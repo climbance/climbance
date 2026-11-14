@@ -1,6 +1,6 @@
-"""learn's `learn check` over questions and lessons, ported as it was worded.
-The graph and the certification settings are stored as authored: a client
-ignores a graph that fails its own check, as `knowledge.md` gives."""
+"""The format check over questions and lessons. The graph and the
+certification settings are stored as authored: a client ignores
+a graph that fails its own check, as `knowledge.md` gives."""
 
 import re
 from collections.abc import Mapping
@@ -100,7 +100,7 @@ def _message(error: Mapping[str, Any]) -> str:
 
 def _settings(source: ModuleSource) -> list[str]:
     """The graph and the certification settings, typed, and every slug and id
-    they name resolved, as `learn check` did."""
+    they name resolved."""
     topics = source.course.get("topic", [])
     subs = {sub for topic in topics for sub in topic.get("subs", [])}
     found: list[str] = []

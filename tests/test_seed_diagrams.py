@@ -138,7 +138,7 @@ def test_the_snapshot_leaves_out_a_drawing_no_live_content_holds(database, tmp_p
 
 
 def test_a_snapshot_without_mermaid_holds_no_diagrams(database, tmp_path):
-    """The snapshot then equals learn's format 6."""
+    """The snapshot then stays at format 6."""
     seed_module(read_module(authored(tmp_path)), root=database, drawer=Fake())
 
     assert "diagrams" not in snapshot(database)

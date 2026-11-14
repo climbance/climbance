@@ -47,7 +47,7 @@ from climb.schema import (
 )
 from climb.storage import Database
 
-# learn's line kind, the table its record is stored in, and the record
+# a sync line's kind, the table its record is stored in, and the record
 KINDS: dict[str, tuple[Table, type[KnowledgeRecord]]] = {
     "attempt": (answers, Answer),
     "session": (stints, Stint),
@@ -55,7 +55,7 @@ KINDS: dict[str, tuple[Table, type[KnowledgeRecord]]] = {
     "focus": (focuses, Focus),
     "lesson": (lesson_marks, LessonMark),
     "cert": (certification_exams, CertificationExam),
-    # the engine's own: learn kept these three on the device
+    # the engine's own three kinds: `knowledge.md`, The wire
     "setting": (setting_changes, SettingChange),
     "raise": (limit_raises, LimitRaise),
     "order": (module_orders, ModuleOrder),

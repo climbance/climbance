@@ -108,7 +108,7 @@ def test_a_module_seeds_every_level_of_its_content(database, tmp_path):
     ]  # fmt: skip
 
 
-def test_learn_s_card_format_is_stored_as_an_open_question(database, tmp_path):
+def test_the_wire_s_card_format_is_stored_as_an_open_question(database, tmp_path):
     """`card` collides with a Card here, and the glossary names it `open`."""
     seed_module(read_module(authored(tmp_path)), root=database)
 
@@ -207,15 +207,14 @@ def test_a_retired_slug_is_never_reused(database, tmp_path):
         (CHOICE.replace("level = 0", "level = 4"), "bad level 4"),
     ],
 )
-def test_the_seed_refuses_what_learn_s_check_refused(tmp_path, types, refusal):
+def test_the_seed_refuses_a_malformed_question(tmp_path, types, refusal):
     found = refusals(read_module(authored(tmp_path, types=types)))
 
     assert any(refusal in one for one in found), found
 
 
 def test_a_refused_module_writes_nothing(database, tmp_path):
-    """A module is checked whole, as `learn check` checked a course, so a seed
-    never stores half of one."""
+    """A module is checked whole, so a seed never stores half of one."""
     broken = CHOICE.replace('answer = ["B"]', 'answer = ["D"]')
 
     result = seed_module(read_module(authored(tmp_path, types=broken)), root=database)

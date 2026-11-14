@@ -355,6 +355,10 @@ without redefining them. Grouped by the file that specifies the record.
   every read and never stored.
 - **Review forecast**: the projection counting the reviews each of the next
   fourteen learning days will hold, every review assumed to pass.
+- **Snapshot**: the whole content of every live module as one JSON document,
+  at snapshot format 6, which both clients load.
+- **Sync line**: one knowledge record as a client writes it and the sync
+  carries it, named by its kind and its `client_id`.
 - **Outbox**: the knowledge records a client holds that the engine has not
   acknowledged, kept in the client's copy of the user's log.
 

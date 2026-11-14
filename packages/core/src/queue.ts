@@ -62,7 +62,7 @@ export const isLessonItem = (x: unknown): x is LessonItem =>
 export type QueueKind = 'mix' | 'focus' | 'review' | 'drill';
 
 /**
- * Picks the next question on demand from what is ready now (spec/learn.md, Queues). The board
+ * Picks the next question on demand from what is ready now (`knowledge.md`, Queues). The board
  * is passed on every pick, so answers recorded since the last pick are taken into account.
  */
 export class Queue {

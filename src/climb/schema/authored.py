@@ -1,6 +1,5 @@
 """The authored structure a content row holds as JSONB, typed so the seed
-refuses a malformed one: `README.md`, Storage. The messages are learn's, as
-`learn check` worded them."""
+refuses a malformed one: `README.md`, Storage."""
 
 from typing import Annotated, Literal
 
@@ -72,7 +71,7 @@ class ShortBody(Authored):
 
 
 class OpenBody(Authored):
-    """learn's `card`: the points the answer has to contain, and the traps."""
+    """An open question's key and its traps."""
 
     key: list[Text]
     traps: list[Text] = Field(default_factory=list[str])
@@ -147,7 +146,7 @@ class CertificationRule(Authored):
 
 
 class ScopeRule(CertificationRule):
-    """A scope's rule, and its rule per level, named as learn named levels."""
+    """A scope's rule, and its rule per level, keyed by level name."""
 
     foundation: CertificationRule | None = None
     associate: CertificationRule | None = None

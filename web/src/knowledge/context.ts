@@ -34,7 +34,7 @@ export function useKnowledge(): Knowledge {
   return knowledge
 }
 
-/** The lines of one kind, in the shape learn wrote them and the core reads. */
+/** The sync lines of one kind, in the shape the core reads. */
 export function linesOf<T>(records: Held[], kind: string): T[] {
   return records.filter((one) => one.kind === kind).map((one) => one.line as unknown as T)
 }

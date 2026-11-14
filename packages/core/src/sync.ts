@@ -14,7 +14,7 @@ import type { CourseStatus, LessonRecord, RaiseRecord, SessionRecord, StatusReco
 export type Cursor = Record<string, number>;
 export type Line = Record<string, unknown>;
 
-/** A record in the outbox: its kind, its id and learn's line. */
+/** A record in the outbox: its kind, its id and its sync line. */
 export interface Outgoing {
   kind: string;
   client_id: string;

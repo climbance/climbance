@@ -44,7 +44,7 @@ const KINDS: Record<string, keyof LearnerLog> = {
   order: 'orders',
 };
 
-/** The log from learn's lines, each tagged with its kind; a kind the learner reads nothing from is dropped. */
+/** The log from sync lines, each tagged with its kind; a kind the learner reads nothing from is dropped. */
 export function learnerLog(lines: readonly { kind: string; line: unknown }[]): LearnerLog {
   const log: LearnerLog = {
     attempts: [],

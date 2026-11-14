@@ -15,7 +15,7 @@ def snapshot(database, tmp_path, **files) -> dict:
     return response.json()
 
 
-def test_the_snapshot_is_the_format_learn_s_app_reads(database, tmp_path):
+def test_the_snapshot_is_at_format_6(database, tmp_path):
     """Format 6, so the app's loader stays as it is: `knowledge.md`."""
     served = snapshot(database, tmp_path)
 
@@ -29,7 +29,7 @@ def test_the_snapshot_is_the_format_learn_s_app_reads(database, tmp_path):
     }
 
 
-def test_a_module_reads_as_learn_s_course(database, tmp_path):
+def test_a_module_reads_as_a_snapshot_course(database, tmp_path):
     (course,) = snapshot(database, tmp_path)["courses"]
 
     assert course["slug"] == "python"
@@ -43,8 +43,8 @@ def test_a_module_reads_as_learn_s_course(database, tmp_path):
     ]
 
 
-def test_an_open_question_reaches_the_app_as_learn_s_card(database, tmp_path):
-    """The rename stops at the engine's edge, where learn's app still reads
+def test_an_open_question_reaches_the_app_as_a_card(database, tmp_path):
+    """The rename stops at the engine's edge, where the wire still reads
     `card`."""
     (course,) = snapshot(database, tmp_path)["courses"]
 
@@ -114,8 +114,22 @@ def test_a_titled_subtopic_reaches_the_app_by_its_title(database, tmp_path):
     assert course["definition"]["topic"][0]["sub_titles"] == {"types": "Mutability and identity"}
 
 
-def test_a_topic_with_no_titles_reads_as_learn_wrote_it(database, tmp_path):
-    """The key is left out, so a module without titles still equals learn's."""
+def test_a_topic_with_no_titles_stays_at_format_6(database, tmp_path):
+    """The key is left out, so a module without titles stays at format 6."""
     (course,) = snapshot(database, tmp_path)["courses"]
 
     assert "sub_titles" not in course["definition"]["topic"][0]
+
+
+def test_a_subtopic_s_technique_reaches_the_app(database, tmp_path):
+    seed_module(read_module(titled(tmp_path, TEACHING)), root=database)
+
+    (course,) = browser_of(database).get("/api/knowledge/snapshot").json()["courses"]
+    assert course["definition"]["topic"][0]["sub_techniques"] == {"flow": ["binary-search"]}
+
+
+def test_a_topic_naming_no_technique_stays_at_format_6(database, tmp_path):
+    """The key is left out, so a module naming none stays at format 6."""
+    (course,) = snapshot(database, tmp_path)["courses"]
+
+    assert "sub_techniques" not in course["definition"]["topic"][0]

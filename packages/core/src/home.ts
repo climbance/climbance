@@ -45,7 +45,7 @@ export interface ContinuePlan {
   include: string | null; // the focus's module, served while paused
 }
 
-/** A module picked on the home sets the focus aside, as `learn next --course` does. */
+/** A module picked on the home sets the focus aside. */
 export function continuePlan(
   board: BoardOf,
   focus: Focus | null,

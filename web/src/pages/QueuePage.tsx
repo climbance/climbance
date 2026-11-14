@@ -40,7 +40,7 @@ import { filteredScope } from '@/knowledge/filtered'
 import { useLearner } from '@/knowledge/learner'
 import { LessonOver, type Reading } from '@/knowledge/LessonOver'
 
-// learn's names, which a stint stores: the filtered queue is `drill` on the wire
+// the wire's names, which a stint stores: the filtered queue is `drill` on the wire
 
 const HOME = '/knowledge'
 

@@ -49,9 +49,9 @@ def test_an_open_answer_carries_its_ticks(database, tmp_path):
     assert (back["grade"], back["missed"], back["traps"]) == ("p", [1], [0])
 
 
-def test_learn_s_drill_and_level_exam_map_to_their_names_here(database, tmp_path):
-    """Stored under this project's names, returned under learn's, which the
-    app still writes."""
+def test_the_wire_s_drill_and_level_exam_map_to_the_store_s_names(database, tmp_path):
+    """Stored under the store's names, returned under the wire's, which the
+    clients still write."""
     sessions = [
         {"kind": "session", "client_id": "s1", "t": T, "mode": "drill", "score": 3, "n": 4},
         {"kind": "session", "client_id": "s2", "t": T, "mode": "exam-L2", "score": 30, "n": 40},

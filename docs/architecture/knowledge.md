@@ -63,8 +63,8 @@ this repo holds. The content repository holds the modules alone.
 - **The module check installs the module's libraries for its run alone.** A
   library a snippet imports is no dependency of the engine, so a module adds
   nothing to the engine's lock file.
-- **An authoring file keeps learn's word for a module, `course`**, in
-  `course.toml`. The word names the file and nothing else.
+- **An authoring file names a module `course`**, in `course.toml`. The word
+  names the file and nothing else.
 
 ## Seeding
 

@@ -493,7 +493,7 @@ export interface paths {
     };
     /**
      * Content
-     * @description Every live module, in the shape learn's app reads: `knowledge.md`. The
+     * @description Every live module, at snapshot format 6: `knowledge.md`. The
      *     app syncs often and the content moves only at a seed, so an unchanged
      *     snapshot answers 304.
      */

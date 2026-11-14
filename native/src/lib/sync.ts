@@ -20,7 +20,7 @@ export interface SyncResult {
   pushed: number;
 }
 
-// learn's line kinds, as the engine's sync names them, against the local tables
+// sync line kinds against the local tables
 const KIND: Record<DB.Table, string> = {
   attempts: 'attempt',
   sessions: 'session',

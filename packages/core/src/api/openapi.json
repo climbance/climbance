@@ -1113,7 +1113,7 @@
     "/api/knowledge/snapshot": {
       "get": {
         "summary": "Content",
-        "description": "Every live module, in the shape learn's app reads: `knowledge.md`. The\napp syncs often and the content moves only at a seed, so an unchanged\nsnapshot answers 304.",
+        "description": "Every live module, at snapshot format 6: `knowledge.md`. The\napp syncs often and the content moves only at a seed, so an unchanged\nsnapshot answers 304.",
         "operationId": "content_api_knowledge_snapshot_get",
         "responses": {
           "200": {

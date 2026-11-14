@@ -13,7 +13,7 @@ router = APIRouter(prefix="/knowledge")
 
 @router.get("/snapshot")
 def content(request: Request, root: Root, _user_id: UserId) -> Response:
-    """Every live module, in the shape learn's app reads: `knowledge.md`. The
+    """Every live module, at snapshot format 6: `knowledge.md`. The
     app syncs often and the content moves only at a seed, so an unchanged
     snapshot answers 304."""
     body = json.dumps(snapshot(root), separators=(",", ":"), sort_keys=True)

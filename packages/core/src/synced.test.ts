@@ -5,7 +5,7 @@ import { syncedLine } from './index';
 const T = '2026-11-10T10:00:00+00:00';
 
 describe('a record the sync returned', () => {
-  it("splits into the merge's fields and learn's line", () => {
+  it("splits into the merge's fields and the sync line", () => {
     const line = syncedLine({
       kind: 'attempt',
       client_id: 'c1',

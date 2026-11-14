@@ -1,5 +1,5 @@
-"""The content as one snapshot, in the shape learn's app reads: `courses.json`
-format 6. The app's loader then stays as it was."""
+"""The content as one snapshot, at snapshot format 6: `knowledge.md`, The
+wire."""
 
 from typing import Any
 
@@ -10,7 +10,7 @@ from climb.knowledge.table import lessons, modules, questions, subtopics, topics
 from climb.storage import Database
 
 FORMAT = 6
-# py-fsrs's defaults, as learn published them: `knowledge.md`, The schedule
+# py-fsrs's defaults: `knowledge.md`, The schedule
 RULES: dict[str, Any] = {
     "fsrs": {
         "version": 6,
@@ -27,7 +27,7 @@ RULES: dict[str, Any] = {
     },
     "levels": {"0": "Foundation", "1": "Associate", "2": "Professional", "3": "Expert"},
 }  # fmt: skip
-# learn's order default, which learn's file left out
+# the order a module carries when its file gives none
 DEFAULT_ORDER = 100
 
 
@@ -41,7 +41,7 @@ def snapshot(root: Database) -> dict[str, Any]:
         drawn = drawings(conn, _sources(courses))
     snap: dict[str, Any] = {"format": FORMAT, "rules": RULES, "courses": courses}
     if drawn:
-        # absent without Mermaid, so the snapshot equals learn's
+        # absent without Mermaid, so the snapshot stays at format 6
         snap["diagrams"] = drawn
     return snap
 
@@ -140,7 +140,7 @@ def _question(row: dict[str, Any], topic: str, sub: str) -> dict[str, Any]:
     raw = {**row["body"], "id": row["slug"], "kind": row["kind"], "level": row["level"]}
     raw |= {"prompt": row["prompt"], "topic": topic, "sub": sub}
     if row["format"] != "choice":
-        # learn's app still reads `card` for the glossary's open question
+        # the wire's name for the glossary's open question
         raw["format"] = "card" if row["format"] == "open" else row["format"]
     for optional in ("code", "lesson"):
         if row[optional] is not None:

@@ -47,7 +47,8 @@ complete. `modules/py/STATUS.md` gives each subtopic.
 - [ ] Release `py` `stdlib` at level 0: 2 of 8 subtopics
 - [ ] Release `py` `internals` at level 0: 2 of 7 subtopics
 - [ ] Replace `python` with `py`, as `concepts.md` `## The parallel module`
-      gives: remove `modules/python` from `content/`, retitle `py` "Python", seed
+      gives: remove `modules/python` from `content/`, retitle `py` "Python",
+      seed
 - [ ] Run each lesson block on every supported build, as each witness runs.
       Rule 2 runs a block on the project's interpreter alone
 - [ ] Show the misconception a wrong choice embodies in its feedback, on the

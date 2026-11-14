@@ -162,7 +162,7 @@
     },
     "OpenBody": {
       "additionalProperties": false,
-      "description": "learn's `card`: the points the answer has to contain, and the traps.",
+      "description": "An open question's key and its traps.",
       "properties": {
         "concept": {
           "anyOf": [

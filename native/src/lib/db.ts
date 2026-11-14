@@ -31,7 +31,6 @@ export const TABLES: Table[] = [
 let opened: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export function db(): Promise<SQLite.SQLiteDatabase> {
-  // a file of its own: learn's app kept GitHub's bookkeeping in learn.db
   opened ??= (async () => {
     const d = await SQLite.openDatabaseAsync('climb.db');
     await d.execAsync('PRAGMA journal_mode = WAL;');

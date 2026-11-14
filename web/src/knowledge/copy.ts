@@ -16,7 +16,7 @@ export const DEVICE = 'web'
 
 export type { Cursor, Line }
 
-/** One record of the log as the copy holds it: learn's line, apart from its kind and ids. */
+/** One record of the log as the copy holds it: its sync line, apart from its kind and ids. */
 export interface Held {
   client_id: string
   kind: string

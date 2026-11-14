@@ -16,7 +16,7 @@ class Bank(BaseModel):
 
 
 class ModuleSource(BaseModel):
-    slug: str  # the directory's name, as learn named a course
+    slug: str  # the directory's name
     course: dict[str, Any]
     banks: list[Bank]
     graph: dict[str, Any] | None
