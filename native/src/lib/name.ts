@@ -1,2 +1,2 @@
 // the dev build's name says so, and stays no longer than the release name
-export const APP_NAME = __DEV__ ? 'Climbance Dev' : 'Climbance';
+export const APP_NAME = __DEV__ ? 'Climb Dev' : 'Climbance';

@@ -271,7 +271,7 @@ native-apk: _prebuild
 native-install:
     {{ android_home }}/platform-tools/adb install -r {{ apk }}
 
-# The dev app ("Climbance Dev") beside the release one. Rebuild it only after native changes.
+# The dev app ("Climb Dev") beside the release one. Rebuild it only after native changes.
 native-dev-apk: _prebuild
     cd native/android && ANDROID_HOME={{ android_home }} ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a --console=plain -q
     {{ android_home }}/platform-tools/adb install -r native/android/app/build/outputs/apk/debug/app-debug.apk
