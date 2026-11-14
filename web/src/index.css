@@ -110,7 +110,7 @@
 }
 
 /* the neutrals are the "Claude +" community theme on tweakcn, converted to
-   oklch, and the site at alg-site carries the same ones. The flame is the
+   oklch, and the marketing site carries the same ones. The flame is the
    site's: it marks the brand, and no verdict reads in it, since its hue sits
    between `verdict-wrong` and `verdict-timeout` */
 :root {
