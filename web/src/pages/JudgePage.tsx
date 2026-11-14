@@ -24,6 +24,7 @@ import type { components } from '@climb/core'
 import { ErrorLine } from '@/components/ErrorLine'
 import { PageHeader } from '@/components/PageHeader'
 import { Panel } from '@/components/Panel'
+import { WrappedText } from '@/components/PythonCode'
 import { Tag } from '@/components/Tag'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -108,7 +109,10 @@ export function JudgePage() {
                       <span className="w-6 shrink-0 text-right text-muted-foreground select-none">
                         {number}
                       </span>
-                      <span className="whitespace-pre-wrap break-words">{line || ' '}</span>
+                      {/* a wrap continues under the line's own indent: `pages.md` */}
+                      <span className="min-w-0 flex-1 whitespace-pre">
+                        <WrappedText code={line || ' '} />
+                      </span>
                     </button>
                   </li>
                 )

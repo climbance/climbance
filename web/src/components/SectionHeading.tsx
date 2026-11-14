@@ -26,10 +26,10 @@ export function SectionHeading({
   const text = (
     <>
       {onToggle && (
-        <ChevronDown
-          aria-hidden="true"
-          className={cn('size-4 self-center transition-transform', closed && '-rotate-90')}
-        />
+        // centred on the first line, where a long title wraps at phone width
+        <span aria-hidden="true" className="flex h-lh shrink-0 items-center self-start">
+          <ChevronDown className={cn('size-4 transition-transform', closed && '-rotate-90')} />
+        </span>
       )}
       {title}
       {count !== undefined && (
@@ -39,13 +39,13 @@ export function SectionHeading({
   )
   return (
     <div className="flex items-baseline gap-3">
-      <Tag className={cn('font-medium', sub ? 'text-body' : 'text-heading')}>
+      <Tag className={cn('min-w-0 font-medium', sub ? 'text-body' : 'text-heading')}>
         {onToggle ? (
           <button
             type="button"
             onClick={onToggle}
             aria-expanded={!closed}
-            className="flex items-baseline gap-2"
+            className="flex items-baseline gap-2 text-left"
           >
             {text}
           </button>
@@ -54,7 +54,7 @@ export function SectionHeading({
         )}
       </Tag>
       {aside && (
-        <div className="ml-auto flex items-baseline gap-stack text-meta text-muted-foreground">
+        <div className="ml-auto flex shrink-0 items-baseline gap-stack text-meta text-muted-foreground">
           {aside}
         </div>
       )}

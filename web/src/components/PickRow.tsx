@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import { ProgressBar } from '@/components/ProgressBar'
@@ -47,6 +47,12 @@ export function PickRow({
   progress,
   children,
 }: Props) {
+  const counted = stats.map((stat, i) => (
+    <span key={i} className="flex items-baseline gap-1.5">
+      <span className="tabular-nums text-foreground">{stat.value}</span>
+      {stat.label}
+    </span>
+  ))
   return (
     <div
       className={cn(
@@ -57,7 +63,7 @@ export function PickRow({
     >
       {lead}
       <div className="min-w-0 flex-1">
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           {to ? (
             <Link
               to={to}
@@ -70,9 +76,23 @@ export function PickRow({
           )}
           {badge}
         </div>
+        {/* at phone width the counts read under the title, as the phone's row does */}
+        {stats.length > 0 && (
+          <span className="mt-1 flex flex-wrap gap-x-4 text-meta text-muted-foreground sm:hidden">
+            {counted}
+          </span>
+        )}
         {note && (
           <span className={cn('mt-1 block text-meta text-muted-foreground', mono && 'font-mono')}>
-            {note}
+            {/* a technique breaks between names, never at its own hyphen */}
+            {mono && typeof note === 'string'
+              ? note.split(' · ').map((name, i) => (
+                  <Fragment key={i}>
+                    {i > 0 && ' · '}
+                    <span className="whitespace-nowrap">{name}</span>
+                  </Fragment>
+                ))
+              : note}
           </span>
         )}
         {progress && (
@@ -82,14 +102,11 @@ export function PickRow({
         )}
         {children}
       </div>
-      <span className="ml-auto flex shrink-0 items-center gap-5 text-meta text-muted-foreground">
-        {stats.map((stat, i) => (
-          <span key={i} className="flex items-baseline gap-1.5">
-            <span className="tabular-nums text-foreground">{stat.value}</span>
-            {stat.label}
-          </span>
-        ))}
-      </span>
+      {stats.length > 0 && (
+        <span className="ml-auto flex shrink-0 items-center gap-5 text-meta text-muted-foreground max-sm:hidden">
+          {counted}
+        </span>
+      )}
       {aside && <span className="relative flex shrink-0 gap-1">{aside}</span>}
     </div>
   )

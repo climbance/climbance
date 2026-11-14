@@ -700,6 +700,9 @@ difference it found. No row is marked `to fix` today.
   each row.** A drawn graph needs a page's width, and the phone's screen holds
   one column. The two clients read the same depths, the same rows and the
   same locks, as `## The two clients` requires.
+- **The web below 640px draws no edges either.** The edges' gutter would take
+  a third of a row there. Each row names the required cards it waits on, as
+  the phone's row does.
 - **A list split into sections reads each section under a plain heading with
   its count, above a bordered panel of rows.** The board and the cards list
   split their lists the same way, so a reader learns one shape.
@@ -711,6 +714,9 @@ difference it found. No row is marked `to fix` today.
 - **A row's counts read as one cluster at its right**, each count beside the
   word it counts. A row with nothing counted says so in one word, since three
   counts of nothing say less than `never` does.
+- **Below 640px the counts read on a line under the title, on both clients.**
+  At the right, the counts keep their width and leave the title a column a
+  word or two wide.
 - **A panel holds what a page carries beside its reading**: a bordered block on
   the card surface. The counts a card run reached and a submission's verdict
   are each one. Every panel carries the same

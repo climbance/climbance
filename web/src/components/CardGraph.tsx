@@ -1,5 +1,5 @@
 import type { CardEdge } from '@climb/core'
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -62,11 +62,17 @@ export function CardGraph({
   }, [edges])
 
   return (
-    <div ref={box} className="relative" style={{ paddingLeft: gutter }}>
+    // at phone width the rows name what they wait on, as the phone's do, and
+    // the gutter would take a third of the row
+    <div
+      ref={box}
+      className="relative sm:pl-(--gutter)"
+      style={{ '--gutter': `${gutter}px` } as CSSProperties}
+    >
       {gutter > 0 && (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-0 h-full"
+          className="pointer-events-none absolute top-0 left-0 h-full max-sm:hidden"
           style={{ width: gutter }}
         >
           {drawn.map((one) => {

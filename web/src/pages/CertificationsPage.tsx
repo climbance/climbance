@@ -38,7 +38,7 @@ import { KNOWLEDGE } from '@/knowledge/paths'
 import { StartSheet, type Scope } from '@/knowledge/StartSheet'
 import { type Sections, useSections } from '@/lib/sections'
 import { GridTable } from '@/components/GridTable'
-import { GRID_CELL, GRID_PRESS } from '@/lib/grid'
+import { GRID_CELL, GRID_FIRST, GRID_PRESS } from '@/lib/grid'
 import { cn } from '@/lib/utils'
 
 type Picked = { course: string; id: string }
@@ -141,7 +141,7 @@ function Grid(props: {
       >
         {rows.map((row) => (
           <tr key={row.scope}>
-            <td className={cn('px-4 py-2', row.scope === COURSE_SCOPE && 'font-medium')}>
+            <td className={cn(GRID_FIRST, row.scope === COURSE_SCOPE && 'font-medium')}>
               {row.title}
             </td>
             {props.levels.map((l) => {

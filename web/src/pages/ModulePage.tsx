@@ -57,7 +57,7 @@ import { ModuleMap } from '@/knowledge/ModuleMap'
 import { StartSheet, type Scope } from '@/knowledge/StartSheet'
 import { useSections } from '@/lib/sections'
 import { GridTable } from '@/components/GridTable'
-import { GRID_CELL, GRID_PRESS } from '@/lib/grid'
+import { GRID_CELL, GRID_FIRST, GRID_PRESS } from '@/lib/grid'
 import { cn } from '@/lib/utils'
 
 const HOME = '/knowledge'
@@ -258,7 +258,7 @@ export function ModulePage() {
                     >
                       {t.rows.map((row) => (
                         <tr key={row.sub}>
-                          <td className="px-4 py-2">
+                          <td className={GRID_FIRST}>
                             <div className="flex items-center gap-1">
                               {/* the name starts the subtopic at every level; the press beside it aims the focus */}
                               <button
