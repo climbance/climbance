@@ -148,7 +148,7 @@ starts, so their subtopics come first.
 - [x] Write the solver's skill: a session answers each question without its
       key, and a reply differing from the key is a finding under rules 7
       and 9
-- [ ] Add to `module check` the refusal of a cycle in the card graph and the
+- [x] Add to `module check` the refusal of a cycle in the card graph and the
       prerequisite graph together, as `content.md` `## Cards and subtopics`
       gives
 - [ ] Add to `module check` the list of cards whose technique no subtopic

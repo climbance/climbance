@@ -118,8 +118,8 @@ def _settings(source: ModuleSource) -> list[str]:
                 found.append(f"{needs} needs itself")
             if min(max(LEVELS), graph.match_up_to) + offset > max(LEVELS):
                 found.append(f"{needs} -> {to}: offset {offset} needs a level above {max(LEVELS)}")
-        if cycle := _cycle(graph.edges()):
-            found.append(f"cycle: {' -> '.join(cycle)}")
+        if closed := cycle(graph.edges()):
+            found.append(f"cycle: {' -> '.join(closed)}")
     if source.certifications is None:
         return found
     try:
@@ -139,7 +139,7 @@ def _settings(source: ModuleSource) -> list[str]:
     return found
 
 
-def _cycle(edges: list[tuple[str, str, int]]) -> list[str] | None:
+def cycle(edges: list[tuple[str, str, int]]) -> list[str] | None:
     """A subtopic needing itself through others, as the path that closes it."""
     needs: dict[str, list[str]] = {}
     for one, to, _ in edges:

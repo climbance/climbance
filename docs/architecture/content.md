@@ -276,13 +276,13 @@ The subtopic says why the forms are correct and what they cost.
   its edges, and no fact about union-find's cost rests on a fact about
   sorting.
 - **The card graph and the prerequisite graph never order two techniques
-  opposite ways.** `module check` projects both graphs onto techniques and
-  refuses a cycle in their union. A requirement draws an edge between the two
-  cards' techniques. A prerequisite draws an edge from each technique of the
-  needing subtopic to each technique of the needed one, through any subtopic
-  naming none. An edge from a technique to itself is dropped. A cycle would
-  have the user study one technique's form first and the other technique's
-  facts first.
+  opposite ways.** `module check` reads the cards in `content/cards/`,
+  projects both graphs onto techniques and refuses a cycle in their union. A
+  requirement draws an edge between the two cards' techniques. A
+  prerequisite draws an edge from each technique of the needing subtopic to
+  each technique of the needed one, through any subtopic naming none. An
+  edge from a technique to itself is dropped. A cycle would have the user
+  study one technique's form first and the other technique's facts first.
 - **A card and its subtopic gate each other in nothing.** A card run never
   waits on a subtopic, and a subtopic's questions never wait on a met card.
   Mastery reads knowledge and execution apart, so a gate between the two

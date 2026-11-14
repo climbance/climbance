@@ -13,6 +13,7 @@ from climb.knowledge.authoring.execution import Runs
 from climb.knowledge.authoring.layout import box_drawing, text_fences, widths
 from climb.knowledge.authoring.lessons import lessons_run
 from climb.knowledge.authoring.likeness import overlaps
+from climb.knowledge.authoring.pairing import crossed
 from climb.knowledge.authoring.prose import prose
 from climb.knowledge.authoring.repeats import repeats
 from climb.knowledge.authoring.snippets import snippets, versions
@@ -64,7 +65,12 @@ class Checked:
 
 
 def check(
-    root: Path, *, run: bool = True, other_versions: bool = True, fresh: bool = False
+    root: Path,
+    *,
+    cards: Path | None = None,
+    run: bool = True,
+    other_versions: bool = True,
+    fresh: bool = False,
 ) -> Checked:
     course = load(root)
     kept = root / CACHE
@@ -91,5 +97,7 @@ def check(
     for line in refusals(source):
         if line not in source.unread:
             report.error(0, "seed", line)
+    for line in crossed(source, cards or root.parent.parent / "cards"):
+        report.error(0, "graph", line)
     checked.executed = len(runs.executed)
     return checked
