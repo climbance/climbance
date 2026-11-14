@@ -572,6 +572,10 @@ model of mastery.
 - **Knowledge is counted from answers** to the questions the technique
   carries. `knowledge.md` gives the answer and the question state it is
   replayed into.
+- **A question carries the technique its subtopic names**, as `knowledge.md`
+  `## Modules` gives. An answer counts toward the technique's parents as well,
+  as a claim does, so an answer in `knapsack` counts toward
+  `dynamic-programming`.
 - **Knowledge never stands in for recognition.** An answer recalls a fact the
   question named, and recognition is spotting a technique nobody named. A
   question answered correctly therefore raises no recognition reading.
@@ -630,6 +634,5 @@ Deferred, since only use answers each:
 - How much evidence a technique needs before the board shows a number rather
   than "unknown".
 - Whether a solve labelled `speed` counts as a full solve.
-- How a question is tied to the technique it carries.
 - How a module outside the technique vocabulary, such as Python, enters
   mastery. Its questions carry no technique for a reading to be kept on.

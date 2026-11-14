@@ -380,7 +380,7 @@ times. Each record class is specified in one of the files beside it.
 
 | File | Holds |
 |---|---|
-| [`content.md`](content.md) | Techniques, cards, template matches |
+| [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims |
 | [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, and the mastery derived from them |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |

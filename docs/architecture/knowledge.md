@@ -21,6 +21,12 @@ A module is one subject: Python first, then algorithms and system design.
   module authored without titles still reads.
 - **A subtopic is shown with its topic's title**, except where its topic
   already heads the view. Two topics can each hold a subtopic called basics.
+- **A subtopic may name one technique**, by its code in the vocabulary,
+  authored in `course.toml`. The seed refuses a code the vocabulary does not
+  hold, and a technique named by two subtopics in any module. A question
+  carries its subtopic's technique, so each knowledge reading counts the
+  answers of one subtopic. `content.md` `## Cards and subtopics` gives what
+  the subtopic teaches beside the card.
 - **Titles are in sentence case**, as lesson and topic titles are: the first
   word and proper nouns alone are capitalized.
 - **Every question sits at one of four levels**: 0 Foundation, 1 Associate,

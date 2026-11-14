@@ -134,14 +134,23 @@ and no question carries a technique yet. The module itself is authored in the
 content repository, as its `PLAN.md` gives: one subtopic per technique of the
 nine cards, at levels 0 and 1, segmented as the Python module is.
 
-- [ ] Decide how a subtopic names the technique it teaches, and write the field
+- [x] Decide how a subtopic names the technique it teaches, and write the field
       into `knowledge.md`. `log.md` defers how a question is tied to its
       technique, and the field settles it
-- [ ] Write into `content.md` how a card and a subtopic share one technique:
+- [x] Write into `content.md` how a card and a subtopic share one technique:
       the card holds the trigger, the templates and the ladder, the subtopic
       the facts. Without the split a lesson and a brief restate each other
 - [ ] Add the technique field to the seed and the snapshot, checked against
       the vocabulary as the seed runs
+- [ ] Add to `module check` the refusal of an algorithms graph missing a
+      card requirement's edge, as `content.md` `## Cards and subtopics` gives
+- [ ] Update the `card-author` skill's brief to the sections `content.md`
+      `## Cards and subtopics` keeps, writing the facts into the subtopic
+- [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
+      card's brief once its subtopic is released. The subtopic's concept
+      writer reads those sections as a source first
+- [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
+      `py` and its level table for levels 0 and 1
 - [ ] Write the solver's skill: a session answers each question without its
       key, and a reply differing from the key is a finding under rules 7
       and 9

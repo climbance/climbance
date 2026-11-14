@@ -234,6 +234,56 @@ starts at the roots and an experienced user sees where a card sits.
   waits on the graph, since the graph orders study rather than proving what
   the user may solve.
 
+## Cards and subtopics
+
+A card and a subtopic of the algorithms module teach one technique together.
+The card says when to reach for the technique and how its forms are written.
+The subtopic says why the forms are correct and what they cost.
+
+- **The card holds the trigger, the brief's core idea and decision axes, the
+  templates and the ladder.** A solver reads these before a sitting and
+  during one.
+- **The subtopic holds the facts: invariants, complexity, pitfalls and edge
+  cases.** Each fact is a concept with a witness, as
+  `docs/authoring/concepts.md` gives. A fact lives in one place, so a brief
+  and a lesson never restate each other.
+- **A brief loses its `## Complexity`, `## Pitfalls` and `## Key insights`
+  sections once its subtopic is written.** The facts in those sections become
+  the subtopic's concepts. A brief whose subtopic is not written keeps them.
+- **A brief keeps `## Mental model`, `## Out of scope` and `## Open`.** The
+  mental model says what each name in the templates means, which a reader
+  needs while reading the templates. The other two say what the card's
+  templates leave out.
+- **The subtopic names the card's technique**, as `knowledge.md` `## Modules`
+  gives. Two cards teaching one technique share one subtopic:
+  `dp-1d-linear` and `dp-state-design` share `dynamic-programming`.
+- **The module's prerequisite graph is authored, and holds every card
+  requirement.** Where one card requires another, the first card's subtopic
+  needs the second's, unless both cards share a subtopic. `module check`
+  refuses a graph missing such an edge. An edge no requirement draws is
+  allowed, since one fact can rest on another without any template using
+  the other card's form.
+- **A card and its subtopic gate each other in nothing.** A card run never
+  waits on a subtopic, and a subtopic's questions never wait on a met card.
+  Mastery reads knowledge and execution apart, so a gate between the two
+  would hold one reading back until the other moved.
+- **A card's page links to its subtopic, and each of the subtopic's lessons
+  links to the card.**
+- **The module's code is Python, at the level of `py`'s first set**: level 0
+  of `core`, `stdlib` and `internals`. A Python API such as `heapq` is taught
+  in `py`, and the algorithms module teaches what the structure guarantees.
+  The module names no prerequisite in `py`, since gating runs inside one
+  module.
+- **The module has levels 0 and 1, and its own level table** in its
+  `CLAUDE.md`. `py`'s table measures how far into Python a learner is, which
+  says nothing about algorithms.
+
+Deferred, since writing the first subtopic answers each:
+
+- The topics the subtopics are grouped into.
+- The wording of the level table.
+- How a complexity claim is witnessed.
+
 ## Judgement items
 
 The solutions a judging exercise serves, built from the templates. `log.md`
