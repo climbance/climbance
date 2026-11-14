@@ -240,6 +240,10 @@ A card and a subtopic of the algorithms module teach one technique together.
 The card says when to reach for the technique and how its forms are written.
 The subtopic says why the forms are correct and what they cost.
 
+- **A card and a subtopic are paired by their technique code alone.** A card
+  names a code, and a subtopic names one as `knowledge.md` `## Modules` gives.
+  The board's three readings key on the same code, so a pairing needs no field
+  of its own.
 - **The card holds the trigger, the brief's core idea and decision axes, the
   templates and the ladder.** A solver reads these before a sitting and
   during one.
@@ -248,32 +252,49 @@ The subtopic says why the forms are correct and what they cost.
   `docs/authoring/concepts.md` gives. A fact lives in one place, so a brief
   and a lesson never restate each other.
 - **A brief loses its `## Complexity`, `## Pitfalls` and `## Key insights`
-  sections once its subtopic is written.** The facts in those sections become
-  the subtopic's concepts. A brief whose subtopic is not written keeps them.
+  sections once a subtopic names its technique.** The facts in those sections
+  become the subtopic's concepts. `card check` refuses a brief keeping one of
+  the three sections after that. The check runs there and not in the seed,
+  since the engine reads no heading of a brief.
 - **A brief keeps `## Mental model`, `## Out of scope` and `## Open`.** The
   mental model says what each name in the templates means, which a reader
   needs while reading the templates. The other two say what the card's
   templates leave out.
-- **The subtopic names the card's technique**, as `knowledge.md` `## Modules`
-  gives. Two cards teaching one technique share one subtopic:
-  `dp-1d-linear` and `dp-state-design` share `dynamic-programming`.
-- **The module's prerequisite graph is authored, and holds every card
-  requirement.** Where one card requires another, the first card's subtopic
-  needs the second's, unless both cards share a subtopic. `module check`
-  refuses a graph missing such an edge. An edge no requirement draws is
-  allowed, since one fact can rest on another without any template using
-  the other card's form.
+- **Every card's technique gets a subtopic, and a subtopic may have no card.**
+  Amortized analysis and recursion are facts with no ladder of their own, so
+  the module holds subtopics no card names. Two cards teaching one technique
+  share one subtopic: `dp-1d-linear` and `dp-state-design` share
+  `dynamic-programming`.
+- **`module check` lists each card whose technique no subtopic names.** The
+  list reports work still to write and refuses nothing, since a card is
+  studied in full without its subtopic.
+- **A requirement draws no prerequisite.** A requirement says one card's
+  template uses another card's form, and the card graph orders study by it. A
+  prerequisite says one subtopic's facts rest on another subtopic's facts, and
+  the prerequisite graph gates new questions by it. Kruskal's template sorts
+  its edges, and no fact about union-find's cost rests on a fact about
+  sorting.
+- **The card graph and the prerequisite graph never order two techniques
+  opposite ways.** `module check` treats a card and the subtopic naming its
+  technique as one node, and refuses a cycle in the union of both graphs. A
+  cycle would have the user study one technique's form first and the other
+  technique's facts first.
 - **A card and its subtopic gate each other in nothing.** A card run never
   waits on a subtopic, and a subtopic's questions never wait on a met card.
   Mastery reads knowledge and execution apart, so a gate between the two
   would hold one reading back until the other moved.
 - **A card's page links to its subtopic, and each of the subtopic's lessons
   links to the card.**
+- **A template may cite subtopics of another module, in `cites`.** Each entry
+  names a subtopic as `<module>/<topic>/<subtopic>`, such as
+  `py/stdlib/collections`, and the card's page links each one. A citation
+  gates nothing, since gating runs inside one module. The seed refuses a
+  citation naming no seeded subtopic, so a module is seeded before the cards
+  citing it.
 - **The module's code is Python, at the level of `py`'s first set**: level 0
   of `core`, `stdlib` and `internals`. A Python API such as `heapq` is taught
-  in `py`, and the algorithms module teaches what the structure guarantees.
-  The module names no prerequisite in `py`, since gating runs inside one
-  module.
+  in `py`, and a template using the API cites that subtopic. The algorithms
+  module teaches what the structure guarantees.
 - **The module has levels 0 and 1, and its own level table** in its
   `CLAUDE.md`. `py`'s table measures how far into Python a learner is, which
   says nothing about algorithms.

@@ -142,13 +142,22 @@ nine cards, at levels 0 and 1, segmented as the Python module is.
       the facts. Without the split a lesson and a brief restate each other
 - [ ] Add the technique field to the seed and the snapshot, checked against
       the vocabulary as the seed runs
-- [ ] Add to `module check` the refusal of an algorithms graph missing a
-      card requirement's edge, as `content.md` `## Cards and subtopics` gives
+- [ ] Add to `module check` the refusal of a cycle in the card graph and the
+      prerequisite graph together, as `content.md` `## Cards and subtopics`
+      gives
+- [ ] Add to `module check` the list of cards whose technique no subtopic
+      names
 - [ ] Update the `card-author` skill's brief to the sections `content.md`
       `## Cards and subtopics` keeps, writing the facts into the subtopic
-- [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
-      card's brief once its subtopic is released. The subtopic's concept
-      writer reads those sections as a source first
+- [ ] Add to `card check` the refusal of a brief keeping `## Complexity`,
+      `## Pitfalls` or `## Key insights` once a subtopic names its technique
+- [ ] Remove those three sections from each card's brief once a subtopic
+      names its technique. The subtopic's concept writer reads them as a
+      source first
+- [ ] Add `cites` to the template in the seed and the snapshot, refusing a
+      subtopic the store does not hold
+- [ ] Link each cited subtopic on the card's page on both clients, with the
+      row in `pages.md` `### Acts`
 - [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
       `py` and its level table for levels 0 and 1
 - [ ] Write the solver's skill: a session answers each question without its
