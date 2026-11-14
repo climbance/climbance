@@ -133,7 +133,9 @@ graph, and `log.md` gives when a card is locked.
 Mastery's knowledge part counts answers to the questions a technique carries,
 and no question carries a technique yet. The module itself is authored in the
 content repository, as its `PLAN.md` gives: a subtopic or more per technique
-of the nine cards, at levels 0 and 1, segmented as the Python module is.
+of every card, at levels 0 and 1, written by concept as
+`docs/authoring/concepts.md` gives. The root cards are where a new user
+starts, so their subtopics come first.
 
 - [x] Decide how a subtopic names the technique it teaches, and write the field
       into `knowledge.md`. `log.md` defers how a question is tied to its
@@ -143,37 +145,42 @@ of the nine cards, at levels 0 and 1, segmented as the Python module is.
       the facts. Without the split a lesson and a brief restate each other
 - [x] Add the technique field to the seed and the snapshot, checked against
       the vocabulary as the seed runs
+- [x] Write the solver's skill: a session answers each question without its
+      key, and a reply differing from the key is a finding under rules 7
+      and 9
 - [ ] Add to `module check` the refusal of a cycle in the card graph and the
       prerequisite graph together, as `content.md` `## Cards and subtopics`
       gives
 - [ ] Add to `module check` the list of cards whose technique no subtopic
       names
+- [ ] Add to `card check` the refusal of a brief keeping `## Complexity`,
+      `## Pitfalls` or `## Key insights` once a subtopic names its technique.
+      The check reads the techniques from the modules in `content/modules/`
 - [ ] Update the `card-author` skill's brief to the sections `content.md`
       `## Cards and subtopics` keeps, writing the facts into the subtopic
-- [ ] Add to `card check` the refusal of a brief keeping `## Complexity`,
-      `## Pitfalls` or `## Key insights` once a subtopic names its technique
-- [ ] Remove those three sections from each card's brief once a subtopic
-      names its technique. The subtopic's concept writer reads them as a
-      source first
-- [ ] Add `cites` to the template in the seed and the snapshot, refusing a
-      subtopic the store does not hold
-- [ ] Link each cited subtopic on the card's page on both clients, with the
-      row in `pages.md` `### Acts`
-- [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
-      `py` and its level table for levels 0 and 1
-- [ ] Write the solver's skill: a session answers each question without its
-      key, and a reply differing from the key is a finding under rules 7
-      and 9
 - [ ] Write the lesson reviewer's skill: a session reads each lesson's prose
       against its example and its questions, under rules 15 and 22
+- [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
+      `py` and its level table for levels 0 and 1
+- [ ] Write the `binary-search` subtopic first, and record in `concepts.md`
+      how its complexity claims are witnessed. Most of a subtopic's facts are
+      complexity, so the answer shapes every later subtopic
+- [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
+      card's brief once a subtopic names its technique. The subtopic's
+      concept writer reads them as a source first
 - [ ] Run the solver and the lesson reviewer over the module by hand before
       it is seeded, and fix what they find. A lesson giving its question away
       was the Python module's commonest defect
 - [ ] Seed the module, with `module check` passing
-- [ ] Link a card's page to every subtopic naming its technique, on both
-      clients, with the row in `pages.md` `### Acts`
+- [ ] Link a card's page to every subtopic naming its technique, and each
+      lesson to every card its subtopic pairs with, on both clients, with the
+      rows in `pages.md` `### Acts`
 - [ ] Count a technique's knowledge reading from the answers to the questions
       of every subtopic naming it, as `log.md` gives, and show it on the board
+- [ ] Add `cites` to the template in the seed and the card API, refusing a
+      subtopic the store does not hold
+- [ ] Link each cited subtopic on the card's page on both clients, with the
+      row in `pages.md` `### Acts`
 
 ### The cards, checked
 
