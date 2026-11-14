@@ -10,9 +10,8 @@
 # `db` service by, CLIMB_ORIGIN and CLIMB_SECRET, and each provider's
 # client id and secret. CLIMB_DOMAIN is the host CLIMB_ORIGIN names,
 # since Caddy issues the certificate for it and the sign-in callback returns
-# there. CLIMB_REDIRECT_FROM lists the hosts Caddy redirects to it, and
-# Caddy refuses to start without it. DOCKER_GID is the id of the host's docker
-# group, which the deployment repo writes per server.
+# there. DOCKER_GID is the id of the host's docker group, which the
+# deployment repo writes per server.
 
 name: climb
 

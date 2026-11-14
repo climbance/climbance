@@ -7,10 +7,3 @@
 	encode zstd gzip
 	reverse_proxy api:8000
 }
-
-# CLIMB_REDIRECT_FROM lists further hosts, space-separated, that answer
-# with a permanent redirect to CLIMB_DOMAIN. Sign-in returns to the one
-# origin alone, so a second host serving the pages would break it.
-{$CLIMB_REDIRECT_FROM} {
-	redir https://{$CLIMB_DOMAIN}{uri} permanent
-}
