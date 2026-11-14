@@ -240,10 +240,10 @@ A card and a subtopic of the algorithms module teach one technique together.
 The card says when to reach for the technique and how its forms are written.
 The subtopic says why the forms are correct and what they cost.
 
-- **A card and a subtopic are paired by their technique code alone.** A card
-  names a code, and a subtopic names one as `knowledge.md` `## Modules` gives.
-  The board's three readings key on the same code, so a pairing needs no field
-  of its own.
+- **A card and a subtopic are paired by technique code alone.** A card names
+  one code, and a subtopic names any number, as `knowledge.md` `## Modules`
+  gives. A card is paired with every subtopic naming its code. The board's
+  three readings key on the same code, so a pairing needs no field of its own.
 - **The card holds the trigger, the brief's core idea and decision axes, the
   templates and the ladder.** A solver reads these before a sitting and
   during one.
@@ -262,9 +262,10 @@ The subtopic says why the forms are correct and what they cost.
   templates leave out.
 - **Every card's technique gets a subtopic, and a subtopic may have no card.**
   Amortized analysis and recursion are facts with no ladder of their own, so
-  the module holds subtopics no card names. Two cards teaching one technique
-  share one subtopic: `dp-1d-linear` and `dp-state-design` share
-  `dynamic-programming`.
+  the module holds subtopics naming no card's technique. Two cards teaching
+  one technique are each paired with every subtopic naming it, and one
+  technique's facts may span several subtopics: `dp-1d-linear` and
+  `dp-state-design` both name `dynamic-programming`.
 - **`module check` lists each card whose technique no subtopic names.** The
   list reports work still to write and refuses nothing, since a card is
   studied in full without its subtopic.
@@ -275,16 +276,19 @@ The subtopic says why the forms are correct and what they cost.
   its edges, and no fact about union-find's cost rests on a fact about
   sorting.
 - **The card graph and the prerequisite graph never order two techniques
-  opposite ways.** `module check` treats a card and the subtopic naming its
-  technique as one node, and refuses a cycle in the union of both graphs. A
-  cycle would have the user study one technique's form first and the other
-  technique's facts first.
+  opposite ways.** `module check` projects both graphs onto techniques and
+  refuses a cycle in their union. A requirement draws an edge between the two
+  cards' techniques. A prerequisite draws an edge from each technique of the
+  needing subtopic to each technique of the needed one, through any subtopic
+  naming none. An edge from a technique to itself is dropped. A cycle would
+  have the user study one technique's form first and the other technique's
+  facts first.
 - **A card and its subtopic gate each other in nothing.** A card run never
   waits on a subtopic, and a subtopic's questions never wait on a met card.
   Mastery reads knowledge and execution apart, so a gate between the two
   would hold one reading back until the other moved.
-- **A card's page links to its subtopic, and each of the subtopic's lessons
-  links to the card.**
+- **A card's page links to every subtopic paired with the card, and each
+  lesson of a subtopic links to every card paired with the subtopic.**
 - **A template may cite subtopics of another module, in `cites`.** Each entry
   names a subtopic as `<module>/<topic>/<subtopic>`, such as
   `py/stdlib/collections`, and the card's page links each one. A citation

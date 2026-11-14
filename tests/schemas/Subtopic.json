@@ -26,6 +26,13 @@
       "title": "Slug",
       "type": "string"
     },
+    "techniques": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Techniques",
+      "type": "array"
+    },
     "title": {
       "anyOf": [
         {

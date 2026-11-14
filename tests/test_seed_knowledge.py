@@ -311,3 +311,46 @@ def test_a_title_for_a_subtopic_the_topic_does_not_list_is_refused(tmp_path):
         "sub_titles names 'nowhere'" in one
         for one in refusals(read_module(titled(tmp_path, stray)))
     )
+
+
+TEACHING = COURSE.replace(
+    'subs = ["types", "flow"]\n',
+    'subs = ["types", "flow"]\nsub_techniques = { flow = ["binary-search"] }\n',
+)
+
+
+def test_a_subtopic_seeds_with_the_techniques_its_topic_names(database, tmp_path):
+    seed_module(read_module(titled(tmp_path, TEACHING)), root=database)
+
+    stored = {row["slug"]: row["techniques"] for row in rows(database, subtopics)}
+    assert stored == {"types": [], "flow": ["binary-search"]}
+
+
+def test_a_technique_the_vocabulary_lacks_is_refused(tmp_path):
+    unknown = TEACHING.replace('"binary-search"', '"bogo-search"')
+
+    assert any(
+        "'bogo-search', which the vocabulary lacks" in one
+        for one in refusals(read_module(titled(tmp_path, unknown)))
+    )
+
+
+def test_a_technique_named_twice_by_one_subtopic_is_refused(tmp_path):
+    twice = TEACHING.replace('["binary-search"]', '["binary-search", "binary-search"]')
+
+    assert any(
+        "'flow' names a technique twice" in one
+        for one in refusals(read_module(titled(tmp_path, twice)))
+    )
+
+
+def test_one_technique_may_be_named_by_several_subtopics(database, tmp_path):
+    """A technique is sized for classifying code and a subtopic for teaching,
+    so neither bounds how many of the other it is paired with."""
+    shared = TEACHING.replace(
+        'flow = ["binary-search"]', 'flow = ["binary-search"], types = ["binary-search", "hashing"]'
+    )
+    seed_module(read_module(titled(tmp_path / "a", shared)), root=database)
+    other = titled(tmp_path / "b", TEACHING).rename(tmp_path / "b" / "algorithms")
+
+    assert seed_module(read_module(other), root=database).refused == []

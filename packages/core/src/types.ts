@@ -12,6 +12,7 @@ export interface TopicDef {
   title: string;
   subs: string[];
   sub_titles?: Record<string, string>; // a subtopic's title, where the module gives one
+  sub_techniques?: Record<string, string[]>; // a subtopic's vocabulary codes, where it names any
 }
 
 export interface CourseDef {

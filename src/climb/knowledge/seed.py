@@ -132,6 +132,7 @@ def _topics(
     sub_rows: list[dict[str, Any]] = []
     for topic, topic_id in zip(listed, ids, strict=True):
         titles = topic.get("sub_titles", {})
+        techniques = topic.get("sub_techniques", {})
         for at, slug in enumerate(topic["subs"]):
             found = held_subs.pop((topic_id, slug), None)
             subs[slug] = found["id"] if found else new_id()
@@ -143,6 +144,7 @@ def _topics(
                     "retired_at": None,
                     "position": at,
                     "title": titles.get(slug),
+                    "techniques": techniques.get(slug, []),
                 }
             )
         result.subtopics += len(topic["subs"])

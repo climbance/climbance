@@ -572,8 +572,8 @@ model of mastery.
 - **Knowledge is counted from answers** to the questions the technique
   carries. `knowledge.md` gives the answer and the question state it is
   replayed into.
-- **A question carries the technique its subtopic names**, as `knowledge.md`
-  `## Modules` gives. An answer counts toward the technique's parents as well,
+- **A question carries the techniques its subtopic names**, as `knowledge.md`
+  `## Modules` gives. An answer counts toward each technique's parents as well,
   as a claim does, so an answer in `knapsack` counts toward
   `dynamic-programming`.
 - **Knowledge never stands in for recognition.** An answer recalls a fact the

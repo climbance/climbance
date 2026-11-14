@@ -11,6 +11,7 @@ from pydantic import ValidationError
 from climb.knowledge.files import ModuleSource
 from climb.schema import BODIES, CertificationSettings, GraphSettings, QuestionFormat
 from climb.schema.authored import LEVEL_NAMES, LEVELS
+from climb.techniques import codes
 
 FORMATS = ("choice", "short", "card")
 # held in a column of its own, so never part of the body
@@ -25,7 +26,7 @@ HEADING = re.compile(r"#{2,3}\s+(.+?)\s*#*\s*$")
 
 
 def refusals(source: ModuleSource) -> list[str]:
-    found = list(source.unread) + _settings(source) + _sub_titles(source)
+    found = list(source.unread) + _settings(source) + _sub_titles(source) + _sub_techniques(source)
     course = source.course
     kinds, code_kinds = course.get("kinds", []), course.get("code_kinds", [])
     with_lessons = bool((source.graph or {}).get("lesson"))
@@ -176,4 +177,29 @@ def _sub_titles(source: ModuleSource) -> list[str]:
                 found.append(f"{named}: sub_titles names {slug!r}, which subs does not list")
             if not (isinstance(title, str) and title.strip()):
                 found.append(f"{named}: the title of {slug!r} must be non-empty text")
+    return found
+
+
+def _sub_techniques(source: ModuleSource) -> list[str]:
+    """A topic's `sub_techniques`: a list of vocabulary codes per subtopic the
+    topic lists."""
+    found: list[str] = []
+    for topic in source.course.get("topic", []):
+        named = f"topic {topic.get('slug')}"
+        techniques = topic.get("sub_techniques", {})
+        if not isinstance(techniques, dict):
+            found.append(f"{named}: sub_techniques must be a table")
+            continue
+        for slug, listed in cast(dict[str, object], techniques).items():
+            if slug not in topic.get("subs", []):
+                found.append(f"{named}: sub_techniques names {slug!r}, which subs does not list")
+            if not isinstance(listed, list):
+                found.append(f"{named}: the techniques of {slug!r} must be a list")
+                continue
+            entries = cast(list[object], listed)
+            for code in entries:
+                if not isinstance(code, str) or code not in codes():
+                    found.append(f"{named}: {slug!r} names {code!r}, which the vocabulary lacks")
+            if len(set(map(str, entries))) < len(entries):
+                found.append(f"{named}: {slug!r} names a technique twice")
     return found

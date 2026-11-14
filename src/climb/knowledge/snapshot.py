@@ -66,6 +66,7 @@ def _course(conn: Connection, module: dict[str, Any]) -> dict[str, Any]:
             subtopics.c.id.label("sub_id"),
             subtopics.c.slug.label("sub"),
             subtopics.c.title.label("sub_title"),
+            subtopics.c.techniques.label("sub_techniques"),
         )
         .join(subtopics, subtopics.c.topic_id == topics.c.id)
         .where(topics.c.module_id == module["id"], topics.c.retired_at.is_(None))
@@ -81,8 +82,10 @@ def _course(conn: Connection, module: dict[str, Any]) -> dict[str, Any]:
         )
         topic["subs"].append(row["sub"])
         if row["sub_title"] is not None:
-            # absent without a title, so an untitled module equals learn's
+            # absent without a title, so an untitled module stays at format 6
             topic.setdefault("sub_titles", {})[row["sub"]] = row["sub_title"]
+        if row["sub_techniques"]:
+            topic.setdefault("sub_techniques", {})[row["sub"]] = row["sub_techniques"]
         where[row["sub_id"]] = (row["slug"], row["sub"])
     course: dict[str, Any] = {
         "slug": module["slug"],

@@ -10,6 +10,7 @@ from sqlalchemy import (
     Table,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
@@ -65,6 +66,7 @@ subtopics = Table(
     Column("retired_at", timestamp()),
     Column("position", Integer, nullable=False),
     Column("title", Text),
+    Column("techniques", ARRAY(Text), server_default=text("'{}'"), nullable=False),
     UniqueConstraint("topic_id", "slug"),
     CheckConstraint(f"slug ~ {SLUG}", name="slug_spelled"),
 )

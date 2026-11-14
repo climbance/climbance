@@ -21,12 +21,18 @@ A module is one subject: Python first, then algorithms and system design.
   module authored without titles still reads.
 - **A subtopic is shown with its topic's title**, except where its topic
   already heads the view. Two topics can each hold a subtopic called basics.
-- **A subtopic may name one technique**, by its code in the vocabulary,
-  authored in `course.toml`. The seed refuses a code the vocabulary does not
-  hold, and a technique named by two subtopics in any module. A question
-  carries its subtopic's technique, so each knowledge reading counts the
-  answers of one subtopic. `content.md` `## Cards and subtopics` gives what
-  the subtopic teaches beside the card.
+- **A subtopic may name techniques**, each by its code in the vocabulary,
+  authored in `course.toml` as its topic's `sub_techniques`. The seed refuses
+  a code the vocabulary does not hold.
+- **A technique may be named by any number of subtopics, in any module.** A
+  technique is sized for classifying code, and a subtopic for teaching, so
+  neither bounds how many of the other it is paired with. Most subtopics
+  name one technique, and nothing requires it.
+- **A question carries its subtopic's techniques.** A knowledge reading counts
+  the answers to every subtopic naming the technique. A question naming
+  techniques of its own is deferred until a subtopic mixing two techniques
+  needs it. `content.md` `## Cards and subtopics` gives what a subtopic
+  teaches beside a card.
 - **Titles are in sentence case**, as lesson and topic titles are: the first
   word and proper nouns alone are capitalized.
 - **Every question sits at one of four levels**: 0 Foundation, 1 Associate,
@@ -473,27 +479,29 @@ trigger, as `README.md` requires.
 
 ## The wire
 
-The native app came from learn and still reads and writes learn's formats, and
-the web app reads and writes them through the same `packages/core`. The engine
-translates at its edge, so the store keeps this project's names.
+Both clients read the snapshot and write sync lines through
+`packages/core`. The wire keeps some names the store does not use, and the
+engine translates them at its edge, so the store keeps this project's names.
 
-- **The content reaches a client as one snapshot**, learn's `courses.json` at
-  format 6. The snapshot rebuilt from Postgres equals learn's own, so the
-  loader in `packages/core` stays as it was. The snapshot adds one field
-  learn's lacks, the drawings `## Diagrams` gives.
-- **A client syncs learn's log lines**: `attempt`, `session`, `status`,
-  `focus`, `lesson` and `cert`. Each line carries a `client_id` and names its
-  content by slug.
-- **Three lines are the engine's own**: `setting`, `raise` and `order`.
-  learn kept the settings, the raise and the module order on the device, so
-  its format carries no line for any of the three.
+- **The content reaches a client as one snapshot, at snapshot format 6.** The
+  format is the module tree, the questions, the lessons and the scheduling
+  rules in one JSON document, and the loader in `packages/core` reads it. A
+  field added since format 6 is left out where empty: the drawings `##
+  Diagrams` gives, and a topic's `sub_titles` and `sub_techniques`. A module
+  carrying none of them then reads as format 6 alone.
+- **A client syncs sync lines**: `attempt`, `session`, `status`, `focus`,
+  `lesson` and `cert`. Each line carries a `client_id` and names its content
+  by slug.
+- **Three line kinds are the engine's own**: `setting`, `raise` and `order`.
+  The settings, the raise and the module order were kept on the device before
+  the engine synced them, so format 6 has no line for any of the three.
 - **A `setting` line carries the name and the value**, as `name` and `n`.
 - **An `order` line names every module by slug, as `courses`.** A line naming
   a module the store does not hold is refused, as any line naming unknown
   content is.
-- **Two names change at the edge.** learn's `card` format is stored as an
+- **Two names change at the edge.** The wire's `card` format is stored as an
   open question, and its `drill` queue as the filtered queue. A line read
-  back carries learn's names again.
+  back carries the wire's names again.
 - **A line naming content the store does not hold is refused alone.** The
   rest of the upload is stored, and the reply names each refused line.
 - **A sync returns the user's records since a cursor**, one append order per

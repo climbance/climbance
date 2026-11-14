@@ -8,11 +8,11 @@ The work not yet ready for a phase waits under Further developments.
 
 The algorithms track in all three of its forms, and what the engine needs
 before a user other than the author starts on it. Learn: a module of short
-lessons and questions, one subtopic per technique the cards teach. Drill: short
-exercises on the phone. Solve: the sitting, on problems whose difficulty
-matches their label. Planned 2026-11-13, ahead of the content pipeline: the
-pipeline improves content, and this phase puts the content in front of someone
-other than the author.
+lessons and questions, a subtopic or more per technique the cards teach.
+Drill: short exercises on the phone. Solve: the sitting, on problems whose
+difficulty matches their label. Planned 2026-11-13, ahead of the content
+pipeline: the pipeline improves content, and this phase puts the content in
+front of someone other than the author.
 
 The order below is the order of work. The problem sweeps run in the background
 from the second block on.
@@ -132,8 +132,8 @@ graph, and `log.md` gives when a card is locked.
 
 Mastery's knowledge part counts answers to the questions a technique carries,
 and no question carries a technique yet. The module itself is authored in the
-content repository, as its `PLAN.md` gives: one subtopic per technique of the
-nine cards, at levels 0 and 1, segmented as the Python module is.
+content repository, as its `PLAN.md` gives: a subtopic or more per technique
+of the nine cards, at levels 0 and 1, segmented as the Python module is.
 
 - [x] Decide how a subtopic names the technique it teaches, and write the field
       into `knowledge.md`. `log.md` defers how a question is tied to its
@@ -141,7 +141,7 @@ nine cards, at levels 0 and 1, segmented as the Python module is.
 - [x] Write into `content.md` how a card and a subtopic share one technique:
       the card holds the trigger, the templates and the ladder, the subtopic
       the facts. Without the split a lesson and a brief restate each other
-- [ ] Add the technique field to the seed and the snapshot, checked against
+- [x] Add the technique field to the seed and the snapshot, checked against
       the vocabulary as the seed runs
 - [ ] Add to `module check` the refusal of a cycle in the card graph and the
       prerequisite graph together, as `content.md` `## Cards and subtopics`
@@ -170,10 +170,10 @@ nine cards, at levels 0 and 1, segmented as the Python module is.
       it is seeded, and fix what they find. A lesson giving its question away
       was the Python module's commonest defect
 - [ ] Seed the module, with `module check` passing
-- [ ] Link a card's page to its technique's subtopic on both clients, with the
-      row in `pages.md` `### Acts`
-- [ ] Count a technique's knowledge reading from the answers to its subtopic's
-      questions, as `log.md` gives, and show it on the board
+- [ ] Link a card's page to every subtopic naming its technique, on both
+      clients, with the row in `pages.md` `### Acts`
+- [ ] Count a technique's knowledge reading from the answers to the questions
+      of every subtopic naming it, as `log.md` gives, and show it on the board
 
 ### The cards, checked
 

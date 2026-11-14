@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from helpers import browsing
-from test_seed_knowledge import CHOICE, authored, titled
+from test_seed_knowledge import CHOICE, TEACHING, authored, titled
 
 from climb.api.app import create_app
 from climb.knowledge import read_module, seed_module
