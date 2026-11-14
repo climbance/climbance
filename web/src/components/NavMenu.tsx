@@ -1,15 +1,11 @@
-import {
-  SECTION_PRACTICE,
-  SECTION_PROBLEMS,
-  SECTION_CARDS,
-  SECTION_KNOWLEDGE,
-} from '@climb/core'
+import { SECTION_PRACTICE, SECTION_PROBLEMS, SECTION_CARDS, SECTION_KNOWLEDGE } from '@climb/core'
 import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 
 import { AccountMenu } from '@/components/AccountMenu'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
+import { useEdgeFade } from '@/lib/overflow'
 import { cn } from '@/lib/utils'
 
 // the four the navigation names. A technique and a picked problem, which
@@ -32,18 +28,33 @@ const SECTIONS = [
   },
 ]
 
+const FADE = '1rem'
+
 export function NavMenu({ wide }: { wide: boolean }) {
   const { pathname } = useLocation()
   const sections = useRef<HTMLDivElement>(null)
+  // a narrow fade: at 360px the fourth section starts barely inside the row
+  const fade = useEdgeFade(sections, [], FADE)
 
   // a phone's width holds three of the four, so the marked one is scrolled to
   useEffect(() => {
     const row = sections.current
     const marked = row?.querySelector('[aria-current="page"]')
     if (!row || !marked) return
-    // the row alone scrolls: scrollIntoView would move the page sideways too
-    const over = marked.getBoundingClientRect().right - row.getBoundingClientRect().right
-    if (over > 0) row.scrollLeft += over
+    // the row alone scrolls: scrollIntoView would move the page sideways too.
+    // The margin clears the fade, which would otherwise cover the marked one
+    const margin =
+      parseFloat(FADE) * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    const align = () => {
+      const over = marked.getBoundingClientRect().right + margin - row.getBoundingClientRect().right
+      if (over > 0) row.scrollLeft += over
+    }
+    align()
+    // the web font widens the labels after the first layout
+    const observer = new ResizeObserver(align)
+    observer.observe(marked)
+    observer.observe(row)
+    return () => observer.disconnect()
   }, [pathname])
 
   return (
@@ -67,11 +78,21 @@ export function NavMenu({ wide }: { wide: boolean }) {
           <span aria-hidden className="size-2.5 rounded-full bg-brand" />
           <span className="sr-only sm:not-sr-only">Climbance</span>
         </Link>
-        <div ref={sections} className="flex min-w-0 items-center gap-1 overflow-x-auto">
+        <div
+          ref={sections}
+          className="flex min-w-0 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] sm:gap-1"
+          style={fade}
+        >
           {SECTIONS.map(({ label, to, owns }) => {
             const current = owns(pathname)
             return (
-              <Button key={to} variant={current ? 'secondary' : 'ghost'} size="sm" asChild>
+              <Button
+                key={to}
+                variant={current ? 'secondary' : 'ghost'}
+                size="sm"
+                className="max-sm:px-1.5"
+                asChild
+              >
                 <Link to={to} aria-current={current ? 'page' : undefined}>
                   {label}
                 </Link>
