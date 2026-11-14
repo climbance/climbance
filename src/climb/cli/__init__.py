@@ -19,7 +19,6 @@ from climb.cli.generate import generate
 from climb.cli.hand_match import hand_match
 from climb.cli.invite import invitation
 from climb.cli.judge import judge
-from climb.cli.knowledge import knowledge
 from climb.cli.match import match
 from climb.cli.module import module
 from climb.cli.movement import moved
@@ -359,13 +358,6 @@ def main() -> None:
         invite_action.add_parser(name, help=help).add_argument("email")
     invite_action.add_parser("list", help="every email invited")
 
-    knowledge_parser = _command(sub, "knowledge", "the knowledge module's records")
-    kept = knowledge_parser.add_subparsers(dest="action", required=True)
-    import_parser = kept.add_parser("import", help="post learn's history through the sync")
-    import_parser.add_argument("source", help="learn's data repo, holding progress/")
-    # named every time: the history is one person's, never a default's
-    import_parser.add_argument("--user", required=True, help="whose history it is")
-
     judge_parser = _command(sub, "judge", "the judging exercise's items")
     judge_action = judge_parser.add_subparsers(dest="action", required=True)
     judge_action.add_parser(
@@ -460,7 +452,6 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "score": score,
     "movement": moved,
     "log": user_log,
-    "knowledge": knowledge,
     "card": lambda args, parser, _root: card(args, parser),
     "judge": lambda args, _parser, root: judge(args, root),
     "module": lambda args, parser, _root: module(args, parser),
