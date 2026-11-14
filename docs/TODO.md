@@ -46,17 +46,13 @@ complete. `modules/py/STATUS.md` gives each subtopic.
 - [x] Release `py` `core` at level 0: 7 of 7 subtopics
 - [ ] Release `py` `stdlib` at level 0: 2 of 8 subtopics
 - [ ] Release `py` `internals` at level 0: 2 of 7 subtopics
-- [ ] Release `py` `typing` at level 0: 0 of 7 subtopics
-- [ ] Release `py` `runtime` at level 0: 0 of 6 subtopics
-- [ ] Release `py` `concurrency` at level 0: 0 of 5 subtopics
-- [ ] Release `py` `production` at level 0: 0 of 7 subtopics
-- [ ] Release `py` `data` at level 0: 0 of 5 subtopics
-- [ ] Release `py` `security` at level 0: 0 of 5 subtopics
+- [ ] Replace `python` with `py`, as `concepts.md` `## The parallel module`
+      gives: remove `modules/python` from `content/`, retitle `py` "Python", seed
 - [ ] Run each lesson block on every supported build, as each witness runs.
       Rule 2 runs a block on the project's interpreter alone
 - [ ] Show the misconception a wrong choice embodies in its feedback, on the
       phone and the web. The bank records it, and no client reads it
-- [ ] Write into `concepts.md` when `py` replaces `python`, and what happens
+- [x] Write into `concepts.md` when `py` replaces `python`, and what happens
       to a user's answers in `python` then
 - [x] Seed a module in a few round trips: one batched upsert per table, and
       no row the store already holds as authored. A seed of `python` through
@@ -555,6 +551,21 @@ Blocks of work not ready for a phase, grouped and unordered. A planned phase is
 a block that became ready. A block, or a single item of one, is planned into a
 phase once it is clear enough to plan. An item's trigger, where it names one, is
 the event that makes the item ready.
+
+### The Python module, the later topics
+
+The topics of `py` outside its first set. The first set is level 0 of `core`,
+`stdlib` and `internals`, released in Phase 16. A topic is added whole, never
+as extra questions in a group already released. A question added to a released
+group lowers that group's passed share, and can lock again the level above a
+group a user has finished.
+
+- [ ] Release `py` `typing` at level 0: 0 of 7 subtopics
+- [ ] Release `py` `runtime` at level 0: 0 of 6 subtopics
+- [ ] Release `py` `concurrency` at level 0: 0 of 5 subtopics
+- [ ] Release `py` `production` at level 0: 0 of 7 subtopics
+- [ ] Release `py` `data` at level 0: 0 of 5 subtopics
+- [ ] Release `py` `security` at level 0: 0 of 5 subtopics
 
 ### Algorithm practice on the phone
 

@@ -398,6 +398,20 @@ with its section.
 - **A question of `python` may supply an idea to `py`**, a misconception or
   an example, but never its text. Its text was written by the order this
   file replaces.
+- **`py` replaces `python` once `py` releases `stdlib` and `internals` at
+  level 0.** `core` is released at level 0 already, so `py` then holds level 0
+  of its first three topics.
+- **At the replacement, `python` is removed from `content/`, and the seed
+  retires it**, as `knowledge.md` `## Seeding` gives. A `python` question is
+  then never served or counted, and its answers stay readable.
+- **`py`'s title becomes "Python" at the replacement, and its slug stays
+  `py`.** The log names a module by its slug.
+- **A user's answers in `python` count toward nothing in `py`.** Each `py`
+  question has a slug of its own and asks its own question, so a user meets
+  every `py` question unseen.
+- **`python`'s other six topics go unserved from the replacement until `py`
+  writes them.** `python` holds 2,187 questions, at every level and in all
+  nine topics, and its text was written by the order this file replaces.
 
 ## Pilot
 
@@ -416,8 +430,6 @@ with its section.
 - **Whether the engine generates a lesson or a question from a concept**, as
   a command. The pilot wrote each stage through the skill's agents. A command
   follows once the briefs stop changing between subtopics.
-- **When `py` replaces `python`**, and what happens to a user's answers in
-  `python` then.
 
 The seed is the exception, and it changes before the pilot is seeded. It
 reads the concept files, and derives each question's lesson section, level
