@@ -44,7 +44,7 @@ complete. `modules/py/STATUS.md` gives each subtopic.
 - [ ] Fix the Details heading "Your answer", which the phone sometimes cuts
       to "Your", after a cold start too
 - [x] Release `py` `core` at level 0: 7 of 7 subtopics
-- [ ] Release `py` `stdlib` at level 0: 2 of 8 subtopics
+- [ ] Release `py` `stdlib` at level 0: 7 of 8 subtopics
 - [ ] Release `py` `internals` at level 0: 2 of 7 subtopics
 - [ ] Replace `python` with `py`, as `concepts.md` `## The parallel module`
       gives: remove `modules/python` from `content/`, retitle `py` "Python",
