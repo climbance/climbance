@@ -364,7 +364,7 @@ waits for the next module.
 - [x] Port FSRS replay and question states into `climb.knowledge`, with the
       shared fixture's `scheduling` cases passing. Knowledge mastery and the
       template schedule read them on the server
-- [ ] Generate the shared fixture's `scheduling` cases from that replay, by a
+- [x] Generate the shared fixture's `scheduling` cases from that replay, by a
       `just` recipe. Gating and the queues stay in TypeScript, so their cases
       wait for a server feature that reads them
 - [x] Write into `docs/architecture/` what a technique's mastery is derived

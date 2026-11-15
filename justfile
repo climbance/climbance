@@ -45,6 +45,10 @@ web-check:
 schemas:
     SCHEMA_SNAPSHOT=write uv run pytest -q -n 0 tests/test_schema_additive.py
 
+# Regenerate the shared fixture's scheduling cases from the Python replay.
+fixtures:
+    uv run python tests/scheduling_fixture.py
+
 # The tests with coverage, gated at `fail_under`. What CI runs in place of `test`.
 coverage *args:
     uv run pytest --cov {{ args }}

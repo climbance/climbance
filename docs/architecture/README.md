@@ -642,6 +642,10 @@ times. Each record class is specified in one of the files beside it.
   - The Python side generates the fixtures, and both suites check them. A
     fixture is regenerated from the Python side, never edited by hand, so a
     rule changed in one copy fails the other copy's tests.
+  - `just fixtures` generates the cases of the rules Python holds: FSRS replay
+    and the question states. A rule only TypeScript holds, such as gating or
+    a queue, keeps the cases generated before the merge until a server
+    feature reads that rule.
   - A rule changes in `knowledge.md` first, then in both copies. The doc is
     the contract the fixtures are generated against.
   - The app served the knowledge modules first, and the rest of the engine
