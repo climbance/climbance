@@ -66,6 +66,12 @@ the coverage map for a module written by concept.
 - **A concept that no code can show carries no witness**, and its `quote`
   holds the sentence of the source the claim rests on. Advice such as "prefer a
   `Sequence` parameter" is such a concept.
+- **A source is read from the library, `library/` in the content
+  repository.** `sources.py` in the `concept-author` skill fetches a source
+  once, and the library keeps the original file beside its text, one file per
+  PDF page. Both are committed, so a `#page=` in a `source` names a page of a
+  copy git holds, and a later edition shows as a diff. Wikipedia changes with
+  every edit, so it is cached in the engine's gitignored `data/` instead.
 - **A misconception is the wrong belief itself**, such as "`a or b` returns a
   bool". Distractors, traps and pitfalls are drawn from the list.
 - **A concept at level 2 or 3 may be an interaction**, such as "a `finally`
