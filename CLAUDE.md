@@ -1,7 +1,7 @@
 # Project conventions
 
 AI coaching layer for deliberate practice of algorithmic problem-solving.
-See `README.md` for what this is; `docs/ROADMAP.md` for the phase plan.
+See `README.md` for what this is.
 
 ## Stack
 
@@ -55,15 +55,11 @@ it covers.
   discovers revises the doc.
 - Divergence is checked on purpose. An unchecked doc describes a system that
   does not exist, and a model implements that description anyway.
-- `docs/TODO.md` is a task list, not a log. It holds the phases still open.
-- A ticked item stays while its phase is open. Items are removed a whole phase
-  at a time, never one by one as each lands.
-- A closed phase is harvested into `docs/ROADMAP.md`, then removed whole. What
-  survives is what it measured, since nothing re-derives it. How the work was
-  sequenced is in the commits.
-- A roadmap section is compact: what ships as a short bullet list, what the
-  phase exits on, and for a closed one what it measured. No argument for why,
-  and no detail a reader can get from `docs/architecture/` or the commits.
+- A measurement a design choice rests on is written beside that choice in
+  `docs/architecture/`, since nothing re-derives it. How the work went is in
+  the commits.
+- The plan, what is still to do and in what order, is kept outside this
+  repository.
 
 ## Sequencing
 
@@ -72,12 +68,7 @@ Neither big batches nor detailed design up front.
 
 A design pass settles boundaries, record shapes and what is irreversible, then
 stops. A detail only real use can answer is named as deferred rather than
-reasoned out. The schema is designed a phase ahead of the features.
-
-A phase's exit depends on its own items alone. Working ahead into the next
-phase is fine. An exit that waits on an item there is not: nothing then decides
-when the phase closes, and two phases close together on whichever item lands
-last.
+reasoned out. The schema is designed ahead of the features that write it.
 
 ## Writing
 
@@ -142,28 +133,6 @@ After: "Each site's outcome is stored, not only printed. The run prints one
 line per stage, and that output is gone when the process ends. Without a
 stored record, nobody can later see which gate rejected an answer, which
 configuration produced it, or which prompt hash it was sent."
-
-### TODO items
-
-- **A TODO item is a task someone can finish.** An item that only asserts
-  what is true about the system has nothing to do and never gets ticked.
-  State it in `docs/architecture/` instead.
-- **An item opens with an imperative verb**: write, add, run, measure, delete,
-  rename. A noun phrase names a topic, and a reader cannot tell whether the
-  work is to build it, decide it or check it.
-- **An item names what exists when it is done** — a file, a field, a passing
-  test, a number written down. Without that, two readers tick it at different
-  points, and the phase closes on whichever read it loosest.
-- **An investigation is written as the run and its output.** "Whether X holds
-  is what decides Y" is a statement; the task is to run X once and record what
-  it showed. Keep the question in `docs/architecture/` if it needs stating at
-  all.
-- **A TODO item is one or two lines, rarely three.** It names what to do and
-  the one reason that is not obvious from the name. The argument behind it
-  belongs in `docs/architecture/`, and the record of how it went
-  belongs in the commit.
-- **An item carrying two decisions becomes two items.** Each is then
-  checkable on its own, and one can land while the other is still open.
 
 ## Code style
 

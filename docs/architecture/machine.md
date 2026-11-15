@@ -73,6 +73,8 @@ fields to stay comparable, and those fields are stated here once.
   forget to bump a version while the text moves. A prompt hash moves with the
   text. The cost is that a reflowed sentence re-derives what it reaches, and
   that the criteria are cited as a prompt hash rather than as "prompt 3".
+  Editing one criteria entry re-derived 7 of 31 attempts' claims, where a
+  version bump would have re-derived all 31.
 - **The configuration is stored once, on the call, and a record references
   the call.** A record carries its provenance whole when it is read, and the
   store fills the fields from the call the record names. One call writes many

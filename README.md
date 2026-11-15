@@ -194,14 +194,6 @@ engine runs them rather than the frontier.
 | Attribution | 85–98% exact set match across five classifiers (n=60), at $0.04–3.15 per 1k decisions |
 | Store | empty of problems and attempts; generation refills it |
 
-Built: the technique vocabulary, the attribution classifier and its eval, the
-call log and transport, cards, template matching, and the four calls that write
-a problem. Next: the worth of a generated corpus, measured as the matcher's
-score against a hand pass. Then the drill loop
-the engine serves and judges. Not started: the ladder and recall, failure-mode
-diagnosis, mastery estimation, scheduling.
-Sequencing lives in [`docs/ROADMAP.md`](docs/ROADMAP.md).
-
 ## The archived corpus
 
 Practice used to arrive through a push API: problems and attempts from a
@@ -342,15 +334,6 @@ Why it is shaped this way:
   asks the second question. The gap between recall and recognition is exactly
   the false fluency that blocked practice trains.
 
-**Built so far:** the card record, the authoring skill and its nine cards,
-seeding, the template matcher and the hand-match prompt. Against the archived
-corpus, nine cards pre-filtered to ~2.8k questions and ~14k pair verdicts.
-Next: a corpus written for the forms the cards teach. The reset left no pair
-carrying a user reference, and none can carry one until problems exist to
-match by hand. Then the matcher's score against that hand pass, then ladder
-resolution, card runs and the recall trainer. Item by item in
-[`docs/TODO.md`](docs/TODO.md), phases 6 and 7.
-
 ## Design
 
 [`docs/architecture/`](docs/architecture/) is the primary design document: the
@@ -432,7 +415,6 @@ src/climb/{log,cards,problems,cases,solutions,solution_claims,verifications}/
 native/                         the native app: the knowledge modules' queues on a phone
 packages/core/                  the knowledge rules and screen data, shared by the web and the app
 docs/architecture/              concepts, boundaries, invariants, flows
-docs/{ROADMAP,TODO}.md          sequencing, and what is open
 .claude/skills/card-author/  the skill that authors cards
 content/                     cards and knowledge modules — a private repo of its own
 data/old/                    the archived corpus: calibration, not a store

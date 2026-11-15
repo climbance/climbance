@@ -25,7 +25,7 @@ def test_a_level_counts_the_concepts_at_it_and_their_questions(tmp_path):
 
 
 def test_the_page_tallies_each_level_of_a_topic(tmp_path):
-    """The tally a release copies into the TODO, and a dash where nothing is
+    """The tally STATUS.md shows per level, and a dash where nothing is
     written."""
     page = markdown("m", topics(course(tmp_path)))
 

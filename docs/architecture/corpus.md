@@ -45,7 +45,7 @@ architecture, and `README.md` is the map.
 - **Whether a statement gives its form away is not checked.** A statement can
   name its approach, or reuse the example its template's trigger names, and a
   solver who recognises the problem has not derived the form. A gate over the
-  corpus for this is deferred to "The corpus gated" in `ROADMAP.md`. It needs
+  corpus for this is deferred. It needs
   a corpus to measure and a baseline no generator wrote, and a status the gate
   promotes to is an additive change when it comes.
 - **A statement's example and cases are the engine's own.** The generator's
@@ -108,9 +108,8 @@ architecture, and `README.md` is the map.
 - **A model call writing ratings is deferred.** The by-hand pass covers the
   corpus while the corpus holds tens of problems. The call is the
   `classifier` source when the corpus outgrows a by-hand pass.
-- **A difficulty estimated from attempts is deferred** to "Difficulty
-  calibrated from attempts" in `ROADMAP.md`. Whether an estimate is a rating
-  with a source of its own is decided there.
+- **A difficulty estimated from attempts is deferred.** Whether an estimate
+  is a rating with a source of its own is decided when it is planned.
 
 ### The criteria
 

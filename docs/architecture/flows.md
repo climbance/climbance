@@ -61,7 +61,10 @@ The order matters because each step can reject what came before.
 - **The generator's own expected values are a reading, not a gate.** The call
   that wrote the canonical also declared what each case returns, so the two
   share one reading of the statement, and a contradiction between them is that
-  call's arithmetic. A landing case stores the reference's answer.
+  call's arithmetic. A landing case stores the reference's answer. The values
+  were a gate once, as `misdeclared`: of ten writings on one template it
+  rejected four, and the two checked by hand had the canonical right and the
+  declared value wrong. So a mismatch is counted rather than rejected.
 - **The count is filed on the generator's own record.** The count says how
   often a configuration's hand-computed value contradicts its own code, which
   is a fact about that site rather than about the problem.
@@ -166,7 +169,9 @@ The order matters because each step can reject what came before.
   survivor two rounds did not kill is usually equivalent to the canonical, and
   no case kills an equivalent mutant. A round that kills nothing stops the loop
   early. The bound was set before a corpus existed, and how much the second
-  round still kills revises it.
+  round still kills revises it. On the first landings it killed nothing: the
+  statement's own cases killed 46 of 53 and 17 of 22 mutants, round one killed
+  none of the survivors, and each survivor was equivalent by inspection.
 - **The search runs before the loop and its case is appended after the
   loop.** The survivors are decided against the set as the statement left it,
   so the separating case may not join that set. Searching first catches a
@@ -686,7 +691,7 @@ start, and the probes are drawn at it.
   technique is recognised at all.
 - **Whether a statement gives its own form away is not read here.** A statement
   naming its approach is a property of the corpus rather than of the pick, and
-  `ROADMAP.md` defers the measurement to "The corpus gated".
+  its measurement is deferred.
 - **A probe is stored on the run, not derived.** The draw reads the attempt log
   as it stood at the start, so a later attempt would change what a re-derivation
   returned. The probes the run offered have to stay readable.

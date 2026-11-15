@@ -217,7 +217,8 @@ attempt.
   overall, by set equality rather than overlap. The board is per technique, so
   a classifier that over-claims one code skews the board, and a claim naming
   every candidate decides nothing while scoring well on a metric that only asks
-  whether the right code appears.
+  whether the right code appears. Set equality compounds a per-candidate
+  error: a classifier right on 95% of candidates scores 87% over three.
 - **How often a claim names every candidate is reported beside the score.**
   Claiming inclusively removes the reason to withhold a code, so a claim fails
   by naming all of them. A claim naming every candidate is the fallback, and it

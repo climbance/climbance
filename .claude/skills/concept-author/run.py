@@ -14,7 +14,6 @@ background` gives the rest.
 import argparse
 import concurrent.futures as cf
 import json
-import re
 import subprocess
 import time
 import tomllib
@@ -23,7 +22,7 @@ from pathlib import Path
 import inputs
 import stages
 
-from climb.knowledge.authoring.status import LEVELS, Topic, markdown, topics
+from climb.knowledge.authoring.status import markdown, topics
 
 ENGINE = Path(__file__).resolve().parents[3]
 CONTENT = ENGINE / "content"
@@ -366,7 +365,7 @@ def relevel(args: argparse.Namespace) -> None:
 
 def release(args: argparse.Namespace) -> None:
     """Merge the run's branch into the content repository's main, seed it
-    locally and in prod, and rewrite STATUS.md and the TODO's counts."""
+    locally and in prod, and rewrite STATUS.md."""
     if git("rev-parse", "--abbrev-ref", "HEAD") != "main" or git("status", "--porcelain"):
         raise SystemExit(f"release: {CONTENT} is not a clean checkout of main")
     if git("log", "--oneline", f"main..{args.branch}"):
@@ -394,34 +393,7 @@ def release(args: argparse.Namespace) -> None:
                 return
         else:
             print(f"{where}: seeded")
-    counted = todo(args.module, found)
-    print(f"TODO: {counted} counts rewritten, left uncommitted" if counted else "TODO: no count")
 
-
-def todo(module: str, found: list[Topic]) -> int:
-    """Rewrite each 'Release `<module>` `<topic>` at level <n>: k of m
-    subtopics' item of the TODO, and tick it once k is m."""
-    path = ENGINE / "docs" / "TODO.md"
-    tally = {(t.slug, n): (t.done(n), len(t.subtopics)) for t in found for n in LEVELS}
-    item = re.compile(
-        rf"^- \[[ x]\] Release `{module}` `([\w-]+)` at level (\d): \d+ of \d+ subtopics", re.M
-    )
-    count = 0
-
-    def counted(m: re.Match[str]) -> str:
-        nonlocal count
-        if (m[1], int(m[2])) not in tally:
-            return m[0]
-        done, total = tally[m[1], int(m[2])]
-        count += 1
-        mark = "x" if done == total else " "
-        return (
-            f"- [{mark}] Release `{module}` `{m[1]}` at level {m[2]}: {done} of {total} subtopics"
-        )
-
-    text = path.read_text()
-    path.write_text(item.sub(counted, text))
-    return count
 
 
 def main() -> None:
