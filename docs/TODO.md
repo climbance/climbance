@@ -202,7 +202,7 @@ pipeline, Phase 17, which is deferred until new cards are written.
 - [x] Seed cards in a few round trips: batch the template and case inserts,
       and skip a card the store already holds unchanged. A seed through the
       tunnel paid one round trip per row
-- [ ] Review every authored card's brief and template notes once, in a fresh
+- [x] Review every authored card's brief and template notes once, in a fresh
       session, against the technique's criterion and the template's own code,
       and fix each false claim found. `card check` runs code and catches no
       false claim in prose
