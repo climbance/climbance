@@ -361,7 +361,7 @@ waits for the next module.
 
 ## Phase 18 — scheduling and mastery
 
-- [ ] Port FSRS replay and question states into `climb.knowledge`, with the
+- [x] Port FSRS replay and question states into `climb.knowledge`, with the
       shared fixture's `scheduling` cases passing. Knowledge mastery and the
       template schedule read them on the server
 - [ ] Generate the shared fixture's `scheduling` cases from that replay, by a
