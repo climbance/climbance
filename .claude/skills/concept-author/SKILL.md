@@ -73,13 +73,13 @@ stage's own.
    - Report each scope you chose that a reviewer could dispute, with a
      recommendation.
 2. **Review.** Brief: check each concept against the stage 1 checklist. Run
-   one more case each claim's wording covers. Check that each misconception's
-   text is false in every case the claim's scope reaches, and that each
-   witness uses only the baseline and earlier concepts. For each
+   one more case each claim's wording covers at its level. Check that each
+   misconception's text is false in every case the claim's scope reaches, and
+   that each witness uses only the baseline and earlier concepts. For each
    misconception, name an output the claim gives and the misconception does
    not, from code using only the baseline and earlier concepts. Sort each
-   finding as WRONG (false), GAP (a clause or misconception missing) or
-   STYLE.
+   finding as WRONG (false in a case at the claim's level), GAP (a clause or
+   misconception missing, or a case of a higher level) or STYLE.
 3. **Fix**, then repeat 2 with a fresh reviewer until a review finds no
    WRONG. Record each scope decided, and each disputed one, in the digest.
    The concept file's header records the stage's date and the digest's

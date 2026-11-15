@@ -395,7 +395,8 @@ back to a concept in the pilot broke one of them.
   since the message of an uncaught one differs between builds. A witness
   shows a `SyntaxError` through `compile()`.
 - **The claim's wording holds beyond its witness.** A witness proves what it
-  prints. The reviewer tries one more case the wording covers, and runs it.
+  prints. The reviewer tries one more case the wording covers at the claim's
+  level, and runs it.
   A claim that "a capture pattern is allowed only in the last case" passed its
   witness and was false for `case [a, b]:`.
 - **The claim follows the module's writing rules**, since a lesson copies
@@ -415,6 +416,15 @@ back to a concept in the pilot broke one of them.
   belongs to a higher level, or is trivia, is put outside the claim by
   narrowing its scope, and becomes a concept of its own or nothing. A claim of
   level 0 that lists every edge stops being readable at level 0.
+- **A claim is read at its own level.** A case outside that level is one a
+  learner at the level does not meet in ordinary code, or one the subtopic's
+  `decisions.md` already put outside it. A review reports such a case as a
+  gap naming its level, never as a wrong claim.
+- **A fix adds no clause excluding a case outside the claim's level.** It may
+  drop a word such as "always" that claims more than the level needs. In the
+  level 0 run of `py`, the second stage 1 review found 29 wrong claims. Many
+  broke a clause an earlier fix had added, such as "while the quotient fits
+  in a float", with a case the clause did not foresee.
 
 ## Mechanical checks
 
