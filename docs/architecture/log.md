@@ -618,8 +618,8 @@ where a sitting's typing is slow.
   is submitted, so no field keys it to a sitting.
 - **Mastery never counts a short exercise as execution.** Judging someone
   else's solution is reading code, and execution is writing a correct
-  solution. Which reading a short exercise feeds, if any, is deferred to the
-  mastery work in Phase 18.
+  solution. A short exercise feeds no part of mastery, as `## Mastery`
+  gives.
 - **An answer is private and append-only**, keyed to its user and to the item
   it answered, as a recall attempt is.
 
@@ -710,6 +710,10 @@ model of mastery.
 - **Recall attempts do not count toward mastery.** Typing a form from memory
   is neither spotting it in a problem nor solving a problem with it. The card
   shows recall progress on its own, as `## Recall attempts` gives.
+- **Short exercises do not count toward mastery either.** A judgement item and
+  a key line each come from a named template, so neither tests spotting the
+  technique, and neither writes a solution. The board shows the judgement
+  rates beside mastery instead, as `## Judging a solution` gives.
 - **Diagnoses count only after they are tested** against the user's
   self-labels. An untested diagnosis would put a guess where the user's own
   answer belongs.
@@ -737,6 +741,8 @@ model of mastery.
 Deferred, since only use answers each:
 
 - How old evidence fades.
+- Whether the judgement rates enter mastery, once the stored predictions show
+  whether a technique's judgement rates predict its execution.
 - The scores and the evidence bound beyond their starting values.
 - Whether a solve labelled `speed` counts less than a full solve.
 - How a module outside the technique vocabulary, such as Python, enters

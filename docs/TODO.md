@@ -383,7 +383,7 @@ waits for the next module.
 - [x] Compute each technique's execution reading from its sittings, as `log.md`
       gives, and show it on the board beside recognition read as unknown. The
       pick and the predictions both read it
-- [ ] Decide what a short exercise's answers feed in a technique's mastery:
+- [x] Decide what a short exercise's answers feed in a technique's mastery:
       a reading of their own, judgement, or recognition. Phase 16 keeps them
       out of execution, and nothing else reads them yet
 
