@@ -119,6 +119,7 @@ name = "the packages are layered, and nothing imports upward"
 type = "layers"
 layers = [
     "climb.cli | climb.api",
+    "climb.pick",
     "climb.graduation",
     "climb.generation : climb.ladder : climb.recall : climb.judging",
     "climb.attempt_claims : climb.solution_claims : climb.matches : climb.board : climb.cards : climb.sitting : climb.template_schedule",

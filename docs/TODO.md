@@ -439,7 +439,7 @@ cards' states.
       an open run's next rung, an owed spaced check, a new card only below the
       cap, and a lapsed card again. An owed check freezes new starts, and an
       overdue review does not
-- [ ] Compute the pick in the engine as `flows.md` `## The pick` gives, with a
+- [x] Compute the pick in the engine as `flows.md` `## The pick` gives, with a
       test per rank, the cap and the freeze an owed check puts on new cards
 - [ ] Serve the pick on the board on both clients, above the lists the board
       already shows. A technique with no template keeps the staleness order
