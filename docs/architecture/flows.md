@@ -877,6 +877,12 @@ sittings count.
   first submission is the moment the form was retrieved, and later submissions
   debug it. The rating reads the sitting's attempts as they stand, as `log.md`
   gives.
+- **A short exercise drawn from a template is no review of it.** Judging a
+  solution or filling its key line picks among lines shown on the screen, and
+  a recall types the form from a blank file. FSRS raises a template's stability
+  on every pass, so an easy pass counted as a review would space the next
+  recall past the point the form is lost. The exercise stays practice beside
+  the schedule, stored as its own record kind.
 - **An open sitting is read as it stands.** A failed submission rates Again
   until a later solve in the same sitting rates it Hard. The review is derived,
   so the change rewrites no record.
@@ -885,6 +891,9 @@ Deferred, since only use answers each:
 
 - Whether a sitting whose last attempt carries the self-label `syntax` rates
   Good rather than Hard.
+- Whether a short exercise's answers enter the schedule as a signal of their
+  own. The stored predictions can show whether a failed exercise precedes a
+  failed recall.
 - Whether a template match written by the user adds a review. A user record
   stands over a machine's, so the reason the matcher's matches add none does
   not reach it.

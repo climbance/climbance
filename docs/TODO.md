@@ -417,7 +417,7 @@ cards' states.
 - [x] Write into `flows.md` which sittings review a template, rungs and
       probes among them. `log.md` gives each review's rating. The matcher is
       unscored, so a review never reads a match
-- [ ] Decide whether a short exercise drawn from a template, such as its key
+- [x] Decide whether a short exercise drawn from a template, such as its key
       line, reviews that template in FSRS or stays practice beside the
       schedule, and write the choice into `flows.md`
 - [ ] Write down the FSRS parameters the schedule starts from and why each was
