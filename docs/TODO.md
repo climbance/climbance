@@ -405,7 +405,8 @@ drill board tracked them by hand.
 - [ ] Write into `log.md` which probe graduates a card, and what a lapsed card
       needs to graduate again. Both are deferred under `## Card states`
 - [ ] Show each card's state and its next due recall or spaced check on
-      `/cards` and on the board's cards in progress. The dashboard left both for this phase
+      `/cards` and on the board's cards in progress. The dashboard left both
+      for this phase
 
 ### The schedule
 

@@ -442,8 +442,8 @@ lapsed.
   `## The template schedule` gives the check. A card is done once it
   graduates.
 - **Lapsed: a graduated card one of whose templates has had a review rated
-  Again since graduation.** A form can be lost after the card graduated, and a card left
-  graduated on a lost form is never offered again.
+  Again since graduation.** A form can be lost after the card graduated, and
+  a card left graduated on a lost form is never offered again.
 - **Before graduation, a card state reads the ladder as it stands now.** A
   re-derived ladder holding a required rung the user has not solved returns a
   consolidating card to acquiring. The ladder is the truth the card state is
@@ -458,7 +458,7 @@ lapsed.
 Deferred, since only use answers each:
 
 - Which probe graduates a card.
-- What a lapsed card needs to graduate again.
+- The step a lapsed card needs to graduate again.
 - The card state of a started card whose ladder holds no required rung, every
   core template being a gap.
 - A core template added by a re-seed to a card that already graduated.
