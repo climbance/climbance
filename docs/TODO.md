@@ -167,7 +167,8 @@ starts, so their subtopics come first.
       complexity, so the answer shapes every later subtopic
 - [ ] Move `## Complexity`, `## Pitfalls` and `## Key insights` from each
       card's brief into `sources/<technique>.md` of its primary module, once a
-      subtopic there names its technique. `binary-search` moved on 2026-11-15
+      subtopic there names its technique. The 13 root cards and
+      `dp-state-design` moved on 2026-11-15
 - [ ] Run the solver over the whole module before it is seeded, and fix what
       it finds. `concept-author` runs it on each bank before the fix, so no
       solver has read a fixed question
