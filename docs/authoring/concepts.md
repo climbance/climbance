@@ -136,6 +136,34 @@ steps, with no step waiting for the author.
   goes to the digest's `## For you`**, and is not applied. The answers users
   gave to that question would stop counting.
 
+## Claims about cost
+
+Most of an algorithms subtopic's facts are costs. A witness's output is
+compared exactly on every run, so a cost is witnessed by counting steps.
+
+- **A claim about cost names what it counts**: probes, comparisons, predicate
+  calls, pushes or pops. It states an exact count where the source gives
+  one, such as at most ⌊log₂ n⌋ + 1 probes. A witness can print a count, and
+  it cannot print an O.
+- **A witness never times code.** Wall-clock time differs between runs and
+  between builds, so the check could not compare the witness's output.
+- **A witness counts with a counter in the algorithm's own code**, such as
+  `probes += 1`, written with the baseline. A library call is counted through
+  a callable it accepts, such as `bisect_left`'s `key`, where that callable is
+  baseline. A library call accepting no callable has its cost cited as a
+  `quote`.
+- **A worst case is shown by exhaustion.** The witness runs every target, or
+  every input of a size, and prints the largest count beside the claimed
+  bound. One input shows the cost of that input alone, not the bound.
+- **The witness prints its counts at several sizes**, chosen so that the
+  bound changes between them. A count that matched the bound at one size
+  would also match a wrong bound at that size.
+- **An amortized claim prints the total over a whole pass beside n, and the
+  largest count of a single step.** The single step shows the cost the
+  misconception expects, and the total shows the cost the claim states.
+- **A claim with no exact count in any source carries a `quote`.** A bound
+  invented to have something to print is a fact no source states.
+
 ## Lessons and questions
 
 - **A lesson section asserts only the claims of the concepts that name it.**

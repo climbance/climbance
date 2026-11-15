@@ -11,9 +11,15 @@ CONCEPTS = "docs/authoring/concepts.md"
 RULES = "docs/authoring/rules.md"
 # the parts of concepts.md each stage's writer, reviewer and fixer reads
 STAGE_CONCEPTS = {
-    1: ["## The order", "## The concept record", "## Levels", "## The stage 1 checklist"],
-    2: ["## The concept record", "## Lessons and questions"],
-    3: ["## The concept record", "## Lessons and questions"],
+    1: [
+        "## The order",
+        "## The concept record",
+        "## Levels",
+        "## Claims about cost",
+        "## The stage 1 checklist",
+    ],
+    2: ["## The concept record", "## Claims about cost", "## Lessons and questions"],
+    3: ["## The concept record", "## Claims about cost", "## Lessons and questions"],
 }
 
 
