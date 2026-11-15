@@ -18,6 +18,7 @@ def card(slug: str, *, technique: str = "binary-search") -> Card:
         id=f"minted-{slug}",
         slug=slug,
         technique=technique,
+        module="algo",
         title=slug,
         trigger="a sorted range",
         brief="## Core idea",

@@ -1695,6 +1695,11 @@
             "type": "string",
             "title": "Technique"
           },
+          "module": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "title": "Module"
+          },
           "title": {
             "type": "string",
             "title": "Title"
@@ -1733,6 +1738,7 @@
           "id",
           "slug",
           "technique",
+          "module",
           "title",
           "trigger",
           "brief",
@@ -2397,6 +2403,11 @@
             "type": "string",
             "title": "Technique"
           },
+          "module": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "title": "Module"
+          },
           "title": {
             "type": "string",
             "title": "Title"
@@ -2457,6 +2468,7 @@
           "id",
           "slug",
           "technique",
+          "module",
           "title",
           "trigger",
           "brief",

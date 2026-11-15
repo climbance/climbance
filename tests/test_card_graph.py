@@ -23,6 +23,7 @@ def built(slug: str, *requires: str) -> Card:
         id=f"c-{slug}",
         slug=slug,
         technique=TECHNIQUE,
+        module="algo",
         title=slug,
         trigger="the cue",
         brief="## Core idea",

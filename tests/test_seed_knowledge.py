@@ -351,6 +351,6 @@ def test_one_technique_may_be_named_by_several_subtopics(database, tmp_path):
         'flow = ["binary-search"]', 'flow = ["binary-search"], types = ["binary-search", "hashing"]'
     )
     seed_module(read_module(titled(tmp_path / "a", shared)), root=database)
-    other = titled(tmp_path / "b", TEACHING).rename(tmp_path / "b" / "algorithms")
+    other = titled(tmp_path / "b", TEACHING).rename(tmp_path / "b" / "algo")
 
     assert seed_module(read_module(other), root=database).refused == []

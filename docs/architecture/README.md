@@ -40,6 +40,9 @@ without redefining them. Grouped by the file that specifies the record.
   narrower one's entry. `dynamic-programming` is the parent of `knapsack`.
 - **Card**: the study material for one technique: what to read, the
   templates to reproduce from memory, and a selector for problems to solve.
+- **Primary module**: the module a card names in `module`, whose subtopics
+  support the card. Another module's subtopic naming the card's technique
+  adds to the card and leaves the support unchanged.
 - **Template**: one form of a technique, authored on a card, that a user
   reproduces from memory. Core by default.
 - **Trigger**: the field on a card or a template saying when to reach for the

@@ -1,7 +1,9 @@
-"""The card graph and the prerequisite graph read together, over techniques:
+"""The cards read beside a module: the two graphs together, over techniques,
+and the cards the module is primary for that no subtopic supports.
 `content.md`, Cards and subtopics."""
 
 import json
+from dataclasses import dataclass, field
 from itertools import pairwise
 from pathlib import Path
 from typing import Any, cast
@@ -16,27 +18,47 @@ from climb.schema import CardSeed, GraphSettings
 type Drawn = dict[tuple[str, str], str]
 
 
-def crossed(source: ModuleSource, cards: Path) -> list[str]:
-    """A cycle through both graphs, as the path of techniques that closes it."""
+@dataclass
+class Paired:
+    errors: list[str] = field(default_factory=list[str])
+    unnamed: list[str] = field(default_factory=list[str])  # one line per card
+
+
+def paired(source: ModuleSource, cards: Path) -> Paired:
+    """A cycle through both graphs, as the path of techniques that closes it,
+    and each card naming the module as primary whose technique no subtopic of
+    the module names."""
     techniques = _techniques(source)
-    if not any(techniques.values()):
-        return []
     if not cards.is_dir():
-        return [f"no cards at {cards}, so the two graphs cannot be read together"]
+        if any(techniques.values()):
+            return Paired([f"no cards at {cards}, so the two graphs cannot be read together"])
+        return Paired()
     held: dict[str, CardSeed] = {}
     for path in sorted(cards.glob("*.json")):
         try:
             card = CardSeed.model_validate(json.loads(path.read_text()))
         except (json.JSONDecodeError, ValidationError) as error:
-            return [f"{path.name}: unreadable card: {error}"]
+            return Paired([f"{path.name}: unreadable card: {error}"])
         held[card.slug] = card
+    named = {one for listed in techniques.values() for one in listed}
+    found = Paired(
+        unnamed=[
+            f"card {card.slug}: no subtopic names {card.technique}"
+            for card in held.values()
+            if card.module == source.slug and card.technique not in named
+        ]
+    )
+    if not named:
+        return found
     drawn: Drawn = {}
     _card_edges(held, drawn)
     _prerequisite_edges(source, techniques, drawn)
     if closed := cycle([(one, to, 0) for one, to in drawn]):
         steps = [f"{one} -> {to} ({drawn[one, to]})" for one, to in pairwise(closed)]
-        return ["cycle across the card graph and the prerequisite graph: " + ", ".join(steps)]
-    return []
+        found.errors.append(
+            "cycle across the card graph and the prerequisite graph: " + ", ".join(steps)
+        )
+    return found
 
 
 def _techniques(source: ModuleSource) -> dict[str, list[str]]:

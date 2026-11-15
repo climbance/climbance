@@ -151,8 +151,10 @@ starts, so their subtopics come first.
 - [x] Add to `module check` the refusal of a cycle in the card graph and the
       prerequisite graph together, as `content.md` `## Cards and subtopics`
       gives
-- [ ] Add to `module check` the list of cards whose technique no subtopic
+- [x] Add to `module check` the list of cards whose technique no subtopic
       names
+- [x] Add `module` to every card, naming its primary module, and limit that
+      list to the cards naming the module checked
 - [ ] Add to `card check` the refusal of a brief keeping `## Complexity`,
       `## Pitfalls` or `## Key insights` once a subtopic names its technique.
       The check reads the techniques from the modules in `content/modules/`
@@ -172,9 +174,11 @@ starts, so their subtopics come first.
       it is seeded, and fix what they find. A lesson giving its question away
       was the Python module's commonest defect
 - [ ] Seed the module, with `module check` passing
-- [ ] Link a card's page to every subtopic naming its technique, and each
-      lesson to every card its subtopic pairs with, on both clients, with the
-      rows in `pages.md` `### Acts`
+- [ ] Link a card's page to every subtopic naming its technique, the primary
+      module's first, and each lesson to every card its subtopic pairs with,
+      on both clients, with the rows in `pages.md` `### Acts`
+- [ ] Refuse in the card seed a card whose `module` names no seeded module,
+      once the algorithms module is seeded. Every card names it before then
 - [ ] Count a technique's knowledge reading from the answers to the questions
       of every subtopic naming it, as `log.md` gives, and show it on the board
 - [ ] Add `cites` to the template in the seed and the card API, refusing a

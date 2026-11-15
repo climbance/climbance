@@ -38,6 +38,7 @@ class CardSeed(BaseModel):
 
     slug: Slug
     technique: str
+    module: Slug
     title: str
     trigger: str = Field(min_length=1)
     brief: str = Field(min_length=1)

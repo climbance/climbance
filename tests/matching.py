@@ -34,6 +34,7 @@ def card(
     return {
         "slug": slug,
         "technique": technique,
+        "module": "algo",
         "title": slug,
         "trigger": "a window over a contiguous run",
         "brief": "## Core idea\n\nGrow, then shrink.",

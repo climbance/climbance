@@ -244,6 +244,15 @@ The subtopic says why the forms are correct and what they cost.
   one code, and a subtopic names any number, as `knowledge.md` `## Modules`
   gives. A card is paired with every subtopic naming its code. The board's
   three readings key on the same code, so a pairing needs no field of its own.
+- **A card names its primary module, in `module`.** The primary module's
+  subtopics support the card: they hold the facts the card's forms rest on.
+  An algorithms card names `algo`, the algorithms module, and a card on a
+  language's idioms would name that language's module. A card names a module
+  by slug, the module's directory name, and the pages show the module's title.
+- **Another module's subtopic adds to a card and never supports it.** Its
+  answers still count toward the technique's knowledge reading, and its link
+  still shows on the card's page. A `py` subtopic naming `heap` would
+  otherwise hide the gap where the algorithms module has no heap subtopic.
 - **The card holds the trigger, the brief's core idea and decision axes, the
   templates and the ladder.** A solver reads these before a sitting and
   during one.
@@ -260,15 +269,17 @@ The subtopic says why the forms are correct and what they cost.
   mental model says what each name in the templates means, which a reader
   needs while reading the templates. The other two say what the card's
   templates leave out.
-- **Every card's technique gets a subtopic, and a subtopic may have no card.**
-  Amortized analysis and recursion are facts with no ladder of their own, so
-  the module holds subtopics naming no card's technique. Two cards teaching
+- **Every card's technique gets a subtopic in the card's primary module, and a
+  subtopic may have no card.** Amortized analysis and recursion are facts with
+  no ladder of their own, so the module holds subtopics naming no card's
+  technique. Two cards teaching
   one technique are each paired with every subtopic naming it, and one
   technique's facts may span several subtopics: `dp-1d-linear` and
   `dp-state-design` both name `dynamic-programming`.
-- **`module check` lists each card whose technique no subtopic names.** The
-  list reports work still to write and refuses nothing, since a card is
-  studied in full without its subtopic.
+- **`module check` lists each card naming the module as primary whose
+  technique none of the module's subtopics names.** The list reports work
+  still to write and refuses nothing, since a card is studied in full without
+  its subtopic.
 - **A requirement draws no prerequisite.** A requirement says one card's
   template uses another card's form, and the card graph orders study by it. A
   prerequisite says one subtopic's facts rest on another subtopic's facts, and
@@ -287,8 +298,10 @@ The subtopic says why the forms are correct and what they cost.
   waits on a subtopic, and a subtopic's questions never wait on a met card.
   Mastery reads knowledge and execution apart, so a gate between the two
   would hold one reading back until the other moved.
-- **A card's page links to every subtopic paired with the card, and each
-  lesson of a subtopic links to every card paired with the subtopic.**
+- **A card's page links to every subtopic paired with the card, the primary
+  module's first, and each lesson of a subtopic links to every card paired
+  with the subtopic.** The primary module's subtopics support the card, and
+  the rest add to it.
 - **A template may cite subtopics of another module, in `cites`.** Each entry
   names a subtopic as `<module>/<topic>/<subtopic>`, such as
   `py/stdlib/collections`, and the card's page links each one. A citation

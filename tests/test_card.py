@@ -20,6 +20,7 @@ def card(slug: str = "two-pointers-basic", *, technique: str = "two-pointers", *
         id=f"minted-{slug}",
         slug=slug,
         technique=technique,
+        module="algo",
         title=slug,
         trigger=kwargs.pop("trigger", "sorted array, pair summing to a target"),
         brief=kwargs.pop("brief", "## Core idea\n\nTwo indices, one pass."),

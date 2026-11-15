@@ -83,6 +83,7 @@ def a_card(slug: str, technique: str, *, templates=None) -> Card:
         id=f"minted-{slug}",
         slug=slug,
         technique=technique,
+        module="algo",
         title=slug,
         trigger="a choice",
         brief="## Core idea",

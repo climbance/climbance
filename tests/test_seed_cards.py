@@ -24,6 +24,7 @@ def record(slug: str = "binary-search", *, technique: str = "binary-search", **o
     return {
         "slug": slug,
         "technique": technique,
+        "module": "algo",
         "title": "Binary search",
         "trigger": "a sorted range and a monotone predicate",
         "brief": "## Core idea\n\nHalve the range.",

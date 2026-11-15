@@ -312,6 +312,7 @@ def stored_template(root, id: str = "t1") -> None:
             id=f"card-{id}",
             slug=f"card-{id}",
             technique="greedy",
+            module="algo",
             title=id,
             trigger="a trigger",
             brief="a brief",

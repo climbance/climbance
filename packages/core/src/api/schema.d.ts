@@ -708,6 +708,8 @@ export interface components {
       slug: string;
       /** Technique */
       technique: string;
+      /** Module */
+      module: string;
       /** Title */
       title: string;
       /** Trigger */
@@ -969,6 +971,8 @@ export interface components {
       slug: string;
       /** Technique */
       technique: string;
+      /** Module */
+      module: string;
       /** Title */
       title: string;
       /** Trigger */

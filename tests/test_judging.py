@@ -56,6 +56,7 @@ def card(*templates: Template) -> Card:
         id="c-1",
         slug="largest-card",
         technique="sorting",
+        module="algo",
         title="largest",
         trigger="a choice",
         brief="## Core idea",

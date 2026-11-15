@@ -26,6 +26,7 @@ cards = Table(
     # a re-seed finds the card by its slug
     Column("slug", Text, nullable=False, unique=True),
     Column("technique", Text, nullable=False),
+    Column("module", Text, nullable=False),
     Column("title", Text, nullable=False),
     Column("trigger", Text, nullable=False),
     Column("brief", Text, nullable=False),

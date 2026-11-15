@@ -20,6 +20,7 @@ def card(slug: str = "least-card", **overrides) -> dict:
     return {
         "slug": slug,
         "technique": "sorting",
+        "module": "algo",
         "title": slug,
         "trigger": "a choice",
         "brief": "## Core idea",

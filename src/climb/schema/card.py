@@ -108,6 +108,7 @@ class Card(BaseModel):
     id: str  # what a card run references
     slug: Slug  # authored; the idempotency key a re-seed matches on
     technique: str  # a bare string, as a code is everywhere: membership is a write-path check
+    module: Slug  # the primary module, whose subtopics support the card
     title: str
     trigger: str = Field(min_length=1)  # when to reach for the technique at all
     brief: str = Field(min_length=1)  # markdown; what to read before solving

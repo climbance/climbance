@@ -13,7 +13,7 @@ from climb.knowledge.authoring.execution import Runs
 from climb.knowledge.authoring.layout import box_drawing, text_fences, widths
 from climb.knowledge.authoring.lessons import lessons_run
 from climb.knowledge.authoring.likeness import overlaps
-from climb.knowledge.authoring.pairing import crossed
+from climb.knowledge.authoring.pairing import paired
 from climb.knowledge.authoring.prose import prose
 from climb.knowledge.authoring.repeats import repeats
 from climb.knowledge.authoring.snippets import snippets, versions
@@ -97,7 +97,10 @@ def check(
     for line in refusals(source):
         if line not in source.unread:
             report.error(0, "seed", line)
-    for line in crossed(source, cards or root.parent.parent / "cards"):
+    pairing = paired(source, cards or root.parent.parent / "cards")
+    for line in pairing.errors:
         report.error(0, "graph", line)
+    for line in pairing.unnamed:
+        report.warn(0, "cards", line)
     checked.executed = len(runs.executed)
     return checked

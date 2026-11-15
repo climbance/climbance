@@ -35,7 +35,10 @@ file in place.
 
 1. **Pick the technique code**, and read its entry. `earns` and `near_miss` are
    what the classifier and the reader are both held to, so what the card teaches
-   *as the technique* must sit inside them.
+   *as the technique* must sit inside them. Name the card's primary module in
+   `module`: `algo` for an algorithms card. That module's subtopics hold
+   the facts the card leaves out, as `content.md` `## Cards and subtopics`
+   gives.
 
    ```bash
    uv run python -c "from climb.techniques import codes; print(sorted(codes()))"
