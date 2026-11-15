@@ -98,8 +98,6 @@ labelled easy, where the platforms call it hard.
       difficulty: easy on a root card, medium or hard on the rest. A card
       deeper than a root serves an easy problem only where `corpus.md` admits
       one
-- [ ] Read each served problem's difficulty against the author's own sittings
-      on it, and list where the two disagree
 
 ### The card graph
 
@@ -223,10 +221,6 @@ and a review of anyone's code begins with.
       countable
 - [x] Serve the exercise at the phone's width first, on both clients, with the
       shared fixtures passing in both suites
-- [ ] Tag each judgement item with a difficulty read from its answers: the
-      share answered right or located, once enough users answered it. A
-      template stores no difficulty, and a label made up before any answer
-      would mislead
 - [x] Show the user's judgement as two rates per technique: flaws found, and
       clean solutions called flawed
 
@@ -819,12 +813,18 @@ to change in a sort key, a call or a pointer rewiring.
 
 ### Difficulty calibrated from attempts
 
+- [ ] Read each served problem's difficulty against the author's own sittings
+      on it, and list where the two disagree. Triggered when the author's
+      sittings cover 30 served problems
 - [ ] Estimate each problem's difficulty with item response theory from pass
       and fail records, and store the estimate with its provenance. Triggered
       when problems carry attempts from more than one user
 - [ ] Score each landing by the gap between the difficulty `generate` was
       aimed at and the estimated difficulty. Triggered when difficulty
       estimates exist
+- [ ] Tag each judgement item with a difficulty read from its answers: the
+      share answered right or located. A label made up before any answer would
+      mislead. Triggered when items carry answers from more than one user
 
 ### Retrieval
 
