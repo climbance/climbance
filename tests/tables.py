@@ -5,7 +5,7 @@ import types
 import typing
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 from typing import Any
 
 from pydantic import BaseModel
@@ -122,7 +122,8 @@ def _typed(column: Column[Any], annotation: object) -> bool:
         ]
     if annotation is bool:
         return isinstance(kind, Boolean)
-    if annotation is int:
+    # an int enum is its members' numbers, which a check constraint bounds
+    if annotation is int or (isinstance(annotation, type) and issubclass(annotation, IntEnum)):
         return isinstance(kind, Integer)
     if annotation is float:
         return isinstance(kind, Float)

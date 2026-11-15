@@ -446,7 +446,7 @@ cards' states.
       test per rank, the cap and the freeze an owed check puts on new cards
 - [x] Serve the pick on the board on both clients, above the lists the board
       already shows. A technique with no template keeps the staleness order
-- [ ] Store what each pick predicted before its attempt, from FSRS alone and
+- [x] Store what each pick predicted before its attempt, from FSRS alone and
       from the mastery state, naming the settings each was made under. A
       prediction written after the outcome is fitted to it
 

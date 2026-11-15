@@ -567,7 +567,12 @@ export interface paths {
     /** Board Pick */
     get: operations['board_pick_api_pick_get'];
     put?: never;
-    post?: never;
+    /**
+     * Taken
+     * @description Stores what the pick predicts as the user takes it, once per pick: a
+     *     second take before any outcome returns the first prediction.
+     */
+    post: operations['taken_api_pick_post'];
     delete?: never;
     options?: never;
     head?: never;
@@ -583,6 +588,12 @@ export interface components {
      * @enum {string}
      */
     Act: 'recall' | 'sitting' | 'start';
+    /**
+     * Arm
+     * @description Which policy chose the pick, once the comparison assigns one.
+     * @enum {string}
+     */
+    Arm: 'scheduler' | 'baseline';
     /**
      * Asked
      * @description One attempt the loop still asks about, and the modes its verdict leaves
@@ -1135,6 +1146,40 @@ export interface components {
        */
       retired: boolean;
     };
+    /** Prediction */
+    Prediction: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      rank: components['schemas']['Rank'];
+      act: components['schemas']['Act'];
+      /** Card Id */
+      card_id: string;
+      /** Template Id */
+      template_id?: string | null;
+      /** Problem Id */
+      problem_id?: string | null;
+      /**
+       * Probe
+       * @default false
+       */
+      probe: boolean;
+      /** Recall Probability */
+      recall_probability?: number | null;
+      /** Fsrs Settings */
+      fsrs_settings: string;
+      /** Execution */
+      execution?: number | null;
+      /** Execution Settings */
+      execution_settings: string;
+      arm?: components['schemas']['Arm'] | null;
+    };
     /**
      * Probe
      * @description One problem a run was given, testing whether the form transfers to a
@@ -1235,7 +1280,7 @@ export interface components {
     Provider: 'google' | 'github';
     /**
      * Rank
-     * @description The order `flows.md` offers in, first served first.
+     * @description The order the pick offers in: `flows.md`, The pick.
      * @enum {integer}
      */
     Rank: 1 | 2 | 3 | 4 | 5;
@@ -1528,6 +1573,18 @@ export interface components {
       cursor: {
         [key: string]: number;
       };
+    };
+    /**
+     * Taken
+     * @description The pick the board showed, which the user took.
+     */
+    Taken: {
+      /** Card Slug */
+      card_slug: string;
+      /** Template Slug */
+      template_slug?: string | null;
+      /** Problem Id */
+      problem_id?: string | null;
     };
     /**
      * TechniqueRow
@@ -2674,6 +2731,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['BoardPick'] | null;
+        };
+      };
+    };
+  };
+  taken_api_pick_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Taken'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Prediction'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };

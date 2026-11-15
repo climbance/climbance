@@ -5,6 +5,7 @@ from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 
 from climb.attempt_claims import resolve_techniques
+from climb.ids import settings_hash
 from climb.schema import Attempt, AttemptClaim, FailureMode, Problem, SelfLabel
 
 # the starting values `log.md` gives, each moved only on what the log measures
@@ -13,6 +14,7 @@ LATER_SOLVE = 0.5
 SYNTAX_FAILURE = 0.25
 EVIDENCE = 3  # sittings before the board shows a number rather than unknown
 MISSED = {FailureMode.GAP, FailureMode.RUST}
+SETTINGS_HASH = settings_hash([FIRST_SOLVE, LATER_SOLVE, SYNTAX_FAILURE, EVIDENCE, sorted(MISSED)])
 
 
 def score(attempts: Sequence[Attempt], label: FailureMode | None) -> float:

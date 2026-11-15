@@ -19,6 +19,7 @@ import {
   orderedModuleRows,
   techniqueKnowledge,
   pickView,
+  takePick,
   type PickTarget,
 } from '@climb/core'
 import { Link } from 'react-router'
@@ -82,7 +83,7 @@ export function BoardPage() {
           return (
             <div className="space-y-section">
               {/* the schedule's one act, above every list: `flows.md`, The pick */}
-              {pick.data && <BoardPick view={pickView(pick.data)} />}
+              {pick.data && <BoardPick pick={pick.data} />}
 
               {/* the study the user declared, ahead of any staleness ranking */}
               {studying.length > 0 && (
@@ -191,13 +192,17 @@ function pickPath(target: PickTarget): string {
   return `/cards/${card}`
 }
 
-function BoardPick({ view }: { view: ReturnType<typeof pickView> }) {
+function BoardPick({ pick }: { pick: Parameters<typeof pickView>[0] }) {
+  const view = pickView(pick)
   return (
     <section className="space-y-stack">
       <SectionHeading title={view.heading} />
-      <PickPanel>
-        <PickRow to={pickPath(view.target)} title={view.title} note={view.note} stats={[]} />
-      </PickPanel>
+      {/* the prediction is stored as the link opens the act: `log.md`, Predictions */}
+      <div onClickCapture={() => void takePick(api, pick)}>
+        <PickPanel>
+          <PickRow to={pickPath(view.target)} title={view.title} note={view.note} stats={[]} />
+        </PickPanel>
+      </div>
     </section>
   )
 }

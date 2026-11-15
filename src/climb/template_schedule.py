@@ -7,11 +7,14 @@ from datetime import datetime, timedelta
 
 from fsrs import Rating
 
+from climb.ids import settings_hash
 from climb.knowledge.schedule import FSRS, Review, fsrs_card, replay, scheduler
 from climb.schema import Attempt, Hint, Problem, RecallAttempt
 
 # the template settings, apart from the questions' though equal to them for now
-SCHEDULER = scheduler(FSRS)
+SETTINGS = FSRS
+SCHEDULER = scheduler(SETTINGS)
+SETTINGS_HASH = settings_hash(SETTINGS)
 CHECK_OPENS = 0.89
 CHECK_OWED = 0.84
 CHECK_FLOOR = timedelta(days=3)

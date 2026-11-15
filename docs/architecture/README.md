@@ -272,6 +272,9 @@ without redefining them. Grouped by the file that specifies the record.
   given.
 - **Pick**: the one problem or recall the board serves, read from FSRS,
   mastery and the cards' states.
+- **Prediction**: what a pick expected as the user took it, from FSRS and from
+  mastery, each with the settings that made it. A `Prediction` record stores
+  one.
 - **In flight**: a card acquiring, or consolidating with its spaced check open
   or owed. The pick offers a new card only while fewer than two are in flight.
 - **Card state**: how far one user's study of one card has gone: not started,
@@ -399,7 +402,7 @@ times. Each record class is specified in one of the files beside it.
 |---|---|
 | [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims |
-| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, and the mastery derived from them |
+| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, and the predictions each pick stores |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
@@ -427,6 +430,7 @@ times. Each record class is specified in one of the files beside it.
 | Card runs | user | private | append-only | the store |
 | Recall attempts | user | private | append-only | the store |
 | Judgements | user | private | append-only | the store |
+| Predictions | user | private | append-only | the store |
 | Attempts | user | private | append-only | the store |
 | Attempt verifications | user | private | append-only | the store |
 | Attempt claims | user | private | append-only | the store |

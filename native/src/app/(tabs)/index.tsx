@@ -27,9 +27,12 @@ import {
   focusLabel,
   orderedModuleRows,
   pickView,
+  takePick,
   type PickTarget,
 } from '@climb/core';
 import { useStore } from '@/lib/store';
+import { engine } from '@/lib/engine';
+import { getToken } from '@/lib/settings';
 import { useEngine } from '@/lib/useEngine';
 import { AccountMenu } from '@/ui/account';
 import { CardPanel } from '@/ui/cards';
@@ -164,6 +167,7 @@ function BoardBody({
   const studying = inProgress(cards);
   const next = nextCards(cards);
   const view = pick ? pickView(pick) : null;
+  const { origin } = useStore().settings;
   return (
     <>
       {/* the schedule's one act, above every list: `flows.md`, The pick */}
@@ -171,7 +175,16 @@ function BoardBody({
         <>
           <Heading title={view.heading} />
           <PickPanel>
-            <PickRow title={view.title} note={view.note} stats={[]} onPress={() => openPick(view.target)} />
+            <PickRow
+              title={view.title}
+              note={view.note}
+              stats={[]}
+              onPress={() => {
+                // the prediction is stored as the act opens: `log.md`, Predictions
+                if (pick) void getToken().then((token) => takePick(engine(origin, token), pick));
+                openPick(view.target);
+              }}
+            />
           </PickPanel>
         </>
       ) : null}

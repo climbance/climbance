@@ -7,6 +7,7 @@ import {
   cardNeeds,
   cardNextLine,
   pickView,
+  takePick,
   cardRow,
   briefParts,
   cardSections,
@@ -571,5 +572,31 @@ describe('the pick', () => {
     ).toMatch(/^A probe/);
     const start = pickView({ ...base, rank: 5, act: 'start' });
     expect([start.title, start.note, start.target.kind]).toEqual(['Binary search', 'Start this card', 'card']);
+  });
+});
+
+describe('taking the pick', () => {
+  it('sends the pick the board showed, and swallows a refusal', async () => {
+    const sent: unknown[] = [];
+    const client = {
+      POST: async (_path: string, init: { body: unknown }) => {
+        sent.push(init.body);
+        throw new Error('offline');
+      },
+    } as unknown as Parameters<typeof takePick>[0];
+    const pick = {
+      rank: 1 as const,
+      act: 'recall' as const,
+      probe: false,
+      card_slug: 'bs',
+      card_title: 'Binary search',
+      technique: 'binary-search',
+      template_slug: 'lower',
+      template_title: 'Lower bound',
+      problem_id: null,
+      problem_title: null,
+    };
+    await expect(takePick(client, pick)).resolves.toBeUndefined();
+    expect(sent).toEqual([{ card_slug: 'bs', template_slug: 'lower', problem_id: null }]);
   });
 });

@@ -4,6 +4,7 @@ from climb.log.invitations import invitations_held, invite, invited, withdraw
 from climb.log.judgements import JudgementLog
 from climb.log.latest import latest_by_attempt
 from climb.log.owned import erased, whole_log
+from climb.log.predictions import PredictionLog
 from climb.log.recalls import RecallLog, latest_recalls
 from climb.log.runs import CardRunLog
 from climb.log.sessions import LIFETIME, hashed, opened, revoked, user_of
@@ -18,6 +19,7 @@ __all__ = [
     "CardRunLog",
     "DeviceKind",
     "JudgementLog",
+    "PredictionLog",
     "Provider",
     "RecallLog",
     "SignedInDevice",

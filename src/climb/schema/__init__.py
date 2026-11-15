@@ -55,6 +55,7 @@ from climb.schema.knowledge import (
 )
 from climb.schema.match import MatchSource, TemplateMatch
 from climb.schema.outcome import CallSite, Gate, SiteOutcome
+from climb.schema.prediction import Act, Arm, Prediction, Rank
 from climb.schema.problem import (
     Problem,
     ProblemDifficulty,
@@ -75,7 +76,9 @@ from climb.schema.verification import AttemptVerification, Execution, Verificati
 __all__ = [
     "BODIES",
     "LADDER",
+    "Act",
     "Answer",
+    "Arm",
     "Attempt",
     "AttemptClaim",
     "AttemptRecord",
@@ -121,12 +124,14 @@ __all__ = [
     "ModuleStatusChange",
     "OpenGrade",
     "Pause",
+    "Prediction",
     "Probe",
     "Problem",
     "ProblemDifficulty",
     "ProblemStatus",
     "Question",
     "QuestionFormat",
+    "Rank",
     "RecallAttempt",
     "Requirement",
     "RetirementReason",

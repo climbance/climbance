@@ -1,0 +1,151 @@
+{
+  "$defs": {
+    "Act": {
+      "enum": [
+        "recall",
+        "sitting",
+        "start"
+      ],
+      "title": "Act",
+      "type": "string"
+    },
+    "Arm": {
+      "description": "Which policy chose the pick, once the comparison assigns one.",
+      "enum": [
+        "scheduler",
+        "baseline"
+      ],
+      "title": "Arm",
+      "type": "string"
+    },
+    "Rank": {
+      "description": "The order the pick offers in: `flows.md`, The pick.",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "title": "Rank",
+      "type": "integer"
+    }
+  },
+  "properties": {
+    "act": {
+      "$ref": "#/$defs/Act"
+    },
+    "arm": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Arm"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "card_id": {
+      "minLength": 1,
+      "title": "Card Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "execution": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Execution"
+    },
+    "execution_settings": {
+      "minLength": 1,
+      "title": "Execution Settings",
+      "type": "string"
+    },
+    "fsrs_settings": {
+      "minLength": 1,
+      "title": "Fsrs Settings",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "probe": {
+      "default": false,
+      "title": "Probe",
+      "type": "boolean"
+    },
+    "problem_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Problem Id"
+    },
+    "rank": {
+      "$ref": "#/$defs/Rank"
+    },
+    "recall_probability": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recall Probability"
+    },
+    "template_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Template Id"
+    },
+    "user_id": {
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "rank",
+    "act",
+    "card_id",
+    "fsrs_settings",
+    "execution_settings"
+  ],
+  "title": "Prediction",
+  "type": "object"
+}

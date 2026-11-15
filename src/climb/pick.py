@@ -3,7 +3,6 @@
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
-from enum import IntEnum, StrEnum
 
 from fsrs import Rating
 from pydantic import BaseModel
@@ -11,28 +10,12 @@ from pydantic import BaseModel
 from climb.graduation import Next, NextKind
 from climb.knowledge.schedule import Review
 from climb.ladder import CardState, Rung
-from climb.schema import Attempt, Card, CardRun, FailureMode, Problem
+from climb.schema import Act, Attempt, Card, CardRun, FailureMode, Problem, Rank
 from climb.template_schedule import recall_probability
 
 CAP = 2  # cards in flight
 # each says the solver held the form, so the failure aims nothing
 HELD = {FailureMode.SYNTAX, FailureMode.SPEED}
-
-
-class Rank(IntEnum):
-    """The order `flows.md` offers in, first served first."""
-
-    OWED_CHECK = 1
-    OPEN_CHECK = 2
-    DUE_REVIEW = 3
-    RUNG = 4
-    NEW_CARD = 5
-
-
-class Act(StrEnum):
-    RECALL = "recall"
-    SITTING = "sitting"
-    START = "start"
 
 
 class Pick(BaseModel):

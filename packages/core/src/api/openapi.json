@@ -1284,6 +1284,43 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "Taken",
+        "description": "Stores what the pick predicts as the user takes it, once per pick: a\nsecond take before any outcome returns the first prediction.",
+        "operationId": "taken_api_pick_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Taken"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prediction"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -1297,6 +1334,15 @@
           "start"
         ],
         "title": "Act"
+      },
+      "Arm": {
+        "type": "string",
+        "enum": [
+          "scheduler",
+          "baseline"
+        ],
+        "title": "Arm",
+        "description": "Which policy chose the pick, once the comparison assigns one."
       },
       "Asked": {
         "properties": {
@@ -2833,6 +2879,120 @@
         "title": "Picked",
         "description": "The problem a user picked, before its statement is served. The statement\nis left out, as a candidate's is."
       },
+      "Prediction": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "rank": {
+            "$ref": "#/components/schemas/Rank"
+          },
+          "act": {
+            "$ref": "#/components/schemas/Act"
+          },
+          "card_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Card Id"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          },
+          "problem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problem Id"
+          },
+          "probe": {
+            "type": "boolean",
+            "title": "Probe",
+            "default": false
+          },
+          "recall_probability": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall Probability"
+          },
+          "fsrs_settings": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Fsrs Settings"
+          },
+          "execution": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution"
+          },
+          "execution_settings": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Execution Settings"
+          },
+          "arm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Arm"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "rank",
+          "act",
+          "card_id",
+          "fsrs_settings",
+          "execution_settings"
+        ],
+        "title": "Prediction"
+      },
       "Probe": {
         "properties": {
           "problem_id": {
@@ -3118,7 +3278,7 @@
           5
         ],
         "title": "Rank",
-        "description": "The order `flows.md` offers in, first served first."
+        "description": "The order the pick offers in: `flows.md`, The pick."
       },
       "RecallAttempt": {
         "properties": {
@@ -3811,6 +3971,42 @@
           "user_id"
         ],
         "title": "Synced"
+      },
+      "Taken": {
+        "properties": {
+          "card_slug": {
+            "type": "string",
+            "title": "Card Slug"
+          },
+          "template_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Slug"
+          },
+          "problem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problem Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_slug"
+        ],
+        "title": "Taken",
+        "description": "The pick the board showed, which the user took."
       },
       "TechniqueRow": {
         "properties": {

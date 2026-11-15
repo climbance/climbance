@@ -619,3 +619,18 @@ export function pickView(pick: BoardPick): PickView {
     target,
   };
 }
+
+/**
+ * Stores what the pick predicts as the user takes it, before any outcome:
+ * `log.md`, Predictions. The board opens the act whatever this answers, since
+ * a lost prediction costs one data point and a blocked pick costs the session.
+ */
+export async function takePick(client: EngineClient, pick: BoardPick): Promise<void> {
+  try {
+    await client.POST('/api/pick', {
+      body: { card_slug: pick.card_slug, template_slug: pick.template_slug, problem_id: pick.problem_id },
+    });
+  } catch {
+    // the act still opens
+  }
+}

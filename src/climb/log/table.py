@@ -15,7 +15,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 
-from climb.schema import CaseOutcome, ClaimSource, Confidence, FailureMode, Hint
+from climb.schema import Act, Arm, CaseOutcome, ClaimSource, Confidence, FailureMode, Hint
 from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
 
 # the engine's own user, whose id a private record's `user_id` references. The
@@ -323,4 +323,29 @@ judgements = Table(
     Column("called_clean", Boolean, nullable=False),
     Column("line", Integer),
     CheckConstraint("called_clean = (line IS NULL)", name="a_flaw_is_tapped"),
+)
+
+
+# what each pick predicted as the user took it: `log.md`, Predictions
+predictions = Table(
+    "predictions",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("user_id", Text, ForeignKey("users.id"), nullable=False, index=True),
+    Column("rank", Integer, nullable=False),
+    Column("act", enumerated(Act), nullable=False),
+    Column("card_id", Text, ForeignKey("cards.id"), nullable=False),
+    Column("template_id", Text, ForeignKey("card_templates.id")),
+    Column("problem_id", Text, ForeignKey("problems.id")),
+    Column("probe", Boolean, nullable=False),
+    Column("recall_probability", Double),
+    Column("fsrs_settings", Text, nullable=False),
+    Column("execution", Double),
+    Column("execution_settings", Text, nullable=False),
+    Column("arm", enumerated(Arm)),
+    CheckConstraint("rank BETWEEN 1 AND 5", name="rank_known"),
+    CheckConstraint("recall_probability BETWEEN 0 AND 1", name="recall_probability_a_share"),
+    CheckConstraint("execution BETWEEN 0 AND 1", name="execution_a_share"),
 )
