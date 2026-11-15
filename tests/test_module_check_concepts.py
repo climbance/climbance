@@ -1,4 +1,5 @@
 import json
+from datetime import date
 from pathlib import Path
 
 from authoring import found, written
@@ -50,6 +51,8 @@ def _toml(value) -> str:
         return "{ " + ", ".join(f"{k} = {_toml(v)}" for k, v in value.items()) + " }"
     if isinstance(value, list):
         return "[" + ", ".join(_toml(v) for v in value) + "]"
+    if isinstance(value, date):
+        return value.isoformat()
     return json.dumps(value)
 
 
@@ -79,6 +82,26 @@ def test_a_concept_with_neither_a_witness_nor_a_quote_is_refused(tmp_path):
     errors = found(check(module(tmp_path, bare), run=False).report.errors, 27)
 
     assert errors == ["[27] concepts/t/sub.toml while-retests: neither a witness nor a quote"]
+
+
+def test_a_quote_with_no_read_on_date_is_refused(tmp_path):
+    """Rule 27: a source page changes after it is quoted."""
+    quoted = {k: v for k, v in concept().items() if k not in ("witness", "output")}
+    quoted["quote"] = "A sentence."
+
+    errors = found(check(module(tmp_path, quoted), run=False).report.errors, 27)
+
+    assert errors == ["[27] concepts/t/sub.toml while-retests: a quote with no read_on date"]
+
+
+def test_a_quote_with_its_read_on_date_is_accepted(tmp_path):
+    """Rule 27: a TOML date names when the quoted source was read."""
+    quoted = {k: v for k, v in concept().items() if k not in ("witness", "output")}
+    quoted |= {"quote": "A sentence.", "read_on": date(2026, 11, 15)}
+
+    errors = found(check(module(tmp_path, quoted), run=False).report.errors, 27)
+
+    assert errors == []
 
 
 def test_a_question_naming_an_unknown_concept_is_refused(tmp_path):

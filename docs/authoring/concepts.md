@@ -55,6 +55,7 @@ the coverage map for a module written by concept.
 | `witness` | Code whose output shows the claim holds. |
 | `output` | The witness's output, the same on every supported build. |
 | `quote` | The source's sentence the claim rests on, where no witness can run. |
+| `read_on` | The date the quoted source was read, beside a `quote`. |
 | `misconceptions` | Wrong beliefs about the claim, each `{ id, text }`. |
 | `taught_by` | The lesson section teaching the concept, as `<slug>#<anchor>`. |
 

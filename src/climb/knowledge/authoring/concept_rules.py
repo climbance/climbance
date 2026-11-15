@@ -5,6 +5,7 @@ import builtins
 import keyword
 import re
 from collections import defaultdict
+from datetime import date
 from typing import Any, cast
 
 from climb.knowledge.authoring.course import Course, Report, where
@@ -35,6 +36,8 @@ def records(course: Course, report: Report) -> None:
             report.error(27, at, "a witness with no output")
         if "witness" not in concept and "quote" not in concept:
             report.error(27, at, "neither a witness nor a quote")
+        if "quote" in concept and not isinstance(concept.get("read_on"), date):
+            report.error(27, at, "a quote with no read_on date")
         if any("#" not in url for url in sources(concept)):
             report.error(27, at, "a source names no section")
         if concept.get("level") not in (0, 1, 2, 3):
