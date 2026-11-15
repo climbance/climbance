@@ -164,6 +164,11 @@ compared exactly on every run, so a cost is witnessed by counting steps.
   misconception expects, and the total shows the cost the claim states.
 - **A claim with no exact count in any source carries a `quote`.** A bound
   invented to have something to print is a fact no source states.
+- **A count derived from the code's own steps needs no `quote`.** The claim
+  names the step that fixes the count, such as each sum moving one pointer by
+  one place, and the witness shows the count at several sizes. The source
+  still states the order of the cost, which the derived count refines. Such a
+  count is not invented, since the code fixes it.
 
 ## Lessons and questions
 
