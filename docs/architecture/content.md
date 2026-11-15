@@ -263,13 +263,14 @@ The subtopic says why the forms are correct and what they cost.
   and a lesson never restate each other.
 - **A brief loses its `## Complexity`, `## Pitfalls` and `## Key insights`
   sections once a subtopic of the card's primary module names its technique.**
-  The facts in those sections become the subtopic's concepts. A new card is
-  written without the three sections, and its facts wait for the subtopic.
-  `card check` reads the modules in `content/modules/` and refuses a brief
-  keeping one of the three sections after that. Another module's subtopic
-  holds none of the card's facts, so it leaves the brief alone. The check runs
-  in `card check` and not in the seed, since the engine reads no heading of a
-  brief.
+  The three sections move to the module's `sources/<technique>.md`, which the
+  subtopic's stage 1 writer is given, and their facts become the subtopic's
+  concepts. A new card is written without the three sections, and its facts
+  wait for the subtopic. `card check` reads the modules in `content/modules/`
+  and refuses a brief keeping one of the three sections after that. Another
+  module's subtopic holds none of the card's facts, so it leaves the brief
+  alone. The check runs in `card check` and not in the seed, since the engine
+  reads no heading of a brief.
 - **A brief keeps `## Mental model`, `## Out of scope` and `## Open`.** The
   mental model says what each name in the templates means, which a reader
   needs while reading the templates. The other two say what the card's

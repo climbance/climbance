@@ -162,12 +162,12 @@ starts, so their subtopics come first.
       `## Pitfalls` and `## Key insights`, leaving those facts to the subtopic
 - [x] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
       `py` and its level table for levels 0 and 1
-- [ ] Write the `binary-search` subtopic first, and record in `concepts.md`
+- [x] Write the `binary-search` subtopic first, and record in `concepts.md`
       how its complexity claims are witnessed. Most of a subtopic's facts are
       complexity, so the answer shapes every later subtopic
-- [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
-      card's brief once a subtopic of its primary module names its technique.
-      The subtopic's concept writer reads them as a source first
+- [ ] Move `## Complexity`, `## Pitfalls` and `## Key insights` from each
+      card's brief into `sources/<technique>.md` of its primary module, once a
+      subtopic there names its technique. `binary-search` moved on 2026-11-15
 - [ ] Run the solver over the whole module before it is seeded, and fix what
       it finds. `concept-author` runs it on each bank before the fix, so no
       solver has read a fixed question

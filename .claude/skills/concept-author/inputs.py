@@ -61,8 +61,22 @@ def docs(engine: Path, role: str, stage: int) -> list[tuple[str, str]]:
     return parts
 
 
+def notes(module: Path, sub: str) -> list[Path]:
+    """The notes moved from the briefs of the cards the subtopic pairs with:
+    `content.md`, Cards and subtopics."""
+    course = tomllib.loads((module / "course.toml").read_text())
+    named = [
+        code
+        for topic in course.get("topic", [])
+        for code in topic.get("sub_techniques", {}).get(sub, [])
+    ]
+    return [path for code in named if (path := module / "sources" / f"{code}.md").exists()]
+
+
 def files(module: Path, topic: str, sub: str, role: str, stage: int) -> list[Path]:
     found = [module / "CLAUDE.md"]
+    if stage == 1 and role != "digest":
+        found += notes(module, sub)
     if role == "digest" or (role == "write" and stage == 1):
         return found
     found.append(module / "concepts" / topic / f"{sub}.toml")
