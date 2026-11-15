@@ -33,6 +33,7 @@ export const OF = {
   signIn: 'the sign-in',
   module: 'the module',
   lesson: 'the lesson',
+  subtopic: 'the subtopic',
   lessons: 'the lessons',
   certifications: 'the certifications',
   exam: 'the exam',

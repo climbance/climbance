@@ -34,6 +34,7 @@ import { Link, useParams } from 'react-router'
 import { api, type Studied } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { useLearner } from '@/knowledge/learner'
+import { subtopicPath } from '@/knowledge/paths'
 import { SectionHeading } from '@/components/SectionHeading'
 import { ErrorLine } from '@/components/ErrorLine'
 import { Loaded } from '@/components/Loaded'
@@ -347,7 +348,7 @@ function ProbesView({
 }
 
 // the subtopics holding the facts the card's forms rest on: `content.md`,
-// Cards and subtopics. A subtopic opens its module until it has a page
+// Cards and subtopics
 function Subtopics({
   card,
   courses,
@@ -364,7 +365,7 @@ function Subtopics({
         {found.map((one) => (
           <Link
             key={`${one.module}/${one.sub}`}
-            to={`/knowledge/modules/${encodeURIComponent(one.module)}`}
+            to={subtopicPath(one.module, one.sub)}
             className="font-medium underline-offset-4 hover:underline"
           >
             {subtopicLabel(one)}

@@ -175,7 +175,7 @@ starts, so their subtopics come first.
 - [x] Link a card's page to every subtopic naming its technique, the primary
       module's first, and each lesson to every card its subtopic pairs with,
       on both clients, with the rows in `pages.md` `### Acts`
-- [ ] Add a subtopic page on both clients: its lessons with their state, a
+- [x] Add a subtopic page on both clients: its lessons with their state, a
       line per level and its cards. A card's subtopic link opens the module
       page until the subtopic page exists
 - [x] Refuse in the card seed a card whose `module` names no seeded module,

@@ -12,6 +12,7 @@ import { JudgePage } from '@/pages/JudgePage'
 import { KnowledgePage } from '@/pages/KnowledgePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { ModulePage } from '@/pages/ModulePage'
+import { SubtopicPage } from '@/pages/SubtopicPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ProblemPage } from '@/pages/ProblemPage'
 import { ProblemsPage } from '@/pages/ProblemsPage'
@@ -78,6 +79,7 @@ function App() {
             <Route path="knowledge" element={<KnowledgePage />} />
             <Route path="knowledge/queue" element={<QueuePage />} />
             <Route path="knowledge/modules/:module" element={<ModulePage />} />
+            <Route path="knowledge/modules/:module/:sub" element={<SubtopicPage />} />
             <Route path="knowledge/lessons" element={<LessonsPage />} />
             <Route path="knowledge/lessons/:module/:lesson" element={<LessonPage />} />
             <Route path="knowledge/certifications" element={<CertificationsPage />} />

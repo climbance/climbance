@@ -14,3 +14,8 @@ export function lessonPath(module: string, slug: string, part = ''): string {
 export function modulePath(module: string, from?: 'board'): string {
   return `${KNOWLEDGE}/modules/${module}${from ? `?from=${from}` : ''}`
 }
+
+/** A subtopic's page, a step down from its module. */
+export function subtopicPath(module: string, sub: string): string {
+  return `${KNOWLEDGE}/modules/${module}/${encodeURIComponent(sub)}`
+}

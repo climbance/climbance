@@ -401,6 +401,12 @@ platforms.
 - **The lessons page lists each module's lessons in order**, each row naming
   whether the lesson is locked, ready or read, and its minutes. A row opens
   the lesson, a locked one included, since reading early skips nothing.
+- **A subtopic's page reads one line per level, its lessons and its cards.**
+  A level line counts the questions passed, as the module's cell does. The
+  lessons are in graph order, each row as the lessons page draws it. A card's
+  subtopic link opens this page. The page offers no Start and no Focus, since
+  those presses sit on the module's page, and a press living on two pages
+  drifts apart.
 - **A lesson's page reads its text, and Mark read is the act.** A read lesson
   offers Mark unread instead. The lessons the text links to open on the same
   page.
@@ -427,6 +433,7 @@ Problems      the listing, a picked problem
 Cards         the list, a card, a recall
 Knowledge     the home
                 a module: its groups, its map, the start sheet
+                  a subtopic
                 a queue, an exam
                 the lessons, a lesson
                 the certifications, a certification's conditions
@@ -516,6 +523,7 @@ what it offers. The inventory is the list both clients build to.
 | A level exam's choices | `/knowledge/exam` | Exam | same |
 | An exam and its results | `/knowledge/exam` | the quiz screen | by platform |
 | The lessons | `/knowledge/lessons` | Lessons | same |
+| A subtopic | `/knowledge/modules/:module/:sub` | Subtopic | same |
 | A lesson | `/knowledge/lessons/:module/:lesson` | Lesson | same |
 | The certifications | `/knowledge/certifications` | Certifications | same |
 | A certification's conditions | a dialog on the certifications and the map | a sheet on Certifications and Map | same |

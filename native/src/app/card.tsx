@@ -348,7 +348,7 @@ function RunStart({
 }
 
 // the subtopics holding the facts the card's forms rest on: `content.md`,
-// Cards and subtopics. A subtopic opens its module until it has a screen
+// Cards and subtopics
 function Subtopics({
   card,
   courses,
@@ -368,7 +368,7 @@ function Subtopics({
             key={`${one.module}/${one.sub}`}
             variant="bodyMedium"
             accessibilityRole="link"
-            onPress={() => router.push({ pathname: '/module', params: { course: one.module } })}
+            onPress={() => router.push({ pathname: '/subtopic', params: { course: one.module, sub: one.sub } })}
             style={{ color: theme.colors.primary }}
           >
             {subtopicLabel(one)}

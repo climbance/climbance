@@ -39,14 +39,31 @@ export function lessonSections(modules: readonly { c: Course; b: Board }[]): Les
   });
 }
 
-/** Lessons in graph order: the shallowest subtopic taught and the lowest level first, then listing order. */
+/**
+ * Lessons in graph order: the shallowest subtopic taught and the lowest level
+ * first, then listing order, and never before a lesson it needs.
+ */
 export function inGraphOrder(c: Course, lessons: Lesson[]): Lesson[] {
   const key = (x: Lesson) =>
     Math.min(...x.teaches.map(([s, l]) => (c.graph?.depth(s) ?? 0) * 10 + l), Number.MAX_SAFE_INTEGER);
-  return lessons
+  const sorted = lessons
     .map((x, i) => ({ x, i, k: key(x) }))
     .sort((a, b) => a.k - b.k || a.i - b.i)
     .map((e) => e.x);
+  // the listing order is the store's, so two lessons at one depth and level
+  // are ordered by their own needs
+  const held = new Set(sorted.map((x) => x.slug));
+  const placed = new Set<string>();
+  const out: Lesson[] = [];
+  while (out.length < sorted.length) {
+    const ready = (x: Lesson) =>
+      x.needs.every((n) => !n.startsWith('lesson:') || !held.has(n.slice(7)) || placed.has(n.slice(7)));
+    // a cycle of needs places the first left, rather than dropping it
+    const next = sorted.find((x) => !placed.has(x.slug) && ready(x)) ?? sorted.find((x) => !placed.has(x.slug))!;
+    placed.add(next.slug);
+    out.push(next);
+  }
+  return out;
 }
 
 export type LessonGroup = 'toRead' | 'read' | 'locked';

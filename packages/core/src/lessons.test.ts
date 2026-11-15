@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   Board,
+  inGraphOrder,
   lessonGroups,
   lessonParts,
   lessonPage,
@@ -136,5 +137,32 @@ describe("a lesson's parts", () => {
     expect(lessonParts('```\n## not a heading\n```')).toEqual([
       { title: null, anchor: null, text: '```\n## not a heading\n```' },
     ]);
+  });
+});
+
+describe('the graph order', () => {
+  it('places a lesson after a lesson it needs, at the same depth and level', () => {
+    /** the store lists lessons by slug, so the needs decide between two equal ones */
+    const both = loadSnapshot({
+      format: 6,
+      courses: [
+        {
+          slug: 'm',
+          definition: {
+            title: 'M',
+            pass_ratio: 1,
+            kinds: ['concept'],
+            topic: [{ slug: 't', tier: 1, title: 'T', subs: ['a'] }],
+          },
+          questions: [mk('q1', 'a', 0)],
+          graph: {
+            format: 2,
+            needs: {},
+            lesson: { alpha: lesson('alpha', ['a@0'], ['lesson:beta']), beta: lesson('beta', ['a@0']) },
+          },
+        },
+      ],
+    } as never).courses[0];
+    expect(inGraphOrder(both, both.graph!.lessons).map((x) => x.slug)).toEqual(['beta', 'alpha']);
   });
 });
