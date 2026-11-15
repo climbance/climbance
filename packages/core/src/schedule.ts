@@ -1,4 +1,4 @@
-import { courseGroups, DEFAULT_RULES, groupKey, levelName, qkey, topicOf, type Catalog } from './courses';
+import { courseGroups, DEFAULT_RULES, groupKey, levelName, qkey, subTitle, topicOf, type Catalog } from './courses';
 import { AGAIN, GOOD, HARD, replay, type Memory } from './fsrs';
 import type { Lesson } from './graph';
 import type { Attempt, AttemptRecord, Course, Group, Question, Rules, Status } from './types';
@@ -337,7 +337,7 @@ export class Board {
     if (!c) return '';
     const pg = { course: g.course, topic: topicOf(c, b.sub) ?? g.topic, sub: b.sub, level: b.level };
     const name = levelName(this.rules, b.level);
-    const what = b.sub === g.sub ? name : `${b.sub} · ${name}`;
+    const what = b.sub === g.sub ? name : `${subTitle(c, b.sub)} · ${name}`;
     return `needs ${what} ${this.nPassed(pg)}/${this.groupQuestions(pg).length}`;
   }
 }

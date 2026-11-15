@@ -94,7 +94,7 @@ describe('the lessons', () => {
       status: 'Ready to read',
     });
     // the lesson waits for the lesson it needs, and for the group its own group needs done
-    expect(lessonRow(b, c, c.graph!.lesson('second')!).status).toBe('Needs first, a · Foundation');
+    expect(lessonRow(b, c, c.graph!.lesson('second')!).status).toBe('Needs first, Ints · Foundation');
   });
 
   it('reads a lesson read once its mark says so', () => {

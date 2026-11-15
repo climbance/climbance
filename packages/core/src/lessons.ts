@@ -127,7 +127,7 @@ export function lessonRow(b: Board, c: Course, x: Lesson): LessonRow {
   const need = (r: string) =>
     r.startsWith('lesson:')
       ? (c.graph?.lesson(r.slice(7))?.title ?? r)
-      : `${r.slice(0, r.lastIndexOf('@'))} · ${levelName(b.rules, Number(r.slice(r.lastIndexOf('@') + 1)))}`;
+      : `${subTitle(c, r.slice(0, r.lastIndexOf('@')))} · ${levelName(b.rules, Number(r.slice(r.lastIndexOf('@') + 1)))}`;
   const status =
     state === 'done'
       ? 'Read'

@@ -60,6 +60,27 @@ describe('a group cell', () => {
     expect(cell.line).toBe(`0/1 · ${cell.needs || 'locked'}`);
   });
 
+  it('names the needed subtopic by its title', () => {
+    /** a slug is the authoring name, which the learner never meets elsewhere */
+    const gated = loadSnapshot({
+      format: 6,
+      courses: [
+        {
+          slug: 'c',
+          definition: {
+            title: 'C',
+            pass_ratio: 1,
+            kinds: ['concept'],
+            topic: [{ slug: 't', tier: 1, title: 'Types', subs: ['s1', 's2'], sub_titles: { s1: 'Ints' } }],
+          },
+          questions: [mk('a', 's1', 0), mk('d', 's2', 0)],
+          graph: { format: 2, needs: { s2: ['s1'] } },
+        },
+      ],
+    } as never);
+    expect(groupCell(Board.build(gated, []), g('s2', 0)).needs).toBe('needs Ints · Foundation 0/1');
+  });
+
   it('marks a group holding no questions', () => {
     expect(groupCell(b, g('s2', 1))).toMatchObject({ state: 'empty', count: '·', line: 'no questions' });
   });
