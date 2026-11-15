@@ -375,12 +375,11 @@ waits for the next module.
       from: the attempts, their claims, their verdicts and the drills, with
       recognition kept apart from execution. Mastery is never stored, so the
       derivation is the whole model
-- [ ] Re-claim thirty attempts with the earlier machine claims hidden, and write
-      the agreement with the first claims into `log.md`. The user's consistency
-      caps every classifier score, and mastery reads claims
-- [ ] Read the served statements for an unbounded input, and list each one
+- [x] Read the served statements for an unbounded input, and list each one
       found here. A problem is never edited, so a list is what decides whether
-      any is worth retiring
+      any is worth retiring. One of 133: Peak Signal Envelope (`4455c984`),
+      written before the constraints section, retired as defective and
+      replaced by `5caeb03c`
 
 ### Mastery
 
@@ -505,6 +504,9 @@ that drifted from its target shows in the hand pass whatever the matcher says.
 - [ ] Write down how many pairs the two passes settled, and over how many
       templates. A score prints a denominator, and nothing else says what the
       reference covers
+- [ ] Re-claim thirty attempts blind, through a hand pass showing no earlier
+      claim and storing none, and write the agreement with the first claims
+      into `log.md`. The user's consistency caps every score read against them
 
 ### Scoring the matcher
 
