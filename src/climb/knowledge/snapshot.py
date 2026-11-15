@@ -6,27 +6,15 @@ from typing import Any
 from sqlalchemy import Connection, select
 
 from climb.knowledge.diagrams import diagram_of, drawings, fenced, whole
+from climb.knowledge.schedule import FSRS
 from climb.knowledge.table import lessons, modules, questions, subtopics, topics
 from climb.storage import Database
 
 FORMAT = 6
-# py-fsrs's defaults: `knowledge.md`, The schedule
 RULES: dict[str, Any] = {
-    "fsrs": {
-        "version": 6,
-        "desired_retention": 0.9,
-        "maximum_interval": 36500,
-        "learning_steps_minutes": [1.0, 10.0],
-        "relearning_steps_minutes": [10.0],
-        "enable_fuzzing": False,
-        "parameters": [
-            0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666, 0.796,
-            1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658, 0.1542,
-        ],
-        "mastered_stability_days": 21,
-    },
+    "fsrs": FSRS,
     "levels": {"0": "Foundation", "1": "Associate", "2": "Professional", "3": "Expert"},
-}  # fmt: skip
+}
 # the order a module carries when its file gives none
 DEFAULT_ORDER = 100
 
