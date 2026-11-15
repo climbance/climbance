@@ -521,8 +521,8 @@ check is owed, and when a graduated template is due again.
   question's is from its answers in `knowledge.md`. The state is derived on
   every read and never stored.
 - **A review is a recall attempt of the template, or a sitting on a problem
-  whose `target_template_id` names the template.** `flows.md` lists which
-  sittings count.
+  whose `target_template_id` names the template.** `flows.md` `## A
+  template's reviews` lists which sittings count.
 - **Each recall attempt becomes a rating.** A pass with no hint rates Good, a
   pass after the notes rates Hard, and a failed recall rates Again. A pass
   after the form hint rates Again too, since typing back a form just read
@@ -576,8 +576,6 @@ Deferred, since only use answers each:
 - How a sitting's elapsed time enters its rating.
 - The check of a recallable template no review has reached when its card
   turns consolidating.
-- Whether a probe reviews every template its solution displays, or only its
-  target.
 
 ## Short exercises
 

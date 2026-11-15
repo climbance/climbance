@@ -844,6 +844,51 @@ Deferred, since only use answers each:
   case carries a value rather than a predicate.
 - The step a failed recall leads to, which the scheduler settles.
 
+## A template's reviews
+
+A template's FSRS state is replayed from its reviews, as `log.md` `## The
+template schedule` gives. A review is a recall attempt of the template, or a
+sitting on a problem written for the template. This section names which
+sittings count.
+
+- **A sitting reviews the template its problem's `target_template_id` names,
+  and no other.** The generator stores the target on the problem. The matcher
+  is unscored, so a template match adds no review.
+- **A sitting on a problem whose target is a technique reviews no template.**
+  The statement was written for the skill, and no scored record says which
+  form the solution used.
+- **A rung reviews its target alone.** The ladder folds a rung's solve from the
+  templates the rung covers, which `## Solving a rung` gives. A covered
+  template that is not the problem's target gains no review from the solve.
+- **A probe reviews its target alone**, as any sitting does. The canonical may
+  display other templates of the card, and the user's solution may use none of
+  them.
+- **A sitting counts wherever it was served**: from a rung, from a probe or
+  from the board. The review measures the form, and the route to the problem
+  does not change it.
+- **A sitting counts whether or not a card run is open.** The ladder discards
+  an attempt finished before the run began, since the run measures study. A
+  review measures memory, and a form held before the run is still held.
+- **A sitting with no submission is no review.** A clock started and never
+  submitted against tested no form.
+- **A sitting on a defective problem is no review.** The statement asks for
+  something its cases do not decide, so the verdict does not rate the form.
+- **A sitting is one review, at the moment of its first submission.** The
+  first submission is the moment the form was retrieved, and later submissions
+  debug it. The rating reads the sitting's attempts as they stand, as `log.md`
+  gives.
+- **An open sitting is read as it stands.** A failed submission rates Again
+  until a later solve in the same sitting rates it Hard. The review is derived,
+  so the change rewrites no record.
+
+Deferred, since only use answers each:
+
+- Whether a sitting whose last attempt carries the self-label `syntax` rates
+  Good rather than Hard.
+- Whether a template match written by the user adds a review. A user record
+  stands over a machine's, so the reason the matcher's matches add none does
+  not reach it.
+
 ## Adjudicating the eval set
 
 The reference the classifier is scored against. One writer's blind claims cap

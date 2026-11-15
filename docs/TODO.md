@@ -414,7 +414,7 @@ The board orders by staleness and the user picks. Sitting daily makes that pick
 itself the work, so the board serves one, read from FSRS, mastery and the
 cards' states.
 
-- [ ] Write into `flows.md` which sittings review a template, rungs and
+- [x] Write into `flows.md` which sittings review a template, rungs and
       probes among them. `log.md` gives each review's rating. The matcher is
       unscored, so a review never reads a match
 - [ ] Decide whether a short exercise drawn from a template, such as its key
