@@ -6,6 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from climb.schema.problem import ProblemDifficulty
 
 Slug = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
+# a subtopic of another module, as `<module>/<topic>/<subtopic>`: `content.md`
+Citation = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*(/[a-z0-9][a-z0-9-]*){2}$")]
 
 
 class TemplateKind(StrEnum):
@@ -97,6 +99,9 @@ class Template(BaseModel):
     # the top-level definitions turning JSON into nodes and back, which a
     # judgement item neither shows nor mutates: `content.md`
     harness: list[str] = Field(default_factory=list[str])
+    # the subtopics of another module the form's code rests on, such as the
+    # `py` subtopic teaching `heapq`. A citation gates nothing
+    cites: list[Citation] = Field(default_factory=list[Citation])
 
 
 class Card(BaseModel):

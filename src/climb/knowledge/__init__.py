@@ -1,6 +1,6 @@
 from climb.knowledge.check import refusals
 from climb.knowledge.files import read_module
-from climb.knowledge.seed import retire_module, seed_module, seeded_modules
+from climb.knowledge.seed import retire_module, seed_module, seeded_modules, seeded_subtopics
 from climb.knowledge.snapshot import snapshot
 from climb.knowledge.sync import Synced, sync
 
@@ -11,6 +11,7 @@ __all__ = [
     "retire_module",
     "seed_module",
     "seeded_modules",
+    "seeded_subtopics",
     "snapshot",
     "sync",
 ]

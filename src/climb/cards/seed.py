@@ -31,7 +31,11 @@ def reason(exc: ValidationError) -> str:
 
 
 def seed_cards(
-    records: Iterable[Mapping[str, Any]], *, store: CardStore, modules: Collection[str]
+    records: Iterable[Mapping[str, Any]],
+    *,
+    store: CardStore,
+    modules: Collection[str],
+    subtopics: Collection[str] = frozenset(),
 ) -> CardSeedResult:
     """Validate authored cards, mint what identifies them, upsert each one.
 
@@ -59,6 +63,14 @@ def seed_cards(
         # a primary module no store holds would pair the card with no subtopic
         if seed.module not in modules:
             result.rejected.append(Rejected(index=index, reason=f"no seeded module: {seed.module}"))
+            continue
+        uncited = dict.fromkeys(
+            one for template in seed.templates for one in template.cites if one not in subtopics
+        )
+        if uncited:
+            result.rejected.append(
+                Rejected(index=index, reason=f"no seeded subtopic: {', '.join(uncited)}")
+            )
             continue
         if seed.slug in accepted:
             result.rejected.append(Rejected(index=index, reason=f"seeded twice: {seed.slug}"))

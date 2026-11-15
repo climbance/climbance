@@ -3,6 +3,7 @@
 from pydantic import BaseModel, Field, model_validator
 
 from climb.schema.card import (
+    Citation,
     Requirement,
     Selector,
     Slug,
@@ -28,6 +29,7 @@ class TemplateSeed(BaseModel):
     unordered: bool = False
     cases: list[TemplateCase] = Field(default_factory=list[TemplateCase])
     harness: list[str] = Field(default_factory=list[str])
+    cites: list[Citation] = Field(default_factory=list[Citation])
     # the surviving mutants the author judged equivalent to the form, as `card
     # check` names them. Authoring alone: the seed stores none
     equivalent: list[str] = Field(default_factory=list[str])

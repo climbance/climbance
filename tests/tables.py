@@ -102,6 +102,9 @@ def _is_model(annotation: object) -> bool:
 
 def _typed(column: Column[Any], annotation: object) -> bool:
     kind = column.type
+    if typing.get_origin(annotation) is typing.Annotated:
+        # a constraint on the value, such as a pattern, leaves its type alone
+        annotation = typing.get_args(annotation)[0]
     if annotation is Any:
         # JSON of any shape: a stored `null` is a value, so NOT NULL still holds
         return isinstance(kind, JSONB)

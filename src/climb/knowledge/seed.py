@@ -297,3 +297,15 @@ def seeded_modules(*, root: Database) -> set[str]:
         return set(
             conn.execute(select(modules.c.slug).where(modules.c.retired_at.is_(None))).scalars()
         )
+
+
+def seeded_subtopics(*, root: Database) -> set[str]:
+    """Each live subtopic, spelled as a citation names it."""
+    live = (
+        select(modules.c.slug, topics.c.slug, subtopics.c.slug)
+        .join(topics, topics.c.module_id == modules.c.id)
+        .join(subtopics, subtopics.c.topic_id == topics.c.id)
+        .where(modules.c.retired_at.is_(None), subtopics.c.retired_at.is_(None))
+    )
+    with root.connect() as conn:
+        return {"/".join(row) for row in conn.execute(live)}

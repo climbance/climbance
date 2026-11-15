@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   judgeFrom,
   cardSubtopics,
+  citedSubtopics,
+  TEMPLATE_CITES,
   CARD_SUBTOPICS,
   subtopicLabel,
   RECALL_THIS,
@@ -144,6 +146,8 @@ function TemplateCard({
   const theme = useTheme();
   const [revealed, setRevealed] = useState(false);
   const view = templateView(template, recalled, now);
+  const st = useStore();
+  const cited = citedSubtopics(st.catalog?.courses ?? [], template.cites ?? []);
 
   return (
     <Panel padded>
@@ -159,6 +163,25 @@ function TemplateCard({
         {view.status}
       </Text>
       <Markdown>{template.trigger}</Markdown>
+      {/* the subtopics of another module the form's code rests on: `content.md` */}
+      {cited.length ? (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 12, rowGap: 4 }}>
+          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            {TEMPLATE_CITES}
+          </Text>
+          {cited.map((one) => (
+            <Text
+              key={`${one.module}/${one.sub}`}
+              variant="bodySmall"
+              accessibilityRole="link"
+              onPress={() => router.push({ pathname: '/subtopic', params: { course: one.module, sub: one.sub } })}
+              style={{ color: theme.colors.primary }}
+            >
+              {subtopicLabel(one)}
+            </Text>
+          ))}
+        </View>
+      ) : null}
       {view.recallable ? (
         <Button
           mode="contained-tonal"

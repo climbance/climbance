@@ -555,6 +555,7 @@ what it offers. The inventory is the list both clients build to.
 | Mark a lesson read or unread | the lesson page | Lesson | same |
 | Open a subtopic naming a card's technique | the card page | Card | same |
 | Open a card a lesson's subtopic pairs with | the lesson page | Lesson | same |
+| Open a subtopic a template cites | the card page, in the template's panel | Card | same |
 | Set the daily limit and the exam size | the settings page | Settings | same |
 | Set the exam size for one exam | the exam page | Exam | same |
 | Type a `short` reply | the browser's keyboard | the app's keyboard | by platform |

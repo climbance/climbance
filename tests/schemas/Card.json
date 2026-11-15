@@ -73,6 +73,14 @@
           "title": "Cases",
           "type": "array"
         },
+        "cites": {
+          "items": {
+            "pattern": "^[a-z0-9][a-z0-9-]*(/[a-z0-9][a-z0-9-]*){2}$",
+            "type": "string"
+          },
+          "title": "Cites",
+          "type": "array"
+        },
         "code": {
           "title": "Code",
           "type": "string"

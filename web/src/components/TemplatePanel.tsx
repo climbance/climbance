@@ -1,4 +1,4 @@
-import { RECALL_THIS, HIDE_FORM } from '@climb/core'
+import { citedSubtopics, HIDE_FORM, RECALL_THIS, subtopicLabel, TEMPLATE_CITES } from '@climb/core'
 import { useState } from 'react'
 
 import { Link } from 'react-router'
@@ -9,6 +9,8 @@ import { Markdown } from '@/components/Markdown'
 import { PythonCode, RevealPress } from '@/components/PythonCode'
 import { Tag } from '@/components/Tag'
 import { Button } from '@/components/ui/button'
+import { useLearner } from '@/knowledge/learner'
+import { subtopicPath } from '@/knowledge/paths'
 import { templateView } from '@/lib/format'
 
 // the form stays hidden until it is asked for: `content.md` gives why a form
@@ -26,6 +28,8 @@ export function TemplatePanel({
 }) {
   const [revealed, setRevealed] = useState(false)
   const view = templateView(template, recalled)
+  const { catalog } = useLearner()
+  const cited = citedSubtopics(catalog?.courses ?? [], template.cites ?? [])
 
   return (
     <PanelFrame>
@@ -41,6 +45,22 @@ export function TemplatePanel({
 
       <div className="space-y-stack px-4 py-3">
         <Markdown>{template.trigger}</Markdown>
+
+        {/* the subtopics of another module the form's code rests on: `content.md` */}
+        {cited.length > 0 && (
+          <p className="flex flex-wrap gap-x-4 text-meta">
+            <span className="text-muted-foreground">{TEMPLATE_CITES}</span>
+            {cited.map((one) => (
+              <Link
+                key={`${one.module}/${one.sub}`}
+                to={subtopicPath(one.module, one.sub)}
+                className="font-medium underline-offset-4 hover:underline"
+              >
+                {subtopicLabel(one)}
+              </Link>
+            ))}
+          </p>
+        )}
 
         {revealed ? (
           <PythonCode code={template.code} />

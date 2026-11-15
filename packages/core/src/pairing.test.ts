@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   Board,
   cardSubtopics,
+  citedSubtopics,
   lessonCards,
   loadSnapshot,
   subtopicCards,
@@ -121,5 +122,13 @@ describe("a subtopic's page", () => {
 
   it('reads nothing for a subtopic the module does not hold', () => {
     expect(subtopicView(Board.build(catalog, []), c, 'graphs')).toBeNull();
+  });
+});
+
+describe("a template's citations", () => {
+  it('reads each cited subtopic the catalog holds, in the order cited', () => {
+    /** a citation the catalog no longer holds has nothing to open */
+    const cited = citedSubtopics(courses, ['py/t/heapq', 'py/t/gone', 'algo/t/heaps']);
+    expect(cited.map(subtopicLabel)).toEqual(['First, Python', 'First, Algorithms']);
   });
 });

@@ -183,9 +183,9 @@ starts, so their subtopics come first.
       once the algorithms module is seeded. Every card names it before then
 - [x] Count a technique's knowledge reading from the answers to the questions
       of every subtopic naming it, as `log.md` gives, and show it on the board
-- [ ] Add `cites` to the template in the seed and the card API, refusing a
+- [x] Add `cites` to the template in the seed and the card API, refusing a
       subtopic the store does not hold
-- [ ] Link each cited subtopic on the card's page on both clients, with the
+- [x] Link each cited subtopic on the card's page on both clients, with the
       row in `pages.md` `### Acts`
 
 ### The cards, checked

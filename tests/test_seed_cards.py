@@ -395,3 +395,26 @@ def test_a_card_naming_no_seeded_module_is_rejected(database):
     result = seed_cards([record(module="algorithms")], store=CardStore(database), modules=MODULES)
 
     assert [one.reason for one in result.rejected] == ["no seeded module: algorithms"]
+
+
+def test_a_citation_naming_no_seeded_subtopic_is_rejected(database):
+    """A citation links a subtopic the card's page could not open."""
+    cited = template(cites=["py/stdlib/collections"])
+
+    result = seed_cards([record(templates=[cited])], store=CardStore(database), modules=MODULES)
+
+    assert [one.reason for one in result.rejected] == ["no seeded subtopic: py/stdlib/collections"]
+
+
+def test_a_citation_naming_a_seeded_subtopic_is_stored(database):
+    store = CardStore(database)
+    cited = template(cites=["py/stdlib/collections"])
+
+    seed_cards(
+        [record(templates=[cited])],
+        store=store,
+        modules=MODULES,
+        subtopics={"py/stdlib/collections"},
+    )
+
+    assert store.all()[0].templates[0].cites == ["py/stdlib/collections"]

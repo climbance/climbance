@@ -13,6 +13,7 @@ type ListedCard = components['schemas']['ListedCard'];
 
 export const CARD_SUBTOPICS = 'Subtopics';
 export const LESSON_CARDS = 'Cards';
+export const TEMPLATE_CITES = 'Rests on';
 export const SUBTOPIC_LESSONS = 'Lessons';
 export const SUBTOPIC_CARDS = 'Cards';
 export const SUBTOPIC_LEVELS = 'Levels';
@@ -57,6 +58,17 @@ function named(course: Course, subs: Set<string>): Set<string> {
       topic.subs.filter((sub) => subs.has(sub)).flatMap((sub) => topic.subTechniques[sub] ?? []),
     ),
   );
+}
+
+/** The subtopics a template cites, as `<module>/<topic>/<subtopic>`, in its order. One the catalog does not hold is left out. */
+export function citedSubtopics(courses: Course[], cites: readonly string[]): PairedSubtopic[] {
+  return cites.flatMap((cited) => {
+    const [module, topic, sub] = cited.split('/');
+    const course = courses.find((one) => one.slug === module && !one.archived);
+    const held = course?.topics.find((one) => one.slug === topic && one.subs.includes(sub));
+    if (!course || !held) return [];
+    return [{ module, moduleTitle: course.title, topic, sub, title: held.subTitles[sub] ?? sub }];
+  });
 }
 
 /** Every card paired with a subtopic the lesson teaches, in the list's order. */

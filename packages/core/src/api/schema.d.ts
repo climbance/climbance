@@ -1600,6 +1600,8 @@ export interface components {
       cases?: components['schemas']['TemplateCase'][];
       /** Harness */
       harness?: string[];
+      /** Cites */
+      cites?: string[];
     };
     /**
      * TemplateCase
