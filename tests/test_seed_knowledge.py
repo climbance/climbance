@@ -5,7 +5,7 @@ import pytest
 from commands import connected, run_cli
 from sqlalchemy import event, select
 
-from climb.knowledge import read_module, refusals, seed_module
+from climb.knowledge import read_module, refusals, retire_module, seed_module, snapshot
 from climb.knowledge.table import lessons, modules, questions, subtopics, topics
 
 COURSE = """\
@@ -354,3 +354,41 @@ def test_one_technique_may_be_named_by_several_subtopics(database, tmp_path):
     other = titled(tmp_path / "b", TEACHING).rename(tmp_path / "b" / "algo")
 
     assert seed_module(read_module(other), root=database).refused == []
+
+
+def test_a_retired_module_keeps_every_row_and_leaves_the_snapshot(database, tmp_path):
+    """`knowledge.md`, Seeding: a module whose files are gone is retired,
+    never deleted, so its answers keep pointing at its questions."""
+    seed_module(read_module(authored(tmp_path)), root=database)
+
+    retired = retire_module("python", root=database)
+
+    assert retired == 1 + 1 + 2 + 3 + 1
+    for table in (modules, topics, subtopics, questions, lessons):
+        assert all(row["retired_at"] is not None for row in rows(database, table))
+    assert snapshot(database)["courses"] == []
+
+
+def test_a_retired_module_is_not_seeded_again(database, tmp_path):
+    """Its questions are retired, and a retired slug is never reused."""
+    seed_module(read_module(authored(tmp_path)), root=database)
+    retire_module("python", root=database)
+
+    result = seed_module(read_module(authored(tmp_path / "again")), root=database)
+
+    assert result.refused
+    assert snapshot(database)["courses"] == []
+
+
+def test_retiring_an_unknown_module_is_refused(database):
+    with pytest.raises(LookupError, match="no module 'nowhere'"):
+        retire_module("nowhere", root=database)
+
+
+def test_the_terminal_retires_a_module(database, tmp_path, monkeypatch, capsys):
+    connected(database, monkeypatch)
+    seed_module(read_module(authored(tmp_path)), root=database)
+
+    run_cli(monkeypatch, "module", "retire", "python")
+
+    assert "python: 8 rows retired" in capsys.readouterr().out

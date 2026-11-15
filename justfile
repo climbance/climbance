@@ -87,7 +87,7 @@ diagrams-test:
 
 # Seed one knowledge module from its authored directory, by slug. The
 # module's own checker runs first, and a module it refuses is not seeded.
-seed-module name="python":
+seed-module name="py":
     uv run climb module check {{ name }}
     uv run climb seed knowledge content/modules/{{ name }}
 

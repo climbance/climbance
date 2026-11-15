@@ -4,11 +4,21 @@ import os
 import sys
 from pathlib import Path
 
+from climb.knowledge import retire_module
 from climb.knowledge.authoring import Checked, check, in_sub, load, near
 from climb.knowledge.authoring.status import markdown, topics
+from climb.storage import Database
 
 # set once the run has restarted itself with the module's libraries
 RESTARTED = "CHECK_REQUIREMENTS"
+
+
+def retired(args: argparse.Namespace, root: Database) -> None:
+    try:
+        count = retire_module(args.slug, root=root)
+    except LookupError as error:
+        sys.exit(f"module retire: {error}")
+    print(f"{args.slug}: {count} rows retired")
 
 
 def module(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:

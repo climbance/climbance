@@ -177,7 +177,7 @@ precedence over this file.
 
 1. Write `modules/<slug>/course.toml`, with `title`, `pass_ratio`, `kinds`,
    the optional `code_kinds`, `code_lang` and `order`, and the topic list.
-   `modules/python/course.toml` is the example.
+   `modules/py/course.toml` is the example.
 2. Write `modules/<slug>/CLAUDE.md` with the module's verification rules.
    Add `requirements.txt` where its snippets import a library, and
    `check.toml` where a rule skips something.

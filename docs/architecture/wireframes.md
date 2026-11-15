@@ -511,7 +511,7 @@ problem's path reads as its record, as "Every problem" gives.
 ## A module
 
 ```
-+- /knowledge/modules/python --------------------------------------------+
++- /knowledge/modules/py ------------------------------------------------+
 | Climbance    Practice  Problems  Cards  [ Knowledge ]           ☀  ≡   |
 +------------------------------------------------------------------------+
 | < Knowledge                                                            |
@@ -553,7 +553,7 @@ problem's path reads as its record, as "Every problem" gives.
 ## A module, starting a filtered queue
 
 ```
-+- /knowledge/modules/python --------------------------------------------+
++- /knowledge/modules/py ------------------------------------------------+
 | Climbance    Practice  Problems  Cards  [ Knowledge ]           ☀  ≡   |
 +------------------------------------------------------------------------+
 | Python                                                                 |

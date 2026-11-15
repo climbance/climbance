@@ -20,7 +20,7 @@ from climb.cli.hand_match import hand_match
 from climb.cli.invite import invitation
 from climb.cli.judge import judge
 from climb.cli.match import match
-from climb.cli.module import module
+from climb.cli.module import module, retired
 from climb.cli.movement import moved
 from climb.cli.problem import problem
 from climb.cli.retime import retime
@@ -414,6 +414,10 @@ def main() -> None:
         "--content", default="content/modules", help="the directory holding the modules"
     )
     status_parser.add_argument("--json", action="store_true", help="emit the status as JSON")
+    retire_parser = module_action.add_parser(
+        "retire", help="retire a seeded module whose files are gone, keeping its rows"
+    )
+    retire_parser.add_argument("slug", help="the module's slug in the store")
 
     log_parser = _command(sub, "log", "one user's whole log, read out or erased")
     action = log_parser.add_subparsers(dest="action", required=True)
@@ -454,7 +458,9 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "log": user_log,
     "card": lambda args, parser, _root: card(args, parser),
     "judge": lambda args, _parser, root: judge(args, root),
-    "module": lambda args, parser, _root: module(args, parser),
+    "module": lambda args, parser, root: (
+        retired(args, root) if args.action == "retire" else module(args, parser)
+    ),
     "invite": invitation,
 }
 

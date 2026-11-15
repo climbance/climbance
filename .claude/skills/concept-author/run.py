@@ -421,7 +421,7 @@ def todo(module: str, found: list[Topic]) -> int:
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--module", default="py")
-    p.add_argument("--source", default="python")
+    p.add_argument("--source", default="py")
     p.add_argument("--level", type=int, required=True)
     p.add_argument("--jobs", type=int, default=1)
     p.add_argument("--hours", type=float, default=1, help="the limit on one step")

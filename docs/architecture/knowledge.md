@@ -88,6 +88,10 @@ already made.
 - **A question asking something new takes a new slug.** The old answers
   answered the old question, and a new slug keeps them from counting toward
   the new one. The old slug is retired.
+- **A module whose files are removed is retired by `climb module retire`**,
+  with every row it holds. The seed reads one module's directory, so a
+  directory that is gone retires nothing. The module's questions are retired
+  with it, so its files are never seeded again.
 - **A retired slug is never reused.** A reused slug would attach the old
   answers to whatever question took it.
 - **The author decides which of the two an edit is.** The seed sees changed

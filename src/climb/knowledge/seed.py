@@ -268,3 +268,24 @@ def _retire(conn: Connection, table: Table, held: Iterable[str]) -> int:
         return 0
     live = table.c.id.in_(ids) & table.c.retired_at.is_(None)
     return conn.execute(update(table).where(live).values(retired_at=datetime.now(UTC))).rowcount
+
+
+def retire_module(slug: str, *, root: Database) -> int:
+    """Retires a module whose files are gone, with every row it holds, and
+    returns how many rows were retired. Its slugs are never seeded again."""
+    with root.begin() as conn:
+        found = conn.execute(select(modules.c.id).where(modules.c.slug == slug)).scalar()
+        if found is None:
+            raise LookupError(f"no module '{slug}'")
+        held = select(topics.c.id).where(topics.c.module_id == found)
+        subs = select(subtopics.c.id).where(subtopics.c.topic_id.in_(held))
+        return sum(
+            _retire(conn, table, conn.execute(select(table.c.id).where(where)).scalars())
+            for table, where in [
+                (questions, questions.c.module_id == found),
+                (lessons, lessons.c.module_id == found),
+                (subtopics, subtopics.c.id.in_(subs)),
+                (topics, topics.c.module_id == found),
+                (modules, modules.c.id == found),
+            ]
+        )

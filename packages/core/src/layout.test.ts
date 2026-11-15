@@ -15,7 +15,7 @@ import {
 
 /** Just enough TOML for course.toml subs and graph.toml (`needs` lists, `[[edge]]` tables). */
 function readPython(): { course: Course; raw: RawGraph } | null {
-  const base = resolve(__dirname, '../../../content/modules/python');
+  const base = resolve(__dirname, '../../../content/modules/py');
   if (!existsSync(`${base}/graph.toml`)) return null;
   const strip = (s: string) => s.replace(/#.*$/gm, '');
   const courseToml = strip(readFileSync(`${base}/course.toml`, 'utf8'));
