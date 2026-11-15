@@ -6,6 +6,7 @@ import {
   cardEdges,
   cardNeeds,
   cardNextLine,
+  pickView,
   cardRow,
   briefParts,
   cardSections,
@@ -525,5 +526,39 @@ describe("a technique's knowledge reading", () => {
       { label: 'attempted', value: 'never' },
       { label: 'known', value: '1/3' },
     ]);
+  });
+});
+
+describe('the pick', () => {
+  const base = {
+    probe: false,
+    card_slug: 'bs',
+    card_title: 'Binary search',
+    technique: 'binary-search',
+    template_slug: null,
+    template_title: null,
+    problem_id: null,
+    problem_title: null,
+  };
+
+  it('opens a check as the recall of its template', () => {
+    const view = pickView({ ...base, rank: 1, act: 'recall', template_slug: 'lower', template_title: 'Lower bound' });
+    expect(view.target).toEqual({ kind: 'recall', card: 'bs', template: 'lower' });
+    expect(view.note).toBe('Spaced check owed: recall the form from memory · Binary search');
+    expect(view.title).toBe('Lower bound');
+  });
+
+  it("opens a due review's sitting on the problem, drilled for the card's technique", () => {
+    const view = pickView({ ...base, rank: 3, act: 'sitting', problem_id: 'p1', problem_title: 'Ships' });
+    expect(view.target).toEqual({ kind: 'problem', card: 'bs', problem: 'p1', technique: 'binary-search' });
+    expect(view.note).toMatch(/^Review due: a problem written for this form/);
+  });
+
+  it('names a probe apart from a rung, and a new card by its title alone', () => {
+    expect(
+      pickView({ ...base, rank: 4, act: 'sitting', probe: true, problem_id: 'p2', problem_title: 'X' }).note,
+    ).toMatch(/^A probe/);
+    const start = pickView({ ...base, rank: 5, act: 'start' });
+    expect([start.title, start.note, start.target.kind]).toEqual(['Binary search', 'Start this card', 'card']);
   });
 });

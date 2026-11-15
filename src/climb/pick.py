@@ -41,6 +41,7 @@ class Pick(BaseModel):
     card_slug: str
     template_id: str | None = None  # absent on a probe and a new card
     problem_id: str | None = None  # a sitting's alone
+    probe: bool = False  # a probe ranks with the rungs, and reads apart from them
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,11 +88,27 @@ def offers(
     readings, problems, attempts = list(readings), list(problems), list(attempts)
     offered: list[tuple[tuple[int, float, int, str], Pick]] = []
 
-    def offer(rank: Rank, reading: CardReading, act: Act, **named: str | None) -> None:
-        template = named.get("template_id")
+    def offer(
+        rank: Rank,
+        reading: CardReading,
+        act: Act,
+        *,
+        template_id: str | None = None,
+        problem_id: str | None = None,
+        probe: bool = False,
+    ) -> None:
+        template = template_id
         chance = recall_probability(reviews.get(template, []), now) if template else None
         key = (rank, 1.0 if chance is None else chance, reading.depth, reading.card.slug)
-        offered.append((key, Pick(rank=rank, act=act, card_slug=reading.card.slug, **named)))
+        chosen = Pick(
+            rank=rank,
+            act=act,
+            card_slug=reading.card.slug,
+            template_id=template_id,
+            problem_id=problem_id,
+            probe=probe,
+        )
+        offered.append((key, chosen))
 
     owed = False
     for reading in readings:
@@ -113,7 +130,7 @@ def offers(
             if rung is not None:
                 offer(Rank.RUNG, reading, Act.SITTING, problem_id=rung.problem.id)
         if state is CardState.CONSOLIDATING and (probe := _probe(reading, problems, attempts)):
-            offer(Rank.RUNG, reading, Act.SITTING, problem_id=probe)
+            offer(Rank.RUNG, reading, Act.SITTING, problem_id=probe, probe=True)
 
     flying = sum(in_flight(one, now) for one in readings)
     if flying < CAP and not owed:

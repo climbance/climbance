@@ -204,6 +204,8 @@ ignore_names = [
     "recallable",
     # the cards list reads a card's required rungs solved, and no module does
     "required_solved",
+    # the board's pick names its problem, which the page reads and no module does
+    "problem_title",
 ]
 
 [tool.ruff]

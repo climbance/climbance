@@ -18,6 +18,8 @@ import {
   MODULES_HEADING,
   orderedModuleRows,
   techniqueKnowledge,
+  pickView,
+  type PickTarget,
 } from '@climb/core'
 import { Link } from 'react-router'
 
@@ -39,14 +41,13 @@ export function BoardPage() {
   // the cards in progress read as the cards list draws them, so one card reads
   // one way on both pages
   const cards = useLoaded((signal) => api.GET('/api/cards', { signal }), 'cards')
+  // the pick only adds to the board, so a failed one reads as none
+  const pick = useLoaded((signal) => api.GET('/api/pick', { signal }), 'pick')
   const studying = inProgress(cards.data ?? [])
   const next = nextCards(cards.data ?? [])
   const { catalog, board: learnerBoard, order, now } = useLearner()
   const all = useMemo(() => (catalog ? learnerBoard(null) : null), [catalog, learnerBoard])
-  const modules = useMemo(
-    () => (all ? orderedModuleRows(all, order, now) : []),
-    [all, order, now],
-  )
+  const modules = useMemo(() => (all ? orderedModuleRows(all, order, now) : []), [all, order, now])
   // the knowledge reading, from the device's copy: `log.md`, Mastery
   const known = (row: TechniqueRow) => (all ? techniqueKnowledge(all, row) : null)
 
@@ -80,6 +81,9 @@ export function BoardPage() {
 
           return (
             <div className="space-y-section">
+              {/* the schedule's one act, above every list: `flows.md`, The pick */}
+              {pick.data && <BoardPick view={pickView(pick.data)} />}
+
               {/* the study the user declared, ahead of any staleness ranking */}
               {studying.length > 0 && (
                 <section className="space-y-stack">
@@ -174,5 +178,26 @@ function Practised({
       title={row.technique}
       stats={counts(row, known)}
     />
+  )
+}
+
+// a route per target, as the cards list and the card's page open the same acts
+function pickPath(target: PickTarget): string {
+  const card = encodeURIComponent(target.card)
+  if (target.kind === 'recall')
+    return `/cards/${card}/recall/${encodeURIComponent(target.template)}`
+  if (target.kind === 'problem')
+    return `/problems/${encodeURIComponent(target.problem)}?card=${card}`
+  return `/cards/${card}`
+}
+
+function BoardPick({ view }: { view: ReturnType<typeof pickView> }) {
+  return (
+    <section className="space-y-stack">
+      <SectionHeading title={view.heading} />
+      <PickPanel>
+        <PickRow to={pickPath(view.target)} title={view.title} note={view.note} stats={[]} />
+      </PickPanel>
+    </section>
   )
 }

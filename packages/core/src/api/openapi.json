@@ -1259,10 +1259,45 @@
           }
         }
       }
+    },
+    "/api/pick": {
+      "get": {
+        "summary": "Board Pick",
+        "operationId": "board_pick_api_pick_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/BoardPick"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Board Pick Api Pick Get"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "Act": {
+        "type": "string",
+        "enum": [
+          "recall",
+          "sitting",
+          "start"
+        ],
+        "title": "Act"
+      },
       "Asked": {
         "properties": {
           "attempt": {
@@ -1618,6 +1653,91 @@
           "excluded"
         ],
         "title": "Board"
+      },
+      "BoardPick": {
+        "properties": {
+          "rank": {
+            "$ref": "#/components/schemas/Rank"
+          },
+          "act": {
+            "$ref": "#/components/schemas/Act"
+          },
+          "probe": {
+            "type": "boolean",
+            "title": "Probe"
+          },
+          "card_slug": {
+            "type": "string",
+            "title": "Card Slug"
+          },
+          "card_title": {
+            "type": "string",
+            "title": "Card Title"
+          },
+          "technique": {
+            "type": "string",
+            "title": "Technique"
+          },
+          "template_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Slug"
+          },
+          "template_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Title"
+          },
+          "problem_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problem Id"
+          },
+          "problem_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Problem Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "act",
+          "probe",
+          "card_slug",
+          "card_title",
+          "technique",
+          "template_slug",
+          "template_title",
+          "problem_id",
+          "problem_title"
+        ],
+        "title": "BoardPick",
+        "description": "The pick, named as the board shows it."
       },
       "Candidate": {
         "properties": {
@@ -2987,6 +3107,18 @@
         ],
         "title": "Provider",
         "description": "Who holds an identity and its login: `README.md`."
+      },
+      "Rank": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "title": "Rank",
+        "description": "The order `flows.md` offers in, first served first."
       },
       "RecallAttempt": {
         "properties": {

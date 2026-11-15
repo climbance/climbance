@@ -441,7 +441,7 @@ cards' states.
       overdue review does not
 - [x] Compute the pick in the engine as `flows.md` `## The pick` gives, with a
       test per rank, the cap and the freeze an owed check puts on new cards
-- [ ] Serve the pick on the board on both clients, above the lists the board
+- [x] Serve the pick on the board on both clients, above the lists the board
       already shows. A technique with no template keeps the staleness order
 - [ ] Store what each pick predicted before its attempt, from FSRS alone and
       from the mastery state, naming the settings each was made under. A

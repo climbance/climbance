@@ -10,6 +10,7 @@ from climb.api.devlogin import router as dev_login_router
 from climb.api.judging import router as judging
 from climb.api.knowledge import router as knowledge
 from climb.api.pages import Pages
+from climb.api.picks import router as picks
 from climb.api.reads import router as reads
 from climb.api.signin import SignIn, install
 from climb.api.writes import router as writes
@@ -45,6 +46,7 @@ def create_app(
     app.include_router(account, prefix=PREFIX)
     app.include_router(knowledge, prefix=PREFIX)
     app.include_router(judging, prefix=PREFIX)
+    app.include_router(picks, prefix=PREFIX)
     app.include_router(apps, prefix=PREFIX)
     if sign_in is not None:
         install(app, sign_in, PREFIX)

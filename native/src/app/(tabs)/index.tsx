@@ -26,6 +26,8 @@ import {
   MODULES_HEADING,
   focusLabel,
   orderedModuleRows,
+  pickView,
+  type PickTarget,
 } from '@climb/core';
 import { useStore } from '@/lib/store';
 import { useEngine } from '@/lib/useEngine';
@@ -62,7 +64,9 @@ export default function PracticeScreen() {
 
   const board = useEngine('/api/board');
   const cards = useEngine('/api/cards');
-  const pull = usePullSync(board.reload, cards.reload);
+  // the pick only adds to the board, so a failed one reads as none, as on the web
+  const pick = useEngine('/api/pick');
+  const pull = usePullSync(board.reload, cards.reload, pick.reload);
   // the cards in progress only add to the board, so a failed list reads as none, as on the web
   const error = board.error;
   const cardsIn = cards.data !== null || cards.error !== null;
@@ -121,7 +125,7 @@ export default function PracticeScreen() {
           blank={BOARD_NONE}
           blankWhen={(x) => x.board.rows.length === 0}
         >
-          {(x) => <BoardBody board={x.board} cards={x.cards} learner={all} />}
+          {(x) => <BoardBody board={x.board} cards={x.cards} learner={all} pick={pick.data ?? null} />}
         </Loaded>
       </ScrollView>
       <ContinueNotice next={next} />
@@ -129,7 +133,29 @@ export default function PracticeScreen() {
   );
 }
 
-function BoardBody({ board, cards, learner }: { board: Board; cards: ListedCard[]; learner: Learner | null }) {
+// a route per target, as the cards list and the card's screen open the same acts
+function openPick(target: PickTarget) {
+  if (target.kind === 'recall')
+    router.push({ pathname: '/recall', params: { slug: target.card, template: target.template } });
+  else if (target.kind === 'problem')
+    router.push({
+      pathname: '/problem',
+      params: { problem: target.problem, technique: target.technique, card: target.card },
+    });
+  else router.push({ pathname: '/card', params: { slug: target.card } });
+}
+
+function BoardBody({
+  board,
+  cards,
+  learner,
+  pick,
+}: {
+  board: Board;
+  cards: ListedCard[];
+  learner: Learner | null;
+  pick: components['schemas']['BoardPick'] | null;
+}) {
   const theme = useTheme();
   const [now] = useState(() => Date.now());
   // the knowledge reading, from the device's copy: `log.md`, Mastery
@@ -137,8 +163,18 @@ function BoardBody({ board, cards, learner }: { board: Board; cards: ListedCard[
   const { untouched, practised, foot } = boardView(board, known);
   const studying = inProgress(cards);
   const next = nextCards(cards);
+  const view = pick ? pickView(pick) : null;
   return (
     <>
+      {/* the schedule's one act, above every list: `flows.md`, The pick */}
+      {view ? (
+        <>
+          <Heading title={view.heading} />
+          <PickPanel>
+            <PickRow title={view.title} note={view.note} stats={[]} onPress={() => openPick(view.target)} />
+          </PickPanel>
+        </>
+      ) : null}
       {studying.length > 0 ? (
         <>
           <Heading title={BOARD_STUDYING} count={studying.length} />

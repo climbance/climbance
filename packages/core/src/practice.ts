@@ -21,6 +21,14 @@ import {
   FORM_NO_CASES,
   FORM_UNCHECKED,
   NO_DIFFICULTY,
+  PICK_CHECK_OPEN,
+  PICK_CHECK_OWED,
+  PICK_HEADING,
+  PICK_PROBE,
+  PICK_REVIEW_RECALL,
+  PICK_REVIEW_SITTING,
+  PICK_RUNG,
+  PICK_START,
   PROCEDURE,
   recallDue,
   recallOverdue,
@@ -33,6 +41,7 @@ import {
 type TechniqueRow = components['schemas']['TechniqueRow'];
 type BoardReading = components['schemas']['Board'];
 type ListedCard = components['schemas']['ListedCard'];
+type BoardPick = components['schemas']['BoardPick'];
 type Recalled = components['schemas']['Recalled'];
 type Picked = components['schemas']['Picked'];
 type Template = components['schemas']['Template'];
@@ -549,4 +558,48 @@ export async function startCardRun(client: EngineClient, slug: string): Promise<
   } catch (reason) {
     return { ok: false, refused: String(reason) };
   }
+}
+
+/** Where the board's pick opens, which each client maps to a route of its own. */
+export type PickTarget =
+  | { kind: 'recall'; card: string; template: string }
+  | { kind: 'problem'; card: string; problem: string; technique: string }
+  | { kind: 'card'; card: string };
+
+export interface PickView {
+  heading: string;
+  title: string;
+  note: string;
+  target: PickTarget;
+}
+
+const PICK_NOTES: Record<number, string> = { 1: PICK_CHECK_OWED, 2: PICK_CHECK_OPEN };
+
+/** The board's pick as both clients show it, above the lists: `flows.md`, The pick. */
+export function pickView(pick: BoardPick): PickView {
+  const card = pick.card_slug;
+  const target: PickTarget =
+    pick.act === 'recall' && pick.template_slug
+      ? { kind: 'recall', card, template: pick.template_slug }
+      : pick.act === 'sitting' && pick.problem_id
+        ? { kind: 'problem', card, problem: pick.problem_id, technique: pick.technique }
+        : { kind: 'card', card };
+  const note =
+    PICK_NOTES[pick.rank] ??
+    (pick.rank === 3
+      ? pick.act === 'sitting'
+        ? PICK_REVIEW_SITTING
+        : PICK_REVIEW_RECALL
+      : pick.rank === 4
+        ? pick.probe
+          ? PICK_PROBE
+          : PICK_RUNG
+        : PICK_START);
+  const title = pick.problem_title ?? pick.template_title ?? pick.card_title;
+  return {
+    heading: PICK_HEADING,
+    title,
+    note: title === pick.card_title ? note : `${note} · ${pick.card_title}`,
+    target,
+  };
 }

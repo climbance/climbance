@@ -51,6 +51,11 @@ those steps at low fidelity.
 - **A signed-in user lands on the board, on both clients.** Every sitting
   starts from a technique the user picks there, Continue starts the next
   queue there, and Phase 18 serves the scheduler's pick on the same page.
+- **The board serves the pick above its lists, on both clients.** The pick
+  is one row under its own heading, naming the form, the problem or the card,
+  and the act it opens. `flows.md` `## The pick` gives what it offers. A user
+  who declines it picks from the lists below, which keep their order, and a
+  technique with no template keeps the staleness order.
 - **The board names the cards in progress before the techniques.** A card in
   progress is one
   acquiring or consolidating: a study the user declared and has not finished.
