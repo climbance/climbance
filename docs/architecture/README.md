@@ -270,6 +270,10 @@ without redefining them. Grouped by the file that specifies the record.
   correctly, and `none` an attempt that went the way it should.
 - **Card run**: the record that a card was started, and the probes it was
   given.
+- **Pick**: the one problem or recall the board serves, read from FSRS,
+  mastery and the cards' states.
+- **In flight**: a card acquiring, or consolidating with its spaced check open
+  or owed. The pick offers a new card only while fewer than two are in flight.
 - **Card state**: how far one user's study of one card has gone: not started,
   acquiring, consolidating, graduated or lapsed. Derived from the log, never
   stored.
@@ -397,7 +401,7 @@ times. Each record class is specified in one of the files beside it.
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims |
 | [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, and the mastery derived from them |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
-| [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, adjudicating the eval set |
+| [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
 | [`wireframes.md`](wireframes.md) | Each page drawn at low fidelity |
 | [`knowledge.md`](knowledge.md) | Modules, where their authoring rules live, questions, lessons, the schedule, the queues, certifications, and the user's knowledge log |

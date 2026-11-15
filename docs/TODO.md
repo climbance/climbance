@@ -425,23 +425,24 @@ cards' states.
 - [x] Write the spaced check into `log.md` as two recall probabilities, 0.89
       and 0.84, with a three-day floor. At the default parameters these land on
       algo-prep's measured window, days 3 to 5
-- [ ] Write the in-flight cap into the pick's rule in `flows.md`: two cards,
+- [x] Write the in-flight cap into the pick's rule in `flows.md`: two cards,
       counting a card on its ladder or with its spaced check open. A card
       waiting for its check holds no slot
 - [x] Compute each template's recall probability and due time over the
       ported replay, as `log.md` `## The template schedule` gives, with a test
       pinning the check to days 3 and 5 at the default parameters
-- [ ] Write the pick's rule into `flows.md`: what it reads, how it aims at the
+- [x] Write the pick's rule into `flows.md`: what it reads, how it aims at the
       form a failed sitting missed, what breaks a tie, and what the board offers
       beside it. `flows.md` says today that the trainer draws and nothing
       schedules
-- [ ] Write into the pick's rule what it offers per card state: a due recall,
+- [x] Write into the pick's rule what it offers per card state: a due recall,
       an open run's next rung, an owed spaced check, a new card only below the
       cap, and a lapsed card again. An owed check freezes new starts, and an
       overdue review does not
-- [ ] Serve one pick on the board, naming a due template and a problem written
-      for it, with every technique still on offer beside it. A technique with no
-      template keeps the board's staleness order
+- [ ] Compute the pick in the engine as `flows.md` `## The pick` gives, with a
+      test per rank, the cap and the freeze an owed check puts on new cards
+- [ ] Serve the pick on the board on both clients, above the lists the board
+      already shows. A technique with no template keeps the staleness order
 - [ ] Store what each pick predicted before its attempt, from FSRS alone and
       from the mastery state, naming the settings each was made under. A
       prediction written after the outcome is fitted to it

@@ -830,9 +830,10 @@ trainer never prints the form until the user asks for it as a hint.
 - **A recall attempt needs no open card run.** The record is keyed to a card
   and a template, as `log.md` gives it, and the run measures the ladder rather
   than the recall.
-- **The trainer draws, and nothing schedules.** Never recalled first, then
-  least recently recalled, which is the ordering the board uses for a
-  technique. The scheduler Phase 18 adds may draw differently.
+- **The trainer draws by staleness, and the pick schedules.** A recall the
+  user starts from the card draws never recalled first, then least recently
+  recalled, which is the ordering the board uses for a technique. A recall
+  the pick serves names its template, as `## The pick` gives.
 
 Deferred, since only use answers each:
 
@@ -897,6 +898,95 @@ Deferred, since only use answers each:
 - Whether a template match written by the user adds a review. A user record
   stands over a machine's, so the reason the matcher's matches add none does
   not reach it.
+
+## The pick
+
+The board serves one pick: the next act the schedule names for the user. The
+user may take it or pick anything else the board offers.
+
+- **The pick reads three folds**: each template's FSRS state, each card's
+  state with its next spaced check or recall, and each technique's mastery.
+  All three are derived on every read, so the pick is too, and nothing stores
+  it but the prediction each pick makes.
+- **A pick names a template and the act that reviews it.** The act is a
+  recall of the template, or a sitting on a problem written for it.
+- **A spaced check is served as a recall.** Graduation reads a recall rated
+  Good, as `log.md` gives, so a check served as a sitting could never
+  graduate the card.
+- **A graduated template's due review is served as a sitting**, on a problem
+  written for the template that the user has not solved. A sitting reviews the
+  form in use on a statement the user has not seen, where a recall reviews
+  reproducing it. A template with no such problem is served as a recall.
+- **A failed sitting aims the pick at the form it missed.** The sitting's
+  Again lowers the target template's stability, so FSRS brings the template
+  due again soon. The pick then serves the template's recall once the
+  relearning step has passed, and a problem written for it after the recall
+  passes.
+- **A failed sitting labelled `syntax` or `speed` aims nothing.** Each label
+  says the solver held the form. The Again still enters FSRS, since the
+  rating reads the attempts alone, as `log.md` gives.
+- **Ties break on the lowest recall probability, then the shallowest card,
+  then the lowest execution reading, then the slug.** Recall probability ranks
+  the form closest to being lost. Depth then serves a form other forms build
+  on before the forms above it.
+- **The board offers everything beside the pick.** The cards in progress, the
+  unlocked cards not started and every technique stay listed, as `pages.md`
+  gives. The pick sits above them, so a user who declines it picks as before.
+- **A technique with no template keeps the board's staleness order.** No
+  template means no FSRS state, so the schedule has nothing to rank it by.
+
+The pick offers by card state, in this order, and serves the first offer the
+user's cards hold.
+
+1. An owed spaced check, on a consolidating card or a lapsed one.
+2. An open spaced check, on a consolidating card or a lapsed one.
+3. A graduated template's due review, overdue or not.
+4. An acquiring card's next rung, or a consolidating card's probe.
+5. A new card, only below the cap and only while no check is owed.
+
+- **An owed check comes first.** The check tests whether the form survived
+  the gap after study, and each further day moves it toward a second
+  acquisition. A check that is open but not owed can wait a day, so it comes
+  second.
+- **A lapsed card is offered again through its checks.** Each template rated
+  Again since graduation waits for its own check, and the card graduates
+  again on those recalls alone, as `log.md` gives.
+- **A due review comes before a rung.** A graduated form decays while it
+  waits, and a ladder picks up where it stopped.
+- **An acquiring card offers its first unsolved rung**, required rungs before
+  optional ones, in the ladder's order. The ladder follows the card's
+  template order, as `## Solving a rung` gives.
+- **A consolidating card with no probe solved offers its next unattempted
+  probe**, ranked with the rungs. Graduation needs a solved probe, and a
+  probe needs no wait.
+- **A consolidating card waiting for its check offers nothing else.** Its
+  rungs are solved, and its check has not opened.
+- **A new card is the shallowest unlocked card not started**, as the board
+  already lists them. The cap and an owed check both hold it back.
+- **An owed check freezes new starts, and an overdue review does not.** An
+  owed check is study left unfinished, and a new card would split the days
+  that finish it. An overdue review is decay risk on a form already kept, so
+  it ranks by its recall probability and holds nothing back.
+
+The in-flight cap bounds when the pick offers a new card.
+
+- **The pick offers a new card only while fewer than two cards are in
+  flight.** Two is the limit the author's earlier drill board held. Each card
+  in flight needs work on the day it is open, and more than two split each day
+  between too many forms.
+- **A card is in flight while it is acquiring, or consolidating with its
+  spaced check open or owed.** Each needs work now: a rung to solve, or a
+  recall to make.
+- **A consolidating card waiting for its check to open holds no slot.** Its
+  next act is days away. Counting it would leave those days idle, and the next
+  card's ladder fills them instead.
+- **A graduated card and a lapsed card hold no slot.** A graduated card is
+  done. A lapsed card needs recalls alone, which the pick offers beside a new
+  card.
+- **The cap is folded from the card states on every read**, and nothing stores
+  it.
+- **The cap bounds the pick, and a start by hand stays open.** The card's page
+  starts a run whatever the cap reads, since the user chose that card.
 
 ## Adjudicating the eval set
 

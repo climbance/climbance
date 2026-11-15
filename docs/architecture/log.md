@@ -480,6 +480,10 @@ Deferred, since only use answers each:
 
 - Whether a probe solved after the sitting's clock passed a limit still
   graduates the card.
+- A lapsed template rated Again again after its own passing recall, while
+  another lapsed template still waits. The card graduates again without
+  reading that second failure, and only a failure after the new graduation
+  lapses the card.
 - The card state of a started card whose ladder holds no required rung, every
   core template being a gap.
 - A core template added by a re-seed to a card that already graduated.
