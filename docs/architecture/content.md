@@ -262,7 +262,8 @@ The subtopic says why the forms are correct and what they cost.
   and a lesson never restate each other.
 - **A brief loses its `## Complexity`, `## Pitfalls` and `## Key insights`
   sections once a subtopic of the card's primary module names its technique.**
-  The facts in those sections become the subtopic's concepts. `card check`
+  The facts in those sections become the subtopic's concepts. A new card is
+  written without the three sections, and its facts wait for the subtopic. `card check`
   reads the modules in `content/modules/` and refuses a brief keeping one of
   the three sections after that. Another module's subtopic holds none of the
   card's facts, so it leaves the brief alone. The check runs in `card check`

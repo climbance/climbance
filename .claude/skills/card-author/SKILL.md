@@ -93,21 +93,21 @@ file in place.
      differently (a dict on the problem's own names against an array behind an
      integer mapping). A mapping layer must be total over everything that can
      appear; name the error class it produces when it is not.
-   - **Key insights** — 3–6 bullets, non-obvious only, including the solve-time
-     practicalities that cost minutes rather than correctness (sizing an array
-     `n + 1` to work 1-indexed instead of remapping).
-   - **Complexity** — per speed-up and per variation where they differ, with the
-     bound named rather than described. "Effectively constant" gives a reader
-     nothing to reason with; `O(α(n))`, α ≤ 4 for any real n, does.
-   - **Pitfalls** — where time is actually lost: off-by-ones, ties, leftovers,
-     sentinels. **Give the structural fix, not the warning.** "Append a sentinel
-     so there is one width formula and one code path" is a fix; "be careful with
-     the width" is a note to forget.
+     Name here the solve-time practicalities that cost minutes rather than
+     correctness (sizing an array `n + 1` to work 1-indexed instead of
+     remapping).
    - **Out of scope** — what belongs to the technique and is deliberately not
      here, and where it would be needed, so the card is closed rather than
      merely unfinished.
    - **Open** — the hard form the optional template answers, named as worth
      deriving first: what makes it hard and nothing that removes the difficulty.
+
+   **No `## Key insights`, `## Complexity` or `## Pitfalls`.** Those facts
+   are concepts of the primary module's subtopic naming the technique, written
+   by `concept-author` with a witness each, and the card's page links to that
+   subtopic. `card check` refuses the three once the subtopic exists. A pitfall
+   the card owns is answered by the template's shape and named in its `notes`,
+   as step 5 gives.
 
    No problem statements, no test cases — see Rules.
 
@@ -266,7 +266,7 @@ file in place.
      names a solve would use, one statement per line, never `;`-joined and never
      a single-line body. A trailing comment may state the invariant a structure
      maintains (`# indices; nums[st] strictly decreasing`) or mark the step that
-     is the trick — nothing else, and complexity goes in the brief.
+     is the trick — nothing else, and complexity goes in the subtopic.
    - **Run it before writing it into the card**, against a brute force over
      random inputs wherever one is cheap to write. A template that compiles and
      is subtly wrong is worse than none, since it is drilled until automatic.
