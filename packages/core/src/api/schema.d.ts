@@ -590,7 +590,7 @@ export interface components {
     Act: 'recall' | 'sitting' | 'start';
     /**
      * Arm
-     * @description Which policy chose the pick, once the comparison assigns one.
+     * @description Which policy chose the pick, were a comparison to assign one.
      * @enum {string}
      */
     Arm: 'scheduler' | 'baseline';
