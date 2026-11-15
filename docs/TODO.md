@@ -420,7 +420,7 @@ cards' states.
 - [x] Decide whether a short exercise drawn from a template, such as its key
       line, reviews that template in FSRS or stays practice beside the
       schedule, and write the choice into `flows.md`
-- [ ] Write down the FSRS parameters the schedule starts from and why each was
+- [x] Write down the FSRS parameters the schedule starts from and why each was
       chosen. A number nobody wrote down is guessed again at every change
 - [x] Write the spaced check into `log.md` as two recall probabilities, 0.89
       and 0.84, with a three-day floor. At the default parameters these land on

@@ -588,9 +588,10 @@ check is owed, and when a graduated template is due again.
 - **The template settings stay on the engine.** The question settings reach
   both clients in the snapshot. The template schedule runs on the server
   alone, so changing it ships no snapshot and regenerates no fixture.
-- **The settings start from the FSRS-6 defaults**, the same as the
-  questions': default parameters, desired retention 0.9, learning steps of 1
-  and 10 minutes, a relearning step of 10 minutes, fuzzing off.
+- **The settings start equal to the questions'**: the FSRS-6 default
+  parameters, desired retention 0.9, learning steps of 1 and 10 minutes, a
+  relearning step of 10 minutes, and fuzzing off. `knowledge.md` `## The
+  schedule` gives the reason for each.
 
 Deferred, since only use answers each:
 
