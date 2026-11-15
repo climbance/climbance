@@ -433,15 +433,16 @@ lapsed.
   card has not graduated.** A solved ladder shows the form was reached with the
   card in view. It does not show the form is kept, so the card waits for a
   check spaced after the ladder.
-- **The solve of the last required rung opens consolidating.** The spacing gap
-  graduation waits for counts from that solve, the last sitting the ladder
-  asked for.
+- **The solve of the last required rung opens consolidating.** Each template's
+  spaced check is then read from the template's reviews, which include the
+  ladder's sittings.
 - **Graduated: the graduation rule held, and the card has not lapsed since.**
-  The rule reads the solved ladder, a clean recall after the spacing gap of
-  every template that carries cases, and a probe solved unprompted. A card is
-  done once it graduates.
-- **Lapsed: a graduated card one of whose templates has failed a review since
-  graduation.** A form can be lost after the card graduated, and a card left
+  The rule reads the solved ladder, a recall rated Good of every template that
+  carries cases once its spaced check opened, and a probe solved unprompted.
+  `## The template schedule` gives the check. A card is done once it
+  graduates.
+- **Lapsed: a graduated card one of whose templates has had a review rated
+  Again since graduation.** A form can be lost after the card graduated, and a card left
   graduated on a lost form is never offered again.
 - **Before graduation, a card state reads the ladder as it stands now.** A
   re-derived ladder holding a required rung the user has not solved returns a
@@ -456,10 +457,8 @@ lapsed.
 
 Deferred, since only use answers each:
 
-- The graduation rule in full: the spacing gap, what a clean recall is, and
-  which probe counts.
-- Which failed review lapses a card, and what a lapsed card needs to graduate
-  again.
+- Which probe graduates a card.
+- What a lapsed card needs to graduate again.
 - The card state of a started card whose ladder holds no required rung, every
   core template being a gap.
 - A core template added by a re-seed to a card that already graduated.
@@ -476,7 +475,7 @@ user. `content.md` gives the card graph the rule reads.
 - **A met card stays met through graduation and a lapse.** A lapse offers the
   lapsed card again and locks nothing above the lapsed card, since the forms
   above the lapsed card were studied and stay studied.
-- **Met does not wait for graduation.** Graduation waits for a spacing gap
+- **Met does not wait for graduation.** Graduation waits for a spaced check
   after the ladder, and a path gated on graduation would stall for days at
   every edge.
 - **Locked and met are derived on every read, never stored.** Each is a fold
@@ -511,6 +510,74 @@ One template reproduced from memory, and how it went.
   recognising it unprompted, so recall fluency never stands in for mastery. The
   gap between recall fluency and solving fluency is the false fluency that
   blocked practice trains.
+
+## The template schedule
+
+Each template's memory, for one user, is FSRS-6, replayed from the template's
+reviews. One curve then decides when a template's spaced check opens, when the
+check is owed, and when a graduated template is due again.
+
+- **A template's state is replayed from its reviews in time order**, as a
+  question's is from its answers in `knowledge.md`. The state is derived on
+  every read and never stored.
+- **A review is a recall attempt of the template, or a sitting on a problem
+  whose `target_template_id` names the template.** `flows.md` lists which
+  sittings count.
+- **Each recall attempt becomes a rating.** A pass with no hint rates Good, a
+  pass after the notes rates Hard, and a failed recall rates Again. A pass
+  after the form hint rates Again too, since typing back a form just read
+  recalls nothing.
+- **Each sitting becomes a rating.** A solve on the first submission rates
+  Good, a solve after a failed submission rates Hard, and an unsolved sitting
+  rates Again. Easy is never used.
+- **The ladder's sittings are reviews.** A rung solved with the card in view
+  is a warm review, and FSRS gives a first review a short stability. The last
+  review before the check is therefore the point the check is measured from.
+- **Recall probability is FSRS's retrievability**: the chance, read from the
+  replay, that the user still reproduces the form at a given moment.
+- **The spaced check opens when a template's recall probability falls to
+  0.88, and is owed once it falls to 0.84.** At the default parameters, after
+  one Good review, these are day 3 and day 5. The check tests whether the form
+  survived, so it sits later than the due time a maintaining review reads.
+- **The check never opens within three days of the template's last review.**
+  A Hard review leaves a stability of 1.3 days, and the band alone would open
+  the check on day 1.7. Recall probability does not model how warm a form
+  still is the day after practice.
+- **A check passed after it was owed still counts.** A pass at lower recall
+  probability is stronger evidence that the form was kept. Owed orders the
+  work and freezes new card starts, as `flows.md` gives the pick.
+- **A failed check is a review rated Again.** FSRS relearning shortens the
+  stability, and the window is read again from the new state. The card stays
+  consolidating.
+- **A graduated template is due at desired retention 0.9**, FSRS's own due
+  time. An overdue template freezes nothing, and the pick serves the lowest
+  recall probability first.
+- **A review rated Again on a graduated card's template lapses the card.** A
+  review rated Hard shortens the next interval and leaves the card graduated.
+- **The settings are constants in code, and a change replays every
+  template.** No state is stored, so new settings move every due time with no
+  migration. Each stored prediction names the settings it was made under, so
+  a calibration compares it with the model that made it.
+- **The template settings stay on the engine.** The question settings reach
+  both clients in the snapshot. The template schedule runs on the server
+  alone, so changing it ships no snapshot and regenerates no fixture.
+- **The settings start from the FSRS-6 defaults**, the same as the
+  questions': default parameters, desired retention 0.9, learning steps of 1
+  and 10 minutes, a relearning step of 10 minutes, fuzzing off.
+
+Deferred, since only use answers each:
+
+- The band and the floor beyond their starting values. They move on what the
+  stored predictions measure against the outcomes.
+- A desired retention for templates apart from questions. The default
+  parameters were fitted on flashcards, and after three Good reviews their
+  intervals reach 14, 57 and 196 days.
+- Parameters fitted per user, once one user's log holds enough reviews.
+- How a sitting's elapsed time enters its rating.
+- The check of a recallable template no review has reached when its card
+  turns consolidating.
+- Whether a probe reviews every template its solution displays, or only its
+  target.
 
 ## Short exercises
 

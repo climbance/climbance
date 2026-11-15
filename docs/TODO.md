@@ -399,13 +399,14 @@ drill board tracked them by hand.
 - [x] Write a card's states into `content.md` and `log.md`: not started,
       acquiring, consolidating, graduated and lapsed, each derived from the log
       and never stored. `flows.md` defers what done means, and this answers it
-- [ ] Write the graduation rule: the required rungs solved, every recallable
-      template recalled clean after the spacing gap, and a probe solved
+- [x] Write the graduation rule: the required rungs solved, every recallable
+      template recalled Good once its spaced check opened, and a probe solved
       unprompted. algo-prep's Pass-2 is this rule, and a rung solved warm proves
       no retention
-- [ ] Write the lapse rule: a graduated card lapses when one of its templates
-      fails its FSRS review. The card is offered again rather than left
-      graduated on a form that went
+- [x] Write the lapse rule: a graduated card lapses when one of its templates
+      has a review rated Again. A review rated Hard leaves it graduated
+- [ ] Write into `log.md` which probe graduates a card, and what a lapsed card
+      needs to graduate again. Both are deferred under `## Card states`
 - [ ] Show each card's state and its next due recall on `/cards` and on the
       board's cards in progress. The dashboard left both for this phase
 
@@ -415,20 +416,23 @@ The board orders by staleness and the user picks. Sitting daily makes that pick
 itself the work, so the board serves one, read from FSRS, mastery and the
 cards' states.
 
-- [ ] Write into `flows.md` what counts as a review of a template: a recall
-      attempt, graded by the hints taken, and a sitting on a problem whose
-      `target_template_id` names the template. The matcher is unscored, so a
-      review never reads a match
+- [ ] Write into `flows.md` which sittings review a template, rungs and
+      probes among them. `log.md` gives each review's rating. The matcher is
+      unscored, so a review never reads a match
 - [ ] Decide whether a short exercise drawn from a template, such as its key
       line, reviews that template in FSRS or stays practice beside the
       schedule, and write the choice into `flows.md`
 - [ ] Write down the FSRS parameters the schedule starts from and why each was
       chosen. A number nobody wrote down is guessed again at every change
-- [ ] Write down the card spacing gap and the in-flight cap the schedule starts
-      from: five days and two cards, algo-prep's measured decay edge and its
-      proven limit. Each moves only on what the log measures
-- [ ] Compute a due date per template with FSRS over its reviews. A template is
-      one form, and a technique mixes forms that fade at different rates
+- [x] Write the spaced check into `log.md` as two recall probabilities, 0.88
+      and 0.84, with a three-day floor. At the default parameters these land on
+      algo-prep's measured window, days 3 to 5
+- [ ] Write the in-flight cap into the pick's rule in `flows.md`: two cards,
+      counting a card on its ladder or with its spaced check open. A card
+      waiting for its check holds no slot
+- [ ] Compute each template's recall probability and due time with FSRS over
+      its reviews, as `log.md` `## The template schedule` gives, with a test
+      pinning the check to days 3 and 5 at the default parameters
 - [ ] Write the pick's rule into `flows.md`: what it reads, how it aims at the
       form a failed sitting missed, what breaks a tie, and what the board offers
       beside it. `flows.md` has selection never schedule today

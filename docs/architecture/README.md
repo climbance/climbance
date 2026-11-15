@@ -278,9 +278,13 @@ without redefining them. Grouped by the file that specifies the record.
 - **Graduated**: the card state once the graduation rule held, until a lapse.
   A graduated card is done.
 - **Lapsed**: the card state of a graduated card one of whose templates has
-  since failed a review.
+  since had a review rated Again.
 - **Recall attempt**: one template reproduced from memory, with the hints
   taken.
+- **Recall probability**: FSRS's retrievability of one template for one user
+  at a moment, read from the replay of its reviews.
+- **Spaced check**: the recall a consolidating card's template waits for. It
+  opens and falls owed at two recall probabilities, as `log.md` gives.
 - **Short exercise**: a question about code answered in seconds with no
   typing, such as judging a solution. Each kind is a record kind of its own.
 - **Judgement item**: a template's form, clean or carrying one mutant that
@@ -288,8 +292,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Judgement**: one user's answer to a judgement item: clean or flawed, and
   the tapped line where flawed.
 - **Review**: one check that a user still holds a template's form or a
-  question's fact. An answer to a seen question is a review of it. Which
-  recall attempts and sittings count as a review is deferred to the schedule.
+  question's fact. An answer to a seen question is a review of it, and so is
+  a template's recall attempt or a sitting written for the template.
 - **Board**: the per-technique view of progress, derived from attempts and
   claims. Never stored.
 - **Mastery**: how well a user knows one technique, in three parts:
