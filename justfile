@@ -114,6 +114,7 @@ app:
 types:
     uv run python -m climb.api --openapi > packages/core/src/api/openapi.json
     cd web && npx openapi-typescript ../packages/core/src/api/openapi.json -o ../packages/core/src/api/schema.d.ts
+    npx prettier --write packages/core/src/api/schema.d.ts
 
 # Apply every migration the database named by DATABASE_URL has not had.
 migrate:
