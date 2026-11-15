@@ -492,9 +492,9 @@ than the author.
 - The technique field on a subtopic, carried by the seed and the snapshot, and
   the algorithms module authored to it in the content repository, checked by
   the solver before it is seeded.
-- The card rules numbered in `cards.md`, and `climb card check` with a
-  pass running each template's mutants against its cases, so the mutants a
-  solution is judged on are ones the cases catch.
+- `climb card check` with a pass running each template's mutants against its
+  cases, so the mutants a solution is judged on are ones the cases catch. Each
+  authored card's prose reviewed once for false claims.
 - Judging a solution: a template's solution, clean or carrying one mutant that
   fails a case, judged as correct or not and then by its flawed line. The
   key line: one line blanked, the choices drawn from that line's mutants.
@@ -504,45 +504,13 @@ than the author.
 - Exit: a user other than the author completes the first run with its
   pretest, and uses a lesson, a short exercise and a sitting.
 
-## Phase 17 — The content pipeline (after Phase 16)
+## Phase 17 — The content pipeline — deferred
 
-The card rules, `card check` with its mutant pass, the solver and the lesson
-reviewer moved to Phase 16 on 2026-11-13, which needs them for the algorithms
-module. The rest of the pipeline waits for the next module.
-
-Modules and cards written, checked and revised by a pipeline of Claude Code
-sessions, with the pipeline's reviewers measured before content is trusted to
-them. Planned on 2026-11-11, after three review passes by hand over the Python
-module left 23 numbered rules. Cards joined on 2026-11-12.
-
-- The authoring rules, the level definitions, the skills and the checks in
-  this repo. The content repository holds the modules and the cards, each
-  module's own rules and skip list, and the plan of what to write.
-- The content repository's `check.py` ported into the engine as a tested
-  command. The seed's own gate stays apart from it, since the gate executes
-  no snippet.
-- The card rules numbered in a `cards.md` beside `docs/authoring/rules.md`,
-  and the card validator ported to `climb card check`, which also runs
-  each template's mutants against its cases.
-- A writer session per subtopic level, working through the module's coverage
-  map, and per card.
-- **Blind reviewers, each a fresh session asked one question.** For a module,
-  one answers without the key, one picks from the choices alone, one assigns a
-  level from the definitions, one checks each fact against the module's named
-  sources, and one reads a lesson's prose against its example. For a card, one
-  names the form from a trigger alone, and one checks a brief against the
-  criterion and the code.
-- A fixer that is not the reviewer, and a findings file per module and per
-  card naming the rule, the question or template, and the outcome.
-- **The reviewers scored before they are used.** The Python module as it stood
-  before the three passes is the module reviewers' test set, and the defects
-  those passes fixed are its labels. No pass labelled a card, so the card
-  reviewers' findings over the nine cards are read by hand.
-- A module names how each kind of question is proved: by running code, by
-  arithmetic, or by a dated source.
-- Exit: the reviewers are scored, one Python subtopic level is rewritten
-  through the loop, and one card is revised through it, each with every
-  finding closed.
+Planned on 2026-11-11 for modules and cards. Authoring by concept superseded
+the module half on 2026-11-13: `docs/authoring/concepts.md` and the
+`concept-author` skill give a module its writer, reviewers, fixer and digest.
+The card half, blind card reviewers and a card loop, waits until new cards are
+written.
 
 ## Phase 18 — Scheduling and mastery
 

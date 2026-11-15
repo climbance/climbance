@@ -190,7 +190,7 @@ starts, so their subtopics come first.
 
 Judging a solution is built from a template's mutants that fail a case, so a
 template's cases must catch its mutants first. Taken from the content
-pipeline, Phase 17, which keeps the rest for the next module.
+pipeline, Phase 17, which is deferred until new cards are written.
 
 - [x] Port the skill's `validate.py` to `climb card check <slug>`, with a
       test per check, and have the content repository's pre-commit hook run
@@ -202,6 +202,16 @@ pipeline, Phase 17, which keeps the rest for the next module.
 - [x] Seed cards in a few round trips: batch the template and case inserts,
       and skip a card the store already holds unchanged. A seed through the
       tunnel paid one round trip per row
+- [ ] Review every authored card's brief and template notes once, in a fresh
+      session, against the technique's criterion and the template's own code,
+      and fix each false claim found. `card check` runs code and catches no
+      false claim in prose
+- [ ] Decide what a question or a card written by a session records about its
+      writer, and write the choice into `machine.md`. A Claude Code session
+      leaves no call in the call log
+- [ ] Add to rule 27 in `docs/authoring/rules.md` that a concept resting on a
+      `quote` names the date its source was read. A source page changes
+      after it is quoted
 
 ### Judging a solution
 
@@ -261,101 +271,6 @@ are the capabilities any new user needs from it.
 - A user other than the author completes the first run with its pretest, and
   uses each form of the algorithms track: a lesson, a short exercise and a
   sitting.
-
-## Phase 17 — the content pipeline (after Phase 16)
-
-Modules and cards written, checked and revised by Claude Code sessions, with no
-call to the API. The pipeline lives in this repo, and the content repository
-holds the content alone. Planned 2026-11-11, and cards joined on 2026-11-12.
-Which modules and cards get written is the content repository's `PLAN.md`.
-On 2026-11-13 the card rules, `card check` with its mutant pass and the
-solver moved to Phase 16, which needs them for the algorithms module. The rest
-waits for the next module.
-
-### The design
-
-- [x] Write into `knowledge.md` where authoring lives: the rules, the level
-      definitions, the skills and the checks in this repo, and the modules
-      with their own rules and skip lists in the content repository
-- [ ] Add "Authoring content" to `flows.md`: the steps in order for a module
-      and for a card, why a reviewer sees neither the key nor the writer's
-      reasoning, why the fixer is another session, and what stops the loop
-- [ ] Decide what a question or a card written by a session records about its
-      writer, and write the choice into `machine.md`. A Claude Code session
-      leaves no call in the call log
-- [ ] Add the rule for a question no interpreter proves to
-      `docs/authoring/rules.md`: the question names its source and the date
-      the source was read. A module of such questions needs it before its
-      first bank
-
-### The move
-
-- [x] Move `RULES.md` and the authoring half of `content/modules/CLAUDE.md`
-      into this repo's docs, with learn's names replaced: `courses/`,
-      `just learn check`, `spec/learn.md`. A writer session follows them
-- [x] Port `content/modules/check.py` to `climb module check <slug>`,
-      with a test per rule it checks. Its 1126 lines carry no test today, and
-      every later step trusts its verdict
-- [ ] Add the `Finding` record and its schema snapshot: the rule, the question
-      or the template, the reviewer, the verdict and the outcome, stored as
-      one JSON-lines file per module and per card in the content repository
-
-### The module reviewers
-
-- [ ] Write the form reviewer's skill: a session picks from the choices
-      alone, with no prompt, and a keyed pick above chance is a finding under
-      rules 10 and 11
-- [ ] Write the leveller's skill: a session assigns each question a level
-      from the definitions, and a level differing from the bank's is a finding
-      under rule 16
-- [ ] Write the fact reviewer's skill: a session checks each claim against
-      the sources the module names, under rules 4 to 6 and 12
-- [ ] Have each reviewer read its example defects from a path in the content
-      repository. The skill is public, and a real question is not
-
-### The card reviewers
-
-- [ ] Move the card rules out of the `card-author` skill into a `cards.md`
-      beside `docs/authoring/rules.md`, numbered as `rules.md` numbers a
-      module's. A reviewer cites a rule by its number, and a skill's prose
-      carries none. Moved here from Phase 16, since nothing cites a number
-      before these reviewers do
-- [ ] Write the trigger reviewer's skill: a session reads a card's trigger and
-      each template's trigger alone and names the form, and a wrong form is a
-      finding. A probe asks a user the same question
-- [ ] Write the brief reviewer's skill: a session checks each claim of a brief
-      and a template's notes against the technique's criterion and the
-      template's own code
-
-### The loop
-
-- [ ] Write the loop's skill: the writer, the check, the reviewers and a fixer
-      in turn, for a module and for a card. A question or a template is
-      reviewed again only where its text or its rule moved since its last
-      review
-
-### The reviewers, scored
-
-- [ ] List the defects the three passes fixed, each with its question and the
-      rule it broke, read from the content repository's three fix commits
-- [ ] Run the module reviewers over the Python module as it stood before the
-      first pass, and write each rule's recall against that list into
-      `ROADMAP.md`
-- [ ] Read by hand a sample of the findings the three passes did not make, and
-      write the share that are real defects beside the recall
-- [ ] Run the card reviewers over the nine authored cards, read every finding
-      by hand, and write the share that are real defects into `ROADMAP.md`.
-      No pass labelled a card's defects, so no recall can be taken
-
-### Exit
-
-- [ ] The module reviewers carry a recall per rule against the three passes,
-      and the card reviewers a share of real findings, both in `ROADMAP.md`
-- [ ] One Python subtopic level is rewritten through the loop, seeded with
-      nothing refused and every finding closed. The three passes fixed that
-      level by hand, so the rewrite shows whether the loop reaches their work
-- [ ] One authored card is revised through the loop, seeded with `card check`
-      passing and every finding closed
 
 ## Phase 18 — scheduling and mastery
 
