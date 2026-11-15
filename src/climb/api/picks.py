@@ -6,6 +6,8 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from climb.api.context import Root, UserId
+from climb.attempt_claims import standing_attempt_claims
+from climb.board.execution import execution
 from climb.cards import CardStore
 from climb.cards.graph import depths
 from climb.graduation import reading
@@ -42,7 +44,9 @@ def board_pick(root: Root, user_id: UserId) -> BoardPick | None:
     by_id = {one.id: one for one in problems}
     log = AttemptLog(root)
     attempts = log.attempts(user_id)
-    labels = {key: one.mode for key, one in latest_by_attempt(log.self_labels(user_id)).items()}
+    standing = latest_by_attempt(log.self_labels(user_id))
+    labels = {key: one.mode for key, one in standing.items()}
+    read = execution(attempts, by_id, standing_attempt_claims(log.claims(user_id)), standing)
     solutions, matches = SolutionLog(root).solutions(), MatchLog(root).matches()
     runs, recalls = CardRunLog(root), RecallLog(root).all(user_id)
     cards = CardStore(root).all()
@@ -67,6 +71,7 @@ def board_pick(root: Root, user_id: UserId) -> BoardPick | None:
                 rungs=found.rungs,
                 state=state,
                 next=upcoming,
+                execution=read.get(card.technique, (0, None))[1],
             )
         )
     chosen = pick(

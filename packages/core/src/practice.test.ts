@@ -97,8 +97,18 @@ describe("a technique's row", () => {
         { label: 'attempt', value: 1 },
         { label: 'solved', value: '1/1' },
         { label: '', value: 'yesterday' },
+        { label: 'execution', value: 'unknown' },
+        { label: 'recognition', value: 'unknown' },
       ],
     );
+  });
+
+  it('reads execution as a share once it stands, and recognition unknown beside it', () => {
+    const row = { attempt_count: 3, solved_count: 2, last_attempt_at: '2026-11-09T12:00:00Z', execution: 2 / 3 };
+    expect(techniqueStats(row, NOW).slice(3)).toEqual([
+      { label: 'execution', value: '67%' },
+      { label: 'recognition', value: 'unknown' },
+    ]);
   });
 });
 
@@ -109,6 +119,7 @@ describe('the board', () => {
     solved_count: 0,
     self_labels: {},
     narrower,
+    sittings: 0,
   });
 
   it('splits the techniques never practised from the rest', () => {

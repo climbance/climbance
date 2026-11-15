@@ -1554,6 +1554,13 @@ export interface components {
        * @default []
        */
       narrower: string[];
+      /**
+       * Sittings
+       * @default 0
+       */
+      sittings: number;
+      /** Execution */
+      execution?: number | null;
     };
     /**
      * Template

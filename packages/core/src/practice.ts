@@ -29,7 +29,10 @@ import {
   PICK_REVIEW_SITTING,
   PICK_RUNG,
   PICK_START,
+  EXECUTION,
   PROCEDURE,
+  RECOGNITION,
+  UNKNOWN,
   recallDue,
   recallOverdue,
   studyingSince,
@@ -91,7 +94,8 @@ export function techniqueKnowledge(
  * `never`, and the knowledge reading follows where a subtopic holds questions.
  */
 export function techniqueStats(
-  row: Pick<TechniqueRow, 'attempt_count' | 'solved_count' | 'last_attempt_at'>,
+  row: Pick<TechniqueRow, 'attempt_count' | 'solved_count' | 'last_attempt_at'> &
+    Partial<Pick<TechniqueRow, 'execution'>>,
   now: number,
   knowledge: Knowledge | null = null,
 ): Stat[] {
@@ -101,7 +105,19 @@ export function techniqueStats(
     { label: row.attempt_count === 1 ? 'attempt' : 'attempts', value: row.attempt_count },
     { label: 'solved', value: share(row.solved_count, row.attempt_count) },
     { label: '', value: lastAt(row.last_attempt_at, now) },
+    ...masteryStats(row.execution ?? null),
     ...known,
+  ];
+}
+
+/**
+ * Execution beside recognition, kept apart: `log.md`, Mastery. Recognition has
+ * no evidence until the recognition drill is built, so it reads unknown.
+ */
+export function masteryStats(execution: number | null): Stat[] {
+  return [
+    { label: EXECUTION, value: execution === null ? UNKNOWN : `${Math.round(execution * 100)}%` },
+    { label: RECOGNITION, value: UNKNOWN },
   ];
 }
 

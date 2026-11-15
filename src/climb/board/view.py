@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from climb.attempt_claims import resolve_techniques
 from climb.board.candidates import NEVER
+from climb.board.execution import execution
 from climb.schema import Attempt, AttemptClaim, FailureMode, Problem, SelfLabel
 from climb.techniques import narrower
 
@@ -23,6 +24,10 @@ class TechniqueRow(BaseModel):
     # the codes that are a kind of this one, whose questions count toward its
     # knowledge reading on the client: `log.md`, Mastery
     narrower: list[str] = []
+    # the sittings execution counts, and its reading once enough of them stand;
+    # recognition has no evidence yet and reads unknown: `log.md`, Mastery
+    sittings: int = 0
+    execution: float | None = None
 
     @property
     def unsolved_count(self) -> int:
@@ -42,6 +47,8 @@ def per_technique(
     problem id, `claims` and `labels` by attempt id; a missing problem raises
     rather than dropping the attempt.
     """
+    attempts = list(attempts)
+    read = execution(attempts, problems, claims, labels)
     grouped: dict[str, list[Attempt]] = defaultdict(list)
     for attempt in attempts:
         problem = problems[attempt.problem_id]
@@ -60,6 +67,8 @@ def per_technique(
             self_labels=Counter(
                 labels[attempt.id].mode for attempt in group if attempt.id in labels
             ),
+            sittings=read[technique][0],
+            execution=read[technique][1],
         )
         for technique, group in sorted(grouped.items())
     ]

@@ -55,6 +55,7 @@ class CardReading:
     rungs: Sequence[Rung]
     state: CardState
     next: Next | None
+    execution: float | None = None  # the card's technique's, unknown while absent
 
 
 def in_flight(reading: CardReading, now: datetime) -> bool:
@@ -86,7 +87,7 @@ def offers(
     """Every offer, first served first. `labels` holds each attempt's
     standing self-label, by attempt id."""
     readings, problems, attempts = list(readings), list(problems), list(attempts)
-    offered: list[tuple[tuple[int, float, int, str], Pick]] = []
+    offered: list[tuple[tuple[int, float, int, float, str], Pick]] = []
 
     def offer(
         rank: Rank,
@@ -99,7 +100,9 @@ def offers(
     ) -> None:
         template = template_id
         chance = recall_probability(reviews.get(template, []), now) if template else None
-        key = (rank, 1.0 if chance is None else chance, reading.depth, reading.card.slug)
+        # an unknown execution reading ranks first, as the least practised
+        known = -1.0 if reading.execution is None else reading.execution
+        key = (rank, 1.0 if chance is None else chance, reading.depth, known, reading.card.slug)
         chosen = Pick(
             rank=rank,
             act=act,

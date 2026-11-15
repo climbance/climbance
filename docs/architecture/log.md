@@ -720,12 +720,24 @@ model of mastery.
   That prediction is the only stored trace of mastery. It lets a later
   formula be compared with what an earlier one predicted.
 
+- **Execution starts as the mean of a score per sitting.** A solve on the
+  first submission scores 1, a solve after a failed submission 0.5, and an
+  unsolved sitting 0. An unsolved sitting labelled `syntax` scores 0.25, and
+  a sitting labelled `gap` or `rust` scores 0 whatever its verdict. These are
+  starting values, and each moves only on what the stored predictions
+  measure.
+- **Execution reads unknown until a technique holds three sittings.** A mean
+  over one or two sittings swings on a single solve, and a board showing it
+  would rank techniques on noise.
+- **Every sitting weighs the same, however old.** How old evidence fades is
+  deferred, so the first reading counts the whole log.
+- **A solve labelled `speed` counts as a full solve**, until the timed
+  sittings say how slow a solve has to be to count less.
+
 Deferred, since only use answers each:
 
-- The formula itself: how old evidence fades, and how much less a solve after
-  a shown case counts.
-- How much evidence a technique needs before the board shows a number rather
-  than "unknown".
-- Whether a solve labelled `speed` counts as a full solve.
+- How old evidence fades.
+- The scores and the evidence bound beyond their starting values.
+- Whether a solve labelled `speed` counts less than a full solve.
 - How a module outside the technique vocabulary, such as Python, enters
   mastery. Its questions carry no technique for a reading to be kept on.

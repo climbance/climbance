@@ -928,7 +928,8 @@ user may take it or pick anything else the board offers.
 - **Ties break on the lowest recall probability, then the shallowest card,
   then the lowest execution reading, then the slug.** Recall probability ranks
   the form closest to being lost. Depth then serves a form other forms build
-  on before the forms above it.
+  on before the forms above it. An unknown execution reading comes before
+  every number, since the technique has the least practice behind it.
 - **The board offers everything beside the pick.** The cards in progress, the
   unlocked cards not started and every technique stay listed, as `pages.md`
   gives. The pick sits above them, so a user who declines it picks as before.

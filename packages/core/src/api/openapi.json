@@ -3856,6 +3856,22 @@
             "type": "array",
             "title": "Narrower",
             "default": []
+          },
+          "sittings": {
+            "type": "integer",
+            "title": "Sittings",
+            "default": 0
+          },
+          "execution": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution"
           }
         },
         "type": "object",

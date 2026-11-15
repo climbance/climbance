@@ -380,7 +380,7 @@ waits for the next module.
 
 ### Mastery
 
-- [ ] Compute each technique's execution reading from its sittings, as `log.md`
+- [x] Compute each technique's execution reading from its sittings, as `log.md`
       gives, and show it on the board beside recognition read as unknown. The
       pick and the predictions both read it
 - [ ] Decide what a short exercise's answers feed in a technique's mastery:

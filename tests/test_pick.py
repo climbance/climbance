@@ -36,6 +36,7 @@ def reading(slug: str, state: CardState, **fields) -> CardReading:
         rungs=fields.pop("rungs", []),
         state=state,
         next=fields.pop("next", None),
+        execution=fields.pop("execution", None),
     )
 
 
@@ -196,3 +197,15 @@ def test_a_tie_breaks_on_the_lowest_recall_probability():
         "t-fresh-check": [Review(NOW - 2 * DAY, Rating.Good)],
     }
     assert offered([fresh, fading], reviews=reviews)[0].card_slug == "fading"
+
+
+def test_a_tie_then_breaks_on_the_lowest_execution_reading():
+    """At one depth the less practised technique comes first, unknown first."""
+    strong = reading("strong", CardState.NOT_STARTED, execution=0.9)
+    weak = reading("weak", CardState.NOT_STARTED, execution=0.2)
+    unknown = reading("unknown", CardState.NOT_STARTED)
+    assert [one.card_slug for one in offered([strong, weak, unknown])] == [
+        "unknown",
+        "weak",
+        "strong",
+    ]
