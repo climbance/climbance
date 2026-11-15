@@ -363,13 +363,12 @@ module. The rest waits for the next module.
 
 ## Phase 18 — scheduling and mastery
 
-- [ ] Port learn's FSRS replay, question states and gating into
-      `climb.knowledge`, with the shared fixtures passing against it. The
-      mastery formula and the scheduler read them on the server, and the
-      queues stay in TypeScript
-- [ ] Generate `tests/fixtures/knowledge/scheduling.json` from this repo, by
-      a `just` recipe. The fixture was generated outside it, so no rule
-      change here can regenerate it
+- [ ] Port FSRS replay and question states into `climb.knowledge`, with the
+      shared fixture's `scheduling` cases passing. Knowledge mastery and the
+      template schedule read them on the server
+- [ ] Generate the shared fixture's `scheduling` cases from that replay, by a
+      `just` recipe. Gating and the queues stay in TypeScript, so their cases
+      wait for a server feature that reads them
 - [x] Write into `docs/architecture/` what a technique's mastery is derived
       from: the attempts, their claims, their verdicts and the drills, with
       recognition kept apart from execution. Mastery is never stored, so the
@@ -407,8 +406,8 @@ drill board tracked them by hand.
       has a review rated Again. A review rated Hard leaves it graduated
 - [ ] Write into `log.md` which probe graduates a card, and what a lapsed card
       needs to graduate again. Both are deferred under `## Card states`
-- [ ] Show each card's state and its next due recall on `/cards` and on the
-      board's cards in progress. The dashboard left both for this phase
+- [ ] Show each card's state and its next due recall or spaced check on
+      `/cards` and on the board's cards in progress. The dashboard left both for this phase
 
 ### The schedule
 
@@ -430,21 +429,23 @@ cards' states.
 - [ ] Write the in-flight cap into the pick's rule in `flows.md`: two cards,
       counting a card on its ladder or with its spaced check open. A card
       waiting for its check holds no slot
-- [ ] Compute each template's recall probability and due time with FSRS over
-      its reviews, as `log.md` `## The template schedule` gives, with a test
+- [ ] Compute each template's recall probability and due time over the
+      ported replay, as `log.md` `## The template schedule` gives, with a test
       pinning the check to days 3 and 5 at the default parameters
 - [ ] Write the pick's rule into `flows.md`: what it reads, how it aims at the
       form a failed sitting missed, what breaks a tie, and what the board offers
-      beside it. `flows.md` has selection never schedule today
+      beside it. `flows.md` says today that the trainer draws and nothing
+      schedules
 - [ ] Write into the pick's rule what it offers per card state: a due recall,
       an open run's next rung, an owed spaced check, a new card only below the
-      cap, and a lapsed card again. Owed checks come before new starts
+      cap, and a lapsed card again. An owed check freezes new starts, and an
+      overdue review does not
 - [ ] Serve one pick on the board, naming a due template and a problem written
       for it, with every technique still on offer beside it. A technique with no
       template keeps the board's staleness order
 - [ ] Store what each pick predicted before its attempt, from FSRS alone and
-      from the mastery state. A prediction written after the outcome is fitted
-      to it
+      from the mastery state, naming the settings each was made under. A
+      prediction written after the outcome is fitted to it
 
 ### The comparison
 
@@ -460,7 +461,6 @@ prepares the engine for other users.
 - [ ] Keep every record made before the criterion and the assignment out of
       the comparison. Phase 16's users sit before this phase ships, and a
       criterion written after reading their records is fitted to them
-
 - [ ] Write into `log.md` what ready means per technique: the bar, the
       difficulty and the time limit. A criterion written after the data is
       read is fitted to the data
