@@ -253,10 +253,10 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
 27. **A concept holds every field of its record, and a witness with its output
     or a quote of its source.** The source names a section, and a quote
     names the date its source was read in `read_on`, since a source page
-    changes after it is quoted. The level is 0 to 3, and the concept lists at least one misconception, each with an `id`
-    unique in the concept and a `text`. A question naming an unknown concept
-    or misconception, or restating a field it derives from its concept, is
-    refused. *check*
+    changes after it is quoted. The level is 0 to 3, and the concept lists at
+    least one misconception, each with an `id` unique in the concept and a
+    `text`. A question naming an unknown concept or misconception, or
+    restating a field it derives from its concept, is refused. *check*
 28. **Each `taught_by` names a section, and each section of a lesson teaching
     concepts is named by one.** A section no concept names asserts what no
     witness checks. A lesson file holds no intro and no common-mistakes or
