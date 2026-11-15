@@ -1,4 +1,4 @@
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Collection, Iterable, Iterator, Mapping
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
@@ -30,7 +30,9 @@ def reason(exc: ValidationError) -> str:
     )
 
 
-def seed_cards(records: Iterable[Mapping[str, Any]], *, store: CardStore) -> CardSeedResult:
+def seed_cards(
+    records: Iterable[Mapping[str, Any]], *, store: CardStore, modules: Collection[str]
+) -> CardSeedResult:
     """Validate authored cards, mint what identifies them, upsert each one.
 
     Records rather than paths: the caller owns where the content lives. The
@@ -53,6 +55,10 @@ def seed_cards(records: Iterable[Mapping[str, Any]], *, store: CardStore) -> Car
             result.rejected.append(
                 Rejected(index=index, reason=f"unknown technique code(s): {', '.join(unknown)}")
             )
+            continue
+        # a primary module no store holds would pair the card with no subtopic
+        if seed.module not in modules:
+            result.rejected.append(Rejected(index=index, reason=f"no seeded module: {seed.module}"))
             continue
         if seed.slug in accepted:
             result.rejected.append(Rejected(index=index, reason=f"seeded twice: {seed.slug}"))

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from climb.cards import CardStore, seed_cards
-from climb.knowledge import read_module, seed_module
+from climb.knowledge import read_module, seed_module, seeded_modules
 from climb.storage import Database
 
 
@@ -30,7 +30,9 @@ def seed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Databa
         _module(args.source, parser, root)
         return
     try:
-        result = seed_cards(read_json(args.source), store=CardStore(root))
+        result = seed_cards(
+            read_json(args.source), store=CardStore(root), modules=seeded_modules(root=root)
+        )
     except (BadLine, OSError) as exc:
         parser.exit(2, f"seed: {exc}\n")
 

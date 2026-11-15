@@ -49,7 +49,7 @@ def seeded(root, *records: dict) -> list[Card]:
     the store happens to list minted ids in."""
     store = CardStore(root)
     authored = records or (card(),)
-    result = seed_cards(authored, store=store)
+    result = seed_cards(authored, store=store, modules={"algo"})
     assert result.rejected == []
     return [store.by_slug(one["slug"]) for one in authored]
 

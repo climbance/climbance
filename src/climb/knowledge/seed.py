@@ -289,3 +289,11 @@ def retire_module(slug: str, *, root: Database) -> int:
                 (modules, modules.c.id == found),
             ]
         )
+
+
+def seeded_modules(*, root: Database) -> set[str]:
+    """The slugs of the modules seeded and not retired, which a card names."""
+    with root.connect() as conn:
+        return set(
+            conn.execute(select(modules.c.slug).where(modules.c.retired_at.is_(None))).scalars()
+        )

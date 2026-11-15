@@ -4,11 +4,15 @@ from pathlib import Path
 import pytest
 from commands import connected
 from helpers import own
+from test_seed_knowledge import authored
 
 from climb import cli
 from climb.cards import CardStore, seed_cards
+from climb.knowledge import read_module, seed_module
 
 CONTENT = Path(__file__).parents[1] / "content" / "cards"
+# the primary module every card here names, as if seeded
+MODULES = {"algo"}
 
 
 def template(slug: str = "predicate-first-true", **overrides) -> dict:
@@ -39,7 +43,7 @@ def test_an_authored_case_reaches_the_stored_template(database):
     store = CardStore(database)
     authored = template(cases=[{"args": [[1, 2, 3], 2], "expected": 1}])
 
-    seed_cards([record(templates=[authored])], store=store)
+    seed_cards([record(templates=[authored])], store=store, modules=MODULES)
 
     card = store.by_slug("binary-search")
     assert card is not None
@@ -49,7 +53,7 @@ def test_an_authored_case_reaches_the_stored_template(database):
 def test_seed_mints_identity(database):
     """The author writes slugs; the engine owns every id, at both levels."""
     store = CardStore(database)
-    result = seed_cards([record()], store=store)
+    result = seed_cards([record()], store=store, modules=MODULES)
 
     assert result.ingested == 1
     assert result.updated == 0
@@ -64,7 +68,11 @@ def test_seed_mints_identity(database):
 def test_the_payload_cannot_supply_identity(database):
     """The seed has no field for an id, so writing one supplies nothing."""
     store = CardStore(database)
-    seed_cards([record(id="forged", templates=[template(id="forged-template")])], store=store)
+    seed_cards(
+        [record(id="forged", templates=[template(id="forged-template")])],
+        store=store,
+        modules=MODULES,
+    )
 
     card = store.all()[0]
     assert card.id != "forged"
@@ -74,10 +82,10 @@ def test_the_payload_cannot_supply_identity(database):
 def test_reseeding_a_slug_refreshes_and_keeps_the_id(database):
     """A card run references the id, so re-seeding never moves it."""
     store = CardStore(database)
-    seed_cards([record()], store=store)
+    seed_cards([record()], store=store, modules=MODULES)
     minted = store.all()[0].id
 
-    result = seed_cards([record(title="Binary search, revised")], store=store)
+    result = seed_cards([record(title="Binary search, revised")], store=store, modules=MODULES)
 
     assert result.ingested == 0
     assert result.updated == 1
@@ -89,12 +97,13 @@ def test_a_template_keeps_its_id_across_a_reseed(database):
     """Recall is per template and keys to its id, so the slug is what a
     re-seed matches on; a template the author added gets a new one."""
     store = CardStore(database)
-    seed_cards([record()], store=store)
+    seed_cards([record()], store=store, modules=MODULES)
     before = {t.slug: t.id for t in store.all()[0].templates}
 
     seed_cards(
         [record(templates=[template(title="renamed"), template("answer-space")])],
         store=store,
+        modules=MODULES,
     )
 
     after = {t.slug: t.id for t in store.all()[0].templates}
@@ -107,8 +116,8 @@ def test_a_new_slug_is_a_new_card(database):
     """Renaming is a title change: the runs and the recall history stay with
     the card whose slug they were written against."""
     store = CardStore(database)
-    seed_cards([record()], store=store)
-    result = seed_cards([record("binary-search-advanced")], store=store)
+    seed_cards([record()], store=store, modules=MODULES)
+    result = seed_cards([record("binary-search-advanced")], store=store, modules=MODULES)
 
     assert result.ingested == 1
     assert result.updated == 0
@@ -129,7 +138,7 @@ def test_an_unknown_technique_is_rejected(database, field):
         if field == "technique"
         else {"selector": {"technique": "sliding-windows", "size": 5}}
     )
-    result = seed_cards([record(**overrides)], store=store)
+    result = seed_cards([record(**overrides)], store=store, modules=MODULES)
 
     assert result.ingested == 0
     assert [r.index for r in result.rejected] == [0]
@@ -146,6 +155,7 @@ def test_an_invalid_card_does_not_stop_the_batch(database):
             record("union-find", technique="union-find"),
         ],
         store=store,
+        modules=MODULES,
     )
 
     assert result.ingested == 2
@@ -157,20 +167,27 @@ def test_a_card_rejected_by_its_own_validator(database):
     """Two templates sharing a slug leave a re-seed with no rule for which
     minted id to keep."""
     store = CardStore(database)
-    result = seed_cards([record(templates=[template(), template()])], store=store)
+    result = seed_cards([record(templates=[template(), template()])], store=store, modules=MODULES)
 
     assert [r.index for r in result.rejected] == [0]
 
 
 def test_empty_batch(database):
-    result = seed_cards([], store=CardStore(database))
+    result = seed_cards([], store=CardStore(database), modules=MODULES)
 
     assert result.ingested == 0
     assert result.updated == 0
     assert result.rejected == []
 
 
+def seeded_algo(database, tmp_path) -> None:
+    """The command reads the seeded modules from the store."""
+    base = authored(tmp_path)
+    seed_module(read_module(base.rename(base.with_name("algo"))), root=database)
+
+
 def test_seed_cards_command_over_a_directory(database, tmp_path, monkeypatch, capsys):
+    seeded_algo(database, tmp_path)
     source = tmp_path / "authored"
     source.mkdir()
     (source / "binary-search.json").write_text(json.dumps(record()))
@@ -187,6 +204,7 @@ def test_seed_cards_command_over_a_directory(database, tmp_path, monkeypatch, ca
 
 
 def test_seed_cards_command_over_one_file(database, tmp_path, monkeypatch, capsys):
+    seeded_algo(database, tmp_path)
     source = tmp_path / "binary-search.json"
     source.write_text(json.dumps(record()))
     connected(database, monkeypatch)
@@ -230,7 +248,9 @@ def test_the_authored_cards_seed(database):
     seeded rather than described."""
     store = CardStore(database)
     result = seed_cards(
-        [json.loads(path.read_text()) for path in sorted(CONTENT.glob("*.json"))], store=store
+        [json.loads(path.read_text()) for path in sorted(CONTENT.glob("*.json"))],
+        store=store,
+        modules=MODULES,
     )
 
     assert result.rejected == []
@@ -265,7 +285,7 @@ def test_a_requirement_reaches_the_stored_card(database):
     after every card."""
     store = CardStore(database)
 
-    result = seed_cards([kruskal(edge()), dsu()], store=store)
+    result = seed_cards([kruskal(edge()), dsu()], store=store, modules=MODULES)
 
     assert result.rejected == []
     card = store.by_slug("minimum-tree")
@@ -274,13 +294,15 @@ def test_a_requirement_reaches_the_stored_card(database):
 
 
 def test_a_requirement_on_an_unknown_card_is_refused(database):
-    result = seed_cards([kruskal(edge())], store=CardStore(database))
+    result = seed_cards([kruskal(edge())], store=CardStore(database), modules=MODULES)
 
     assert [one.reason for one in result.rejected] == ["requires an unknown card: union-find"]
 
 
 def test_a_requirement_on_an_unknown_template_is_refused(database):
-    result = seed_cards([dsu(), kruskal(edge(template="dsu-rank"))], store=CardStore(database))
+    result = seed_cards(
+        [dsu(), kruskal(edge(template="dsu-rank"))], store=CardStore(database), modules=MODULES
+    )
 
     assert [one.index for one in result.rejected] == [1]
     assert "unknown template" in result.rejected[0].reason
@@ -291,7 +313,7 @@ def test_a_requirement_on_an_optional_template_is_refused(database):
     requiring it would wait on a form nobody is asked for."""
     stretch = dsu(templates=[template("dsu-core", optional=True), template("dsu-plain")])
 
-    result = seed_cards([stretch, kruskal(edge())], store=CardStore(database))
+    result = seed_cards([stretch, kruskal(edge())], store=CardStore(database), modules=MODULES)
 
     assert [one.index for one in result.rejected] == [1]
     assert "optional template" in result.rejected[0].reason
@@ -301,13 +323,15 @@ def test_a_cycle_refuses_every_card_on_it(database):
     """A cycle locks each of its cards for every user."""
     looped = dsu(requires=[edge("minimum-tree", "kruskal-mst", "dsu-core")])
 
-    result = seed_cards([looped, kruskal(edge())], store=CardStore(database))
+    result = seed_cards([looped, kruskal(edge())], store=CardStore(database), modules=MODULES)
 
     assert [one.reason for one in result.rejected] == ["on a cycle of requirements"] * 2
 
 
 def test_used_by_names_a_template_of_the_requiring_card(database):
-    result = seed_cards([dsu(), kruskal(edge(used_by="prim"))], store=CardStore(database))
+    result = seed_cards(
+        [dsu(), kruskal(edge(used_by="prim"))], store=CardStore(database), modules=MODULES
+    )
 
     assert "used_by names no template" in result.rejected[0].reason
 
@@ -316,7 +340,7 @@ def test_a_refused_card_refuses_the_cards_requiring_it(database):
     """A refused new card is in no graph, so an edge onto it names nothing."""
     looped = dsu(requires=[edge("union-find", "dsu-core", "dsu-core")])
 
-    result = seed_cards([looped, kruskal(edge())], store=CardStore(database))
+    result = seed_cards([looped, kruskal(edge())], store=CardStore(database), modules=MODULES)
 
     assert [one.index for one in result.rejected] == [0, 1]
 
@@ -325,9 +349,9 @@ def test_a_reseed_dropping_a_required_template_is_refused(database):
     """The stored card requiring that template is not in the batch, so the seed
     breaking it is the one refused, and the stored card stands."""
     store = CardStore(database)
-    seed_cards([dsu(), kruskal(edge())], store=store)
+    seed_cards([dsu(), kruskal(edge())], store=store, modules=MODULES)
 
-    result = seed_cards([dsu(templates=[template("dsu-rank")])], store=store)
+    result = seed_cards([dsu(templates=[template("dsu-rank")])], store=store, modules=MODULES)
 
     assert result.rejected[0].reason == "minimum-tree requires union-find/dsu-core"
     card = store.by_slug("union-find")
@@ -337,9 +361,9 @@ def test_a_reseed_dropping_a_required_template_is_refused(database):
 
 def test_a_reseed_replaces_the_edges(database):
     store = CardStore(database)
-    seed_cards([dsu(), kruskal(edge())], store=store)
+    seed_cards([dsu(), kruskal(edge())], store=store, modules=MODULES)
 
-    seed_cards([kruskal()], store=store)
+    seed_cards([kruskal()], store=store, modules=MODULES)
 
     card = store.by_slug("minimum-tree")
     assert card is not None
@@ -347,7 +371,7 @@ def test_a_reseed_replaces_the_edges(database):
 
 
 def test_a_slug_seeded_twice_in_one_batch_is_refused(database):
-    result = seed_cards([dsu(), dsu()], store=CardStore(database))
+    result = seed_cards([dsu(), dsu()], store=CardStore(database), modules=MODULES)
 
     assert [(one.index, one.reason) for one in result.rejected] == [(1, "seeded twice: union-find")]
 
@@ -356,9 +380,18 @@ def test_a_card_stored_as_authored_is_not_written_again(database):
     """A re-seed after one edit writes one card, which through a tunnel is
     the difference between seconds and minutes."""
     store = CardStore(database)
-    seed_cards([dsu(), kruskal(edge())], store=store)
+    seed_cards([dsu(), kruskal(edge())], store=store, modules=MODULES)
 
-    result = seed_cards([dsu(), kruskal(edge(), title="Kruskal, revised")], store=store)
+    result = seed_cards(
+        [dsu(), kruskal(edge(), title="Kruskal, revised")], store=store, modules=MODULES
+    )
 
     assert (result.unchanged, result.updated, result.ingested) == (1, 1, 0)
     assert store.by_slug("minimum-tree").title == "Kruskal, revised"
+
+
+def test_a_card_naming_no_seeded_module_is_rejected(database):
+    """A module no store holds pairs the card with no subtopic."""
+    result = seed_cards([record(module="algorithms")], store=CardStore(database), modules=MODULES)
+
+    assert [one.reason for one in result.rejected] == ["no seeded module: algorithms"]

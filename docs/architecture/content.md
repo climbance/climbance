@@ -246,10 +246,13 @@ The subtopic says why the forms are correct and what they cost.
   gives. A card is paired with every subtopic naming its code. The board's
   three readings key on the same code, so a pairing needs no field of its own.
 - **A card names its primary module, in `module`.** The primary module's
-  subtopics support the card: they hold the facts the card's forms rest on.
-  An algorithms card names `algo`, the algorithms module, and a card on a
+  subtopics support the card: they hold the facts the card's forms rest on. An
+  algorithms card names `algo`, the algorithms module, and a card on a
   language's idioms would name that language's module. A card names a module
   by slug, the module's directory name, and the pages show the module's title.
+  The card seed refuses a card whose `module` names no seeded module, so a
+  module is seeded before the cards naming it. Such a card would be paired
+  with no subtopic.
 - **Another module's subtopic adds to a card and never supports it.** Its
   answers still count toward the technique's knowledge reading, and its link
   still shows on the card's page. A `py` subtopic naming `heap` would

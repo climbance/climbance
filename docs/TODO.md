@@ -175,7 +175,7 @@ starts, so their subtopics come first.
 - [ ] Link a card's page to every subtopic naming its technique, the primary
       module's first, and each lesson to every card its subtopic pairs with,
       on both clients, with the rows in `pages.md` `### Acts`
-- [ ] Refuse in the card seed a card whose `module` names no seeded module,
+- [x] Refuse in the card seed a card whose `module` names no seeded module,
       once the algorithms module is seeded. Every card names it before then
 - [x] Count a technique's knowledge reading from the answers to the questions
       of every subtopic naming it, as `log.md` gives, and show it on the board
