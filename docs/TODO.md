@@ -160,7 +160,7 @@ starts, so their subtopics come first.
       module names its technique
 - [x] Update the `card-author` skill to write a brief without `## Complexity`,
       `## Pitfalls` and `## Key insights`, leaving those facts to the subtopic
-- [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
+- [x] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
       `py` and its level table for levels 0 and 1
 - [ ] Write the `binary-search` subtopic first, and record in `concepts.md`
       how its complexity claims are witnessed. Most of a subtopic's facts are
