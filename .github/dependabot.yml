@@ -13,8 +13,10 @@ updates:
     groups:
       uv:
         update-types: [minor, patch]
+  # the root: the workspace's one lock file is there, and a bump from /web
+  # leaves it stale, so `npm ci` refuses it
   - package-ecosystem: npm
-    directory: /web
+    directory: /
     schedule:
       interval: weekly
     groups:
@@ -26,6 +28,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # a new minor moves `requires-python`, so it is taken by hand, and its
+      # alphas are skipped with it
+      - dependency-name: python
+        update-types: [version-update:semver-major, version-update:semver-minor]
   - package-ecosystem: docker-compose
     directory: /deploy
     schedule:
