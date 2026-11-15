@@ -72,6 +72,10 @@ the coverage map for a module written by concept.
   PDF page. Both are committed, so a `#page=` in a `source` names a page of a
   copy git holds, and a later edition shows as a diff. Wikipedia changes with
   every edit, so it is cached in the engine's gitignored `data/` instead.
+- **A writer or a reviewer reads a source's text files alone.** The original
+  PDF or HTML is kept only for extracting the text again, with another tool or
+  another layout. Parsing it while citing would give two sessions two texts of
+  one page.
 - **A misconception is the wrong belief itself**, such as "`a or b` returns a
   bool". Distractors, traps and pitfalls are drawn from the list.
 - **A concept at level 2 or 3 may be an interaction**, such as "a `finally`
