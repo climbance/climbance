@@ -96,6 +96,30 @@ fields to stay comparable, and those fields are stated here once.
   Whoever reads the table still supplies the judgement that the harder sample
   reads as the worse model.
 
+## Content written by a session
+
+A question, a concept, a lesson or a card written by a Claude Code session is
+content, not a machine record. The stored record carries no writer and no
+provenance.
+
+- **A session leaves nothing provenance could hold.** It makes no call through
+  the engine's transport, so no call id exists. It reads files as it goes,
+  so no single prompt has a hash. It names a model by an alias such as
+  `opus`, which resolves to no pinned build. Provenance is all or none, so a
+  partial one would compare with nothing.
+- **Content needs no provenance to be judged.** A machine record keeps its
+  configuration so that configurations can be scored against each other and a
+  stale record re-run. Content is checked by the module check or `card check`,
+  reviewed, and revised in place by the seed. A question stands on its witness
+  and its review, whichever model wrote it.
+- **The content repository's history records the writer.** `run.py` in the
+  `concept-author` skill writes each role's model into the body of the commit
+  it makes, and the subtopic's digest records the rounds. A session run by
+  hand, as a card is written today, leaves its commit alone.
+- **A writer field joins the stored record once a query reads it**, such as a
+  defect rate per writer model. The field is then additive, and the commits
+  supply it for content written before.
+
 ## Site outcomes
 
 The record of what one generation call site left on one writing. A model wrote

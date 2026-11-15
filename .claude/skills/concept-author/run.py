@@ -49,6 +49,11 @@ def git(*args: str, cwd: Path = CONTENT, check: bool = True) -> str:
     return done.stdout.strip()
 
 
+def models(chosen: dict[str, str]) -> str:
+    """The commit body naming each role's model: architecture/machine.md."""
+    return "Models: " + ", ".join(f"{role} {model}" for role, model in chosen.items())
+
+
 def plan(source: str) -> tuple[list[tuple[str, str, str]], dict[str, list[str]], dict[str, str]]:
     """Every subtopic of the source module, as (topic, slug, title), its needs,
     and each topic's title."""
@@ -156,7 +161,7 @@ def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
         if args.decide
         else f"feat({args.module}): write {topic}/{sub} at level {args.level}"
     )
-    git("commit", "-q", "-m", subject, cwd=wt)
+    git("commit", "-q", "-m", subject, "-m", models(job.models), cwd=wt)
     return f"{sub}: DONE"
 
 
@@ -353,7 +358,8 @@ def relevel(args: argparse.Namespace) -> None:
             stages.relevel(sub_job, mine)
         git("add", f"modules/{args.module}", cwd=wt)
         if git("status", "--porcelain", cwd=wt):
-            git("commit", "-q", "-m", f"fix({args.module}): re-level {topic}/{sub}", cwd=wt)
+            subject = f"fix({args.module}): re-level {topic}/{sub}"
+            git("commit", "-q", "-m", subject, "-m", models(job.models), cwd=wt)
         git("merge", "-q", "--no-ff", "--no-edit", branch, cwd=main_wt)
         print(f"{sub}: re-levelled")
 

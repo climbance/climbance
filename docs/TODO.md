@@ -206,7 +206,7 @@ pipeline, Phase 17, which is deferred until new cards are written.
       session, against the technique's criterion and the template's own code,
       and fix each false claim found. `card check` runs code and catches no
       false claim in prose
-- [ ] Decide what a question or a card written by a session records about its
+- [x] Decide what a question or a card written by a session records about its
       writer, and write the choice into `machine.md`. A Claude Code session
       leaves no call in the call log
 - [x] Add to rule 27 in `docs/authoring/rules.md` that a concept resting on a

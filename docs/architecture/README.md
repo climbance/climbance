@@ -213,8 +213,9 @@ without redefining them. Grouped by the file that specifies the record.
 
 ### Machine records
 
-- **Machine record**: any record a model wrote: a claim, a match, a solution, a
-  case's arguments. It carries provenance whole.
+- **Machine record**: any record a model call wrote: a claim, a match, a
+  solution, a case's arguments. It carries provenance whole. Content a Claude
+  Code session writes is not one, as `machine.md` gives.
 - **Configuration**: model, effort, endpoint pin and temperature.
 - **Provenance**: the configuration, the prompt hash of what was sent and the
   call that sent it.
