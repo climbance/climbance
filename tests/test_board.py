@@ -330,3 +330,12 @@ def test_the_least_recently_practised_row_comes_first():
 def test_a_technique_only_a_retired_problem_carries_is_not_offered():
     """Nothing could be served for it."""
     assert stalest_first([], [BROKEN]) == []
+
+
+def test_a_row_names_the_codes_narrower_than_its_technique():
+    """A knapsack answer counts toward dynamic-programming on the client."""
+    dp = make_problem("dp-problem", ["dynamic-programming"])
+    (built,) = stalest_first([], [dp])
+
+    assert "knapsack" in built.narrower
+    assert "dynamic-programming" not in built.narrower

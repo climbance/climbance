@@ -17,6 +17,7 @@ import {
   BOARD_PRACTISED,
   MODULES_HEADING,
   orderedModuleRows,
+  techniqueKnowledge,
 } from '@climb/core'
 import { Link } from 'react-router'
 
@@ -41,10 +42,13 @@ export function BoardPage() {
   const studying = inProgress(cards.data ?? [])
   const next = nextCards(cards.data ?? [])
   const { catalog, board: learnerBoard, order, now } = useLearner()
-  const modules = useMemo(() => {
-    const all = learnerBoard(null)
-    return catalog && all ? orderedModuleRows(all, order, now) : []
-  }, [catalog, learnerBoard, order, now])
+  const all = useMemo(() => (catalog ? learnerBoard(null) : null), [catalog, learnerBoard])
+  const modules = useMemo(
+    () => (all ? orderedModuleRows(all, order, now) : []),
+    [all, order, now],
+  )
+  // the knowledge reading, from the device's copy: `log.md`, Mastery
+  const known = (row: TechniqueRow) => (all ? techniqueKnowledge(all, row) : null)
 
   return (
     <section className="space-y-section">
@@ -72,7 +76,7 @@ export function BoardPage() {
           // a technique never practised ranks stalest, so the untouched ones
           // come first. As names alone they stay one glance rather than thirty
           // rows of zeros
-          const { untouched, practised, foot } = boardView(board)
+          const { untouched, practised, foot } = boardView(board, known)
 
           return (
             <div className="space-y-section">
@@ -141,7 +145,7 @@ export function BoardPage() {
                 >
                   <PickList>
                     {practised.map((row) => (
-                      <Practised key={row.technique} row={row} />
+                      <Practised key={row.technique} row={row} known={known(row)} />
                     ))}
                   </PickList>
                 </PageSection>
@@ -157,12 +161,18 @@ export function BoardPage() {
   )
 }
 
-function Practised({ row }: { row: TechniqueRow }) {
+function Practised({
+  row,
+  known,
+}: {
+  row: TechniqueRow
+  known: ReturnType<typeof techniqueKnowledge>
+}) {
   return (
     <PickRow
       to={`/techniques/${encodeURIComponent(row.technique)}`}
       title={row.technique}
-      stats={counts(row)}
+      stats={counts(row, known)}
     />
   )
 }

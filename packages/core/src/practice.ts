@@ -2,6 +2,7 @@ import { lastAt } from './account';
 import type { components } from './api/schema';
 import { described, type EngineClient } from './engine';
 import { lessonParts } from './lessontext';
+import { passed, type Board as Learner } from './schedule';
 import type { Outcome } from './sittingrun';
 import {
   CARD_BRIEF,
@@ -40,16 +41,53 @@ export function share(solved: number, attempts: number): string {
   return attempts === 0 ? '—' : `${solved}/${attempts}`;
 }
 
-/** A technique's counts, each beside its word. An untouched row reads as `never`. */
+/** A technique's knowledge reading: its questions passed, answered and held. */
+export interface Knowledge {
+  passed: number;
+  answered: number;
+  total: number;
+}
+
+/**
+ * The questions of every subtopic naming the technique or a code narrower than
+ * it, in every module the learner holds: `log.md`, Mastery. Null where no such
+ * subtopic holds a question.
+ */
+export function techniqueKnowledge(
+  learner: Learner,
+  row: Pick<TechniqueRow, 'technique' | 'narrower'>,
+): Knowledge | null {
+  const codes = new Set([row.technique, ...(row.narrower ?? [])]);
+  const subs = new Set<string>();
+  for (const course of learner.courses)
+    for (const topic of course.topics)
+      for (const [sub, named] of Object.entries(topic.subTechniques))
+        if (named.some((code) => codes.has(code))) subs.add(`${course.slug}/${topic.slug}/${sub}`);
+  const questions = learner.questions().filter((q) => subs.has(`${q.course}/${q.topic}/${q.sub}`));
+  if (questions.length === 0) return null;
+  return {
+    passed: questions.filter((q) => passed(learner.attempts(q))).length,
+    answered: questions.filter((q) => learner.attempts(q).length > 0).length,
+    total: questions.length,
+  };
+}
+
+/**
+ * A technique's counts, each beside its word. An untouched row reads as
+ * `never`, and the knowledge reading follows where a subtopic holds questions.
+ */
 export function techniqueStats(
   row: Pick<TechniqueRow, 'attempt_count' | 'solved_count' | 'last_attempt_at'>,
   now: number,
+  knowledge: Knowledge | null = null,
 ): Stat[] {
-  if (row.attempt_count === 0) return [{ label: 'attempted', value: 'never' }];
+  const known = knowledge ? [{ label: 'known', value: `${knowledge.passed}/${knowledge.total}` }] : [];
+  if (row.attempt_count === 0) return [{ label: 'attempted', value: 'never' }, ...known];
   return [
     { label: row.attempt_count === 1 ? 'attempt' : 'attempts', value: row.attempt_count },
     { label: 'solved', value: share(row.solved_count, row.attempt_count) },
     { label: '', value: lastAt(row.last_attempt_at, now) },
+    ...known,
   ];
 }
 
@@ -60,16 +98,27 @@ export interface BoardView {
   foot: string | null;
 }
 
-export function boardView(board: BoardReading): BoardView {
+/**
+ * The board's two groups. A technique whose questions the user answered is
+ * practised, though no sitting reached it.
+ */
+export function boardView(
+  board: BoardReading,
+  knowledge: (row: TechniqueRow) => Knowledge | null = () => null,
+): BoardView {
   const foot = [
     board.ungrouped > 0 && `${board.ungrouped} ${board.ungrouped === 1 ? 'attempt' : 'attempts'} grouped nowhere`,
     board.excluded > 0 && `${board.excluded} on a defective problem`,
   ].filter(Boolean);
   return {
-    untouched: board.rows.filter((row) => row.attempt_count === 0),
-    practised: board.rows.filter((row) => row.attempt_count > 0),
+    untouched: board.rows.filter((row) => !touched(row, knowledge)),
+    practised: board.rows.filter((row) => touched(row, knowledge)),
     foot: foot.length > 0 ? foot.join(' · ') : null,
   };
+}
+
+function touched(row: TechniqueRow, knowledge: (row: TechniqueRow) => Knowledge | null): boolean {
+  return row.attempt_count > 0 || (knowledge(row)?.answered ?? 0) > 0;
 }
 
 /** What the user has done on one problem, as the line above its statement reads. */

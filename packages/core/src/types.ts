@@ -100,6 +100,7 @@ export interface Topic {
   title: string;
   subs: string[];
   subTitles: Record<string, string>;
+  subTechniques: Record<string, string[]>; // a subtopic's vocabulary codes, empty where it names none
 }
 
 export interface Course {

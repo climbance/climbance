@@ -68,8 +68,8 @@ Every page under a section carries the same two rows above its body.
 | monotonic-stack   sliding-window   two-pointers ...                    |
 |                                                                        |
 | Techniques practised  2                                                |
-| binary-search        12 attempts    9/12 solved    3 days ago          |
-| monotonic-stack       4 attempts     2/4 solved    17 days ago         |
+| binary-search   12 attempts  9/12 solved  3 days ago  4/12 known       |
+| monotonic-stack  4 attempts   2/4 solved  17 days ago                  |
 |                                                                        |
 | 3 attempts grouped nowhere . 2 on a defective problem                  |
 +------------------------------------------------------------------------+
@@ -84,8 +84,9 @@ Every page under a section carries the same two rows above its body.
   first. Each is a name alone, since every count on such a row is zero.
 - A name here is a link, not a chip. The listing's filters are chips, and a
   press there toggles rather than opens.
-- A practised technique is a row: the attempts, the share solved and when it
-  was last practised.
+- A practised technique is a row: the attempts, the share solved, when it was
+  last practised, and the questions passed of every subtopic naming it. A
+  technique no subtopic names reads no knowledge, as `monotonic-stack` here.
 - The line under the two groups counts the attempts no row holds: the attempts
   no technique resolved, and the attempts on a retired problem.
 - Phase 18 serves the scheduler's pick above both groups, and every technique

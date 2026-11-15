@@ -108,6 +108,7 @@ export function loadSnapshot(snap: Snapshot): Catalog {
           title: t.title,
           subs: [...t.subs],
           subTitles: { ...t.sub_titles },
+          subTechniques: { ...t.sub_techniques },
         }));
       const course: Course = {
         slug: c.slug,

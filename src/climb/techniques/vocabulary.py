@@ -67,3 +67,8 @@ def family(code: str) -> str:
         for ancestor in with_ancestors([code])
         if not (entry := criteria().get(ancestor)) or not entry.parents
     )
+
+
+def narrower(code: str) -> list[str]:
+    """Every code that is a kind of `code`, at any depth, sorted."""
+    return sorted(one for one in codes() if one != code and code in with_ancestors([one]))

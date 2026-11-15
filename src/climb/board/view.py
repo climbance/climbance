@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from climb.attempt_claims import resolve_techniques
 from climb.board.candidates import NEVER
 from climb.schema import Attempt, AttemptClaim, FailureMode, Problem, SelfLabel
+from climb.techniques import narrower
 
 
 class TechniqueRow(BaseModel):
@@ -19,6 +20,9 @@ class TechniqueRow(BaseModel):
     # Only the modes an attempt was labelled with; an unlabelled attempt
     # counts toward the row and toward no mode.
     self_labels: dict[FailureMode, int] = {}
+    # the codes that are a kind of this one, whose questions count toward its
+    # knowledge reading on the client: `log.md`, Mastery
+    narrower: list[str] = []
 
     @property
     def unsolved_count(self) -> int:
@@ -49,6 +53,7 @@ def per_technique(
     return [
         TechniqueRow(
             technique=technique,
+            narrower=narrower(technique),
             attempt_count=len(group),
             solved_count=sum(attempt.solved_unaided for attempt in group),
             last_attempt_at=max(attempt.finished_at for attempt in group),
@@ -89,7 +94,13 @@ def stalest_first(rows: Iterable[TechniqueRow], problems: Iterable[Problem]) -> 
     for problem in problems:
         for technique in problem.techniques if problem.served else []:
             by_technique.setdefault(
-                technique, TechniqueRow(technique=technique, attempt_count=0, solved_count=0)
+                technique,
+                TechniqueRow(
+                    technique=technique,
+                    narrower=narrower(technique),
+                    attempt_count=0,
+                    solved_count=0,
+                ),
             )
     return sorted(
         by_technique.values(), key=lambda row: (row.last_attempt_at or NEVER, row.technique)

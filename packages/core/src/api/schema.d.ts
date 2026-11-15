@@ -1476,6 +1476,11 @@ export interface components {
       self_labels: {
         [key: string]: number;
       };
+      /**
+       * Narrower
+       * @default []
+       */
+      narrower: string[];
     };
     /**
      * Template

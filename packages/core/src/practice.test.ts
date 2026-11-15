@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  Board,
   boardView,
   cardEdges,
   cardNeeds,
@@ -23,8 +24,11 @@ import {
   revealLabel,
   startCardRun,
   techniqueCards,
+  loadSnapshot,
+  techniqueKnowledge,
   techniqueStats,
   templateView,
+  type AttemptRecord,
   type components,
 } from './index';
 
@@ -96,11 +100,12 @@ describe("a technique's row", () => {
 });
 
 describe('the board', () => {
-  const row = (technique: string, attempt_count: number) => ({
+  const row = (technique: string, attempt_count: number, narrower: string[] = []) => ({
     technique,
     attempt_count,
     solved_count: 0,
     self_labels: {},
+    narrower,
   });
 
   it('splits the techniques never practised from the rest', () => {
@@ -108,6 +113,15 @@ describe('the board', () => {
     expect(view.untouched.map((one) => one.technique)).toEqual(['a']);
     expect(view.practised.map((one) => one.technique)).toEqual(['b']);
     expect(view.foot).toBeNull();
+  });
+
+  it('counts a technique practised once its questions are answered', () => {
+    const answered = { passed: 0, answered: 1, total: 4 };
+    const view = boardView({ rows: [row('a', 0), row('b', 0)], ungrouped: 0, excluded: 0 }, (one) =>
+      one.technique === 'a' ? answered : null,
+    );
+    expect(view.practised.map((one) => one.technique)).toEqual(['a']);
+    expect(view.untouched.map((one) => one.technique)).toEqual(['b']);
   });
 
   it('names the attempts no row holds in one line', () => {
@@ -421,5 +435,72 @@ describe('the cards the board offers to start', () => {
     const next = nextCards(cards, 2);
     expect(next.cards.map((one) => one.slug)).toEqual(['a', 'b']);
     expect(next.more).toBe(1);
+  });
+});
+
+describe("a technique's knowledge reading", () => {
+  const question = (id: string, sub: string) => ({
+    id,
+    topic: 't',
+    sub,
+    level: 0,
+    kind: 'concept',
+    prompt: id,
+    format: 'choice' as const,
+    choices: ['a', 'b', 'c'],
+    answer: ['A'],
+  });
+  const learner = (records: AttemptRecord[]) =>
+    Board.build(
+      loadSnapshot({
+        format: 6,
+        courses: [
+          {
+            slug: 'algo',
+            definition: {
+              title: 'Algorithms',
+              pass_ratio: 1,
+              kinds: ['concept'],
+              topic: [
+                {
+                  slug: 't',
+                  tier: 1,
+                  title: 'T',
+                  subs: ['dp', 'knap', 'none'],
+                  sub_techniques: { dp: ['dynamic-programming'], knap: ['knapsack'] },
+                },
+              ],
+            },
+            questions: [question('d1', 'dp'), question('d2', 'dp'), question('k1', 'knap'), question('n1', 'none')],
+          },
+        ],
+      } as never),
+      records,
+    );
+  const at = (id: string, ok: boolean): AttemptRecord => ({ t: '2026-11-10T08:00:00.000Z', course: 'algo', id, ok });
+
+  it("counts a narrower code's questions toward its parent", () => {
+    /** a knapsack answer counts toward dynamic-programming, as `log.md` gives */
+    const reading = techniqueKnowledge(learner([at('k1', true), at('d1', false)]), {
+      technique: 'dynamic-programming',
+      narrower: ['knapsack'],
+    });
+    expect(reading).toEqual({ passed: 1, answered: 2, total: 3 });
+  });
+
+  it('reads nothing for a technique no subtopic names', () => {
+    expect(techniqueKnowledge(learner([]), { technique: 'greedy', narrower: [] })).toBeNull();
+  });
+
+  it('follows the counts with the questions passed', () => {
+    const stats = techniqueStats({ attempt_count: 0, solved_count: 0, last_attempt_at: null }, NOW, {
+      passed: 1,
+      answered: 2,
+      total: 3,
+    });
+    expect(stats).toEqual([
+      { label: 'attempted', value: 'never' },
+      { label: 'known', value: '1/3' },
+    ]);
   });
 });

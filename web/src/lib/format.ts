@@ -13,8 +13,11 @@ export function lastAt(at: string | null | undefined): string {
   return lastAtFrom(at, Date.now())
 }
 
-export function counts(row: Parameters<typeof techniqueStats>[0]) {
-  return techniqueStats(row, Date.now())
+export function counts(
+  row: Parameters<typeof techniqueStats>[0],
+  knowledge: Parameters<typeof techniqueStats>[2] = null,
+) {
+  return techniqueStats(row, Date.now(), knowledge)
 }
 
 export function cardRow(card: Parameters<typeof cardRowAt>[0], heading: string | null) {

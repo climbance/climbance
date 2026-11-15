@@ -82,6 +82,12 @@ those steps at low fidelity.
 - **Each module on the board reads as its row on the knowledge home**, and
   opens the module, whose way back then names the board. The board offers no
   order press, since ordering the modules belongs to the knowledge home.
+- **A technique's row on the board reads its knowledge beside its attempts**,
+  as the questions passed over the questions held, across every subtopic
+  naming the technique or a code narrower than it. A row with no such question
+  reads no knowledge. A technique whose questions the user answered is
+  practised, though no sitting reached it. The count is read from the
+  device's copy, as the board's knowledge part is.
 - **A row's progress reads as one bar, the same on a card and a module.** A
   card's bar counts the rungs solved, and a module's counts the questions
   passed. A reader then compares two studies by one shape.

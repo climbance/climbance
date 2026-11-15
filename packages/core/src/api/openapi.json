@@ -3661,6 +3661,14 @@
             "type": "object",
             "title": "Self Labels",
             "default": {}
+          },
+          "narrower": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Narrower",
+            "default": []
           }
         },
         "type": "object",

@@ -177,7 +177,7 @@ starts, so their subtopics come first.
       on both clients, with the rows in `pages.md` `### Acts`
 - [ ] Refuse in the card seed a card whose `module` names no seeded module,
       once the algorithms module is seeded. Every card names it before then
-- [ ] Count a technique's knowledge reading from the answers to the questions
+- [x] Count a technique's knowledge reading from the answers to the questions
       of every subtopic naming it, as `log.md` gives, and show it on the board
 - [ ] Add `cites` to the template in the seed and the card API, refusing a
       subtopic the store does not hold

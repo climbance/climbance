@@ -7,7 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   boardView,
   inProgress,
+  techniqueKnowledge,
   techniqueStats,
+  type Board as Learner,
   type components,
   BOARD_TITLE,
   OF,
@@ -119,7 +121,7 @@ export default function PracticeScreen() {
           blank={BOARD_NONE}
           blankWhen={(x) => x.board.rows.length === 0}
         >
-          {(x) => <BoardBody board={x.board} cards={x.cards} />}
+          {(x) => <BoardBody board={x.board} cards={x.cards} learner={all} />}
         </Loaded>
       </ScrollView>
       <ContinueNotice next={next} />
@@ -127,10 +129,12 @@ export default function PracticeScreen() {
   );
 }
 
-function BoardBody({ board, cards }: { board: Board; cards: ListedCard[] }) {
+function BoardBody({ board, cards, learner }: { board: Board; cards: ListedCard[]; learner: Learner | null }) {
   const theme = useTheme();
   const [now] = useState(() => Date.now());
-  const { untouched, practised, foot } = boardView(board);
+  // the knowledge reading, from the device's copy: `log.md`, Mastery
+  const known = (row: Board['rows'][number]) => (learner ? techniqueKnowledge(learner, row) : null);
+  const { untouched, practised, foot } = boardView(board, known);
   const studying = inProgress(cards);
   const next = nextCards(cards);
   return (
@@ -187,7 +191,7 @@ function BoardBody({ board, cards }: { board: Board; cards: ListedCard[] }) {
               <PickRow
                 key={row.technique}
                 title={row.technique}
-                stats={techniqueStats(row, now)}
+                stats={techniqueStats(row, now, known(row))}
                 onPress={() => open(row.technique)}
               />
             ))}
