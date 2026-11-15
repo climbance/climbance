@@ -79,6 +79,11 @@ export const RUNGS_SOLVED = 'rungs solved';
 export const QUESTIONS_PASSED = 'questions passed';
 export const FORMS_RECALLED = 'forms recalled';
 export const PROBES_DRAWN = 'probes drawn';
+export const checkOpens = (date: string) => `spaced check opens ${date}`;
+export const checkOpen = (date: string) => `spaced check open, owed ${date}`;
+export const checkOwed = (date: string) => `spaced check owed since ${date}`;
+export const recallDue = (date: string) => `next recall due ${date}`;
+export const recallOverdue = (date: string) => `recall due since ${date}`;
 export const HIDE_FORM = 'Hide the form';
 export const FORM_UNCHECKED = 'Read here and never recalled, since no case checks it.';
 

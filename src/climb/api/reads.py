@@ -21,12 +21,12 @@ from climb.board import (
 )
 from climb.cards import CardStore
 from climb.cards.graph import depths
+from climb.graduation import Next, reading
 from climb.ladder import (
     CardState,
     Gap,
     Ladder,
     Rung,
-    card_state,
     ladder,
     locked_by,
     met,
@@ -167,6 +167,8 @@ class CardStatus(BaseModel):
 
     started_at: datetime | None  # absent until the card is started
     state: CardState
+    # the spaced check a template waits for, or a graduated card's due recall
+    next: Next | None
     rungs: int
     solved: int  # since the run began, as the card's page counts a rung
     required: int
@@ -195,6 +197,7 @@ def every_card(root: Root, user_id: UserId) -> list[ListedCard]:
     runs = CardRunLog(root)
     recalls = RecallLog(root)
     cards = CardStore(root).all()
+    by_id = {problem.id: problem for problem in problems}
     held: dict[str, tuple[CardRun | None, Ladder]] = {}
     for card in cards:
         run = runs.started(user_id, card.id)
@@ -207,7 +210,9 @@ def every_card(root: Root, user_id: UserId) -> list[ListedCard]:
         ListedCard(
             **card.model_dump(),
             family=family(card.technique),
-            status=_status(card, *held[card.slug], attempts, recalls.for_card(user_id, card.id)),
+            status=_status(
+                card, *held[card.slug], attempts, by_id, recalls.for_card(user_id, card.id)
+            ),
             depth=deep[card.slug],
             met=card.slug in reached,
             waiting=[Waiting(slug=one, title=titles[one]) for one in unmet(card, reached)],
@@ -263,8 +268,10 @@ def _status(
     run: CardRun | None,
     resolved: Ladder,
     attempts: list[Attempt],
+    problems: dict[str, Problem],
     recalls: list[RecallAttempt],
 ) -> CardStatus:
+    state, upcoming = reading(card, run, resolved.rungs, attempts, problems, recalls)
     since = run.started_at if run else None
     recall = _recall(card, recalls)
     taught = {rung.problem.id for rung in resolved.rungs}
@@ -279,7 +286,8 @@ def _status(
     ]
     return CardStatus(
         started_at=since,
-        state=card_state(since is not None, resolved.rungs),
+        state=state,
+        next=upcoming,
         rungs=len(resolved.rungs),
         solved=sum(rung.solved for rung in resolved.rungs),
         required=sum(rung.required for rung in resolved.rungs),

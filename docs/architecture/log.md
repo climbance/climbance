@@ -458,6 +458,9 @@ lapsed.
   review was rated Again since the card last graduated needs a recall rated
   Good once its spaced check opened. The check is read from that template's
   reviews, so it opens at least three days after the relearning step.
+- **Only a template that carries cases lapses a card.** A lapsed card
+  graduates again on recalls alone, and a template no case checks is never
+  recalled.
 - **A lapse asks for no new ladder and no new probe.** The ladder and the
   probe held at graduation, and a lapse shows one form lost, which a recall
   tests. The run's probes are already seen, and `flows.md` defers when a run

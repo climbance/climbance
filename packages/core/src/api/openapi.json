@@ -1815,6 +1815,16 @@
           "state": {
             "$ref": "#/components/schemas/CardState"
           },
+          "next": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Next"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "rungs": {
             "type": "integer",
             "title": "Rungs"
@@ -1859,6 +1869,7 @@
         "required": [
           "started_at",
           "state",
+          "next",
           "rungs",
           "solved",
           "required",
@@ -2536,6 +2547,50 @@
         ],
         "title": "Named",
         "description": "One template of the card, as the trainer lists it: what it is called,\nwhether it is optional, and whether a case can check a reproduction of\nit."
+      },
+      "Next": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/NextKind"
+          },
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "opens": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Opens"
+          },
+          "owed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "template_id",
+          "opens"
+        ],
+        "title": "Next",
+        "description": "The spaced check a template waits for, or a graduated card's next due\nrecall. `owed` is the check's alone."
+      },
+      "NextKind": {
+        "type": "string",
+        "enum": [
+          "check",
+          "recall"
+        ],
+        "title": "NextKind"
       },
       "Offered": {
         "properties": {

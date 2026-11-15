@@ -79,6 +79,7 @@ function CardRow({ card, heading }: { card: ListedCard; heading: string | null }
       }
     >
       {row.waits !== null && <p className="mt-1 text-meta text-muted-foreground">{row.waits}</p>}
+      {row.next !== null && <p className="mt-1 text-meta text-muted-foreground">{row.next}</p>}
       {row.trigger !== null && (
         <p className="mt-1 line-clamp-2 text-meta text-muted-foreground">{row.trigger}</p>
       )}

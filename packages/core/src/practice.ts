@@ -15,10 +15,15 @@ import {
   cardsDepth,
   cardsOffered,
   cardWaits,
+  checkOpen,
+  checkOpens,
+  checkOwed,
   FORM_NO_CASES,
   FORM_UNCHECKED,
   NO_DIFFICULTY,
   PROCEDURE,
+  recallDue,
+  recallOverdue,
   studyingSince,
   techniquesLine,
 } from './words/pages';
@@ -273,12 +278,24 @@ export function recallMarks(card: ListedCard): RecallMark[] {
   }));
 }
 
-/** A started card's line: when it began, the ladder, and the forms no rung covers. */
+const day = (iso: string) => new Date(iso).toLocaleDateString();
+
+/** A started card's line: its card state, when it began, the ladder, and the forms no rung covers. */
 export function cardStateLine(status: ListedCard['status']): string {
-  const started = status.started_at ? new Date(status.started_at).toLocaleDateString() : '';
+  const started = status.started_at ? day(status.started_at) : '';
   const gaps =
     status.gaps === 0 ? '' : ` · ${status.gaps === 1 ? '1 form uncovered' : `${status.gaps} forms uncovered`}`;
-  return `started ${started} · ladder ${status.solved}/${status.rungs}, required ${status.required_solved}/${status.required}${gaps}`;
+  return `${status.state} · started ${started} · ladder ${status.solved}/${status.rungs}, required ${status.required_solved}/${status.required}${gaps}`;
+}
+
+/** The spaced check a card waits for, or a graduated card's next due recall. */
+export function cardNextLine(next: ListedCard['status']['next'], now: number): string | null {
+  if (!next) return null;
+  const opens = Date.parse(next.opens);
+  if (next.kind === 'recall') return now < opens ? recallDue(day(next.opens)) : recallOverdue(day(next.opens));
+  if (now < opens) return checkOpens(day(next.opens));
+  const owed = next.owed ?? next.opens;
+  return now < Date.parse(owed) ? checkOpen(day(owed)) : checkOwed(day(owed));
 }
 
 export interface CardRowView {
@@ -292,6 +309,8 @@ export interface CardRowView {
   waits: string | null;
   // a started card reads its progress; any other reads the trigger it is picked by
   state: string | null;
+  // the spaced check the card waits for, or its next due recall
+  next: string | null;
   trigger: string | null;
   progress: { solved: number; rungs: number } | null;
   recall: RecallMark[];
@@ -309,6 +328,7 @@ export function cardRow(card: ListedCard, heading: string | null, now: number): 
     aside: locked ? CARD_LOCKED : card.met ? CARD_MET : started ? lastAt(status.last_at, now) : CARD_NOT_STARTED,
     waits: locked ? cardWaits(waiting.map((one) => one.title)) : null,
     state: started ? cardStateLine(status) : null,
+    next: cardNextLine(status.next, now),
     trigger: started || locked ? null : plain(card.trigger),
     progress: started ? { solved: status.solved, rungs: status.rungs } : null,
     recall: recallMarks(card),

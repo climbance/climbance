@@ -404,7 +404,7 @@ drill board tracked them by hand.
       has a review rated Again. A review rated Hard leaves it graduated
 - [x] Write into `log.md` which probe graduates a card, and what a lapsed card
       needs to graduate again. Both are deferred under `## Card states`
-- [ ] Show each card's state and its next due recall or spaced check on
+- [x] Show each card's state and its next due recall or spaced check on
       `/cards` and on the board's cards in progress. The dashboard left both
       for this phase
 

@@ -754,6 +754,7 @@ export interface components {
       /** Started At */
       started_at: string | null;
       state: components['schemas']['CardState'];
+      next: components['schemas']['Next'] | null;
       /** Rungs */
       rungs: number;
       /** Solved */
@@ -1021,6 +1022,28 @@ export interface components {
       /** Recallable */
       recallable: boolean;
     };
+    /**
+     * Next
+     * @description The spaced check a template waits for, or a graduated card's next due
+     *     recall. `owed` is the check's alone.
+     */
+    Next: {
+      kind: components['schemas']['NextKind'];
+      /** Template Id */
+      template_id: string;
+      /**
+       * Opens
+       * Format: date-time
+       */
+      opens: string;
+      /** Owed */
+      owed?: string | null;
+    };
+    /**
+     * NextKind
+     * @enum {string}
+     */
+    NextKind: 'check' | 'recall';
     /**
      * Offered
      * @description What the login page offers.

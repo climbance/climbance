@@ -5,6 +5,7 @@ import {
   boardView,
   cardEdges,
   cardNeeds,
+  cardNextLine,
   cardRow,
   briefParts,
   cardSections,
@@ -70,6 +71,7 @@ const card = (slug: string, extra: Partial<ListedCard> = {}, status: Partial<Lis
     status: {
       started_at: null,
       state: 'not_started',
+      next: null,
       rungs: 0,
       solved: 0,
       required: 0,
@@ -248,6 +250,7 @@ describe("a card's row", () => {
       {},
       {
         started_at: '2026-11-01T00:00:00Z',
+        state: 'acquiring',
         last_at: '2026-11-10T08:00:00Z',
         rungs: 4,
         solved: 2,
@@ -259,8 +262,28 @@ describe("a card's row", () => {
     const row = cardRow(started, null, NOW);
     expect(row.aside).toBe('today');
     expect(row.trigger).toBeNull();
-    expect(row.state).toMatch(/^started .+ · ladder 2\/4, required 1\/3 · 1 form uncovered$/);
+    expect(row.state).toMatch(/^acquiring · started .+ · ladder 2\/4, required 1\/3 · 1 form uncovered$/);
     expect(row.progress).toEqual({ solved: 2, rungs: 4 });
+  });
+
+  it('names the spaced check a card waits for, by where now falls in it', () => {
+    const next = {
+      kind: 'check' as const,
+      template_id: 't',
+      opens: '2026-11-08T00:00:00Z',
+      owed: '2026-11-10T00:00:00Z',
+    };
+    const at = (iso: string) => Date.parse(iso);
+    expect(cardNextLine(next, at('2026-11-07T00:00:00Z'))).toMatch(/^spaced check opens /);
+    expect(cardNextLine(next, at('2026-11-09T00:00:00Z'))).toMatch(/^spaced check open, owed /);
+    expect(cardNextLine(next, at('2026-11-11T00:00:00Z'))).toMatch(/^spaced check owed since /);
+  });
+
+  it("names a graduated card's next due recall, and reads nothing without one", () => {
+    const next = { kind: 'recall' as const, template_id: 't', opens: '2026-11-08T00:00:00Z', owed: null };
+    expect(cardNextLine(next, Date.parse('2026-11-01T00:00:00Z'))).toMatch(/^next recall due /);
+    expect(cardNextLine(next, Date.parse('2026-11-09T00:00:00Z'))).toMatch(/^recall due since /);
+    expect(cardNextLine(null, NOW)).toBeNull();
   });
 
   it('marks each template by its last recall', () => {

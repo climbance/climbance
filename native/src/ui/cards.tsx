@@ -68,6 +68,11 @@ export function CardPanel({
                   {needs}
                 </Text>
               ) : null}
+              {row.next !== null ? (
+                <Text variant="bodySmall" style={muted}>
+                  {row.next}
+                </Text>
+              ) : null}
               {row.trigger !== null ? (
                 <Text variant="bodySmall" numberOfLines={2} style={muted}>
                   {row.trigger}
