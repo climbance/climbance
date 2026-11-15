@@ -41,7 +41,7 @@ complete. `modules/py/STATUS.md` gives each subtopic.
 - [x] Render inline code in a question's text on the phone and the web
 - [x] Practise `core/functions` on the phone, and fix what reading it there
       shows
-- [ ] Fix the Details heading "Your answer", which the phone sometimes cuts
+- [x] Fix the Details heading "Your answer", which the phone sometimes cuts
       to "Your", after a cold start too
 - [x] Release `py` `core` at level 0: 7 of 7 subtopics
 - [x] Release `py` `stdlib` at level 0: 8 of 8 subtopics

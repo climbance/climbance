@@ -280,7 +280,8 @@ export function Heading(props: {
       {props.onToggle ? (
         <MaterialCommunityIcons name={props.closed ? 'chevron-right' : 'chevron-down'} size={20} color={muted} />
       ) : null}
-      <Text variant={props.sub ? 'titleSmall' : 'titleMedium'} style={{ flexShrink: 1 }}>
+      {/* flex, not flexShrink: Android wraps a shrunk Text at Yoga's rounded width and clips the wrapped word */}
+      <Text variant={props.sub ? 'titleSmall' : 'titleMedium'} style={{ flex: 1 }}>
         {props.title}
         {props.count !== undefined ? <Text style={{ color: muted }}>{`  ${props.count}`}</Text> : null}
       </Text>
