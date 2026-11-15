@@ -395,7 +395,6 @@ def release(args: argparse.Namespace) -> None:
             print(f"{where}: seeded")
 
 
-
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--module", default="py")
