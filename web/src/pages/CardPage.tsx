@@ -24,12 +24,17 @@ import {
   cardSections,
   startCardRun,
   judgeFrom,
+  cardSubtopics,
+  CARD_SUBTOPICS,
+  subtopicLabel,
 } from '@climb/core'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { api, type Studied } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
+import { useLearner } from '@/knowledge/learner'
+import { SectionHeading } from '@/components/SectionHeading'
 import { ErrorLine } from '@/components/ErrorLine'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
@@ -55,6 +60,7 @@ export function CardPage() {
   const [starting, setStarting] = useState(false)
   const [refused, setRefused] = useState<string | null>(null)
   const data = studied.data
+  const { catalog } = useLearner()
   const items = cardSections(data)
   const { current, closed, toggle, jump } = useSections(items)
 
@@ -97,10 +103,13 @@ export function CardPage() {
 
               <Link
                 to={`/judge?card=${encodeURIComponent(slug)}`}
-                className="text-meta underline-offset-4 hover:underline"
+                // a block, so the page's spacing reaches it
+                className="block w-fit text-meta underline-offset-4 hover:underline"
               >
                 {judgeFrom(studied.card.title)}
               </Link>
+
+              <Subtopics card={studied.card} courses={catalog?.courses ?? []} />
 
               <SectionBar items={items} current={current} onJump={jump} />
 
@@ -334,5 +343,34 @@ function ProbesView({
         ))}
       </PickList>
     </Section>
+  )
+}
+
+// the subtopics holding the facts the card's forms rest on: `content.md`,
+// Cards and subtopics. A subtopic opens its module until it has a page
+function Subtopics({
+  card,
+  courses,
+}: {
+  card: Studied['card']
+  courses: Parameters<typeof cardSubtopics>[0]
+}) {
+  const found = cardSubtopics(courses, card)
+  if (found.length === 0) return null
+  return (
+    <section className="space-y-1">
+      <SectionHeading sub title={CARD_SUBTOPICS} />
+      <p className="flex flex-wrap gap-x-4">
+        {found.map((one) => (
+          <Link
+            key={`${one.module}/${one.sub}`}
+            to={`/knowledge/modules/${encodeURIComponent(one.module)}`}
+            className="font-medium underline-offset-4 hover:underline"
+          >
+            {subtopicLabel(one)}
+          </Link>
+        ))}
+      </p>
+    </section>
   )
 }

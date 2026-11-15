@@ -19,8 +19,11 @@ import {
   LESSON_RELATED,
   OF,
   lessonPage,
+  lessonCards,
+  LESSON_CARDS,
 } from '@climb/core';
 import { useStore } from '@/lib/store';
+import { useEngine } from '@/lib/useEngine';
 import { Blank, BottomBar, fromCopy, Loaded, styles, Press, ScreenHeader } from '@/ui/common';
 import { BLOCK_GAP, CodeRenderer, InlineCode, type InlineCodeProps, useMarkdownOptions } from '@/ui/markdown';
 import { Heading } from '@/ui/rows';
@@ -204,6 +207,10 @@ export default function LessonScreen() {
 function Footer({ c, slug }: { c: Course; slug: string }) {
   const theme = useTheme();
   const { next, related } = lessonsAround(c, slug);
+  // the cards add to the lesson, so a failed list reads as none, as on the web
+  const listed = useEngine('/api/cards');
+  const lesson = c.graph?.lessons.find((x) => x.slug === slug);
+  const cards = lesson ? lessonCards(c, lesson, listed.data ?? []) : [];
   const row = (title: string, items: Lesson[]) =>
     items.length ? (
       <View style={{ gap: space[1.5], marginTop: space[4] }}>
@@ -228,6 +235,24 @@ function Footer({ c, slug }: { c: Course; slug: string }) {
     <>
       {row(LESSON_NEXT, next)}
       {row(LESSON_RELATED, related)}
+      {cards.length ? (
+        <View style={{ gap: space[1.5], marginTop: space[4] }}>
+          <Heading sub title={LESSON_CARDS} />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 16, rowGap: 6 }}>
+            {cards.map((card) => (
+              <Text
+                key={card.slug}
+                variant="bodyMedium"
+                accessibilityRole="link"
+                onPress={() => router.push({ pathname: '/card', params: { slug: card.slug } })}
+                style={{ color: theme.colors.primary }}
+              >
+                {card.title}
+              </Text>
+            ))}
+          </View>
+        </View>
+      ) : null}
     </>
   );
 }

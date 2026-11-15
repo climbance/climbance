@@ -545,6 +545,8 @@ what it offers. The inventory is the list both clients build to.
 | Restore an archived module | the settings page | Settings | same |
 | Open a lesson ready to read, or a certification ready for its exam | the home | Home | same |
 | Mark a lesson read or unread | the lesson page | Lesson | same |
+| Open a subtopic naming a card's technique | the card page | Card | same |
+| Open a card a lesson's subtopic pairs with | the lesson page | Lesson | same |
 | Set the daily limit and the exam size | the settings page | Settings | same |
 | Set the exam size for one exam | the exam page | Exam | same |
 | Type a `short` reply | the browser's keyboard | the app's keyboard | by platform |

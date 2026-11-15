@@ -17,11 +17,15 @@ import {
   BACK_LESSONS,
   OF,
   lessonPage,
+  lessonCards,
+  LESSON_CARDS,
 } from '@climb/core'
 
 import { SectionHeading } from '@/components/SectionHeading'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { api } from '@/api/client'
+import { useLoaded } from '@/api/useLoaded'
 import { PageSection } from '@/components/PageSection'
 import { SectionBar } from '@/components/SectionBar'
 import { Button } from '@/components/ui/button'
@@ -45,6 +49,8 @@ export function LessonPage() {
     if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
   }, [hash, body])
 
+  // the cards add to the lesson, so a failed list reads as none
+  const cards = useLoaded((signal) => api.GET('/api/cards', { signal }), 'cards')
   const page = catalog ? { c, x } : undefined
   return (
     <article className="space-y-section">
@@ -67,6 +73,7 @@ export function LessonPage() {
               x={x}
               body={body}
               read={read}
+              cards={lessonCards(c, x, cards.data ?? [])}
               sectioned
               // a page loaded first holds no history entry to return to
               onDone={() => (key === 'default' ? navigate(LESSONS) : navigate(-1))}
@@ -86,13 +93,15 @@ export function LessonBody(props: {
   body: string
   read: boolean
   onLesson?: (slug: string, part?: string) => void
+  // the cards its subtopics pair with, on the lesson's own page alone
+  cards?: { slug: string; title: string }[]
   // Mark read closes the lesson: `pages.md`, The knowledge pages
   onDone: () => void
   // on the lesson's own page its parts read as sections; over a queue the
   // text reads whole
   sectioned?: boolean
 }) {
-  const { c, x, body, read, onLesson, onDone, sectioned = false } = props
+  const { c, x, body, read, onLesson, onDone, sectioned = false, cards = [] } = props
   const k = useKnowledge()
   const { next, related } = lessonsAround(c, x.slug)
   return (
@@ -135,6 +144,22 @@ export function LessonBody(props: {
             </p>
           </section>
         ) : null,
+      )}
+      {cards.length > 0 && (
+        <section className="space-y-1">
+          <SectionHeading sub title={LESSON_CARDS} />
+          <p className="flex flex-wrap gap-x-4">
+            {cards.map((card) => (
+              <Link
+                key={card.slug}
+                to={`/cards/${encodeURIComponent(card.slug)}`}
+                className="font-medium underline-offset-4 hover:underline"
+              >
+                {card.title}
+              </Link>
+            ))}
+          </p>
+        </section>
       )}
       <div>
         {read ? (

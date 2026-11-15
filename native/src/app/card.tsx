@@ -7,6 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   judgeFrom,
+  cardSubtopics,
+  CARD_SUBTOPICS,
+  subtopicLabel,
   RECALL_THIS,
   RECALL_TITLE,
   type components,
@@ -41,7 +44,7 @@ import { useStore } from '@/lib/store';
 import { useEngine } from '@/lib/useEngine';
 import { BottomBar, CodeBlock, Loaded, styles, Press, ScreenHeader } from '@/ui/common';
 import { Markdown } from '@/ui/markdown';
-import { Badge, Panel, PickPanel, PickRow, Progress, Stat, Stats } from '@/ui/rows';
+import { Badge, Heading, Panel, PickPanel, PickRow, Progress, Stat, Stats } from '@/ui/rows';
 import { PageSection, type Sections, SectionBar, useSections } from '@/ui/sections';
 import { usePullSync } from '@/ui/pull';
 import { space } from '@/ui/tokens';
@@ -59,6 +62,7 @@ export default function CardScreen() {
   const insets = useSafeAreaInsets();
   const { slug = '' } = useLocalSearchParams<{ slug: string }>();
   const studied = useEngine('/api/cards/{slug}', { slug });
+  const st = useStore();
   const pull = usePullSync(studied.reload);
   const [now] = useState(() => Date.now());
   const card = studied.data?.card;
@@ -91,6 +95,7 @@ export default function CardScreen() {
               >
                 {judgeFrom(data.card.title)}
               </Text>
+              <Subtopics card={data.card} courses={st.catalog?.courses ?? []} />
               <PageSection of={sections} id="trigger" title={CARD_TRIGGER}>
                 <Markdown>{data.card.trigger}</Markdown>
               </PageSection>
@@ -339,5 +344,37 @@ function RunStart({
         {runStartLabel(starting, lock !== null)}
       </Press>
     </BottomBar>
+  );
+}
+
+// the subtopics holding the facts the card's forms rest on: `content.md`,
+// Cards and subtopics. A subtopic opens its module until it has a screen
+function Subtopics({
+  card,
+  courses,
+}: {
+  card: { technique: string; module: string };
+  courses: Parameters<typeof cardSubtopics>[0];
+}) {
+  const theme = useTheme();
+  const found = cardSubtopics(courses, card);
+  if (found.length === 0) return null;
+  return (
+    <View style={{ gap: space[1.5] }}>
+      <Heading sub title={CARD_SUBTOPICS} />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 16, rowGap: 6 }}>
+        {found.map((one) => (
+          <Text
+            key={`${one.module}/${one.sub}`}
+            variant="bodyMedium"
+            accessibilityRole="link"
+            onPress={() => router.push({ pathname: '/module', params: { course: one.module } })}
+            style={{ color: theme.colors.primary }}
+          >
+            {subtopicLabel(one)}
+          </Text>
+        ))}
+      </View>
+    </View>
   );
 }

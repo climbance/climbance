@@ -172,9 +172,12 @@ starts, so their subtopics come first.
       it finds. `concept-author` runs it on each bank before the fix, so no
       solver has read a fixed question
 - [ ] Seed the module, with `module check` passing
-- [ ] Link a card's page to every subtopic naming its technique, the primary
+- [x] Link a card's page to every subtopic naming its technique, the primary
       module's first, and each lesson to every card its subtopic pairs with,
       on both clients, with the rows in `pages.md` `### Acts`
+- [ ] Add a subtopic page on both clients: its lessons with their state, a
+      line per level and its cards. A card's subtopic link opens the module
+      page until the subtopic page exists
 - [x] Refuse in the card seed a card whose `module` names no seeded module,
       once the algorithms module is seeded. Every card names it before then
 - [x] Count a technique's knowledge reading from the answers to the questions
