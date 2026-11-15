@@ -534,9 +534,11 @@ check is owed, and when a graduated template is due again.
   is a warm review, and FSRS gives a first review a short stability. The last
   review before the check is therefore the point the check is measured from.
 - **Recall probability is FSRS's retrievability**: the chance, read from the
-  replay, that the user still reproduces the form at a given moment.
+  replay, that the user still reproduces the form at a given moment. It
+  counts whole days since the last review, as py-fsrs does, so it falls once
+  a day.
 - **The spaced check opens when a template's recall probability falls to
-  0.88, and is owed once it falls to 0.84.** At the default parameters, after
+  0.89, and is owed once it falls to 0.84.** At the default parameters, after
   one Good review, these are day 3 and day 5. The check tests whether the form
   survived, so it sits later than the due time a maintaining review reads.
 - **The check never opens within three days of the template's last review.**

@@ -422,13 +422,13 @@ cards' states.
       schedule, and write the choice into `flows.md`
 - [ ] Write down the FSRS parameters the schedule starts from and why each was
       chosen. A number nobody wrote down is guessed again at every change
-- [x] Write the spaced check into `log.md` as two recall probabilities, 0.88
+- [x] Write the spaced check into `log.md` as two recall probabilities, 0.89
       and 0.84, with a three-day floor. At the default parameters these land on
       algo-prep's measured window, days 3 to 5
 - [ ] Write the in-flight cap into the pick's rule in `flows.md`: two cards,
       counting a card on its ladder or with its spaced check open. A card
       waiting for its check holds no slot
-- [ ] Compute each template's recall probability and due time over the
+- [x] Compute each template's recall probability and due time over the
       ported replay, as `log.md` `## The template schedule` gives, with a test
       pinning the check to days 3 and 5 at the default parameters
 - [ ] Write the pick's rule into `flows.md`: what it reads, how it aims at the

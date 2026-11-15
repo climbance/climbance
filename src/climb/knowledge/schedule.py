@@ -6,7 +6,6 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import StrEnum
-from functools import cache
 from typing import Any
 
 from fsrs import Card, Rating, Scheduler
@@ -55,14 +54,18 @@ def _minutes(values: Sequence[float]) -> tuple[timedelta, ...]:
     return tuple(timedelta(minutes=m) for m in values)
 
 
-SCHEDULER = Scheduler(
-    parameters=FSRS["parameters"],
-    desired_retention=FSRS["desired_retention"],
-    learning_steps=_minutes(FSRS["learning_steps_minutes"]),
-    relearning_steps=_minutes(FSRS["relearning_steps_minutes"]),
-    maximum_interval=FSRS["maximum_interval"],
-    enable_fuzzing=FSRS["enable_fuzzing"],
-)
+def scheduler(settings: dict[str, Any]) -> Scheduler:
+    return Scheduler(
+        parameters=settings["parameters"],
+        desired_retention=settings["desired_retention"],
+        learning_steps=_minutes(settings["learning_steps_minutes"]),
+        relearning_steps=_minutes(settings["relearning_steps_minutes"]),
+        maximum_interval=settings["maximum_interval"],
+        enable_fuzzing=settings["enable_fuzzing"],
+    )
+
+
+SCHEDULER = scheduler(FSRS)
 RETAINED_DAYS: float = FSRS["mastered_stability_days"]
 
 
@@ -89,20 +92,23 @@ def history(answers: Iterable[Answer]) -> dict[str, list[Review]]:
     return dict(reviews)
 
 
-@cache
-def _replay(reviews: tuple[Review, ...]) -> Memory | None:
+def fsrs_card(reviews: Sequence[Review], scheduler: Scheduler | None = None) -> Card | None:
+    """py-fsrs's card after each review at its own moment, in order."""
     if not reviews:
         return None
     # a fixed id: py-fsrs otherwise sleeps a millisecond to mint one
     card = Card(card_id=0)
     for r in reviews:
-        card, _ = SCHEDULER.review_card(card, r.rating, r.at)
+        card, _ = (scheduler or SCHEDULER).review_card(card, r.rating, r.at)
+    return card
+
+
+def replay(reviews: Sequence[Review], scheduler: Scheduler | None = None) -> Memory | None:
+    card = fsrs_card(reviews, scheduler)
+    if card is None:
+        return None
     assert card.stability is not None and card.difficulty is not None
     return Memory(card.stability, card.difficulty, card.due)
-
-
-def replay(reviews: Sequence[Review]) -> Memory | None:
-    return _replay(tuple(reviews))
 
 
 def passes(review: Review) -> bool:
