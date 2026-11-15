@@ -30,6 +30,8 @@ import {
   PICK_RUNG,
   PICK_START,
   EXECUTION,
+  FALSE_ALARMS,
+  FLAWS_FOUND,
   PROCEDURE,
   RECOGNITION,
   UNKNOWN,
@@ -95,11 +97,14 @@ export function techniqueKnowledge(
  */
 export function techniqueStats(
   row: Pick<TechniqueRow, 'attempt_count' | 'solved_count' | 'last_attempt_at'> &
-    Partial<Pick<TechniqueRow, 'execution'>>,
+    Partial<Pick<TechniqueRow, 'execution' | 'judged'>>,
   now: number,
   knowledge: Knowledge | null = null,
 ): Stat[] {
-  const known = knowledge ? [{ label: 'known', value: `${knowledge.passed}/${knowledge.total}` }] : [];
+  const known = [
+    ...(knowledge ? [{ label: 'known', value: `${knowledge.passed}/${knowledge.total}` }] : []),
+    ...judgedStats(row.judged ?? null),
+  ];
   if (row.attempt_count === 0) return [{ label: 'attempted', value: 'never' }, ...known];
   return [
     { label: row.attempt_count === 1 ? 'attempt' : 'attempts', value: row.attempt_count },
@@ -107,6 +112,18 @@ export function techniqueStats(
     { label: '', value: lastAt(row.last_attempt_at, now) },
     ...masteryStats(row.execution ?? null),
     ...known,
+  ];
+}
+
+/**
+ * The judgement rates, beside mastery and counted in none of its parts:
+ * `log.md`, Judging a solution. Each reads only once an item of its kind was answered.
+ */
+export function judgedStats(judged: TechniqueRow['judged'] | null): Stat[] {
+  if (!judged) return [];
+  return [
+    ...(judged.flawed > 0 ? [{ label: FLAWS_FOUND, value: `${judged.flaws_found}/${judged.flawed}` }] : []),
+    ...(judged.clean > 0 ? [{ label: FALSE_ALARMS, value: `${judged.false_alarms}/${judged.clean}` }] : []),
   ];
 }
 
@@ -129,8 +146,8 @@ export interface BoardView {
 }
 
 /**
- * The board's two groups. A technique whose questions the user answered is
- * practised, though no sitting reached it.
+ * The board's two groups. A technique whose questions the user answered, or
+ * whose solutions the user judged, is practised, though no sitting reached it.
  */
 export function boardView(
   board: BoardReading,
@@ -148,7 +165,8 @@ export function boardView(
 }
 
 function touched(row: TechniqueRow, knowledge: (row: TechniqueRow) => Knowledge | null): boolean {
-  return row.attempt_count > 0 || (knowledge(row)?.answered ?? 0) > 0;
+  const judged = row.judged ? row.judged.flawed + row.judged.clean : 0;
+  return row.attempt_count > 0 || (knowledge(row)?.answered ?? 0) > 0 || judged > 0;
 }
 
 /** What the user has done on one problem, as the line above its statement reads. */

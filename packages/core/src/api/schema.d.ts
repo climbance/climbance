@@ -995,6 +995,34 @@ export interface components {
       lines: string[];
     };
     /**
+     * JudgementRates
+     * @description Flaws found over the flawed items answered, and clean solutions called
+     *     flawed over the clean ones answered. One rate alone hides a user who calls
+     *     everything flawed.
+     */
+    JudgementRates: {
+      /**
+       * Flaws Found
+       * @default 0
+       */
+      flaws_found: number;
+      /**
+       * Flawed
+       * @default 0
+       */
+      flawed: number;
+      /**
+       * False Alarms
+       * @default 0
+       */
+      false_alarms: number;
+      /**
+       * Clean
+       * @default 0
+       */
+      clean: number;
+    };
+    /**
      * Label
      * @description The one mode the solver picked. A skipped label sends no request.
      */
@@ -1618,6 +1646,7 @@ export interface components {
       sittings: number;
       /** Execution */
       execution?: number | null;
+      judged?: components['schemas']['JudgementRates'] | null;
     };
     /**
      * Template

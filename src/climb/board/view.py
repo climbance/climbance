@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from climb.attempt_claims import resolve_techniques
 from climb.board.candidates import NEVER
 from climb.board.execution import execution
+from climb.board.judged import JudgementRates
 from climb.schema import Attempt, AttemptClaim, FailureMode, Problem, SelfLabel
 from climb.techniques import narrower
 
@@ -28,6 +29,8 @@ class TechniqueRow(BaseModel):
     # recognition has no evidence yet and reads unknown: `log.md`, Mastery
     sittings: int = 0
     execution: float | None = None
+    # shown beside mastery and counted in none of its parts: `log.md`, Mastery
+    judged: JudgementRates | None = None
 
     @property
     def unsolved_count(self) -> int:

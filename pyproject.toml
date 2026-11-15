@@ -206,6 +206,9 @@ ignore_names = [
     "required_solved",
     # the board's pick names its problem, which the page reads and no module does
     "problem_title",
+    # the board reads a technique's judgement rates, and no module does
+    "flaws_found",
+    "false_alarms",
 ]
 
 [tool.ruff]

@@ -2491,6 +2491,33 @@
         "title": "JudgedItem",
         "description": "An item as the page shows it: no field says whether it is clean."
       },
+      "JudgementRates": {
+        "properties": {
+          "flaws_found": {
+            "type": "integer",
+            "title": "Flaws Found",
+            "default": 0
+          },
+          "flawed": {
+            "type": "integer",
+            "title": "Flawed",
+            "default": 0
+          },
+          "false_alarms": {
+            "type": "integer",
+            "title": "False Alarms",
+            "default": 0
+          },
+          "clean": {
+            "type": "integer",
+            "title": "Clean",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "JudgementRates",
+        "description": "Flaws found over the flawed items answered, and clean solutions called\nflawed over the clean ones answered. One rate alone hides a user who calls\neverything flawed."
+      },
       "Label": {
         "properties": {
           "mode": {
@@ -4068,6 +4095,16 @@
               }
             ],
             "title": "Execution"
+          },
+          "judged": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JudgementRates"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",

@@ -227,7 +227,7 @@ and a review of anyone's code begins with.
       share answered right or located, once enough users answered it. A
       template stores no difficulty, and a label made up before any answer
       would mislead
-- [ ] Show the user's judgement as two rates per technique: flaws found, and
+- [x] Show the user's judgement as two rates per technique: flaws found, and
       clean solutions called flawed
 
 ### Filling the key line

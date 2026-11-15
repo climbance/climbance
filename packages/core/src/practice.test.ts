@@ -104,6 +104,14 @@ describe("a technique's row", () => {
     );
   });
 
+  it('reads the judgement rates once an item of each kind was answered', () => {
+    const judged = { flaws_found: 3, flawed: 4, false_alarms: 1, clean: 0 };
+    expect(techniqueStats({ attempt_count: 0, solved_count: 0, judged }, NOW)).toEqual([
+      { label: 'attempted', value: 'never' },
+      { label: 'flaws found', value: '3/4' },
+    ]);
+  });
+
   it('reads execution as a share once it stands, and recognition unknown beside it', () => {
     const row = { attempt_count: 3, solved_count: 2, last_attempt_at: '2026-11-09T12:00:00Z', execution: 2 / 3 };
     expect(techniqueStats(row, NOW).slice(3)).toEqual([
@@ -121,6 +129,11 @@ describe('the board', () => {
     self_labels: {},
     narrower,
     sittings: 0,
+  });
+
+  it('counts a technique practised once one of its solutions was judged', () => {
+    const judged = { ...row('a', 0), judged: { flaws_found: 0, flawed: 1, false_alarms: 0, clean: 0 } };
+    expect(boardView({ rows: [judged], ungrouped: 0, excluded: 0 }).practised).toHaveLength(1);
   });
 
   it('splits the techniques never practised from the rest', () => {

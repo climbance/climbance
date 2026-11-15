@@ -19,9 +19,11 @@ from climb.board import (
     stalest_first,
     ungrouped,
 )
+from climb.board.judged import judgement_rates
 from climb.cards import CardStore
 from climb.cards.graph import depths
 from climb.graduation import Next, reading
+from climb.judgements import ItemStore
 from climb.ladder import (
     CardState,
     Gap,
@@ -35,6 +37,7 @@ from climb.ladder import (
 from climb.log import (
     AttemptLog,
     CardRunLog,
+    JudgementLog,
     RecallLog,
     SittingStore,
     latest_by_attempt,
@@ -154,8 +157,14 @@ def board(root: Root, user_id: UserId) -> Board:
     problems = {problem.id: problem for problem in load_problems(root)}
     claims = standing_attempt_claims(log.claims(user_id))
     rows = per_technique(attempts, problems, claims, latest_by_attempt(log.self_labels(user_id)))
+    rates = judgement_rates(
+        JudgementLog(root).for_user(user_id), ItemStore(root).all(), CardStore(root).all()
+    )
     return Board(
-        rows=stalest_first(rows, problems.values()),
+        rows=[
+            row.model_copy(update={"judged": rates.get(row.technique)})
+            for row in stalest_first(rows, problems.values())
+        ],
         ungrouped=len(ungrouped(attempts, problems, claims)),
         excluded=len(excluded(attempts, problems)),
     )
