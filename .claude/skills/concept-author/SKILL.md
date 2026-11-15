@@ -94,7 +94,8 @@ stage's own.
 2. **Review.** Brief: check each section against its concepts. Every claim is
    taught, no sentence goes beyond them, each example's output differs from
    what each targeted misconception predicts, and every construct is taught
-   or in the baseline. Run every block.
+   or in the baseline. Run every block. A fix that rewrote an example has its
+   prose, shown output and counts checked against the new example (rule 22).
 3. **Fix**, and end on the stopping rule, as in stage 1.
 
 ## Stage 3: questions

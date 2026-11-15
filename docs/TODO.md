@@ -160,8 +160,6 @@ starts, so their subtopics come first.
       module names its technique
 - [x] Update the `card-author` skill to write a brief without `## Complexity`,
       `## Pitfalls` and `## Key insights`, leaving those facts to the subtopic
-- [ ] Write the lesson reviewer's skill: a session reads each lesson's prose
-      against its example and its questions, under rules 15 and 22
 - [ ] Write the algorithms module's `CLAUDE.md`: its sources, its baseline in
       `py` and its level table for levels 0 and 1
 - [ ] Write the `binary-search` subtopic first, and record in `concepts.md`
@@ -170,9 +168,9 @@ starts, so their subtopics come first.
 - [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
       card's brief once a subtopic of its primary module names its technique.
       The subtopic's concept writer reads them as a source first
-- [ ] Run the solver and the lesson reviewer over the module by hand before
-      it is seeded, and fix what they find. A lesson giving its question away
-      was the Python module's commonest defect
+- [ ] Run the solver over the whole module before it is seeded, and fix what
+      it finds. `concept-author` runs it on each bank before the fix, so no
+      solver has read a fixed question
 - [ ] Seed the module, with `module check` passing
 - [ ] Link a card's page to every subtopic naming its technique, the primary
       module's first, and each lesson to every card its subtopic pairs with,
@@ -272,9 +270,9 @@ Modules and cards written, checked and revised by Claude Code sessions, with no
 call to the API. The pipeline lives in this repo, and the content repository
 holds the content alone. Planned 2026-11-11, and cards joined on 2026-11-12.
 Which modules and cards get written is the content repository's `PLAN.md`.
-On 2026-11-13 the card rules, `card check` with its mutant pass, the solver
-and the lesson reviewer moved to Phase 16, which needs them for the algorithms
-module. The rest waits for the next module.
+On 2026-11-13 the card rules, `card check` with its mutant pass and the
+solver moved to Phase 16, which needs them for the algorithms module. The rest
+waits for the next module.
 
 ### The design
 

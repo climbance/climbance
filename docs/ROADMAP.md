@@ -491,7 +491,7 @@ than the author.
   easy and three medium problems.
 - The technique field on a subtopic, carried by the seed and the snapshot, and
   the algorithms module authored to it in the content repository, checked by
-  the solver and the lesson reviewer before it is seeded.
+  the solver before it is seeded.
 - The card rules numbered in `cards.md`, and `climb card check` with a
   pass running each template's mutants against its cases, so the mutants a
   solution is judged on are ones the cases catch.
