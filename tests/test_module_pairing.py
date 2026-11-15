@@ -7,7 +7,7 @@ from test_seed_knowledge import COURSE, authored
 
 from climb.knowledge import read_module
 from climb.knowledge.authoring import check
-from climb.knowledge.authoring.pairing import Paired, paired
+from climb.knowledge.authoring.pairing import Paired, covered, paired
 
 SUBS = 'subs = ["types", "flow"]\n'
 
@@ -166,3 +166,9 @@ def test_every_card_is_listed_before_the_module_names_a_technique(tmp_path):
         "card heap: no subtopic names heap",
         "card stack: no subtopic names stack",
     ]
+
+
+def test_each_module_maps_to_the_techniques_its_subtopics_name(tmp_path):
+    root = module(tmp_path, 'sub_techniques = { types = ["stack"], flow = ["stack", "heap"] }\n')
+
+    assert covered(root.parent) == {root.name: {"stack", "heap"}}

@@ -3,6 +3,7 @@ and the cards the module is primary for that no subtopic supports.
 `content.md`, Cards and subtopics."""
 
 import json
+import tomllib
 from dataclasses import dataclass, field
 from itertools import pairwise
 from pathlib import Path
@@ -28,7 +29,7 @@ def paired(source: ModuleSource, cards: Path) -> Paired:
     """A cycle through both graphs, as the path of techniques that closes it,
     and each card naming the module as primary whose technique no subtopic of
     the module names."""
-    techniques = _techniques(source)
+    techniques = _techniques(source.course)
     if not cards.is_dir():
         if any(techniques.values()):
             return Paired([f"no cards at {cards}, so the two graphs cannot be read together"])
@@ -61,11 +62,20 @@ def paired(source: ModuleSource, cards: Path) -> Paired:
     return found
 
 
-def _techniques(source: ModuleSource) -> dict[str, list[str]]:
+def covered(modules: Path) -> dict[str, set[str]]:
+    """Each module's slug to the techniques its subtopics name."""
+    found: dict[str, set[str]] = {}
+    for course in sorted(modules.glob("*/course.toml")):
+        named = _techniques(tomllib.loads(course.read_text()))
+        found[course.parent.name] = {one for listed in named.values() for one in listed}
+    return found
+
+
+def _techniques(course: dict[str, Any]) -> dict[str, list[str]]:
     """A malformed `sub_techniques` is the seed's check to refuse, so it names
     none here."""
     found: dict[str, list[str]] = {}
-    for topic in source.course.get("topic", []):
+    for topic in course.get("topic", []):
         named = topic.get("sub_techniques", {})
         for sub in topic.get("subs", []):
             listed: object = (

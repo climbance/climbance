@@ -155,9 +155,9 @@ starts, so their subtopics come first.
       names
 - [x] Add `module` to every card, naming its primary module, and limit that
       list to the cards naming the module checked
-- [ ] Add to `card check` the refusal of a brief keeping `## Complexity`,
-      `## Pitfalls` or `## Key insights` once a subtopic names its technique.
-      The check reads the techniques from the modules in `content/modules/`
+- [x] Add to `card check` the refusal of a brief keeping `## Complexity`,
+      `## Pitfalls` or `## Key insights` once a subtopic of the card's primary
+      module names its technique
 - [ ] Update the `card-author` skill's brief to the sections `content.md`
       `## Cards and subtopics` keeps, writing the facts into the subtopic
 - [ ] Write the lesson reviewer's skill: a session reads each lesson's prose
@@ -168,7 +168,7 @@ starts, so their subtopics come first.
       how its complexity claims are witnessed. Most of a subtopic's facts are
       complexity, so the answer shapes every later subtopic
 - [ ] Remove `## Complexity`, `## Pitfalls` and `## Key insights` from each
-      card's brief once a subtopic names its technique. The subtopic's
+      card's brief once a subtopic of its primary module names its technique. The subtopic's
       concept writer reads them as a source first
 - [ ] Run the solver and the lesson reviewer over the module by hand before
       it is seeded, and fix what they find. A lesson giving its question away

@@ -153,3 +153,24 @@ def test_a_harness_naming_no_definition_is_named(tmp_path):
     written(tmp_path, card(templates=[template(harness=["TreeNode"])]))
 
     assert [check for check, _ in findings(tmp_path, mutate=False)] == ["harness"]
+
+
+BRIEF = "## Core idea\nsort\n## Complexity\nn log n\n## Pitfalls\nnone\n## Mental model\nxs"
+
+
+def test_a_brief_keeping_the_facts_a_subtopic_holds_is_refused(tmp_path):
+    """The primary module names the technique, so it holds the facts."""
+    written(tmp_path, card(brief=BRIEF))
+
+    refused = findings(tmp_path, covered={"algo": {"sorting"}}, mutate=False)
+    assert refused == [
+        ("brief", "the brief keeps ## Complexity, and a subtopic of algo names sorting"),
+        ("brief", "the brief keeps ## Pitfalls, and a subtopic of algo names sorting"),
+    ]
+
+
+def test_another_modules_subtopic_leaves_the_brief_alone(tmp_path):
+    """A subtopic outside the primary module holds none of the facts."""
+    written(tmp_path, card(brief=BRIEF))
+
+    assert findings(tmp_path, covered={"py": {"sorting"}}, mutate=False) == []

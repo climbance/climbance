@@ -5,9 +5,11 @@ import json
 from pathlib import Path
 
 from climb.cards.check import Finding, check_card, siblings
+from climb.knowledge.authoring.pairing import covered
 
 # where a bare slug is looked for: the content repository's cards
 CARDS = Path("content/cards")
+MODULES = Path("content/modules")
 
 
 def card(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
@@ -16,8 +18,9 @@ def card(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     if missing:
         parser.exit(2, f"card: no such card file: {', '.join(missing)}\n")
     found: list[Finding] = []
+    named = covered(MODULES)
     for path in paths:
-        mine = check_card(path, siblings(path.parent), mutate=not args.no_mutants)
+        mine = check_card(path, siblings(path.parent), covered=named, mutate=not args.no_mutants)
         found += mine
         if not args.json:
             print(f"{path}: {'ok' if not mine else f'{len(mine)} finding(s)'}")

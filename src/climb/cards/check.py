@@ -3,7 +3,8 @@ reading the file. `content.md` gives what a template's cases are for."""
 
 import ast
 import json
-from collections.abc import Mapping
+import re
+from collections.abc import Mapping, Set
 from pathlib import Path
 
 from pydantic import BaseModel, ValidationError
@@ -20,11 +21,16 @@ CAP_MS = 2000
 # a repeated mutant name is numbered from its second occurrence
 ORDINALS = {2: "nd", 3: "rd"}
 
+# a subtopic holds these facts once it names the card's technique
+FACTS = re.compile(r"^## (Complexity|Pitfalls|Key insights)[ \t]*$", re.MULTILINE)
+
 
 class Finding(BaseModel):
     card: str  # the file's stem, so a card that does not parse is still named
     template: str | None = None
-    check: str  # schema, technique, slug, graph, parse, harness, solve, case, mutant or stale
+    # schema, technique, slug, brief, graph, parse, harness, solve, case,
+    # mutant or stale
+    check: str
     message: str
 
 
@@ -40,8 +46,15 @@ def siblings(folder: Path) -> dict[str, CardSeed]:
     return found
 
 
-def check_card(path: Path, others: Mapping[str, CardSeed], *, mutate: bool = True) -> list[Finding]:
-    """Every finding on one card file, the template ones in template order."""
+def check_card(
+    path: Path,
+    others: Mapping[str, CardSeed],
+    *,
+    covered: Mapping[str, Set[str]] | None = None,
+    mutate: bool = True,
+) -> list[Finding]:
+    """Every finding on one card file, the template ones in template order.
+    `covered` maps a module to the techniques its subtopics name."""
     name = path.stem
     try:
         card = CardSeed.model_validate_json(path.read_text())
@@ -54,6 +67,16 @@ def check_card(path: Path, others: Mapping[str, CardSeed], *, mutate: bool = Tru
     ]
     if name != card.slug:
         found.append(Finding(card=name, check="slug", message=f"the slug is {card.slug}"))
+    if card.technique in (covered or {}).get(card.module, set()):
+        found += [
+            Finding(
+                card=name,
+                check="brief",
+                message=f"the brief keeps ## {heading}, and a subtopic of "
+                f"{card.module} names {card.technique}",
+            )
+            for heading in FACTS.findall(card.brief)
+        ]
     refused = broken({**others, card.slug: card})
     if card.slug in refused:
         found.append(Finding(card=name, check="graph", message=refused[card.slug]))
