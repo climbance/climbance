@@ -109,11 +109,11 @@ each technique, and a card and a mastery estimate share no data.
   template the next problem must be written for. The ladder never substitutes
   another problem, because a substitution hides the gap and the missing problem
   is then never written.
-- **The trigger is its own field**, apart from the prose it could
-  sit in, because a probe asks exactly that question: is the form recognised
-  unprompted. So the trigger is shown and withheld on its own, where the rest of
-  what to read is one authored block the engine never parses. The pages cut
-  that block at its headings for display alone, and no heading carries a
+- **The trigger is its own field**, apart from the prose it could sit in,
+  because a drawn recall asks exactly that question: which form the trigger
+  calls for. So the trigger is shown and withheld on its own, where the rest
+  of what to read is one authored block the engine never parses. The pages
+  cut that block at its headings for display alone, and no heading carries a
   meaning the engine reads. The trigger is
   carried at both levels, because recall is per template. The card's trigger
   says to reach for the technique, and a template's trigger says which of the
@@ -194,7 +194,8 @@ each technique, and a card and a mastery estimate share no data.
 - **Probes are assigned when a card is started**, not at import, since a
   problem unseen at import need not still be unseen. Unseen first, then least
   recently attempted, and never drawn from the ladder. The ladder teaches the
-  form, where a probe tests whether the form is recognised unprompted.
+  form, and a probe tests whether the form transfers to a problem it was not
+  studied on.
 
 ## The card graph
 

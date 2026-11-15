@@ -1068,8 +1068,8 @@ export interface components {
     };
     /**
      * Probe
-     * @description One problem a run was given, testing whether the form is recognised
-     *     unprompted. Drawn from outside the ladder, which teaches the form.
+     * @description One problem a run was given, testing whether the form transfers to a
+     *     problem it was not studied on. Drawn from outside the ladder.
      */
     Probe: {
       /** Problem Id */
@@ -1082,9 +1082,7 @@ export interface components {
     };
     /**
      * Probed
-     * @description One probe the start drew, named as the page shows it. A probe tests
-     *     whether the form is recognised unprompted, so the page names the problem
-     *     and says nothing of the technique behind it.
+     * @description One probe the start drew, named as the page shows it.
      */
     Probed: {
       problem: components['schemas']['Problem'];

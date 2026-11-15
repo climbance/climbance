@@ -438,12 +438,30 @@ lapsed.
   ladder's sittings.
 - **Graduated: the graduation rule held, and the card has not lapsed since.**
   The rule reads the solved ladder, a recall rated Good of every template that
-  carries cases once its spaced check opened, and a probe solved unprompted.
+  carries cases once its spaced check opened, and a probe solved.
   `## The template schedule` gives the check. A card is done once it
   graduates.
 - **Lapsed: a graduated card one of whose templates has had a review rated
   Again since graduation.** A form can be lost after the card graduated, and
   a card left graduated on a lost form is never offered again.
+- **A probe graduates a card when one of the run's probes was solved since
+  the run began.** The probe tests whether the form is recognised, and a
+  failed submission before the solve still found the form. So a solve on any
+  submission of the sitting counts.
+- **A probe solved before the ladder was finished counts too.** The probe
+  reads recognition, which the ladder does not change. The spaced check reads
+  retention, so graduation still waits for the check.
+- **A restored solve and a solve on a defective problem graduate nothing.** A
+  restored solve retyped nothing, and a defective problem's verdict decides
+  something other than the form.
+- **A lapsed card graduates again on recalls alone.** Each template whose
+  review was rated Again since the card last graduated needs a recall rated
+  Good once its spaced check opened. The check is read from that template's
+  reviews, so it opens at least three days after the relearning step.
+- **A lapse asks for no new ladder and no new probe.** The ladder and the
+  probe held at graduation, and a lapse shows one form lost, which a recall
+  tests. The run's probes are already seen, and `flows.md` defers when a run
+  is given a further probe.
 - **Before graduation, a card state reads the ladder as it stands now.** A
   re-derived ladder holding a required rung the user has not solved returns a
   consolidating card to acquiring. The ladder is the truth the card state is
@@ -457,8 +475,8 @@ lapsed.
 
 Deferred, since only use answers each:
 
-- Which probe graduates a card.
-- The step a lapsed card needs to graduate again.
+- Whether a probe solved after the sitting's clock passed a limit still
+  graduates the card.
 - The card state of a started card whose ladder holds no required rung, every
   core template being a gap.
 - A core template added by a re-seed to a card that already graduated.

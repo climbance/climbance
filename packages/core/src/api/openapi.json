@@ -2677,7 +2677,7 @@
           "assigned_at"
         ],
         "title": "Probe",
-        "description": "One problem a run was given, testing whether the form is recognised\nunprompted. Drawn from outside the ladder, which teaches the form."
+        "description": "One problem a run was given, testing whether the form transfers to a\nproblem it was not studied on. Drawn from outside the ladder."
       },
       "Probed": {
         "properties": {
@@ -2701,7 +2701,7 @@
           "attempted"
         ],
         "title": "Probed",
-        "description": "One probe the start drew, named as the page shows it. A probe tests\nwhether the form is recognised unprompted, so the page names the problem\nand says nothing of the technique behind it."
+        "description": "One probe the start drew, named as the page shows it."
       },
       "Problem": {
         "properties": {

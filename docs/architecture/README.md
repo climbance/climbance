@@ -46,7 +46,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Template**: one form of a technique, authored on a card, that a user
   reproduces from memory. Core by default.
 - **Trigger**: the field on a card or a template saying when to reach for the
-  technique or the form. Withheld during a probe.
+  technique or the form. A drawn recall shows the trigger alone, and
+  withholds the form's title.
 - **Speedup**: a flag on a template saying its form is asymptotically faster
   than the naive approach the technique replaces, by at least a factor of
   log n.
@@ -56,7 +57,8 @@ without redefining them. Grouped by the file that specifies the record.
   matches and the selector. Never stored.
 - **Rung**: one problem on a ladder. Required when it covers a core template.
 - **Probe**: a problem assigned when a card is started, testing whether the
-  form is recognised unprompted. Never drawn from the ladder.
+  form transfers to a problem it was not studied on. Never drawn from the
+  ladder.
 - **Card graph**: the cards as a directed acyclic graph, each edge from a card
   to a card it requires. Orders study, and gates card runs alone.
 - **Requirement**: an edge of the card graph, authored on the requiring card.

@@ -10,8 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class Probe(BaseModel):
-    """One problem a run was given, testing whether the form is recognised
-    unprompted. Drawn from outside the ladder, which teaches the form."""
+    """One problem a run was given, testing whether the form transfers to a
+    problem it was not studied on. Drawn from outside the ladder."""
 
     model_config = ConfigDict(frozen=True)
 

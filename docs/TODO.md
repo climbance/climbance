@@ -397,12 +397,12 @@ drill board tracked them by hand.
       acquiring, consolidating, graduated and lapsed, each derived from the log
       and never stored. `flows.md` defers what done means, and this answers it
 - [x] Write the graduation rule: the required rungs solved, every recallable
-      template recalled Good once its spaced check opened, and a probe solved
-      unprompted. algo-prep's Pass-2 is this rule, and a rung solved warm proves
+      template recalled Good once its spaced check opened, and a probe solved.
+      algo-prep's Pass-2 is this rule, and a rung solved warm proves
       no retention
 - [x] Write the lapse rule: a graduated card lapses when one of its templates
       has a review rated Again. A review rated Hard leaves it graduated
-- [ ] Write into `log.md` which probe graduates a card, and what a lapsed card
+- [x] Write into `log.md` which probe graduates a card, and what a lapsed card
       needs to graduate again. Both are deferred under `## Card states`
 - [ ] Show each card's state and its next due recall or spaced check on
       `/cards` and on the board's cards in progress. The dashboard left both

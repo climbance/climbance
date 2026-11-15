@@ -119,9 +119,7 @@ class Recalled(BaseModel):
 
 
 class Probed(BaseModel):
-    """One probe the start drew, named as the page shows it. A probe tests
-    whether the form is recognised unprompted, so the page names the problem
-    and says nothing of the technique behind it."""
+    """One probe the start drew, named as the page shows it."""
 
     problem: Problem
     assigned_at: datetime
