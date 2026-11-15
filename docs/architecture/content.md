@@ -317,19 +317,19 @@ The subtopic says why the forms are correct and what they cost.
   gates nothing, since gating runs inside one module. The seed refuses a
   citation naming no seeded subtopic, so a module is seeded before the cards
   citing it.
-- **The module's code is Python, at the level of `py`'s first set**: level 0
-  of `core`, `stdlib` and `internals`. A Python API such as `heapq` is taught
-  in `py`, and a template using the API cites that subtopic. The algorithms
-  module teaches what the structure guarantees.
+- **The module's code is Python, at levels 0 and 1 of `py`'s `core` and
+  `stdlib`.** The module's `CLAUDE.md` lists that baseline. A Python API such
+  as `heapq` is taught in `py`, and a template using the API cites that
+  subtopic. The algorithms module teaches what the structure guarantees.
 - **The module has levels 0 and 1, and its own level table** in its
   `CLAUDE.md`. `py`'s table measures how far into Python a learner is, which
   says nothing about algorithms.
-
-Deferred, since writing the first subtopic answers each:
-
-- The topics the subtopics are grouped into.
-- The wording of the level table.
-- How a complexity claim is witnessed.
+- **The module's topics are the vocabulary's kinds**: procedures, structures,
+  paradigms and problem classes, with `analysis` for a subtopic naming no
+  technique. A topic orders the listing and gates nothing, so the grouping
+  reuses the vocabulary's classification.
+- **A claim about cost is witnessed by counting steps**, as
+  `docs/authoring/concepts.md` `## Claims about cost` gives.
 
 ## Judgement items
 
