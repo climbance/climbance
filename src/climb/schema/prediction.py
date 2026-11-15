@@ -23,7 +23,7 @@ class Act(StrEnum):
 
 
 class Arm(StrEnum):
-    """Which policy chose the pick, once the comparison assigns one."""
+    """Which policy chose the pick, were a comparison to assign one."""
 
     SCHEDULER = "scheduler"
     BASELINE = "baseline"
@@ -47,7 +47,7 @@ class Prediction(BaseModel):
     # the technique's execution reading, absent while it reads unknown
     execution: float | None = Field(default=None, ge=0, le=1)
     execution_settings: str = Field(min_length=1)
-    arm: Arm | None = None  # absent before the comparison assigns arms
+    arm: Arm | None = None  # absent while no comparison assigns arms
 
     @model_validator(mode="after")
     def _the_act_names_its_subject(self) -> Prediction:

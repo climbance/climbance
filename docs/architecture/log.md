@@ -775,9 +775,10 @@ models' readings of one act, written before the act has an outcome.
   next result after the prediction: the template's next review, an attempt on
   the problem, or the card's run. Reading it later keeps the record
   append-only and written blind to the result.
-- **A prediction carries the comparison's arm**, the policy that chose the
-  pick. The field stays empty until the comparison assigns arms, so the
-  comparison needs no change to the record.
+- **A prediction has an empty `arm` field**, for the policy that chose the
+  pick. A comparison of the scheduler against a simpler policy would fill it.
+  No such comparison is planned, since one user's techniques are too few to
+  separate two policies, and the empty field costs nothing.
 - **Predictions are private to the user**, exported and erased with the rest
   of the log.
 

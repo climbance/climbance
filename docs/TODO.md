@@ -450,35 +450,9 @@ cards' states.
       from the mastery state, naming the settings each was made under. A
       prediction written after the outcome is fitted to it
 
-### The comparison
-
-The scheduler is worth building only if it beats a simpler policy over the same
-problems. The comparison runs from the first pick, so its design lands with
-the schedule. It was planned for the author's log alone, and Phase 16
-prepares the engine for other users.
-
-- [ ] Decide whether other users enter the comparison, and if they do,
-      assign by user and technique rather than by technique alone. More users
-      give the comparison more power, and a readiness bar written for one
-      user's level may not hold for another's
-- [ ] Keep every record made before the criterion and the assignment out of
-      the comparison. Phase 16's users sit before this phase ships, and a
-      criterion written after reading their records is fitted to them
-- [ ] Write into `log.md` what ready means per technique: the bar, the
-      difficulty and the time limit. A criterion written after the data is
-      read is fitted to the data
-- [ ] Choose the strongest baseline among a list, spacing per problem and a
-      difficulty ladder, and write the choice and its reason into `flows.md`
-- [ ] Implement that baseline over the same problems, each step checked
-      against the method's published description. A baseline weaker than the
-      original flatters the scheduler
-- [ ] Assign each technique to the scheduler or the baseline, balanced by
-      difficulty, and store the assignment before the first pick. An
-      assignment made later can follow the outcomes it is compared on
-
 ### Exit
 - [ ] Start a sitting from the scheduler's pick on the board, and complete it
-      to the claim, with the pick's prediction and its arm stored
+      to the claim, with the pick's prediction stored
 
 ## Phase 19 — the matcher, measured
 
