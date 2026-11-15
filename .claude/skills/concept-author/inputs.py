@@ -5,6 +5,7 @@ import re
 import subprocess
 import tomllib
 from pathlib import Path
+from typing import NamedTuple
 
 SKILL = ".claude/skills/concept-author/SKILL.md"
 CONCEPTS = "docs/authoring/concepts.md"
@@ -48,10 +49,10 @@ def docs(engine: Path, role: str, stage: int) -> list[tuple[str, str]]:
     parts = [(f"{SKILL} (its opening and roles)", before(skill, "## Stage 1:"))]
     if role == "digest":
         return [*parts, (f"{CONCEPTS} `## Stages` (the approval)", stages)]
+    # the same per stage for every role, so a stage shares one cached prefix
     parts.append((f"{SKILL} `## Stage {stage}`", section(skill, f"## Stage {stage}:")))
     parts += [(f"{CONCEPTS} `{h}`", section(concepts, h)) for h in STAGE_CONCEPTS[stage]]
-    if role in ("fix", "fix-check", "decide"):
-        parts.append((f"{CONCEPTS} `## Stages` (the approval)", stages))
+    parts.append((f"{CONCEPTS} `## Stages` (the approval)", stages))
     if stage == 1:
         heads = ["## Facts and execution", "## Concepts"]
         parts.append((f"{RULES} (its opening)", before(rules, "## Facts and execution")))
@@ -74,7 +75,7 @@ def notes(module: Path, sub: str) -> list[Path]:
 
 
 def files(module: Path, topic: str, sub: str, role: str, stage: int) -> list[Path]:
-    found = [module / "CLAUDE.md"]
+    found = []
     if stage == 1 and role != "digest":
         found += notes(module, sub)
     if role == "digest" or (role == "write" and stage == 1):
@@ -119,10 +120,27 @@ def example(module: Path, sub: str, stage: int) -> tuple[str, str] | None:
     return (f"the format, from {path} (an example of another subtopic)", keep)
 
 
+class Given(NamedTuple):
+    # the system prompt's tail, the same for every session of a stage
+    system: str
+    text: str
+
+
+def block(parts: list[tuple[str, str]]) -> str:
+    return "\n\n".join(f"## {name}\n\n````\n{text.strip()}\n````" for name, text in parts)
+
+
 def given(
     engine: Path, module: Path, topic: str, sub: str, role: str, stage: int, extra: list[Path]
-) -> str:
-    parts = docs(engine, role, stage)
+) -> Given:
+    # labelled by the module's path: the worktree's differs per subtopic
+    claude = (f"modules/{module.name}/CLAUDE.md", (module / "CLAUDE.md").read_text())
+    system = (
+        "# Docs\n\nThe docs every step of this stage reads, as they stand as the step "
+        "starts. They are not files to read again.\n\n"
+        + block([*docs(engine, role, stage), claude])
+    )
+    parts = []
     if role == "write" and (shown := example(module, sub, stage)):
         parts.append(shown)
     for path in [*files(module, topic, sub, role, stage), *extra]:
@@ -137,9 +155,9 @@ def given(
             text=True,
         )
         parts.append(("the module check, run as this step starts", check.stdout))
-    body = "\n\n".join(f"## {name}\n\n````\n{text.strip()}\n````" for name, text in parts)
-    return (
-        "\n\n# Given\n\nThe docs and files your step needs, as they stand as it starts. "
-        "Read a file again only after you change it, and read another only when your "
-        "step needs it.\n\n" + body
+    text = (
+        "\n\n# Given\n\nThe files your step needs, as they stand as it starts; the docs are "
+        "in the system prompt. Read a file again only after you change it, and read another "
+        "only when your step needs it.\n\n" + block(parts)
     )
+    return Given(system, text)

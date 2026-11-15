@@ -95,7 +95,7 @@ class Job:
     def fixer(self, stage: int) -> str:
         return self.models.get(f"fixer{stage}", self.models["fixer"])
 
-    def given(self, role: str, stage: int, extra: list[Path] | None = None) -> str:
+    def given(self, role: str, stage: int, extra: list[Path] | None = None) -> inputs.Given:
         module = self.wt / "modules" / self.module
         return inputs.given(self.engine, module, self.topic, self.sub, role, stage, extra or [])
 
@@ -104,7 +104,7 @@ class Job:
         brief: str,
         model: str,
         step: str,
-        given: str = "",
+        given: str | inputs.Given = "",
         effort: str | None = None,
         log: Path | None = None,
         **extra: object,
@@ -117,6 +117,9 @@ class Job:
         # the solver's agents and the judge read their own files alone
         if brief not in ("solve", "form", "judge", "relevel-assess", "relevel-verify"):
             text = (BRIEFS / "common.md").read_text().format(**f) + text
+        system = ""
+        if isinstance(given, inputs.Given):
+            system, given = given
         text += given
         while True:
             start = log.stat().st_size if log.exists() else 0
@@ -132,6 +135,9 @@ class Job:
                     # the four tools a step uses; the rest cost 12k a turn
                     + ["--tools", "Bash", "Read", "Write", "Edit"]
                     + (["--effort", effort] if effort else [])
+                    # cwd and git status leave the system prompt, to share it
+                    + ["--exclude-dynamic-system-prompt-sections"]
+                    + (["--append-system-prompt", system] if system else [])
                     + ["--output-format", "stream-json", "--verbose"],
                     cwd=self.wt,
                     stdin=subprocess.DEVNULL,
@@ -393,8 +399,7 @@ def fix(
         "fix",
         job.fixer(n),
         f"{label} fix {r}",
-        given=(DECIDING.format(brief=BRIEFS / "decide.md") if tag == "d" else "")
-        + job.given("fix", n, [report, job.scratch / "decisions.md"]),
+        given=decided(job.given("fix", n, [report, job.scratch / "decisions.md"]), tag),
         stage=n,
         report=report,
     )
@@ -403,6 +408,12 @@ def fix(
     (folder / f"fix-{r}.diff").write_text(diff)
     job.mark(f"{key}-fix")
     job.progress(f"{label} fix {r}: {diff.count(chr(10))} diff lines, check 0 errors")
+
+
+def decided(given: inputs.Given, tag: str) -> inputs.Given:
+    if tag != "d":
+        return given
+    return given._replace(text=DECIDING.format(brief=BRIEFS / "decide.md") + given.text)
 
 
 def staged_diff(job: Job) -> str:

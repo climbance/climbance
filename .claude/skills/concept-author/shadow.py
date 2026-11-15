@@ -16,7 +16,7 @@ CANDIDATES = [
 ]
 
 
-def reviews(job, n: int, r: int, kind: str, given: str, scope: str, report: Path) -> None:
+def reviews(job, n: int, r: int, kind: str, given, scope: str, report: Path) -> None:
     folder = report.parent
     chosen = [c for c in CANDIDATES if c[3](n, kind)]
 
