@@ -387,8 +387,8 @@ problem's path reads as its record, as "Every problem" gives.
 - The phone reads the same sections and rows with no gutter. Each row of a
   card that requires others names them on a line of its own: `needs Hashing ✓,
   Two pointers`, a tick on each one met.
-- Graduated and lapsed read in the state's place once the scheduler adds them, and
-  a due date beside them.
+- Graduated and lapsed read in the state's place once the scheduler adds them,
+  and a due date beside them.
 
 ## A card
 

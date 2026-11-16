@@ -185,9 +185,9 @@ those steps at low fidelity.
   sentence names the address that was refused and a URL is kept in the
   browser's history.
 - **A query parameter names where the user came from.** The picked problem is
-  `/problems/:problem_id` whichever page offered it, since a card's ladder opens the
-  same problem as a rung. `?technique=` names the technique
-  the pick came from, `?card=` names the card, and `?from=problems` names the
+  `/problems/:problem_id` whichever page offered it, since a card's ladder
+  opens the same problem as a rung. `?technique=` names the technique the pick
+  came from, `?card=` names the card, and `?from=problems` names the
   listing, which holds no record of its own to name. A listing filtered to one
   tag adds that tag as `?technique=`, since picking one tag is drilling for
   that technique as a pick from the board is. The problem's page keeps the
