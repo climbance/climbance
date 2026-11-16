@@ -10,6 +10,7 @@ import {
   userDraftKey,
   duration,
   editorOpening,
+  endNote,
   RETURNED_NOT_KEPT,
   opening,
   preferenceAfter,
@@ -186,3 +187,12 @@ describe('the way back from a problem', () => {
     expect(backLabel(problemFrom({ slug: 'dp', title: null }, null, false))).toBe('dp');
   });
 });
+
+describe('the End confirmation', () => {
+  it('promises the claims only where a submission was made', () => {
+    /** a sitting with no submission mints no attempt, so nothing is asked after it ends */
+    expect(endNote(true)).toMatch(/asked about/);
+    expect(endNote(false)).not.toMatch(/asked about/);
+  });
+});
+

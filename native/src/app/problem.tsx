@@ -12,7 +12,7 @@ import {
   clockState,
   editorOpening,
   END_KEEP,
-  END_NOTE,
+  endNote,
   END_TITLE,
   RESTORE_SOLVE,
   SITTING_END,
@@ -514,7 +514,7 @@ function SittingOn({
         visible={ending}
         onDismiss={() => setEnding(false)}
         title={END_TITLE}
-        note={END_NOTE}
+        note={endNote(verdict !== null)}
         actions={
           <>
             <Button onPress={() => setEnding(false)}>{END_KEEP}</Button>

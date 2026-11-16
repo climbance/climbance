@@ -261,8 +261,11 @@ export const CLOCK_RESUME = 'Resume';
 export const CLOCK_PAUSE = 'Pause';
 export const SITTING_END = 'End';
 export const END_TITLE = 'End the sitting?';
-export const END_NOTE =
-  'The clock stops for good, and no more submissions are taken. Each attempt is then asked about in turn.';
+/** What ending keeps: a sitting with no submission has no attempt to ask about. */
+export const endNote = (submitted: boolean) =>
+  submitted
+    ? 'The clock stops for good, and no more submissions are taken. Your attempts are kept, and each is then asked about in turn.'
+    : 'The clock stops for good, and no more submissions are taken. Nothing was submitted, so the sitting keeps only the time the clock ran.';
 export const END_KEEP = 'Keep solving';
 export const submitLabel = (running: boolean) => (running ? 'Running…' : 'Submit');
 export const RESTORE_SOLVE = 'Restore my last solve';

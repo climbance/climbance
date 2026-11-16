@@ -8,7 +8,7 @@ import {
   clockState,
   editorOpening,
   END_KEEP,
-  END_NOTE,
+  endNote,
   END_TITLE,
   RESTORE_SOLVE,
   SITTING_END,
@@ -375,7 +375,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>{END_TITLE}</AlertDialogTitle>
-                      <AlertDialogDescription>{END_NOTE}</AlertDialogDescription>
+                      <AlertDialogDescription>{endNote(verdict !== null)}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>{END_KEEP}</AlertDialogCancel>
