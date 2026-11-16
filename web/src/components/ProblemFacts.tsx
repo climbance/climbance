@@ -11,9 +11,12 @@ import { problemFacts } from '@/lib/format'
 export function ProblemFacts({
   problemId,
   technique,
+  submissions = 0,
 }: {
   problemId: string
   technique: string | null
+  // bumped per submission, so the counts follow the verdict
+  submissions?: number
 }) {
   const picked = useLoaded(
     (signal) =>
@@ -22,6 +25,7 @@ export function ProblemFacts({
         signal,
       }),
     `problem:${problemId}`,
+    submissions,
   )
   const cards = useLoaded((signal) => api.GET('/api/cards', { signal }), 'cards')
 

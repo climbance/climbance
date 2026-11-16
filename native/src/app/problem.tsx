@@ -158,6 +158,7 @@ export default function ProblemScreen() {
           )}
           drilled={technique ?? null}
           facts={facts}
+          onSubmitted={picked.reload}
           bottom={insets.bottom}
         />
       )}
@@ -171,6 +172,7 @@ function SittingOn({
   from,
   drilled,
   facts,
+  onSubmitted,
   bottom,
 }: {
   problemId: string;
@@ -179,6 +181,8 @@ function SittingOn({
   // the technique the claim answers for: the card's own, or the pick's
   drilled: string | null;
   facts: ReactNode;
+  // reads the problem's counts again, so they follow the verdict
+  onSubmitted: () => void;
   bottom: number;
 }) {
   const theme = useTheme();
@@ -349,6 +353,7 @@ function SittingOn({
     if (sent.ok) {
       setSubmitted(sent.value.submitted);
       // a solve ends the sitting
+      onSubmitted();
       setMoved(sent.value.moved);
     } else setRefused(sent.refused);
     setRunning(false);

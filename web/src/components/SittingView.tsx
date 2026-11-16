@@ -132,6 +132,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   const restored = useRef<boolean | null>(null)
   const [running, setRunning] = useState(false)
   const [submitted, setSubmitted] = useState<Submitted | null>(null)
+  const [submissions, setSubmissions] = useState(0)
   const [refused, setRefused] = useState<string | null>(null)
   // the sitting as the last pause or resume left it, over the one first loaded,
   // with the engine's elapsed time and when the page received it
@@ -287,6 +288,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
     if (sent.ok) {
       setSubmitted(sent.value.submitted)
       // a solve ends the sitting, and the ended sitting asks for the claims
+      setSubmissions((one) => one + 1)
       setMoved(sent.value.moved)
     } else setRefused(sent.refused)
     setRunning(false)
@@ -400,7 +402,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
           and a narrow window then scrolls sideways */}
       <div className="grid grid-cols-1 gap-gutter lg:grid-cols-2">
         <section className="space-y-stack">
-          <ProblemFacts problemId={problemId} technique={drilled} />
+          <ProblemFacts problemId={problemId} technique={drilled} submissions={submissions} />
           <Markdown>{served.statement}</Markdown>
         </section>
         {/* the verdict sits under the editor: one page is the whole sitting */}

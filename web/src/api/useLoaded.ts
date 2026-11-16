@@ -8,8 +8,13 @@ type Answer<T> = { data?: T; error?: unknown }
 type State<T> = { key: string; data?: T; error?: string }
 
 // `key` names what is loaded: a change reloads, and the answer for a key the
-// page has moved past is never shown
-export function useLoaded<T>(load: (signal: AbortSignal) => Promise<Answer<T>>, key: string) {
+// page has moved past is never shown. A change of `version` reloads the same
+// key and keeps the last answer shown until the new one arrives
+export function useLoaded<T>(
+  load: (signal: AbortSignal) => Promise<Answer<T>>,
+  key: string,
+  version = 0,
+) {
   const [state, setState] = useState<State<T>>({ key })
   // bumped by `retry`, which asks again for the same key
   const [attempt, setAttempt] = useState(0)
@@ -24,10 +29,10 @@ export function useLoaded<T>(load: (signal: AbortSignal) => Promise<Answer<T>>, 
         if (!controller.signal.aborted) setState({ key, error: String(reason) })
       })
     return () => controller.abort()
-    // `key` and `attempt` alone: `load` is a new closure on every render, and
-    // `key` names what it loads
+    // `key`, `attempt` and `version` alone: `load` is a new closure on every
+    // render, and `key` names what it loads
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, attempt])
+  }, [key, attempt, version])
 
   function retry() {
     setState({ key })
