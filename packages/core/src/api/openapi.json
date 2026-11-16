@@ -2268,6 +2268,17 @@
               }
             ],
             "title": "Error"
+          },
+          "returned": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returned"
           }
         },
         "type": "object",
@@ -2346,6 +2357,11 @@
           },
           "returned": {
             "title": "Returned"
+          },
+          "returned_kept": {
+            "type": "boolean",
+            "title": "Returned Kept",
+            "default": true
           },
           "error": {
             "anyOf": [
@@ -3773,6 +3789,16 @@
             ],
             "title": "Elapsed Sec"
           },
+          "last": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Submitted"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "sitting": {
             "$ref": "#/components/schemas/Sitting"
           }
@@ -3901,6 +3927,16 @@
               }
             ],
             "title": "Elapsed Sec"
+          },
+          "last": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Submitted"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "sitting": {
             "anyOf": [

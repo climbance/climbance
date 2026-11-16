@@ -442,6 +442,12 @@ fixed here rather than by whatever executed it.
 - **The error is stored on the case result**, not only shown. `log.md` has a
   diagnosis read a compile error months after the attempt, when only the record
   is left.
+- **A wrong case stores the JSON it returned**, up to 64 KiB. A reopened
+  sitting reads the failing case back from the record, and no rerun is spent
+  on it. A larger return is not kept, since a 1 MiB case answered wrong on
+  every submission would grow the log by that much each time. A case result
+  written before the field existed keeps no return either, and the page says
+  so.
 - **No case observes another.** A solution memoising in a module global would
   otherwise answer one case from a cache built for a different one, and a wrong
   key would pass. Which mechanism gives that isolation is the runner's to

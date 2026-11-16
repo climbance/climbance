@@ -2,6 +2,7 @@
 judges and mints. `log.md` gives what the record holds and why a pause is an
 interval."""
 
+import json
 from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -58,30 +59,6 @@ class TooOften(Refused):
     """More submissions in the last minute than the cap allows."""
 
 
-class _Statement(BaseModel):
-    """What a solver is handed: the statement and the clock, and nothing the
-    problem was written from."""
-
-    model_config = ConfigDict(frozen=True)
-
-    title: str
-    statement: str  # the prose, without the signature it ends on
-    signature: str | None  # the `def solve(...)` line; none where a statement ends on prose
-    # taken on the engine's clock, so a page counting on from it shows the
-    # number an attempt would carry rather than one its own clock skews
-    elapsed_sec: float | None  # none while no clock has run
-
-
-class Served(_Statement):
-    sitting: Sitting | None  # none until a clock press or a submission mints one
-
-
-class Seated(_Statement):
-    """A sitting read by its id, with its problem's statement."""
-
-    sitting: Sitting
-
-
 class Failure(BaseModel):
     """The first case a submission failed, shown whole: `flows.md`."""
 
@@ -92,6 +69,8 @@ class Failure(BaseModel):
     args: list[Any]
     expected: Any
     returned: Any  # on a wrong answer alone: a crash and a timeout return nothing
+    # false where a read-back found no returned value kept: `RETURNED_KEPT`
+    returned_kept: bool = True
     error: str | None  # on a crash alone
 
 
@@ -105,6 +84,32 @@ class Submitted(BaseModel):
     sitting: Sitting  # ended where the submission solved the problem
     verification: AttemptVerification
     failure: Failure | None  # none on a submission that passed every case
+
+
+class _Statement(BaseModel):
+    """What a solver is handed: the statement and the clock, and nothing the
+    problem was written from."""
+
+    model_config = ConfigDict(frozen=True)
+
+    title: str
+    statement: str  # the prose, without the signature it ends on
+    signature: str | None  # the `def solve(...)` line; none where a statement ends on prose
+    # taken on the engine's clock, so a page counting on from it shows the
+    # number an attempt would carry rather than one its own clock skews
+    elapsed_sec: float | None  # none while no clock has run
+    # the sitting's last submission: a reopened sitting reads its verdict back
+    last: Submitted | None = None
+
+
+class Served(_Statement):
+    sitting: Sitting | None  # none until a clock press or a submission mints one
+
+
+class Seated(_Statement):
+    """A sitting read by its id, with its problem's statement."""
+
+    sitting: Sitting
 
 
 class Carry(BaseModel):
@@ -270,6 +275,42 @@ def submit(
         verification=verification,
         failure=_first_failure(problem_cases, runs),
     )
+
+
+def last_submitted(log: AttemptLog, cases: CaseLog, sitting: Sitting) -> Submitted | None:
+    """The sitting's last submission as the page showed it when it was made."""
+    mine = [one for one in log.attempts(sitting.user_id) if one.sitting_id == sitting.id]
+    if not mine:
+        return None
+    attempt = max(mine, key=lambda one: one.finished_at)
+    runs = log.verifications(sitting.user_id, attempt_id=attempt.id)
+    if not runs:
+        return None
+    return Submitted(
+        attempt=attempt,
+        sitting=sitting,
+        verification=runs[-1],
+        failure=_kept_failure(cases.for_problem(sitting.problem_id), runs[-1].results),
+    )
+
+
+def _kept_failure(cases: list[TestCase], results: list[CaseResult]) -> Failure | None:
+    by_id = {one.id: one for one in cases}
+    for result in results:
+        if result.outcome is CaseOutcome.PASSED:
+            continue
+        case = by_id[result.case_id]
+        kept = result.returned is not None
+        return Failure(
+            case_id=case.id,
+            outcome=result.outcome,
+            args=case.args,
+            expected=case.expected,
+            returned=json.loads(result.returned) if result.returned is not None else None,
+            returned_kept=kept or result.outcome is not CaseOutcome.WRONG,
+            error=result.error,
+        )
+    return None
 
 
 def carry(attempts: Sequence[Attempt], *, run_started_at: datetime | None) -> Carry:

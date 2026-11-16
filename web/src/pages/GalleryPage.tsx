@@ -91,6 +91,7 @@ const SUBMITTED: Submitted = {
     args: [[1, 4, 1, 1], 8],
     expected: 3,
     returned: 4,
+    returned_kept: true,
     error: null,
   },
 }

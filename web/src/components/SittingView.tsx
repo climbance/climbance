@@ -241,8 +241,11 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
     sittingId,
     carried.data ?? null,
     served.signature ?? null,
+    served.last ?? null,
   )
   const initial = opened.code
+  // this page's own submission, else the one a reopened sitting reads back
+  const verdict = submitted ?? served.last ?? null
   const keptRestored = opened.restored
   const solve = carried.data?.solved_code ?? null
 
@@ -404,9 +407,9 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
           </div>
           {/* the verdict sits under the editor: a failing case is read beside
               the code that failed it */}
-          {submitted && (
+          {verdict && (
             <Panel className="max-h-[45%] overflow-auto">
-              <Verdict submitted={submitted} />
+              <Verdict submitted={verdict} />
             </Panel>
           )}
         </section>

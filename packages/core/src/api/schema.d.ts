@@ -895,6 +895,8 @@ export interface components {
       elapsed_ms?: number | null;
       /** Error */
       error?: string | null;
+      /** Returned */
+      returned?: string | null;
     };
     /** Claim */
     Claim: {
@@ -939,6 +941,11 @@ export interface components {
       expected: unknown;
       /** Returned */
       returned: unknown;
+      /**
+       * Returned Kept
+       * @default true
+       */
+      returned_kept: boolean;
       /** Error */
       error: string | null;
     };
@@ -1506,6 +1513,7 @@ export interface components {
       signature: string | null;
       /** Elapsed Sec */
       elapsed_sec: number | null;
+      last?: components['schemas']['Submitted'] | null;
       sitting: components['schemas']['Sitting'];
     };
     /**
@@ -1557,6 +1565,7 @@ export interface components {
       signature: string | null;
       /** Elapsed Sec */
       elapsed_sec: number | null;
+      last?: components['schemas']['Submitted'] | null;
       sitting: components['schemas']['Sitting'] | null;
     };
     /**

@@ -3,9 +3,9 @@ backend."""
 
 from collections.abc import Sequence
 
-from climb.runner.encoding import agrees
+from climb.runner.encoding import agrees, as_json
 from climb.runner.execution import CaseRun, RunOutcome, run
-from climb.schema import CaseOutcome, CaseResult, Json, TestCase
+from climb.schema import RETURNED_KEPT, CaseOutcome, CaseResult, Json, TestCase
 
 DECIDED = {RunOutcome.TIMEOUT: CaseOutcome.TIMEOUT, RunOutcome.CRASHED: CaseOutcome.CRASHED}
 
@@ -42,11 +42,16 @@ def judge(
 
 
 def result(case: TestCase, ran: CaseRun) -> CaseResult:
+    outcome = decide(ran, case.expected)
+    returned = as_json(ran.value) if outcome is CaseOutcome.WRONG else None
     return CaseResult(
         case_id=case.id,
-        outcome=decide(ran, case.expected),
+        outcome=outcome,
         elapsed_ms=ran.elapsed_ms,
         error=ran.error,
+        returned=returned
+        if returned is not None and len(returned.encode()) <= RETURNED_KEPT
+        else None,
     )
 
 

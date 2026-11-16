@@ -57,7 +57,9 @@ function FailureView({ failure }: { failure: NonNullable<SubmissionView['failure
       <p className={cn('font-medium', OUTCOME[failure.outcome].text)}>{failure.title}</p>
       <Value label={FAILURE_ARGS} value={failure.args} />
       <Value label={FAILURE_EXPECTED} value={failure.expected} />
-      {failure.outcome === 'wrong' && <Value label={FAILURE_RETURNED} value={failure.returned} />}
+      {failure.returnedText !== null && (
+        <Value label={FAILURE_RETURNED} text={failure.returnedText} />
+      )}
       {failure.error && <Value label={FAILURE_ERROR} text={failure.error} />}
     </div>
   )

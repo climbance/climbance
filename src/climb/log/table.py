@@ -195,10 +195,12 @@ attempt_verification_case_results = Table(
     Column("outcome", enumerated(CaseOutcome), nullable=False),
     Column("elapsed_ms", Integer),
     Column("error", Text),
+    Column("returned", Text),
     CheckConstraint(
         "outcome NOT IN ('passed', 'wrong') OR elapsed_ms IS NOT NULL", name="returned_was_timed"
     ),
     CheckConstraint("error IS NULL OR outcome = 'crashed'", name="only_a_crash_names_an_error"),
+    CheckConstraint("returned IS NULL OR outcome = 'wrong'", name="only_a_wrong_case_returned"),
     CheckConstraint("elapsed_ms >= 0", name="elapsed_counted"),
 )
 
@@ -303,10 +305,12 @@ recall_attempt_case_results = Table(
     Column("outcome", enumerated(CaseOutcome), nullable=False),
     Column("elapsed_ms", Integer),
     Column("error", Text),
+    Column("returned", Text),
     CheckConstraint(
         "outcome NOT IN ('passed', 'wrong') OR elapsed_ms IS NOT NULL", name="returned_was_timed"
     ),
     CheckConstraint("error IS NULL OR outcome = 'crashed'", name="only_a_crash_names_an_error"),
+    CheckConstraint("returned IS NULL OR outcome = 'wrong'", name="only_a_wrong_case_returned"),
     CheckConstraint("elapsed_ms >= 0", name="elapsed_counted"),
 )
 

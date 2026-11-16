@@ -11,6 +11,10 @@ from climb.schema.provenance import MachineProvenance
 # what a case's arguments and return are made of: what JSON can carry
 type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
 
+# the most a wrong case's returned JSON may weigh and still be kept: a 1 MiB
+# case answered wrong on every submission would grow the log by that each time
+RETURNED_KEPT = 64 * 1024
+
 
 class ExpectedSource(StrEnum):
     """Which solution computed a case's expected output. Not `SolutionRole`
@@ -57,6 +61,9 @@ class CaseResult(BaseModel):
     outcome: CaseOutcome
     elapsed_ms: int | None = Field(default=None, ge=0)  # absent where the child measured nothing
     error: str | None = None  # what raised, on a crash; absent on one run before it was kept
+    # the JSON a wrong case returned, so a verdict reads back whole. Absent past
+    # `RETURNED_KEPT` and on runs before it was kept
+    returned: str | None = None
 
     @model_validator(mode="after")
     def _a_case_that_yielded_a_value_was_timed(self) -> CaseResult:
@@ -69,6 +76,12 @@ class CaseResult(BaseModel):
     def _only_a_crash_names_an_error(self) -> CaseResult:
         if self.error is not None and self.outcome is not CaseOutcome.CRASHED:
             raise ValueError(f"a {self.outcome} case raised nothing, so it names no error")
+        return self
+
+    @model_validator(mode="after")
+    def _only_a_wrong_case_keeps_its_return(self) -> CaseResult:
+        if self.returned is not None and self.outcome is not CaseOutcome.WRONG:
+            raise ValueError(f"a {self.outcome} case keeps no returned value")
         return self
 
 

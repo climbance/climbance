@@ -18,6 +18,7 @@ from climb.schema.card import (
 )
 from climb.schema.card_run import CardRun, Probe
 from climb.schema.case import (
+    RETURNED_KEPT,
     CaseOutcome,
     CaseResult,
     ExpectedSource,
@@ -77,6 +78,7 @@ from climb.schema.verification import AttemptVerification, Execution, Verificati
 __all__ = [
     "BODIES",
     "LADDER",
+    "RETURNED_KEPT",
     "Act",
     "Answer",
     "Arm",

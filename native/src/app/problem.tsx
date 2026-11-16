@@ -308,7 +308,9 @@ function SittingOn({
       </View>
     );
 
-  const opened = editorOpening(kept, sittingId, carry, statement.signature);
+  const opened = editorOpening(kept, sittingId, carry, statement.signature, statement.last ?? null);
+  // this screen's own submission, else the one a reopened sitting reads back
+  const verdict = submitted ?? statement.last ?? null;
   const solve = carry?.solved_code ?? null;
   // the user's own act: a solve is never carried, so it returns only here
   function restore() {
@@ -446,11 +448,11 @@ function SittingOn({
             onPress={toggleKeys}
           />
         </View>
-        {submitted ? (
+        {verdict ? (
           // the verdict sits under the editor: a failing case is read beside
           // the code that failed it
           <ScrollView style={{ flexGrow: 0, maxHeight: 220 }} contentContainerStyle={{ paddingHorizontal: space[3] }}>
-            <SubmissionVerdict submitted={submitted} />
+            <SubmissionVerdict submitted={verdict} />
           </ScrollView>
         ) : null}
         {keys && !clock.ended ? (

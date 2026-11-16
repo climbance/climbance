@@ -22,6 +22,7 @@ from climb.board import (
 from climb.board.judged import judgement_rates
 from climb.cards import CardStore
 from climb.cards.graph import depths
+from climb.cases import CaseLog
 from climb.graduation import Next, reading
 from climb.judgements import ItemStore
 from climb.ladder import (
@@ -56,7 +57,7 @@ from climb.schema import (
     RecallAttempt,
     Template,
 )
-from climb.sitting import Carry, Seated, Served, carry, get, serve
+from climb.sitting import Carry, Seated, Served, carry, get, last_submitted, serve
 from climb.solution_claims import load_problem, load_problems
 from climb.solutions import SolutionLog
 from climb.storage import Database
@@ -501,12 +502,20 @@ def picked(root: Root, user_id: UserId, problem_id: str) -> Picked:
 # clock press or a submission mints one
 @router.get("/problems/{problem_id}/statement")
 def statement(root: Root, user_id: UserId, problem_id: str) -> Served:
-    return serve(ProblemStore(root), SittingStore(root), problem_id, user_id=user_id)
+    served = serve(ProblemStore(root), SittingStore(root), problem_id, user_id=user_id)
+    if served.sitting is None:
+        return served
+    return served.model_copy(
+        update={"last": last_submitted(AttemptLog(root), CaseLog(root), served.sitting)}
+    )
 
 
 @router.get("/sittings/{sitting_id}")
 def sitting(root: Root, user_id: UserId, sitting_id: str) -> Seated:
-    return get(ProblemStore(root), SittingStore(root), sitting_id, user_id=user_id)
+    seated = get(ProblemStore(root), SittingStore(root), sitting_id, user_id=user_id)
+    return seated.model_copy(
+        update={"last": last_submitted(AttemptLog(root), CaseLog(root), seated.sitting)}
+    )
 
 
 # `card` names the card the problem was opened from: its open run bounds what

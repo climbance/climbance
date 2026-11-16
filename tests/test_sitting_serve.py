@@ -104,7 +104,14 @@ def test_a_statement_not_ending_on_the_line_is_all_prose(database, statement):
 def test_nothing_the_problem_was_written_from_is_served():
     """A target template or a technique names the form the sitting tests, so a
     field added here that carries one fails this."""
-    assert set(Served.model_fields) == {"title", "statement", "signature", "sitting", "elapsed_sec"}
+    assert set(Served.model_fields) == {
+        "title",
+        "statement",
+        "signature",
+        "sitting",
+        "elapsed_sec",
+        "last",
+    }
 
 
 def test_a_second_begin_returns_the_running_sitting(stores):

@@ -70,12 +70,17 @@ class AttemptLog:
             conditions.append(attempts.c.finished_at >= since)
         return self._attempts.where(*conditions)
 
-    def verifications(self, user_id: str | None = None) -> list[AttemptVerification]:
+    def verifications(
+        self, user_id: str | None = None, *, attempt_id: str | None = None
+    ) -> list[AttemptVerification]:
+        conditions = theirs(attempt_verifications, user_id)
+        if attempt_id is not None:
+            conditions.append(attempt_verifications.c.attempt_id == attempt_id)
         with self.root.connect() as conn:
             runs = (
                 conn.execute(
                     select(attempt_verifications)
-                    .where(*theirs(attempt_verifications, user_id))
+                    .where(*conditions)
                     .order_by(attempt_verifications.c.appended)
                 )
                 .mappings()

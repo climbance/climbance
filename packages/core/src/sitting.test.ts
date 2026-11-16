@@ -10,6 +10,7 @@ import {
   userDraftKey,
   duration,
   editorOpening,
+  RETURNED_NOT_KEPT,
   opening,
   preferenceAfter,
   problemFrom,
@@ -107,6 +108,13 @@ describe('the code a sitting opens on', () => {
     expect(editorOpening(own, 's1', null, 'def solve(a):')).toEqual({ code: 'mine', restored: true });
     expect(editorOpening(null, null, null, 'def solve(a):')).toEqual({ code: 'def solve(a):\n    ', restored: false });
   });
+
+  it('opens a sitting with no draft of its own on its last submission', () => {
+    const last = { attempt: { code: 'sent', restored: false } } as unknown as Submitted;
+    expect(editorOpening(null, 's1', null, 'def solve(a):', last)).toEqual({ code: 'sent', restored: false });
+    const own = { sitting: 's1', code: 'mine', at: '2026-11-16T00:00:00Z', restored: false };
+    expect(editorOpening(own, 's1', null, 'def solve(a):', last).code).toBe('mine');
+  });
 });
 
 describe('a submission read back', () => {
@@ -125,7 +133,24 @@ describe('a submission read back', () => {
     expect(view.verdict).toBe('Not solved: 1 of 3 cases passed');
     expect(view.overall).toBe('wrong');
     expect(view.failures).toBe('1 wrong answer · 1 timed out');
-    expect(view.failure).toMatchObject({ title: 'Case 2: wrong answer', returned: 3 });
+    expect(view.failure).toMatchObject({ title: 'Case 2: wrong answer', returned: 3, returnedText: '3' });
+  });
+
+  it('says a read-back kept no returned value, where a run before the bound or past it kept none', () => {
+    const view = submissionView({
+      attempt: { solved: false },
+      verification: { results: [{ case_id: 'b', outcome: 'wrong' }] },
+      failure: {
+        case_id: 'b',
+        outcome: 'wrong',
+        args: [1],
+        expected: 2,
+        returned: null,
+        returned_kept: false,
+        error: null,
+      },
+    } as unknown as Submitted);
+    expect(view.failure?.returnedText).toBe(RETURNED_NOT_KEPT);
   });
 
   it('cuts a long value unless asked for it whole, and keeps a short one', () => {

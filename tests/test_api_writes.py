@@ -63,7 +63,7 @@ def test_a_verdict_carries_no_expected_value(client, sitting_id):
     """The answers stay server-side, or a response is the case set."""
     (result, _) = submitted(client, sitting_id, TRIPLE).json()["verification"]["results"]
 
-    assert set(result) == {"case_id", "outcome", "elapsed_ms", "error"}
+    assert set(result) == {"case_id", "outcome", "elapsed_ms", "error", "returned"}
 
 
 def test_a_failing_submission_shows_the_first_failing_case_whole(client, sitting_id):
@@ -75,6 +75,7 @@ def test_a_failing_submission_shows_the_first_failing_case_whole(client, sitting
         "args": [1],
         "expected": 2,
         "returned": 3,
+        "returned_kept": True,
         "error": None,
     }
 
@@ -279,3 +280,19 @@ def test_a_submission_after_a_restore_says_so(client, sitting_id):
     plain = submitted(client, sitting_id, TRIPLE).json()["attempt"]
 
     assert (restored["restored"], plain["restored"]) == (True, False)
+
+
+def test_a_reopened_sitting_reads_its_last_submission_back(client, sitting_id):
+    """The code and the verdict were page state alone, so a reload lost both."""
+    submitted(client, sitting_id, TRIPLE)
+    client.post(f"/api/sittings/{sitting_id}/end")
+
+    last = client.get(f"/api/sittings/{sitting_id}").json()["last"]
+
+    assert last["attempt"]["code"] == TRIPLE
+    assert [one["outcome"] for one in last["verification"]["results"]] == ["wrong", "wrong"]
+    assert (last["failure"]["returned"], last["failure"]["returned_kept"]) == (3, True)
+
+
+def test_a_sitting_with_no_submission_reads_nothing_back(client, sitting_id):
+    assert client.get(f"/api/sittings/{sitting_id}").json()["last"] is None

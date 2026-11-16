@@ -121,17 +121,20 @@ export function opening(draft: Draft | null, carry: Carry | null): string | null
 
 /**
  * The code the editor opens on and whether it carries a restore: a reload
- * during the sitting finds what was typed in it, and a new sitting opens on
- * the work in progress, else on the signature.
+ * during the sitting finds what was typed in it, a sitting with no draft of
+ * its own opens on its last submission, and a new sitting opens on the work
+ * in progress, else on the signature.
  */
 export function editorOpening(
   kept: Draft | null,
   sittingId: string | null,
   carry: Carry | null,
   signature: string | null,
+  last: Submitted | null = null,
 ): { code: string; restored: boolean } {
   const own = kept !== null && sittingId !== null && kept.sitting === sittingId;
   if (own) return { code: kept.code, restored: kept.restored === true };
+  if (last?.attempt.code != null) return { code: last.attempt.code, restored: last.attempt.restored === true };
   return { code: opening(kept, carry) ?? (signature ? `${signature}\n    ` : ''), restored: false };
 }
 
@@ -152,6 +155,8 @@ export interface SubmissionView {
     args: unknown[];
     expected: unknown;
     returned: unknown | null;
+    // the Returned line as read: the value, or why a read-back has none
+    returnedText: string | null;
     error: string | null;
   } | null;
 }
@@ -184,6 +189,12 @@ export function submissionView(submitted: Submitted): SubmissionView {
       expected: failure.expected,
       // a returned value reads only where the case returned the wrong one
       returned: failure.outcome === 'wrong' ? failure.returned : null,
+      returnedText:
+        failure.outcome !== 'wrong'
+          ? null
+          : failure.returned_kept === false
+            ? RETURNED_NOT_KEPT
+            : JSON.stringify(failure.returned),
       error: failure.error,
     },
   };
@@ -254,4 +265,5 @@ export const CLAIM_NOTE = 'Asked of each attempt now, while the code is minutes 
 export const FAILURE_ARGS = 'Arguments';
 export const FAILURE_EXPECTED = 'Expected';
 export const FAILURE_RETURNED = 'Returned';
+export const RETURNED_NOT_KEPT = 'not kept for this submission';
 export const FAILURE_ERROR = 'Error';

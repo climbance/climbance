@@ -8,7 +8,7 @@ from climb.log import AttemptLog, SittingStore
 from climb.mint import case
 from climb.runner import runner
 from climb.schema import CaseOutcome, Sitting
-from climb.sitting import DRILL_CAP_MS, Missing, Refused, Submitted, submit
+from climb.sitting import DRILL_CAP_MS, Missing, Refused, Submitted, last_submitted, submit
 from climb.verifications import VerificationLog
 
 STARTED = datetime(2026, 9, 10, 8, tzinfo=UTC)
@@ -310,3 +310,15 @@ def test_a_solve_while_paused_closes_the_pause(database):
     submitted = stores.submitted(DOUBLE, now=NINE_THIRTY)
 
     assert not submitted.sitting.paused and submitted.sitting.ended_at == NINE_THIRTY
+
+
+def test_a_return_kept_nowhere_reads_back_as_not_kept(database, monkeypatch):
+    """A run before the field, or past the bound, kept none to show."""
+    monkeypatch.setattr("climb.runner.verdicts.RETURNED_KEPT", 0)
+    stores = Stores(database)
+    stores.submit(TRIPLE)
+
+    last = last_submitted(stores.log, stores.cases, stores.sittings.get("s1"))
+
+    assert last is not None and last.failure is not None
+    assert (last.failure.returned, last.failure.returned_kept) == (None, False)

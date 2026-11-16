@@ -102,8 +102,8 @@ export function SubmissionVerdict({ submitted }: { submitted: Submitted }) {
           </Text>
           <Value label={FAILURE_ARGS} text={JSON.stringify(view.failure.args)} />
           <Value label={FAILURE_EXPECTED} text={JSON.stringify(view.failure.expected)} />
-          {view.failure.outcome === 'wrong' ? (
-            <Value label={FAILURE_RETURNED} text={JSON.stringify(view.failure.returned)} />
+          {view.failure.returnedText !== null ? (
+            <Value label={FAILURE_RETURNED} text={view.failure.returnedText} />
           ) : null}
           {view.failure.error ? <Value label={FAILURE_ERROR} text={view.failure.error} /> : null}
         </View>

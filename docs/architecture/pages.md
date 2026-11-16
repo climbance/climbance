@@ -147,6 +147,12 @@ those steps at low fidelity.
   submitted, and the next sitting on the problem opens on the signature, as
   `flows.md` gives. A submission typed over the solve would be a solve read
   rather than recalled.
+- **A reopened sitting reads back its last submission: the code and the
+  verdict.** Reading the sitting returns them from the stored attempt and its
+  verification. Kept in page state alone, both were lost to a reload, and an
+  untimed sitting's draft names no sitting, so the editor opened on the
+  signature. A draft of the sitting's own still comes first, since it holds
+  what was typed after the submission.
 - **The login page and the privacy policy carry no navigation.** The two pages
   open without a session, and every section behind the menu answers 401 to a
   request carrying none. The policy names the login as its way back, since the
