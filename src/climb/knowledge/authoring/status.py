@@ -13,6 +13,7 @@ LEVELS = range(4)
 class Written:
     concepts: int
     questions: int
+    empty: str | None = None  # the reason the subtopic holds no concept here
 
 
 @dataclass(frozen=True)
@@ -45,23 +46,28 @@ def topics(root: Path) -> list[Topic]:
 
 
 def written(root: Path, topic: str, slug: str) -> dict[int, Written]:
-    """A level is written when the concept file holds a concept at it."""
+    """A level is written when the concept file holds a concept at it, or
+    records it as empty."""
     path = root / "concepts" / topic / f"{slug}.toml"
     if not path.exists():
         return {}
-    concepts = tomllib.loads(path.read_text()).get("concept", [])
+    held = tomllib.loads(path.read_text())
+    concepts = held.get("concept", [])
+    empty = {e.get("level"): e.get("reason", "") for e in held.get("empty", [])}
     level = {c["id"]: c["level"] for c in concepts}
     bank = root / "banks" / topic / f"{slug}.toml"
     questions: list[dict[str, Any]] = (
         tomllib.loads(bank.read_text()).get("q", []) if bank.exists() else []
     )
-    return {
+    found = {
         n: Written(
             sum(1 for c in concepts if c["level"] == n),
             sum(1 for q in questions if level.get(q.get("concept")) == n),
         )
-        for n in sorted(set(level.values()))
+        for n in set(level.values())
     }
+    found |= {n: Written(0, 0, why) for n, why in empty.items() if n not in found}
+    return dict(sorted(found.items()))
 
 
 def markdown(module: str, found: list[Topic]) -> str:
@@ -69,8 +75,9 @@ def markdown(module: str, found: list[Topic]) -> str:
         f"# `{module}` status",
         "",
         f"Written by `climb module status {module}`, never by hand. A subtopic is",
-        "written at a level when its concept file holds a concept at that level. A",
-        "cell gives the concepts, then the questions.",
+        "written at a level when its concept file holds a concept at that level, or",
+        "records the level as empty. A cell gives the concepts, then the questions,",
+        "and reads `empty` where the file records the level as empty.",
     ]
     body: list[str] = []
     for topic in found:
@@ -79,7 +86,12 @@ def markdown(module: str, found: list[Topic]) -> str:
         body += ["| Subtopic | L0 | L1 | L2 | L3 |", "|---|---|---|---|---|"]
         for sub in topic.subtopics:
             cells = [
-                f"{w.concepts} / {w.questions}" if (w := sub.levels.get(n)) else "—" for n in LEVELS
+                "—"
+                if (w := sub.levels.get(n)) is None
+                else "empty"
+                if w.empty is not None
+                else f"{w.concepts} / {w.questions}"
+                for n in LEVELS
             ]
             body.append(f"| {sub.slug} | " + " | ".join(cells) + " |")
     return "\n".join(head + body) + "\n"

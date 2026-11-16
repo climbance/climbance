@@ -43,6 +43,25 @@ def records(course: Course, report: Report) -> None:
         if concept.get("level") not in (0, 1, 2, 3):
             report.error(27, at, f"level {concept.get('level')!r}")
         _misconceptions(report, at, concept)
+    _empty(course, report)
+
+
+def _empty(course: Course, report: Report) -> None:
+    held = {(c["_file"], c.get("level")) for c in course.concepts.values()}
+    seen: set[tuple[str, object]] = set()
+    for one in course.empty:
+        level = one.get("level")
+        at = f"{one['_file']} empty L{level}"
+        if level not in (0, 1, 2, 3):
+            report.error(27, at, f"level {level!r}")
+        reason = one.get("reason")
+        if not isinstance(reason, str) or not reason.strip():
+            report.error(27, at, "no reason")
+        if (one["_file"], level) in held:
+            report.error(27, at, "the file holds a concept at this level")
+        if (one["_file"], level) in seen:
+            report.error(27, at, "recorded twice")
+        seen.add((one["_file"], level))
 
 
 def taught(course: Course, report: Report) -> None:

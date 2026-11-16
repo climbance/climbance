@@ -32,3 +32,16 @@ def test_the_page_tallies_each_level_of_a_topic(tmp_path):
     assert "L0 1 of 2, L1 1 of 2, L2 0 of 2, L3 0 of 2" in page
     assert "| a | 1 / 2 | 1 / 1 | — | — |" in page
     assert "| b | — | — | — | — |" in page
+
+
+def test_a_level_recorded_as_empty_counts_as_written(tmp_path):
+    """A subtopic with nothing at a level keeps no topic from being finished."""
+    root = course(tmp_path)
+    (root / "concepts" / "t" / "b.toml").write_text(
+        '[[empty]]\nlevel = 3\nreason = "Nothing at this depth."\n'
+    )
+    [topic] = topics(root)
+
+    assert topic.subtopics[1].levels == {3: Written(0, 0, "Nothing at this depth.")}
+    assert topic.done(3) == 1
+    assert "| b | — | — | — | empty |" in markdown("m", [topic])

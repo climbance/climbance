@@ -59,6 +59,12 @@ the coverage map for a module written by concept.
 | `misconceptions` | Wrong beliefs about the claim, each `{ id, text }`. |
 | `taught_by` | The lesson section teaching the concept, as `<slug>#<anchor>`. |
 
+- **A subtopic records a level holding no concept as an `[[empty]]` entry**
+  in its concept file, with `level` and `reason`. The reason says why the
+  subtopic has nothing to teach at that level, so a review can check the
+  reason against `## Levels`. `climb module status` counts the level as
+  written. Without the entry, the level reads as
+  unwritten, and the module is never finished.
 - **A witness is run on every supported build by the module check.** Its
   output is compared with the output the record shows. A witness shows what
   the code does, and the reader of stage 1 checks that the claim says the

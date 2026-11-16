@@ -170,8 +170,9 @@ precedence over this file.
 - **`climb module status <slug>` prints which subtopics a module
   written by concept holds at each level**, with the concepts and the
   questions at each. A subtopic is written at a level once its concept file
-  holds a concept there. The output is read from the files, so a status page
-  copied from it stays true until the files change.
+  holds a concept there, or records the level as empty. The output is read
+  from the files, so a status page copied from it stays true until the files
+  change.
 
 ## A new module
 

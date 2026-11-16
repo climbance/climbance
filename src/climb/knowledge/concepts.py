@@ -25,6 +25,18 @@ def read_concepts(base: Path, unread: list[str]) -> dict[str, dict[str, Any]]:
     return concepts
 
 
+def read_empty(base: Path) -> list[dict[str, Any]]:
+    """Each level a subtopic's concept file records as holding no concept."""
+    found: list[dict[str, Any]] = []
+    for path in sorted((base / "concepts").glob("*/*.toml")):
+        try:
+            raws = tomllib.loads(path.read_text()).get("empty", [])
+        except tomllib.TOMLDecodeError:
+            continue  # read_concepts reports the file
+        found += [one | {"_file": f"concepts/{path.parent.name}/{path.name}"} for one in raws]
+    return found
+
+
 def derive(where: str, raw: dict[str, Any], concepts: dict[str, dict[str, Any]]) -> list[str]:
     """Fill a question's derived fields from its concept, in place."""
     name = raw.get("concept")

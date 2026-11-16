@@ -104,6 +104,32 @@ def test_a_quote_with_its_read_on_date_is_accepted(tmp_path):
     assert errors == []
 
 
+def empty(root: Path, *entries: str) -> Path:
+    path = root / "concepts" / "t" / "sub.toml"
+    path.write_text(path.read_text() + "".join(f"[[empty]]\n{e}\n" for e in entries))
+    return root
+
+
+def test_a_level_recorded_as_empty_with_its_reason_is_accepted(tmp_path):
+    """Rule 27: a subtopic may hold no concept at a level, saying why."""
+    root = empty(module(tmp_path), 'level = 3\nreason = "Nothing at this depth."')
+
+    assert found(check(root, run=False).report.errors, 27) == []
+
+
+def test_an_empty_level_is_refused_without_a_reason_or_beside_a_concept(tmp_path):
+    """Rule 27: an empty level states why, and holds no concept."""
+    entries = ("level = 0", 'level = 2\nreason = " "', 'level = 2\nreason = "x"')
+    root = empty(module(tmp_path), *entries)
+
+    assert found(check(root, run=False).report.errors, 27) == [
+        "[27] concepts/t/sub.toml empty L0: no reason",
+        "[27] concepts/t/sub.toml empty L0: the file holds a concept at this level",
+        "[27] concepts/t/sub.toml empty L2: no reason",
+        "[27] concepts/t/sub.toml empty L2: recorded twice",
+    ]
+
+
 def test_a_question_naming_an_unknown_concept_is_refused(tmp_path):
     """Rule 27: the reading's own finding, reported by the check."""
     errors = found(check(module(tmp_path, q=asking("nope")), run=False).report.errors, 27)

@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from climb.knowledge.concepts import derive, read_concepts
+from climb.knowledge.concepts import derive, read_concepts, read_empty
 
 # a question as its bank holds it, plus `_sub` and `_file`
 type Question = dict[str, Any]
@@ -47,6 +47,8 @@ class Course:
     fixtures: set[str]
     # a module written by concept: docs/authoring/concepts.md
     concepts: dict[str, dict[str, Any]] = field(default_factory=dict[str, dict[str, Any]])
+    # levels a concept file records as holding no concept, each with its reason
+    empty: list[dict[str, Any]] = field(default_factory=list[dict[str, Any]])
     # what reading the concepts found wrong: a file, an id, a derived field
     unread: list[str] = field(default_factory=list[str])
 
@@ -87,6 +89,7 @@ def load(root: Path) -> Course:
         settings=tomllib.loads((root / "course.toml").read_text()),
         fixtures=set(config.get("fixtures", [])),
         concepts=concepts,
+        empty=read_empty(root),
         unread=unread,
     )
 
