@@ -55,6 +55,20 @@ The order matters because each step can reject what came before.
   elements, and a submission of the wrong complexity passes inputs that small.
   The prompt states both ends, since a prompt naming one end produces the
   other fault.
+- **A naive solution slower than the plain brute force separates too early.**
+  The separating case then admits the brute force, which is slower than the
+  form and faster than the naive solution. On 2026-11-16, 14 of the 89 served
+  problems with a separating case in the local store had such a naive
+  solution. Each of the 14 is cubic where the plain brute force is quadratic.
+  The cause is a slice summed, a `min` or a `set` taken per pair, every edge
+  scanned again per candidate, or a list searched in place of a set. The 14
+  separate between n = 521 and n = 1497, under bounds of 100,000 to 200,000.
+  A quadratic solution finishes there within the cap. The conveyor problem,
+  `longest-valid-window`, separates at n = 907.
+- **A naive solution enumerating every choice is the plain brute force**
+  where the statement asks to choose, order or partition. The 11 problems
+  separating between n = 10 and n = 65 enumerate subsets, permutations or
+  unmemoised recursions, and none of the 11 counts in the 14.
 - **The naive site is shown the technique's criterion beside the trigger.** A
   model told to avoid one form reaches the technique through a form no
   template names, as tabulation stands in for a memo.
