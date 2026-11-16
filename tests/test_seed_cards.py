@@ -8,9 +8,10 @@ from test_seed_knowledge import authored
 
 from climb import cli
 from climb.cards import CardStore, seed_cards
-from climb.knowledge import read_module, seed_module
+from climb.knowledge import read_module, seed_module, seeded_modules, seeded_subtopics
 
 CONTENT = Path(__file__).parents[1] / "content" / "cards"
+MODULE_CONTENT = CONTENT.parent / "modules"
 # the primary module every card here names, as if seeded
 MODULES = {"algo"}
 
@@ -246,11 +247,14 @@ def test_a_file_that_is_not_json_never_reaches_the_engine(database, tmp_path, mo
 def test_the_authored_cards_seed(database):
     """The content in this repo is what the path exists to load, so it is
     seeded rather than described."""
+    for module in sorted(MODULE_CONTENT.iterdir()):
+        assert not seed_module(read_module(module), root=database).refused
     store = CardStore(database)
     result = seed_cards(
         [json.loads(path.read_text()) for path in sorted(CONTENT.glob("*.json"))],
         store=store,
-        modules=MODULES,
+        modules=seeded_modules(root=database),
+        subtopics=seeded_subtopics(root=database),
     )
 
     assert result.rejected == []
