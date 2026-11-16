@@ -161,6 +161,7 @@ those steps at low fidelity.
 | `/techniques/:technique` | picks a problem | Practice |
 | `/problems/:problem_id` | reads the statement, solves, submits and claims, or reads a retired problem | Practice |
 | `/judge` | judges one solution at a time, clean or flawed, and taps the wrong line | Practice |
+| `/fill` | picks the line a form's blank needs, one form at a time | Practice |
 | `/cards` | reads where each card stands, and picks one | Cards |
 | `/cards/:slug` | reads a card and reveals its templates | Cards |
 | `/cards/:slug/recall` | opens the recall of the template the trainer draws | Cards |
@@ -259,6 +260,23 @@ gives the exercise and `content.md` the items.
   result reads as right, located, spotted on the wrong line, missed, or a
   false alarm. The flawed line is marked, and the separating case shows its
   arguments, the expected value and what the flawed code gave.
+- **Next serves the following item**, unseen first, then the stalest.
+
+### Filling a key line
+
+The second short exercise, served at a phone's width on both clients. `log.md`
+gives the exercise and `content.md` the items.
+
+- **The page opens from the board and from a card**, as judging does. A card's
+  press adds `?card=`.
+- **The item reads as its template's title, one of its cases and the code**,
+  with the blanked line marked in place.
+- **The choices are presses below the code, shuffled on every serve.** A
+  position then carries no answer. One press sends the fill, since a choice is
+  one line and needs no second step.
+- **The engine decides the fill, and the page shows the decision.** The result
+  reads as right or wrong, and fills the blank with the form's line. A wrong
+  choice shows its separating case.
 - **Next serves the following item**, unseen first, then the stalest.
 
 ## The knowledge pages
@@ -519,6 +537,7 @@ what it offers. The inventory is the list both clients build to.
 | The required cards a locked card waits on, on that press | `/cards/:slug` | Card, its bottom bar | same |
 | A recall | `/cards/:slug/recall/:template` | Recall, from Card | same |
 | Judging a solution | `/judge` | Judge | same |
+| Filling a key line | `/fill` | Fill | same |
 | The knowledge home | `/knowledge` | Home | same |
 | A module | `/knowledge/modules/:module` | Module | same |
 | The start sheet | a dialog on the module page | a sheet on Module | same |

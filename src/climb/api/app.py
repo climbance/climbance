@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from climb.api.account import router as account
 from climb.api.apps import router as apps
 from climb.api.devlogin import router as dev_login_router
+from climb.api.filling import router as filling
 from climb.api.judging import router as judging
 from climb.api.knowledge import router as knowledge
 from climb.api.pages import Pages
@@ -46,6 +47,7 @@ def create_app(
     app.include_router(account, prefix=PREFIX)
     app.include_router(knowledge, prefix=PREFIX)
     app.include_router(judging, prefix=PREFIX)
+    app.include_router(filling, prefix=PREFIX)
     app.include_router(picks, prefix=PREFIX)
     app.include_router(apps, prefix=PREFIX)
     if sign_in is not None:

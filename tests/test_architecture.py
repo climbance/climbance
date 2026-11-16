@@ -11,7 +11,7 @@ from climb.calls import CallLog
 from climb.cards import CardStore
 from climb.cases import CaseLog
 from climb.drafts import DraftStore
-from climb.log import AttemptLog, JudgementLog, SittingStore
+from climb.log import AttemptLog, FillLog, JudgementLog, SittingStore
 from climb.matches import MatchLog
 from climb.outcomes import OutcomeLog
 from climb.problems import ProblemStore
@@ -244,6 +244,7 @@ APPEND_ONLY = (
     SolutionClaimLog,
     RatingLog,
     JudgementLog,
+    FillLog,
     OutcomeLog,
     MatchLog,
     CallLog,

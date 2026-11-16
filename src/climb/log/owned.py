@@ -18,6 +18,7 @@ from climb.knowledge.table import (
     setting_changes,
     stints,
 )
+from climb.log.fills import FillLog
 from climb.log.judgements import JudgementLog
 from climb.log.predictions import PredictionLog
 from climb.log.sittings import SittingStore
@@ -30,6 +31,7 @@ from climb.log.table import (
     card_run_probes,
     card_runs,
     diagnoses,
+    fills,
     judgements,
     predictions,
     recall_attempt_case_results,
@@ -46,6 +48,7 @@ from climb.schema import (
     Call,
     CertificationExam,
     Diagnosis,
+    Fill,
     Focus,
     Judgement,
     LessonMark,
@@ -86,6 +89,7 @@ class UserLog(BaseModel):
     self_labels: list[SelfLabel]
     diagnoses: list[Diagnosis]
     judgements: list[Judgement]
+    fills: list[Fill]
     predictions: list[Prediction]
     calls: list[Call]
     # the knowledge log: `knowledge.md`, The records
@@ -120,6 +124,7 @@ def whole_log(root: Database, user_id: str) -> UserLog:
             "self_labels": log.self_labels(user_id),
             "diagnoses": diagnosed,
             "judgements": JudgementLog(root).for_user(user_id),
+            "fills": FillLog(root).for_user(user_id),
             "predictions": PredictionLog(root).for_user(user_id),
             "calls": called,
             # rows, each validated into the record its field names
@@ -179,6 +184,7 @@ def erased(root: Database, user_id: str) -> dict[str, int]:
             ),
             (recall_attempts, recall_attempts.c.user_id == user_id),
             (judgements, judgements.c.user_id == user_id),
+            (fills, fills.c.user_id == user_id),
             (predictions, predictions.c.user_id == user_id),
             (card_run_probes, card_run_probes.c.card_run_id.in_(started)),
             (card_runs, card_runs.c.user_id == user_id),

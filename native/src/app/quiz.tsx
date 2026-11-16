@@ -2,7 +2,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { BackHandler, Pressable, ScrollView, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Button, Divider, type MD3Theme, Switch, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper';
+import { Button, Divider, Switch, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -72,7 +72,7 @@ import {
 import { EMPTY, type Edit, type Key, pressed } from '@/lib/keys';
 import { useStore, type ExamSession, type QueueSession } from '@/lib/store';
 import { Heading, PickPanel, PickRow } from '@/ui/rows';
-import { BottomBar, CodeBlock, fromCopy, Loaded, Press, ScreenHeader, styles } from '@/ui/common';
+import { BottomBar, CodeBlock, fromCopy, Loaded, optionTile, Press, ScreenHeader, styles } from '@/ui/common';
 import { KeyPad, PAD_HEIGHT } from '@/ui/keys';
 import { Diagram } from '@/ui/diagram';
 import { Inline, Markdown } from '@/ui/markdown';
@@ -397,19 +397,6 @@ function Head({ q, tag, early = false }: { q: Question; tag: string; early?: boo
       {q.code ? <CodeBlock code={q.code} wrap /> : null}
     </>
   );
-}
-
-// one option tile for a choice and a tick alike, as the web draws both: picked
-// reads bordered in the primary and tinted
-function optionTile(on: boolean, theme: MD3Theme) {
-  return {
-    minHeight: 48,
-    padding: space[3],
-    borderRadius: radius(theme).xl,
-    borderWidth: 1,
-    borderColor: on ? theme.colors.primary : theme.colors.outlineVariant,
-    backgroundColor: on ? theme.colors.secondaryContainer : 'transparent',
-  } as const;
 }
 
 function Choices(props: { q: Question; order: number[]; picked: number[]; onToggle?: (pos: number) => void }) {

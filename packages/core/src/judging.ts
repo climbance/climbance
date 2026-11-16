@@ -45,7 +45,7 @@ export function judgeCorrection(decided: Decided): { label: string; code: string
 export const verdictPassed = (verdict: Verdict) => verdict === 'right' || verdict === 'located';
 
 /** The separating case, line by line: the arguments, what was expected, what the flawed code gave. */
-export function separatingLines(decided: Decided): string[] {
+export function separatingLines(decided: { case?: components['schemas']['SeparatingCase'] | null }): string[] {
   const one = decided.case;
   if (!one) return [];
   const gave = one.outcome === 'crashed' ? 'raised an error' : `returned ${shown(one.returned)}`;

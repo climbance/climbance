@@ -33,6 +33,7 @@ from climb.drafts.table import (
     drafts,
 )
 from climb.judgements.table import judgement_items
+from climb.keylines.table import key_line_choices, key_line_items
 from climb.knowledge.table import (
     answers,
     certification_exams,
@@ -58,6 +59,7 @@ from climb.log.table import (
     card_run_probes,
     card_runs,
     diagnoses,
+    fills,
     identities,
     invitations,
     judgements,
@@ -91,9 +93,12 @@ from climb.schema import (
     DifficultyRating,
     Draft,
     DraftCase,
+    Fill,
     Focus,
     Judgement,
     JudgementItem,
+    KeyLineChoice,
+    KeyLineItem,
     Lesson,
     LessonMark,
     LimitRaise,
@@ -184,6 +189,9 @@ STORED: list[Stored] = [
     Stored(SolutionClaim, solution_claims, through_call=True),
     Stored(JudgementItem, judgement_items),
     Stored(Judgement, judgements),
+    Stored(KeyLineItem, key_line_items, elsewhere=frozenset({"choices"})),
+    Stored(KeyLineChoice, key_line_choices, structural=frozenset({"item_id", "position"})),
+    Stored(Fill, fills),
     Stored(Prediction, predictions),
     Stored(DifficultyRating, difficulty_ratings, through_call=True),
     Stored(TemplateMatch, template_matches, through_call=True),
@@ -715,6 +723,7 @@ APPEND_ONLY = {
     "card_runs",
     "recall_attempts",
     "judgements",
+    "fills",
     "predictions",
     "answers",
     "stints",

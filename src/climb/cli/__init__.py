@@ -14,6 +14,7 @@ from climb.cli.card import card
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
+from climb.cli.fill import fill
 from climb.cli.gaps import gaps
 from climb.cli.generate import generate
 from climb.cli.hand_match import hand_match
@@ -364,6 +365,12 @@ def main() -> None:
         "build", help="build items for every template not yet served at its current code"
     )
 
+    fill_parser = _command(sub, "fill", "the key-line exercise's items")
+    fill_action = fill_parser.add_subparsers(dest="action", required=True)
+    fill_action.add_parser(
+        "build", help="build items for every template not yet served at its current code"
+    )
+
     card_parser = _command(sub, "card", "an authored card's file, before it is seeded")
     card_action = card_parser.add_subparsers(dest="action", required=True)
     card_check = card_action.add_parser(
@@ -458,6 +465,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "log": user_log,
     "card": lambda args, parser, _root: card(args, parser),
     "judge": lambda args, _parser, root: judge(args, root),
+    "fill": lambda args, _parser, root: fill(args, root),
     "module": lambda args, parser, root: (
         retired(args, root) if args.action == "retire" else module(args, parser)
     ),

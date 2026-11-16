@@ -6,6 +6,7 @@ import { Button, Text, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
+  fillFrom,
   judgeFrom,
   cardSubtopics,
   citedSubtopics,
@@ -96,6 +97,14 @@ export default function CardScreen() {
                 style={{ color: theme.colors.primary }}
               >
                 {judgeFrom(data.card.title)}
+              </Text>
+              <Text
+                variant="bodyMedium"
+                accessibilityRole="link"
+                onPress={() => router.push({ pathname: '/fill', params: { card: data.card.slug } })}
+                style={{ color: theme.colors.primary }}
+              >
+                {fillFrom(data.card.title)}
               </Text>
               <Subtopics card={data.card} courses={st.catalog?.courses ?? []} />
               <PageSection of={sections} id="trigger" title={CARD_TRIGGER}>

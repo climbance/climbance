@@ -16,6 +16,8 @@ import {
   BOARD_NONE,
   BOARD_STUDYING,
   BOARD_NEXT,
+  FILL_NOTE,
+  FILL_TITLE,
   JUDGE_NOTE,
   JUDGE_TITLE,
   boardMoreCards,
@@ -194,9 +196,10 @@ function BoardBody({
           <CardPanel technique={null} cards={studying} />
         </>
       ) : null}
-      {/* the short exercise, across every card: `pages.md`, Judging */}
+      {/* the short exercises, across every card: `pages.md`, Judging, Filling */}
       <Panel>
         <PickRow title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} onPress={() => router.push('/judge')} />
+        <PickRow title={FILL_TITLE} note={FILL_NOTE} stats={[]} onPress={() => router.push('/fill')} />
       </Panel>
       {next.cards.length > 0 ? (
         <>

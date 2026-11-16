@@ -301,6 +301,10 @@ without redefining them. Grouped by the file that specifies the record.
   fails a case, served by the judging exercise. Product data.
 - **Judgement**: one user's answer to a judgement item: clean or flawed, and
   the tapped line where flawed.
+- **Key-line item**: a template's form with one line blanked, and the choices
+  for that line: the form's own line and mutants of it that fail a case,
+  served by the key-line exercise. Product data.
+- **Fill**: one user's answer to a key-line item: the choice the user picked.
 - **Review**: one check that a user still holds a template's form or a
   question's fact. An answer to a seen question is a review of it, and so is
   a template's recall attempt or a sitting written for the template.
@@ -426,11 +430,13 @@ times. Each record class is specified in one of the files beside it.
 | Verification runs | product | global | append-only | the store |
 | Template matches | product | global | append-only | the store |
 | Judgement items | product | global | created once; only its status moves | the store |
+| Key-line items | product | global | created once; only its status moves | the store |
 | Site outcomes | product | global | append-only | the store |
 | Sittings | user | private | revised in place | the store |
 | Card runs | user | private | append-only | the store |
 | Recall attempts | user | private | append-only | the store |
 | Judgements | user | private | append-only | the store |
+| Fills | user | private | append-only | the store |
 | Predictions | user | private | append-only | the store |
 | Attempts | user | private | append-only | the store |
 | Attempt verifications | user | private | append-only | the store |

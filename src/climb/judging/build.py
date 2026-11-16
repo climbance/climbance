@@ -5,9 +5,9 @@ import ast
 import hashlib
 import io
 import tokenize
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from datetime import datetime
-from typing import Any
+from typing import Any, Protocol
 
 from climb.cards.check import CAP_MS, passes
 from climb.ids import new_id
@@ -53,21 +53,9 @@ def shown(code: str, harness: Sequence[str]) -> str:
 
 def items(template: Template, *, now: datetime) -> list[JudgementItem]:
     """One clean item and up to three flawed, or none where no flaw fits."""
-    if template.kind is not TemplateKind.CODE or not template.cases:
-        return []
-    form = shown(template.code, template.harness)
-    if _width(form) > WIDTH:
-        return []
-    args = [case.args for case in template.cases]
-    ran = run(template.code, args, cap_ms=CAP_MS)
-    cap = pace(max((one.elapsed_ms or 0 for one in ran), default=0), cap_ms=CAP_MS)
-    hidden = _harness_lines(ast.parse(template.code), template.harness)
-    flaws = [
-        flaw
-        for one in mutants(template.code)
-        if one.line not in hidden and (flaw := _flaw(template, form, one, args, cap))
-    ]
-    if not flaws:
+    form = servable(template)
+    found = flaws(template, form) if form is not None else []
+    if form is None or not found:
         return []
     base: dict[str, Any] = {
         "created_at": now,
@@ -77,20 +65,37 @@ def items(template: Template, *, now: datetime) -> list[JudgementItem]:
     clean = JudgementItem.model_validate(base | {"id": new_id(), "code": form, "clean": True})
     return [clean] + [
         JudgementItem.model_validate(base | one | {"id": new_id(), "clean": False})
-        for one in _spread(flaws)
+        for one in _spread(found)
     ]
+
+
+class Built(Protocol):
+    @property
+    def id(self) -> str: ...
+    @property
+    def template_id(self) -> str: ...
+    @property
+    def form_digest(self) -> str: ...
+    @property
+    def status(self) -> ItemStatus: ...
 
 
 def build(
     cards: Sequence[Card], held: Sequence[JudgementItem], *, now: datetime
 ) -> tuple[list[JudgementItem], list[str]]:
+    return rebuild(cards, held, lambda template: items(template, now=now))
+
+
+def rebuild[T: Built](
+    cards: Sequence[Card], held: Sequence[T], make: Callable[[Template], list[T]]
+) -> tuple[list[T], list[str]]:
     """The items to add and the ids to retire: a template already served at its
     current code is left alone."""
-    served: dict[str, list[JudgementItem]] = {}
+    served: dict[str, list[T]] = {}
     for one in held:
         if one.status is ItemStatus.SERVED:
             served.setdefault(one.template_id, []).append(one)
-    added: list[JudgementItem] = []
+    added: list[T] = []
     retired: list[str] = []
     for card in cards:
         for template in card.templates:
@@ -98,8 +103,38 @@ def build(
             if current and all(one.form_digest == digest(template.code) for one in current):
                 continue
             retired += [one.id for one in current]
-            added += items(template, now=now)
+            added += make(template)
     return added, retired
+
+
+def flaws(template: Template, form: str) -> list[dict[str, Any]]:
+    """Each mutant changing one shown line and failing a case, in tree order."""
+    args = [case.args for case in template.cases]
+    ran = run(template.code, args, cap_ms=CAP_MS)
+    cap = pace(max((one.elapsed_ms or 0 for one in ran), default=0), cap_ms=CAP_MS)
+    hidden = _harness_lines(ast.parse(template.code), template.harness)
+    return [
+        flaw
+        for one in mutants(template.code)
+        if one.line not in hidden and (flaw := _flaw(template, form, one, args, cap))
+    ]
+
+
+def servable(template: Template) -> str | None:
+    """The form as shown, where it can make an item at all."""
+    if template.kind is not TemplateKind.CODE or not template.cases:
+        return None
+    form = shown(template.code, template.harness)
+    return None if width(form) > WIDTH else form
+
+
+def spread[T](lines: Sequence[int], picked: dict[int, T]) -> list[T]:
+    """Up to `FLAWED` of `picked`, by line, spread over the form."""
+    ordered = sorted(lines)
+    if len(ordered) <= FLAWED:
+        return [picked[line] for line in ordered]
+    chosen = {round(index * (len(ordered) - 1) / (FLAWED - 1)) for index in range(FLAWED)}
+    return [picked[ordered[index]] for index in sorted(chosen)]
 
 
 def _flaw(
@@ -109,7 +144,7 @@ def _flaw(
         return None  # a change spanning lines cannot be shown on one
     view = shown(_spliced(template.code, mutant.span, mutant.text), template.harness)
     before, after = form.splitlines(), view.splitlines()
-    if len(before) != len(after) or _width(view) > WIDTH:
+    if len(before) != len(after) or width(view) > WIDTH:
         return None
     moved = [number for number, (a, b) in enumerate(zip(before, after, strict=True), 1) if a != b]
     if len(moved) != 1:
@@ -143,16 +178,11 @@ def _spliced(code: str, span: tuple[int, int, int], text: str) -> str:
     return "".join(lines)
 
 
-def _spread(flaws: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Up to `FLAWED` flaws on different lines, spread over the form."""
+def _spread(found: list[dict[str, Any]]) -> list[dict[str, Any]]:
     first: dict[int, dict[str, Any]] = {}
-    for one in flaws:
+    for one in found:
         first.setdefault(one["line"], one)
-    lines = sorted(first)
-    if len(lines) <= FLAWED:
-        return [first[line] for line in lines]
-    picked = {round(index * (len(lines) - 1) / (FLAWED - 1)) for index in range(FLAWED)}
-    return [first[lines[index]] for index in sorted(picked)]
+    return spread(list(first), first)
 
 
 def _harness_lines(tree: ast.Module, harness: Sequence[str]) -> set[int]:
@@ -164,5 +194,5 @@ def _harness_lines(tree: ast.Module, harness: Sequence[str]) -> set[int]:
     return lines
 
 
-def _width(code: str) -> int:
+def width(code: str) -> int:
     return max((len(line) for line in code.splitlines()), default=0)

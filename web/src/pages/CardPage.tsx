@@ -23,6 +23,7 @@ import {
   cardProgress,
   cardSections,
   startCardRun,
+  fillFrom,
   judgeFrom,
   cardSubtopics,
   CARD_SUBTOPICS,
@@ -108,6 +109,12 @@ export function CardPage() {
                 className="block w-fit text-meta underline-offset-4 hover:underline"
               >
                 {judgeFrom(studied.card.title)}
+              </Link>
+              <Link
+                to={`/fill?card=${encodeURIComponent(slug)}`}
+                className="block w-fit text-meta underline-offset-4 hover:underline"
+              >
+                {fillFrom(studied.card.title)}
               </Link>
 
               <Subtopics card={studied.card} courses={catalog?.courses ?? []} />

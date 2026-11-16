@@ -326,6 +326,20 @@ judgements = Table(
 )
 
 
+# one user's answers to the key-line exercise: `log.md`, Filling a key line
+fills = Table(
+    "fills",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("user_id", Text, ForeignKey("users.id"), nullable=False, index=True),
+    Column("item_id", Text, ForeignKey("key_line_items.id"), nullable=False, index=True),
+    Column("choice", Integer, nullable=False),
+    CheckConstraint("choice >= 0", name="choice_counted"),
+)
+
+
 # what each pick predicted as the user took it: `log.md`, Predictions
 predictions = Table(
     "predictions",

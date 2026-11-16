@@ -648,6 +648,23 @@ then taps the line that is wrong. `content.md` gives the items.
 - **The next item is picked unseen first, then by staleness**, until the
   scheduler picks it.
 
+### Filling a key line
+
+The user reads a template's form with one line blanked and picks the line that
+belongs there. `content.md` gives the items.
+
+- **A `Fill` stores one answer**: its `id`, `user_id`, `item_id`,
+  `created_at`, and the choice the user picked, by its position in the item.
+- **Correctness is derived from the item, never stored.** The fill is right
+  when the picked choice is the form's own line.
+- **After the fill, the item shows the form's line and, for a wrong choice,
+  its separating case**: the arguments, the expected value and what the code
+  with that line returned.
+- **The next item is picked unseen first, then by staleness**, as judging
+  picks its items.
+- **A rate per technique on the board is deferred** until enough fills exist
+  to show whether the fill rate differs from the judgement rates.
+
 ## Mastery
 
 How well a user knows one technique. The engine computes mastery from the log

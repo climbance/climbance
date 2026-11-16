@@ -29,6 +29,7 @@ from climb.schema.configuration import Configuration
 from climb.schema.diagnosis import Diagnosis
 from climb.schema.draft import Draft, DraftCase, SettledCase, WritingState
 from climb.schema.judgement import ItemStatus, Judgement, JudgementItem
+from climb.schema.keyline import Fill, KeyLineChoice, KeyLineItem
 from climb.schema.knowledge import (
     BODIES,
     Answer,
@@ -103,6 +104,7 @@ __all__ = [
     "Execution",
     "ExpectedSource",
     "FailureMode",
+    "Fill",
     "Focus",
     "Gate",
     "GraphSettings",
@@ -111,6 +113,8 @@ __all__ = [
     "Json",
     "Judgement",
     "JudgementItem",
+    "KeyLineChoice",
+    "KeyLineItem",
     "Kind",
     "KnowledgeRecord",
     "Lesson",

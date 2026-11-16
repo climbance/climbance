@@ -557,6 +557,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/filling/next': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Served */
+    get: operations['served_api_filling_next_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/filling/{item_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Decided */
+    post: operations['decided_api_filling__item_id__post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/pick': {
     parameters: {
       query?: never;
@@ -913,6 +947,51 @@ export interface components {
      * @enum {string}
      */
     FailureMode: 'speed' | 'rust' | 'gap' | 'syntax' | 'none';
+    /** FillAnswer */
+    FillAnswer: {
+      /** Choice */
+      choice: number;
+    };
+    /** FillChoice */
+    FillChoice: {
+      /** Choice */
+      choice: number;
+      /** Text */
+      text: string;
+    };
+    /** FillDecided */
+    FillDecided: {
+      /** Right */
+      right: boolean;
+      /** Line */
+      line: string;
+      case: components['schemas']['SeparatingCase'] | null;
+    };
+    /**
+     * FilledItem
+     * @description An item as the page shows it: no field says which choice is right.
+     */
+    FilledItem: {
+      /** Item Id */
+      item_id: string;
+      /** Card Slug */
+      card_slug: string;
+      /** Card Title */
+      card_title: string;
+      /** Depth */
+      depth: number;
+      /** Template Title */
+      template_title: string;
+      /** Asks */
+      asks: string;
+      example: components['schemas']['JudgeExample'];
+      /** Lines */
+      lines: string[];
+      /** Blank */
+      blank: number;
+      /** Choices */
+      choices: components['schemas']['FillChoice'][];
+    };
     /**
      * Gap
      * @description A core template no solution displays, named as the card names it.
@@ -2731,6 +2810,72 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['JudgeDecided'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  served_api_filling_next_get: {
+    parameters: {
+      query?: {
+        card?: string | null;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilledItem'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  decided_api_filling__item_id__post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        item_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FillAnswer'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FillDecided'];
         };
       };
       /** @description Validation Error */

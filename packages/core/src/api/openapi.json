@@ -1260,6 +1260,101 @@
         }
       }
     },
+    "/api/filling/next": {
+      "get": {
+        "summary": "Served",
+        "operationId": "served_api_filling_next_get",
+        "parameters": [
+          {
+            "name": "card",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Card"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilledItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filling/{item_id}": {
+      "post": {
+        "summary": "Decided",
+        "operationId": "decided_api_filling__item_id__post",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FillAnswer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FillDecided"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/pick": {
       "get": {
         "summary": "Board Pick",
@@ -2286,6 +2381,130 @@
           "none"
         ],
         "title": "FailureMode"
+      },
+      "FillAnswer": {
+        "properties": {
+          "choice": {
+            "type": "integer",
+            "title": "Choice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "choice"
+        ],
+        "title": "FillAnswer"
+      },
+      "FillChoice": {
+        "properties": {
+          "choice": {
+            "type": "integer",
+            "title": "Choice"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "choice",
+          "text"
+        ],
+        "title": "FillChoice"
+      },
+      "FillDecided": {
+        "properties": {
+          "right": {
+            "type": "boolean",
+            "title": "Right"
+          },
+          "line": {
+            "type": "string",
+            "title": "Line"
+          },
+          "case": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeparatingCase"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "right",
+          "line",
+          "case"
+        ],
+        "title": "FillDecided"
+      },
+      "FilledItem": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id"
+          },
+          "card_slug": {
+            "type": "string",
+            "title": "Card Slug"
+          },
+          "card_title": {
+            "type": "string",
+            "title": "Card Title"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "template_title": {
+            "type": "string",
+            "title": "Template Title"
+          },
+          "asks": {
+            "type": "string",
+            "title": "Asks"
+          },
+          "example": {
+            "$ref": "#/components/schemas/JudgeExample"
+          },
+          "lines": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "blank": {
+            "type": "integer",
+            "title": "Blank"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/FillChoice"
+            },
+            "type": "array",
+            "title": "Choices"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "card_slug",
+          "card_title",
+          "depth",
+          "template_title",
+          "asks",
+          "example",
+          "lines",
+          "blank",
+          "choices"
+        ],
+        "title": "FilledItem",
+        "description": "An item as the page shows it: no field says which choice is right."
       },
       "Gap": {
         "properties": {

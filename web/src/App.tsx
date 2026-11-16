@@ -8,6 +8,7 @@ import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
 import { cn } from '@/lib/utils'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
+import { FillPage } from '@/pages/FillPage'
 import { JudgePage } from '@/pages/JudgePage'
 import { KnowledgePage } from '@/pages/KnowledgePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -68,6 +69,7 @@ function App() {
             <Route index element={<BoardPage />} />
             <Route path="problems" element={<ProblemsPage />} />
             <Route path="judge" element={<JudgePage />} />
+            <Route path="fill" element={<FillPage />} />
             <Route path="cards" element={<CardsPage />} />
             <Route path="cards/:slug" element={<CardPage />} />
             <Route path="cards/:slug/recall" element={<DrawnRecallPage />} />

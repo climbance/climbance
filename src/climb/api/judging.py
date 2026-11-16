@@ -63,7 +63,7 @@ class JudgeDecided(BaseModel):
 @router.get("/next")
 def served(root: Root, user_id: UserId, card: str | None = None) -> JudgedItem:
     cards = CardStore(root).all()
-    owners = _owners(cards)
+    by_template = owners(cards)
     templates = None
     if card is not None:
         chosen = [one for one in cards if one.slug == card]
@@ -75,7 +75,7 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> JudgedItem:
     )
     if item is None:
         raise HTTPException(status_code=404, detail="no item to judge")
-    owner, template = owners[item.template_id]
+    owner, template = by_template[item.template_id]
     first = template.cases[0]
     return JudgedItem(
         item_id=item.id,
@@ -83,7 +83,7 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> JudgedItem:
         card_title=owner.title,
         depth=depths(cards)[owner.slug],
         template_title=template.title,
-        asks=_first_sentence(template.trigger),
+        asks=first_sentence(template.trigger),
         example=JudgeExample(args=first.args, expected=first.expected),
         lines=item.code.splitlines(),
     )
@@ -136,12 +136,12 @@ def decided(root: Root, user_id: UserId, item_id: str, body: JudgeAnswer) -> Jud
     return JudgeDecided(verdict=verdict(item, answer), line=item.line, correct=correct, case=case)
 
 
-def _first_sentence(text: str) -> str:
+def first_sentence(text: str) -> str:
     """Up to the first full stop, marks of emphasis dropped."""
     plain = text.replace("**", "").replace("*", "").replace("`", "")
     head, dot, _ = plain.partition(". ")
     return head + "." if dot else plain
 
 
-def _owners(cards: list[Card]) -> dict[str, tuple[Card, Template]]:
+def owners(cards: list[Card]) -> dict[str, tuple[Card, Template]]:
     return {template.id: (card, template) for card in cards for template in card.templates}

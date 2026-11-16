@@ -1,0 +1,38 @@
+{
+  "description": "One user's answer to one key-line item: `log.md`, Filling a key line.",
+  "properties": {
+    "choice": {
+      "minimum": 0,
+      "title": "Choice",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "item_id": {
+      "minLength": 1,
+      "title": "Item Id",
+      "type": "string"
+    },
+    "user_id": {
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "item_id",
+    "choice"
+  ],
+  "title": "Fill",
+  "type": "object"
+}

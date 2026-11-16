@@ -2,8 +2,9 @@
 
 from collections.abc import Collection, Sequence
 from enum import StrEnum
+from typing import Protocol
 
-from climb.schema import ItemStatus, Judgement, JudgementItem
+from climb.schema import Fill, ItemStatus, Judgement, JudgementItem, KeyLineItem
 
 
 class Verdict(StrEnum):
@@ -22,12 +23,30 @@ def verdict(item: JudgementItem, answer: Judgement) -> Verdict:
     return Verdict.LOCATED if answer.line == item.line else Verdict.SPOTTED
 
 
-def next_item(
-    items: Sequence[JudgementItem],
-    answers: Sequence[Judgement],
+class Served(Protocol):
+    @property
+    def id(self) -> str: ...
+    @property
+    def template_id(self) -> str: ...
+    @property
+    def status(self) -> ItemStatus: ...
+
+
+class Answered(Protocol):
+    @property
+    def item_id(self) -> str: ...
+
+
+def filled(item: KeyLineItem, answer: Fill) -> bool:
+    return answer.choice < len(item.choices) and item.choices[answer.choice].correct
+
+
+def next_item[T: Served](
+    items: Sequence[T],
+    answers: Sequence[Answered],
     *,
     templates: Collection[str] | None = None,
-) -> JudgementItem | None:
+) -> T | None:
     """Unseen first, then the item answered longest ago; `templates` narrows
     the pick to one card's forms."""
     last: dict[str, int] = {}

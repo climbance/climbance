@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, type StyleProp, StyleSheet, type TextStyle, View, type ViewStyle } from 'react-native';
-import { Appbar, Button, type ButtonProps, Text, useTheme } from 'react-native-paper';
+import { Appbar, Button, type ButtonProps, type MD3Theme, Text, useTheme } from 'react-native-paper';
 
 import { router } from 'expo-router';
 
@@ -330,4 +330,17 @@ export function Failed({ message, onRetry }: { message: string; onRetry: () => v
       </Button>
     </View>
   );
+}
+
+// one option tile for a choice and a tick alike, as the web draws both: picked
+// reads bordered in the primary and tinted
+export function optionTile(on: boolean, theme: MD3Theme) {
+  return {
+    minHeight: 48,
+    padding: space[3],
+    borderRadius: radius(theme).xl,
+    borderWidth: 1,
+    borderColor: on ? theme.colors.primary : theme.colors.outlineVariant,
+    backgroundColor: on ? theme.colors.secondaryContainer : 'transparent',
+  } as const;
 }
