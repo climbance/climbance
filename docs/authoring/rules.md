@@ -50,7 +50,12 @@ The rules come from three review passes over the Python module in November
    `TEST_DATABASE_URL` names; with no such server it fails. A block that is a
    deliberate fragment, or that shows a timing, is listed under
    `skip.lesson-block` in the module's `check.toml` with its reason. The
-   typing lessons once carried no imports, so no snippet ran as shown. *check*
+   typing lessons once carried no imports, so no snippet ran as shown. A block
+   runs on every supported build, as a witness does under rule 26, since a
+   lesson quotes witness output. A block importing a library outside the
+   standard library runs on the project's interpreter alone, which holds the
+   module's requirements. *check (the project's interpreter, and each version
+   and build `check.toml` names)*
 3. **A `short` answer is the real output, and `accept` covers its equivalent
    spellings**, such as a qualified name, or the reply with and without
    quotes. *check*

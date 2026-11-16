@@ -137,12 +137,21 @@ def find(spec: str, report: Report) -> str | None:
     return done.stdout.strip()
 
 
-def versions(
-    course: Course, report: Report, pool: cf.Executor, runs: Runs, here: dict[str, Outcome]
-) -> int:
-    pythons = {
+def interpreters(course: Course, report: Report) -> dict[str, str]:
+    """Each version and build check.toml names, by its spec, that uv finds."""
+    return {
         spec: python for spec in course.versions + course.builds if (python := find(spec, report))
     }
+
+
+def versions(
+    course: Course,
+    report: Report,
+    pool: cf.Executor,
+    runs: Runs,
+    here: dict[str, Outcome],
+    pythons: dict[str, str],
+) -> int:
     skipped = course.skip.get("versions", {})
     # a debug or concept snippet has no keyed output to hold, and still may not
     # change by version

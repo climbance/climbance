@@ -16,7 +16,7 @@ from climb.knowledge.authoring.likeness import overlaps
 from climb.knowledge.authoring.pairing import paired
 from climb.knowledge.authoring.prose import prose
 from climb.knowledge.authoring.repeats import repeats
-from climb.knowledge.authoring.snippets import snippets, versions
+from climb.knowledge.authoring.snippets import interpreters, snippets, versions
 from climb.knowledge.authoring.static import (
     centres,
     choices,
@@ -79,16 +79,19 @@ def check(
     report, ran = checked.report, checked.ran
     if run:
         with cf.ThreadPoolExecutor(os.cpu_count()) as pool:
+            others = interpreters(course, report) if other_versions else {}
             here = snippets(course, report, pool, runs)
             ran["snippets"] = len(here)
-            ran["lesson blocks"] = lessons_run(course, report, pool, runs)
+            ran["lesson blocks"] = lessons_run(course, report, pool, runs, others)
             ran["tool outputs"] = tool_outputs(course, report, pool, runs) + transcripts(
                 course, report, runs
             )
             if other_versions:
-                ran["runs on other interpreters"] = versions(course, report, pool, runs, here)
+                ran["runs on other interpreters"] = versions(
+                    course, report, pool, runs, here, others
+                )
             if course.concepts:
-                ran["witness runs"] = witnesses(course, report, pool, runs, other_versions)
+                ran["witness runs"] = witnesses(course, report, pool, runs, others)
         kept.write_text(json.dumps(runs.cache))
     for rule in STATIC + (BY_CONCEPT if course.concepts else (records, coverage)):
         rule(course, report)

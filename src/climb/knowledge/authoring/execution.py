@@ -52,6 +52,10 @@ def _without(cwd: str, text: str) -> str:
     return here.sub("<cwd>", text)
 
 
+# the spec a finding names for sys.executable
+PROJECT = "the project's interpreter"
+
+
 class Runs:
     """The results kept from earlier runs, and the runs this check executed."""
 

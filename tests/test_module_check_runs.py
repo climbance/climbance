@@ -232,3 +232,25 @@ def test_the_command_refuses_a_directory_holding_no_module(tmp_path, monkeypatch
         run_cli(monkeypatch, "module", "check", "gone")
 
     assert exit.value.code == 2
+
+
+def test_a_lesson_block_printing_otherwise_on_another_version_names_it(tmp_path, other):
+    """Rule 2: a block runs on every supported build, as a witness does."""
+    other("two")
+    text = "```python\nprint('one')\n```\n```text\none\n```\n"
+    root = written(tmp_path, [question("a")], lessons=lesson(text), check='versions = ["3.13"]\n')
+
+    assert found(check(root).report.errors, 2) == [
+        "[2] lessons/les.md block 1 on 3.13: shown 'one', got 'two'"
+    ]
+
+
+def test_a_lesson_block_importing_a_library_runs_on_the_project_s_interpreter_alone(
+    tmp_path, other
+):
+    """Rule 2: another interpreter holds none of the module's requirements."""
+    other("two")
+    text = "```python\nimport pytest\nprint('one')\n```\n```text\none\n```\n"
+    root = written(tmp_path, [question("a")], lessons=lesson(text), check='versions = ["3.13"]\n')
+
+    assert found(check(root).report.errors, 2) == []

@@ -1,15 +1,23 @@
 """Rule 2: a lesson's code block runs on its own and matches its shown
-output."""
+output, on the project's interpreter and on every version and build check.toml
+names."""
 
 import concurrent.futures as cf
 import hashlib
 import os
 import re
+import sys
 from collections import defaultdict
 from urllib.parse import urlsplit, urlunsplit
 
 from climb.knowledge.authoring.course import Course, Report, norm
-from climb.knowledge.authoring.execution import Runs, absent, last_exception
+from climb.knowledge.authoring.execution import (
+    PROJECT,
+    Runs,
+    absent,
+    last_exception,
+    third_party,
+)
 from climb.knowledge.authoring.snippets import TOOLS
 
 BLOCK = re.compile(r"```python\n(.*?)```(\s*```(?:output|text)\n(.*?)```)?", re.S)
@@ -36,7 +44,7 @@ def as_async(code: str) -> str:
     return "import asyncio\nasync def __main():\n" + body + "asyncio.run(__main())\n"
 
 
-def lesson_run(runs: Runs, code: str, before: str) -> LessonRan:
+def lesson_run(runs: Runs, code: str, before: str, python: str = sys.executable) -> LessonRan:
     """A block alone, then wrapped for top-level await, then after the
     lesson's earlier blocks: how it ran, and its result."""
     attempts = [("alone", code)]
@@ -47,10 +55,10 @@ def lesson_run(runs: Runs, code: str, before: str) -> LessonRan:
         if AWAIT.search(before + code):
             attempts.append(("after earlier blocks", as_async(before + "\n" + code)))
     for how, text in attempts:
-        status, out, err = runs.run(text)
+        status, out, err = runs.run(text, python)
         if status == 0:
             return how, status, out, err
-    return "alone", *runs.run(code)
+    return "alone", *runs.run(code, python)
 
 
 def matches(shown: str, ran: LessonRan) -> bool:
@@ -91,10 +99,12 @@ def on_postgres(code: str, slug: str, n: int, server: str) -> str:
     return setup + code
 
 
-def lessons_run(course: Course, report: Report, pool: cf.Executor, runs: Runs) -> int:
+def lessons_run(
+    course: Course, report: Report, pool: cf.Executor, runs: Runs, others: dict[str, str]
+) -> int:
     skipped = course.skip.get("lesson-block", {})
     server = postgres_server()
-    jobs: dict[cf.Future[LessonRan], Block] = {}
+    jobs: dict[cf.Future[LessonRan], tuple[Block, str]] = {}
     before: dict[str, str] = defaultdict(str)
     for slug, n, code, shown in lesson_blocks(course):
         earlier = before[slug]
@@ -112,16 +122,22 @@ def lessons_run(course: Course, report: Report, pool: cf.Executor, runs: Runs) -
             code, earlier = on_postgres(code, slug, n, server), ""
         if shown is not None and (DIAGRAM.search(shown) or TOOL_OUTPUT.search(shown)):
             shown = None
-        jobs[pool.submit(lesson_run, runs, code, earlier)] = (slug, n, code, shown)
+        pythons = {PROJECT: sys.executable}
+        # the other interpreters hold none of the module's requirements
+        if not third_party(code):
+            pythons |= others
+        for spec, python in pythons.items():
+            job = pool.submit(lesson_run, runs, code, earlier, python)
+            jobs[job] = ((slug, n, code, shown), spec)
     for future in cf.as_completed(jobs):
-        _judge(jobs[future], future.result(), report)
+        _judge(*jobs[future], future.result(), report)
     return len(jobs)
 
 
-def _judge(block: Block, ran: LessonRan, report: Report) -> None:
+def _judge(block: Block, spec: str, ran: LessonRan, report: Report) -> None:
     slug, n, code, shown = block
     how, status, out, err = ran
-    where = f"lessons/{slug}.md block {n}"
+    where = f"lessons/{slug}.md block {n}" + ("" if spec == PROJECT else f" on {spec}")
     raised = last_exception(err) if status else ""
     if status == -1:
         report.error(2, where, "timed out")
@@ -129,5 +145,5 @@ def _judge(block: Block, ran: LessonRan, report: Report) -> None:
         report.error(2, where, f"raises {raised} and shows no output")
     elif shown is not None and not matches(shown, ran):
         report.error(2, where, f"shown {shown.strip()[:50]!r}, got {(out or err).strip()[:50]!r}")
-    elif how != "alone":
+    elif how != "alone" and spec == PROJECT:
         report.warn(2, where, "runs only after the lesson's earlier blocks")

@@ -5,17 +5,13 @@ import concurrent.futures as cf
 import sys
 
 from climb.knowledge.authoring.course import Course, Report
-from climb.knowledge.authoring.execution import Ran, Runs
-from climb.knowledge.authoring.snippets import find
+from climb.knowledge.authoring.execution import PROJECT, Ran, Runs
 
 
 def witnesses(
-    course: Course, report: Report, pool: cf.Executor, runs: Runs, other_versions: bool
+    course: Course, report: Report, pool: cf.Executor, runs: Runs, others: dict[str, str]
 ) -> int:
-    pythons = {"the project's interpreter": sys.executable}
-    if other_versions:
-        specs = course.versions + course.builds
-        pythons |= {spec: python for spec in specs if (python := find(spec, report))}
+    pythons = {PROJECT: sys.executable} | others
     jobs: dict[cf.Future[Ran], tuple[str, str]] = {
         pool.submit(runs.run, concept["witness"].lstrip("\n"), python): (name, spec)
         for name, concept in course.concepts.items()
