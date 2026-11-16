@@ -392,7 +392,9 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
         </section>
         {/* the verdict sits under the editor: one page is the whole sitting */}
         <section className="flex flex-col gap-stack lg:sticky lg:top-6 lg:h-[calc(100vh-10rem)]">
-          <div className="min-h-96 flex-1 lg:min-h-0">
+          {/* a floor for the editor: past it the verdict scrolls rather than
+              covering the submit press */}
+          <div className="min-h-96 flex-1 lg:min-h-48">
             <CodeEditor
               // what was typed survives a reload; a first visit starts on the
               // signature

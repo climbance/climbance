@@ -105,5 +105,5 @@ export function CodeEditor({ initial, onChange, onSubmit, handle, readOnly = fal
     live.current?.dispatch({ effects: lock.current.reconfigure(locked(readOnly)) })
   }, [readOnly])
 
-  return <div ref={host} className="h-full min-h-96 overflow-hidden rounded-xl border" />
+  return <div ref={host} className="h-full overflow-hidden rounded-xl border" />
 }
