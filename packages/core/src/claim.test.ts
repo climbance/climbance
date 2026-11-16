@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { attemptLine, claimDefault, claimReady, claimToggled, type components } from './index';
+import { attemptCode, attemptLine, claimDefault, claimMissing, claimReady, claimToggled, type components } from './index';
 
 type Attempt = components['schemas']['Attempt'];
 
@@ -21,6 +21,20 @@ describe('the claim', () => {
     expect(claimReady([], true, 'guess')).toBe(true);
     expect(claimReady([], false, 'sure')).toBe(false);
     expect(claimReady(['dp'], false, null)).toBe(false);
+  });
+
+  it('names what Save still waits for, the technique before the confidence', () => {
+    /** the label is optional, so a disabled Save has to say which required answer is missing */
+    expect(claimMissing([], false, null)).toMatch(/technique/);
+    expect(claimMissing(['dp'], false, null)).toMatch(/how sure/);
+    expect(claimMissing([], true, 'guess')).toBeNull();
+  });
+
+  it('shows an earlier attempt its own code, and the last none', () => {
+    /** the editor behind the sheet holds the last attempt's code, so only earlier ones need theirs */
+    const attempt = { code: 'def solve(): pass' } as Attempt;
+    expect(attemptCode(0, 2, attempt)).toBe('def solve(): pass');
+    expect(attemptCode(1, 2, attempt)).toBeNull();
   });
 
   it('names the attempt, its verdict and its time', () => {

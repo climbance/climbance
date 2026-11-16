@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { Button, Checkbox, RadioButton, Text, useTheme } from 'react-native-paper';
 
 import {
+  attemptCode,
   attemptLine,
   CLAIM_CONFIDENCE,
   CLAIM_DECLINE,
@@ -11,7 +12,7 @@ import {
   CLAIM_TITLE,
   claimDeclined,
   claimDefault,
-  claimReady,
+  claimMissing,
   claimRefused,
   claimToggled,
   type Confidence,
@@ -28,7 +29,7 @@ import { engine } from '@/lib/engine';
 import { getToken } from '@/lib/settings';
 import { useStore } from '@/lib/store';
 import { useEngine } from '@/lib/useEngine';
-import { ErrorLine, Loaded } from '@/ui/common';
+import { CodeBlock, ErrorLine, Loaded } from '@/ui/common';
 import { Sheet } from '@/ui/sheet';
 import { Toggle, Toggles } from '@/ui/toggle';
 import { Heading } from '@/ui/rows';
@@ -75,6 +76,7 @@ export function ClaimSheet({
           key={asked.attempt.id}
           asked={asked}
           position={attemptLine(answered, attempts.length, asked.attempt)}
+          code={attemptCode(answered, attempts.length, asked.attempt)}
           techniques={loaded.data.techniques}
           drilled={drilled}
           onClaimed={() => setAnswered(answered + 1)}
@@ -87,12 +89,15 @@ export function ClaimSheet({
 function ClaimForm({
   asked,
   position,
+  code,
   techniques,
   drilled,
   onClaimed,
 }: {
   asked: Asked;
   position: string;
+  // an earlier attempt's own code: the editor behind holds the last one
+  code: string | null;
   techniques: string[];
   drilled: string | null;
   onClaimed: () => void;
@@ -105,6 +110,7 @@ function ClaimForm({
   const [mode, setMode] = useState<FailureMode | null>(null);
   const [sending, setSending] = useState(false);
   const [refused, setRefused] = useState<string | null>(null);
+  const missing = claimMissing(chosen, declined, confidence);
   const id = asked.attempt.id;
 
   // the claim first, then the label where a mode was picked, as core sends them
@@ -123,6 +129,7 @@ function ClaimForm({
       <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
         {position}
       </Text>
+      {code !== null ? <CodeBlock code={code} verbatim /> : null}
       <Heading sub title={CLAIM_QUESTION} />
       <View>
         {techniques.map((technique) => (
@@ -179,10 +186,15 @@ function ClaimForm({
         </>
       ) : null}
       {refused ? <ErrorLine>{claimRefused(refused)}</ErrorLine> : null}
+      {missing ? (
+        <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+          {missing}
+        </Text>
+      ) : null}
       <Button
         mode="contained"
         onPress={() => void send()}
-        disabled={!claimReady(chosen, declined, confidence) || sending}
+        disabled={missing !== null || sending}
       >
         {saveLabel(sending)}
       </Button>

@@ -1,10 +1,11 @@
 import {
+  attemptCode,
   attemptLine,
   CLAIM_CONFIDENCE,
   CLAIM_DECLINE,
   CLAIM_QUESTION,
   claimDefault,
-  claimReady,
+  claimMissing,
   claimRefused,
   claimToggled,
   type Confidence,
@@ -23,6 +24,7 @@ import { api, type Attempt, type FailureMode } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { ErrorLine } from '@/components/ErrorLine'
 import { Loaded } from '@/components/Loaded'
+import { PythonCode } from '@/components/PythonCode'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -74,6 +76,7 @@ export function ClaimPrompt({ sittingId, drilled, onDone }: Props) {
       attempt={asked.attempt}
       modes={asked.modes}
       position={attemptLine(answered, attempts.length, asked.attempt)}
+      code={attemptCode(answered, attempts.length, asked.attempt)}
       techniques={data.techniques}
       drilled={drilled}
       onClaimed={() => setAnswered(answered + 1)}
@@ -87,18 +90,21 @@ type FormProps = {
   // already answers why it went that way
   modes: FailureMode[]
   position: string
+  // an earlier attempt's own code: the editor behind holds the last one
+  code: string | null
   techniques: string[]
   drilled: string | null
   onClaimed: () => void
 }
 
-function ClaimForm({ attempt, modes, position, techniques, drilled, onClaimed }: FormProps) {
+function ClaimForm({ attempt, modes, position, code, techniques, drilled, onClaimed }: FormProps) {
   const [chosen, setChosen] = useState<string[]>(() => claimDefault(drilled, techniques))
   const [declined, setDeclined] = useState(false)
   const [confidence, setConfidence] = useState<Confidence | null>(null)
   const [mode, setMode] = useState<FailureMode | null>(null)
   const [sending, setSending] = useState(false)
   const [refused, setRefused] = useState<string | null>(null)
+  const missing = claimMissing(chosen, declined, confidence)
 
   // the claim first, since naming the techniques is what the label then asks
   // about. A mode nobody picked sends no second request
@@ -115,6 +121,11 @@ function ClaimForm({ attempt, modes, position, techniques, drilled, onClaimed }:
   return (
     <div className="space-y-section">
       <p className="text-meta text-muted-foreground">{position}</p>
+      {code !== null && (
+        <div className="max-h-48 overflow-auto">
+          <PythonCode code={code} />
+        </div>
+      )}
 
       <fieldset className="space-y-2">
         <legend className="mb-2 font-medium">{CLAIM_QUESTION}</legend>
@@ -181,8 +192,11 @@ function ClaimForm({ attempt, modes, position, techniques, drilled, onClaimed }:
       )}
 
       {refused && <ErrorLine>{claimRefused(refused)}</ErrorLine>}
-      <DialogFooter>
-        <Button onClick={send} disabled={!claimReady(chosen, declined, confidence) || sending}>
+      <DialogFooter className="items-center">
+        {missing && (
+          <p className="text-meta text-muted-foreground">{missing}</p>
+        )}
+        <Button onClick={send} disabled={missing !== null || sending}>
           {saveLabel(sending)}
         </Button>
       </DialogFooter>

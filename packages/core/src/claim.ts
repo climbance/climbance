@@ -33,18 +33,31 @@ export function claimToggled(chosen: string[], technique: string): string[] {
 
 /** The claim can be saved once it names a technique or declines, and says how sure. */
 export const claimReady = (chosen: string[], declined: boolean, confidence: Confidence | null) =>
-  (declined || chosen.length > 0) && confidence !== null;
+  claimMissing(chosen, declined, confidence) === null;
+
+/** What Save still waits for, shown beside it: the label below is optional, and the claim is not. */
+export function claimMissing(chosen: string[], declined: boolean, confidence: Confidence | null): string | null {
+  if (!declined && chosen.length === 0) return CLAIM_NEEDS_TECHNIQUE;
+  if (confidence === null) return CLAIM_NEEDS_CONFIDENCE;
+  return null;
+}
 
 export function attemptLine(index: number, count: number, attempt: Attempt): string {
   const time = attempt.time_to_solve_sec != null ? ` · ${duration(attempt.time_to_solve_sec)}` : '';
   return `Attempt ${index + 1} of ${count} · ${attempt.solved ? 'solved' : 'not solved'}${time}`;
 }
 
+/** The code an attempt is asked about, where the editor behind holds a later one. */
+export const attemptCode = (index: number, count: number, attempt: Attempt): string | null =>
+  index < count - 1 ? (attempt.code ?? null) : null;
+
 export const CLAIM_QUESTION = 'Which techniques did this code use?';
 export const CLAIM_DECLINE = 'None of these';
 export const CLAIM_CONFIDENCE = 'How sure are you?';
 export const LABEL_QUESTION = 'Why did it go that way?';
-export const LABEL_OPTIONAL = 'Answering is optional, and a skipped label leaves the attempt unlabelled.';
+export const LABEL_OPTIONAL = 'This question is optional, and skipping it leaves the attempt unlabelled.';
+export const CLAIM_NEEDS_TECHNIQUE = 'Tick a technique, or None of these, to save.';
+export const CLAIM_NEEDS_CONFIDENCE = 'Pick how sure you are to save.';
 export const claimRefused = (why: string) => `The answer was refused: ${why}`;
 export const saveLabel = (sending: boolean) => (sending ? 'Saving…' : 'Save');
 
