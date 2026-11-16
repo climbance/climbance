@@ -244,6 +244,7 @@ def test_a_file_that_is_not_json_never_reaches_the_engine(database, tmp_path, mo
     assert "seed:" in capsys.readouterr().err
 
 
+@pytest.mark.skipif(not CONTENT.is_dir(), reason="content/ is a private repo, absent in CI")
 def test_the_authored_cards_seed(database):
     """The content in this repo is what the path exists to load, so it is
     seeded rather than described."""
