@@ -2,6 +2,8 @@ import {
   CLAIM_NOTE,
   CLAIM_TITLE,
   CLOCK_PAUSED,
+  CLOCK_STARTED_ITSELF,
+  CLOCK_UNTIMED,
   CLOCK_RUNNING,
   clockState,
   editorOpening,
@@ -192,16 +194,20 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
 
   // the user's own press on the clock, which alone sets the clock preference
   function press(to: 'start' | 'pause' | 'resume') {
+    setByItself(false)
     pressed(to)
     void move(to)
   }
 
   // the preference starts a clock the user has not, once per page
   const autoStarted = useRef(false)
+  // shown until the user's own press: `CLOCK_STARTED_ITSELF`
+  const [byItself, setByItself] = useState(false)
   const statementIn = loaded.data !== undefined
   useEffect(() => {
     if (!statementIn || !unstarted || ended || autoStarted.current || !autoStarts()) return
     autoStarted.current = true
+    setByItself(true)
     void move('start', { quiet: true })
     // `move` is a new closure on every render, and it reads `sittingId` alone
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -330,11 +336,15 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
                 className="size-2 rounded-full bg-clock-running"
               />
             )}
-            <ElapsedClock
-              elapsedSec={clock.elapsedSec}
-              receivedAt={clock.at}
-              running={clockNow.running}
-            />
+            {clockNow.untimed ? (
+              <span className="text-meta text-muted-foreground">{CLOCK_UNTIMED}</span>
+            ) : (
+              <ElapsedClock
+                elapsedSec={clock.elapsedSec}
+                receivedAt={clock.at}
+                running={clockNow.running}
+              />
+            )}
             {paused && !ended && (
               <span className="text-meta text-muted-foreground">{CLOCK_PAUSED}</span>
             )}
@@ -381,6 +391,9 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
         </div>
       </div>
       {refused && <ErrorLine>{sittingRefused(refused)}</ErrorLine>}
+      {byItself && !ended && (
+        <p className="text-meta text-muted-foreground">{CLOCK_STARTED_ITSELF}</p>
+      )}
       {/* a paused clock leaves the page as it was: a pause stops the timing,
           not the practice */}
       {/* explicit columns: an implicit one grows to the editor's longest line,

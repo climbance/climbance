@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   CLOCK_PAUSED,
+  CLOCK_STARTED_ITSELF,
+  CLOCK_UNTIMED,
   CLOCK_RUNNING,
   clockState,
   editorOpening,
@@ -249,12 +251,16 @@ function SittingOn({
 
   // the preference starts a clock the user has not, once per screen
   const autoStarted = useRef(false);
+  // shown until the user's own press: `CLOCK_STARTED_ITSELF`
+  const [byItself, setByItself] = useState(false);
   const statementIn = statement !== null;
   useEffect(() => {
     if (!statementIn || !clock.unstarted || clock.ended || autoStarted.current) return;
     autoStarted.current = true;
     void autoStarts().then((on) => {
-      if (on) void move('start', { quiet: true });
+      if (!on) return;
+      setByItself(true);
+      void move('start', { quiet: true });
     });
     // `move` is a new closure on every render, and it reads `sittingId` alone
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,6 +308,7 @@ function SittingOn({
 
   // the user's own press, which alone sets the clock preference
   function press(to: 'start' | 'pause' | 'resume') {
+    setByItself(false);
     void pressed(to);
     void move(to);
   }
@@ -368,7 +375,13 @@ function SittingOn({
             }}
           />
         ) : null}
-        {moved ? <ElapsedClock elapsedSec={moved.elapsedSec} receivedAt={moved.at} running={clock.running} /> : null}
+        {clock.untimed ? (
+          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            {CLOCK_UNTIMED}
+          </Text>
+        ) : moved ? (
+          <ElapsedClock elapsedSec={moved.elapsedSec} receivedAt={moved.at} running={clock.running} />
+        ) : null}
         {clock.paused && !clock.ended ? (
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
             {CLOCK_PAUSED}
@@ -424,6 +437,11 @@ function SittingOn({
         <View style={{ paddingHorizontal: space[3] }}>
           <ErrorLine>{sittingRefused(refused)}</ErrorLine>
         </View>
+      ) : null}
+      {byItself && !clock.ended ? (
+        <Text variant="bodySmall" style={{ paddingHorizontal: space[3], color: theme.colors.onSurfaceVariant }}>
+          {CLOCK_STARTED_ITSELF}
+        </Text>
       ) : null}
       <SegmentedButtons
         value={tab}

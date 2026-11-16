@@ -210,7 +210,12 @@ problem's path reads as its record, as "Every problem" gives.
   scrolled out of sight.
 - The clock reads `0:00` beside `[ Start ]` until the user starts it, or until
   the clock preference starts it on opening. Once running, the press reads
-  `[ Pause ]`, and once paused, `[ Start ]` again.
+  `[ Pause ]`, and once paused, `[ Resume ]`.
+- A clock the preference started carries a line under the bar saying so, and
+  that pausing it turns the preference off. The line goes at the user's first
+  press. The preference was set by a press the user may not remember.
+- A sitting a submission minted with no clock reads `untimed` in the clock's
+  place, since `0:00` reads as a time the sitting took.
 - One line above the statement carries what the picked problem's page used to:
   the difficulty, the techniques, the attempts on this problem and the cards.
 - The bar carries the problem's title, the page's only one, at the heading
@@ -238,7 +243,7 @@ problem's path reads as its record, as "Every problem" gives.
 +- /problems/p-91c2, paused ---------------------------------------------+
 | Climbance    [ Practice ]  Problems  Cards  Knowledge           ☀  ≡   |
 +------------------------------------------------------------------------+
-| Smallest feasible speed     12:04 paused  [ Start ]  [ End ]           |
+| Smallest feasible speed     12:04 paused  [ Resume ]  [ End ]          |
 +------------------------------------------------------------------------+
 | the statement and the editor, as they were, and still usable           |
 +------------------------------------------------------------------------+

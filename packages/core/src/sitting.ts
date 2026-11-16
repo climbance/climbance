@@ -15,6 +15,8 @@ type Outcome = components['schemas']['CaseOutcome'];
 export interface ClockState {
   // no clock has run: no sitting yet, or one a submission minted
   unstarted: boolean;
+  // a sitting exists and its clock never ran: shown as untimed rather than 0:00
+  untimed: boolean;
   paused: boolean;
   ended: boolean;
   running: boolean;
@@ -24,7 +26,7 @@ export function clockState(sitting: Sitting | null): ClockState {
   const unstarted = sitting === null || sitting.clock_started_at == null;
   const paused = sitting?.pauses?.at(-1)?.until === null;
   const ended = sitting?.ended_at != null;
-  return { unstarted, paused, ended, running: !unstarted && !paused && !ended };
+  return { unstarted, untimed: sitting !== null && unstarted, paused, ended, running: !unstarted && !paused && !ended };
 }
 
 /**
@@ -249,8 +251,13 @@ export function sittingBack(from: ProblemFrom): string {
 }
 export const CLOCK_RUNNING = 'The clock is running';
 export const CLOCK_PAUSED = 'paused';
+export const CLOCK_UNTIMED = 'untimed';
+// the preference is set by a press the user may not remember, so the clock says why it runs
+export const CLOCK_STARTED_ITSELF =
+  'The clock started by itself, since your last clock press started one. Pausing it stops the next clock from starting by itself.';
 export const SITTING_ENDED = 'This sitting has ended';
 export const CLOCK_START = 'Start';
+export const CLOCK_RESUME = 'Resume';
 export const CLOCK_PAUSE = 'Pause';
 export const SITTING_END = 'End';
 export const END_TITLE = 'End the sitting?';

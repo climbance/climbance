@@ -42,8 +42,11 @@ const draft = (code: string, at: string, sittingId: string | null = 'old'): Draf
 
 describe('the sitting clock', () => {
   it('reads unstarted, running, paused and ended from the sitting', () => {
-    expect(clockState(null)).toEqual({ unstarted: true, paused: false, ended: false, running: false });
+    expect(clockState(null)).toEqual({ unstarted: true, untimed: false, paused: false, ended: false, running: false });
     expect(clockState(sitting({ clock_started_at: null })).unstarted).toBe(true);
+    // a sitting a submission minted with no clock reads untimed; no sitting yet reads 0:00
+    expect(clockState(sitting({ clock_started_at: null })).untimed).toBe(true);
+    expect(clockState(sitting()).untimed).toBe(false);
     expect(clockState(sitting()).running).toBe(true);
     const paused = sitting({ pauses: [{ at: '2026-11-11T10:05:00Z', until: null }] });
     expect(clockState(paused)).toMatchObject({ paused: true, running: false });

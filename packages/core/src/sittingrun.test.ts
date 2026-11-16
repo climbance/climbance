@@ -43,7 +43,7 @@ describe("the sitting's controls", () => {
       clock_started_at: '2026-11-11T10:00:00Z',
       pauses: [{ at: '2026-11-11T10:05:00Z', until: null }],
     } as Partial<Sitting>);
-    expect(sittingControls(clockState(paused), 's1').clock).toEqual({ to: 'resume', label: 'Start' });
+    expect(sittingControls(clockState(paused), 's1').clock).toEqual({ to: 'resume', label: 'Resume' });
   });
 
   it('offers nothing on an ended sitting, and stops touching it', () => {

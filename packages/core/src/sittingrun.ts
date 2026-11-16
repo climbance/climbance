@@ -1,6 +1,6 @@
 import type { components } from './api/schema';
 import { described, type EngineClient } from './engine';
-import { CLOCK_PAUSE, CLOCK_START, type ClockMove, type ClockState } from './sitting';
+import { CLOCK_PAUSE, CLOCK_RESUME, CLOCK_START, type ClockMove, type ClockState } from './sitting';
 
 // a sitting's controller, for every platform: the requests that mint it, move
 // its clock, submit to it and read it back, and what the clock's presses
@@ -40,7 +40,7 @@ export function sittingControls(state: ClockState, sittingId: string | null): Si
   const clock = state.unstarted
     ? { to: 'start' as const, label: CLOCK_START }
     : state.paused
-      ? { to: 'resume' as const, label: CLOCK_START }
+      ? { to: 'resume' as const, label: CLOCK_RESUME }
       : { to: 'pause' as const, label: CLOCK_PAUSE };
   return { clock, end: sittingId !== null, touch: sittingId !== null };
 }
