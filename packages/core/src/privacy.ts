@@ -2,7 +2,7 @@
 // which the providers' consent screens name, and the phone's Privacy screen
 const POLICY = `# Privacy policy
 
-Last updated: 11 November 2026
+Last updated: 16 November 2026
 
 Climbance is an app for practising algorithmic problem solving, used in a
 browser and as an app on your phone, and access is by invitation. This page
@@ -117,16 +117,22 @@ server for 30 days.
 
 ## Your rights
 
-Write to the address above to ask for any of these:
+The settings, in the browser and on the phone, export your whole record as a
+JSON file, and delete your account. Deleting the account erases your record,
+your sign-in, your signed-in devices, and the invitation your email was let in
+by, at once and for good. Signing in again then needs a new invitation.
+
+You can also write to the address above to ask for any of these:
 
 - a copy of your whole record, as JSON;
 - correction of what the app stores about you;
 - erasure of your whole record, which cannot be undone;
 - a restriction of how your data is used, or an objection to a use.
 
-Erasure removes your record from the database at once, and from the backups
-once they expire, within 30 days. Your email, your sign-in and your signed-in
-devices are kept, so you can still sign in, and a new record starts. A copy on
+Erasure, and deleting the account, remove your record from the database at
+once, and from the backups once they expire, within 30 days. An erasure you
+write to ask for keeps your email, your sign-in and your signed-in devices, so
+you can still sign in, and a new record starts. A copy on
 a device is deleted when that device signs out.
 
 You can also complain to the data protection authority of the country where you

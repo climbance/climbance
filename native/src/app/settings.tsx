@@ -42,6 +42,7 @@ import { useScheme } from '@/lib/scheme';
 import { useStore } from '@/lib/store';
 import { useMe } from '@/ui/account';
 import { BottomBar, styles, SyncLine, Press, ScreenHeader } from '@/ui/common';
+import { YourRecord } from '@/ui/record';
 import { Heading, PickPanel, PickRow } from '@/ui/rows';
 import { useSignOut } from '@/ui/signout';
 import { font, space } from '@/ui/tokens';
@@ -225,6 +226,8 @@ export default function SettingsScreen() {
             </PickPanel>
           </>
         ) : null}
+        {/* last: the one act on the screen that cannot be undone */}
+        {st.hasToken ? <YourRecord me={me} /> : null}
       </KeyboardAwareScrollView>
       {/* the screen's act, saving what the fields hold */}
       <BottomBar bottom={insets.bottom} above={saved ? <Text variant="bodySmall">{SAVED}</Text> : undefined}>

@@ -10,10 +10,13 @@ from climb.log import (
     DeviceKind,
     Provider,
     SignedInDevice,
+    UserLog,
+    account_deleted,
     device_revoked,
     email_of,
     revoked,
     signed_in_devices,
+    whole_log,
 )
 
 router = APIRouter()
@@ -73,3 +76,25 @@ def revoke_device(kind: DeviceKind, device_id: str, root: Root, user_id: UserId)
     if not device_revoked(root, user_id, kind, device_id):
         raise HTTPException(404, "no device of yours carries this id")
     return Response(status_code=204)
+
+
+@router.get("/account/export")
+def exported(response: Response, root: Root, user_id: UserId) -> UserLog:
+    """The user's whole log, as `climb log export` prints it."""
+    response.headers["content-disposition"] = 'attachment; filename="climbance-record.json"'
+    return whole_log(root, user_id)
+
+
+class Deleting(BaseModel):
+    # the name the account menu shows, typed back: the deletion cannot be undone
+    confirm: str
+
+
+@router.delete("/account", status_code=204)
+def deleted(deleting: Deleting, root: Root, user_id: UserId) -> Response:
+    if deleting.confirm.strip() != (email_of(root, user_id) or user_id):
+        raise HTTPException(422, "the confirmation does not name this account")
+    account_deleted(root, user_id)
+    response = Response(status_code=204)
+    response.delete_cookie(SESSION_COOKIE, httponly=True, samesite="lax")
+    return response

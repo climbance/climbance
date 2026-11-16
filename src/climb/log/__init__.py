@@ -4,7 +4,7 @@ from climb.log.fills import FillLog
 from climb.log.invitations import invitations_held, invite, invited, withdraw
 from climb.log.judgements import JudgementLog
 from climb.log.latest import latest_by_attempt
-from climb.log.owned import erased, whole_log
+from climb.log.owned import UserLog, account_deleted, erased, whole_log
 from climb.log.predictions import PredictionLog
 from climb.log.recalls import RecallLog, latest_recalls
 from climb.log.runs import CardRunLog
@@ -26,6 +26,8 @@ __all__ = [
     "RecallLog",
     "SignedInDevice",
     "SittingStore",
+    "UserLog",
+    "account_deleted",
     "app_revoked",
     "app_user_of",
     "device_revoked",

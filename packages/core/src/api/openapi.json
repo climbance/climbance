@@ -1110,6 +1110,56 @@
         }
       }
     },
+    "/api/account/export": {
+      "get": {
+        "summary": "Exported",
+        "description": "The user's whole log, as `climb log export` prints it.",
+        "operationId": "exported_api_account_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account": {
+      "delete": {
+        "summary": "Deleted",
+        "operationId": "deleted_api_account_delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Deleting"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/knowledge/snapshot": {
       "get": {
         "summary": "Content",
@@ -1429,6 +1479,93 @@
           "start"
         ],
         "title": "Act"
+      },
+      "Answer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "correct": {
+            "type": "boolean",
+            "title": "Correct"
+          },
+          "guess": {
+            "type": "boolean",
+            "title": "Guess",
+            "default": false
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpenGrade"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "missed": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Missed"
+          },
+          "traps": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Traps"
+          },
+          "wrong": {
+            "type": "boolean",
+            "title": "Wrong",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "question_id",
+          "correct"
+        ],
+        "title": "Answer"
       },
       "Arm": {
         "type": "string",
@@ -1880,6 +2017,201 @@
         "title": "BoardPick",
         "description": "The pick, named as the board shows it."
       },
+      "Call": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "effort": {
+            "type": "string",
+            "title": "Effort"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Prompt"
+          },
+          "prompt_hash": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Prompt Hash"
+          },
+          "response": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "reasoning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoning"
+          },
+          "stop_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Reason"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "pin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pin"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Tokens"
+          },
+          "reasoning_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoning Tokens"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "elapsed_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elapsed Ms"
+          },
+          "requests": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requests"
+          },
+          "request_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "model",
+          "effort",
+          "prompt",
+          "prompt_hash"
+        ],
+        "title": "Call"
+      },
       "Candidate": {
         "properties": {
           "problem_id": {
@@ -2288,6 +2620,89 @@
         ],
         "title": "CaseResult"
       },
+      "CertificationExam": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "module_id": {
+            "type": "string",
+            "title": "Module Id"
+          },
+          "topic_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Id"
+          },
+          "level": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Level"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "answered": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Answered"
+          },
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "module_id",
+          "level",
+          "score",
+          "answered",
+          "passed"
+        ],
+        "title": "CertificationExam"
+      },
       "Claim": {
         "properties": {
           "techniques": {
@@ -2330,6 +2745,19 @@
         ],
         "title": "Confidence"
       },
+      "Deleting": {
+        "properties": {
+          "confirm": {
+            "type": "string",
+            "title": "Confirm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "confirm"
+        ],
+        "title": "Deleting"
+      },
       "DeviceKind": {
         "type": "string",
         "enum": [
@@ -2337,6 +2765,128 @@
           "app"
         ],
         "title": "DeviceKind"
+      },
+      "Diagnosis": {
+        "properties": {
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
+          "prompt_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Hash"
+          },
+          "call_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Call Id"
+          },
+          "pin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pin"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "attempt_id": {
+            "type": "string",
+            "title": "Attempt Id"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/FailureMode"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "attempt_id",
+          "mode",
+          "evidence"
+        ],
+        "title": "Diagnosis",
+        "description": "Why an attempt failed, inferred. The machine counterpart of\n`SelfLabel`."
       },
       "Failure": {
         "properties": {
@@ -2397,6 +2947,44 @@
           "none"
         ],
         "title": "FailureMode"
+      },
+      "Fill": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Item Id"
+          },
+          "choice": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Choice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "item_id",
+          "choice"
+        ],
+        "title": "Fill",
+        "description": "One user's answer to one key-line item: `log.md`, Filling a key line."
       },
       "FillAnswer": {
         "properties": {
@@ -2521,6 +3109,101 @@
         ],
         "title": "FilledItem",
         "description": "An item as the page shows it: no field says which choice is right."
+      },
+      "Focus": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "module_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Module Id"
+          },
+          "topic_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Id"
+          },
+          "subtopic_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtopic Id"
+          },
+          "certification_level": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certification Level"
+          },
+          "strict": {
+            "type": "boolean",
+            "title": "Strict",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at"
+        ],
+        "title": "Focus",
+        "description": "No module clears the focus. A certification is its module, its topic\nor none for the whole module, and its level."
       },
       "Gap": {
         "properties": {
@@ -2726,6 +3409,54 @@
         "title": "JudgedItem",
         "description": "An item as the page shows it: no field says whether it is clean."
       },
+      "Judgement": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Item Id"
+          },
+          "called_clean": {
+            "type": "boolean",
+            "title": "Called Clean"
+          },
+          "line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "item_id",
+          "called_clean"
+        ],
+        "title": "Judgement",
+        "description": "One user's answer to one item: `log.md`, Judging a solution."
+      },
       "JudgementRates": {
         "properties": {
           "flaws_found": {
@@ -2765,6 +3496,108 @@
         ],
         "title": "Label",
         "description": "The one mode the solver picked. A skipped label sends no request."
+      },
+      "LessonMark": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "lesson_id": {
+            "type": "string",
+            "title": "Lesson Id"
+          },
+          "read": {
+            "type": "boolean",
+            "title": "Read"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "lesson_id",
+          "read"
+        ],
+        "title": "LessonMark"
+      },
+      "LimitRaise": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "added": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Added"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "added"
+        ],
+        "title": "LimitRaise"
       },
       "Listed": {
         "properties": {
@@ -2947,6 +3780,118 @@
         "title": "Me",
         "description": "Who the session signs in as. The engine mints the id, and the address is\nthe provider's, so a user reached by the dev login carries none."
       },
+      "ModuleOrder": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "module_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Module Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "module_ids"
+        ],
+        "title": "ModuleOrder"
+      },
+      "ModuleStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "paused",
+          "archived"
+        ],
+        "title": "ModuleStatus"
+      },
+      "ModuleStatusChange": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "module_id": {
+            "type": "string",
+            "title": "Module Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ModuleStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "module_id",
+          "status"
+        ],
+        "title": "ModuleStatusChange"
+      },
       "Named": {
         "properties": {
           "slug": {
@@ -3048,6 +3993,16 @@
         ],
         "title": "Offered",
         "description": "What the login page offers."
+      },
+      "OpenGrade": {
+        "type": "string",
+        "enum": [
+          "k",
+          "p",
+          "n"
+        ],
+        "title": "OpenGrade",
+        "description": "An open question's grade, from the points ticked: `knowledge.md`."
       },
       "Pause": {
         "properties": {
@@ -3964,6 +4919,66 @@
         ],
         "title": "Served"
       },
+      "SettingChange": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "name": {
+            "$ref": "#/components/schemas/SettingName"
+          },
+          "value": {
+            "type": "integer",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "name",
+          "value"
+        ],
+        "title": "SettingChange"
+      },
+      "SettingName": {
+        "type": "string",
+        "enum": [
+          "new_per_day",
+          "exam_size"
+        ],
+        "title": "SettingName"
+      },
       "SignedInDevice": {
         "properties": {
           "id": {
@@ -4096,6 +5111,88 @@
           "started_at"
         ],
         "title": "Sitting"
+      },
+      "Stint": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Client Id"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "device": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Device"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/StintMode"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Score"
+          },
+          "answered": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Answered"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "user_id",
+          "device",
+          "at",
+          "created_at",
+          "mode",
+          "score",
+          "answered"
+        ],
+        "title": "Stint"
+      },
+      "StintMode": {
+        "type": "string",
+        "enum": [
+          "next",
+          "review",
+          "filtered",
+          "exam"
+        ],
+        "title": "StintMode"
       },
       "Studied": {
         "properties": {
@@ -4570,6 +5667,188 @@
           "records"
         ],
         "title": "Upload"
+      },
+      "UserLog": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "sittings": {
+            "items": {
+              "$ref": "#/components/schemas/Sitting"
+            },
+            "type": "array",
+            "title": "Sittings"
+          },
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/Attempt"
+            },
+            "type": "array",
+            "title": "Attempts"
+          },
+          "verifications": {
+            "items": {
+              "$ref": "#/components/schemas/AttemptVerification"
+            },
+            "type": "array",
+            "title": "Verifications"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/AttemptClaim"
+            },
+            "type": "array",
+            "title": "Claims"
+          },
+          "self_labels": {
+            "items": {
+              "$ref": "#/components/schemas/SelfLabel"
+            },
+            "type": "array",
+            "title": "Self Labels"
+          },
+          "diagnoses": {
+            "items": {
+              "$ref": "#/components/schemas/Diagnosis"
+            },
+            "type": "array",
+            "title": "Diagnoses"
+          },
+          "judgements": {
+            "items": {
+              "$ref": "#/components/schemas/Judgement"
+            },
+            "type": "array",
+            "title": "Judgements"
+          },
+          "fills": {
+            "items": {
+              "$ref": "#/components/schemas/Fill"
+            },
+            "type": "array",
+            "title": "Fills"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/Prediction"
+            },
+            "type": "array",
+            "title": "Predictions"
+          },
+          "card_runs": {
+            "items": {
+              "$ref": "#/components/schemas/CardRun"
+            },
+            "type": "array",
+            "title": "Card Runs"
+          },
+          "recall_attempts": {
+            "items": {
+              "$ref": "#/components/schemas/RecallAttempt"
+            },
+            "type": "array",
+            "title": "Recall Attempts"
+          },
+          "calls": {
+            "items": {
+              "$ref": "#/components/schemas/Call"
+            },
+            "type": "array",
+            "title": "Calls"
+          },
+          "answers": {
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            },
+            "type": "array",
+            "title": "Answers"
+          },
+          "stints": {
+            "items": {
+              "$ref": "#/components/schemas/Stint"
+            },
+            "type": "array",
+            "title": "Stints"
+          },
+          "module_status_changes": {
+            "items": {
+              "$ref": "#/components/schemas/ModuleStatusChange"
+            },
+            "type": "array",
+            "title": "Module Status Changes"
+          },
+          "focuses": {
+            "items": {
+              "$ref": "#/components/schemas/Focus"
+            },
+            "type": "array",
+            "title": "Focuses"
+          },
+          "lesson_marks": {
+            "items": {
+              "$ref": "#/components/schemas/LessonMark"
+            },
+            "type": "array",
+            "title": "Lesson Marks"
+          },
+          "certification_exams": {
+            "items": {
+              "$ref": "#/components/schemas/CertificationExam"
+            },
+            "type": "array",
+            "title": "Certification Exams"
+          },
+          "limit_raises": {
+            "items": {
+              "$ref": "#/components/schemas/LimitRaise"
+            },
+            "type": "array",
+            "title": "Limit Raises"
+          },
+          "module_orders": {
+            "items": {
+              "$ref": "#/components/schemas/ModuleOrder"
+            },
+            "type": "array",
+            "title": "Module Orders"
+          },
+          "setting_changes": {
+            "items": {
+              "$ref": "#/components/schemas/SettingChange"
+            },
+            "type": "array",
+            "title": "Setting Changes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "sittings",
+          "attempts",
+          "verifications",
+          "claims",
+          "self_labels",
+          "diagnoses",
+          "judgements",
+          "fills",
+          "predictions",
+          "card_runs",
+          "recall_attempts",
+          "calls",
+          "answers",
+          "stints",
+          "module_status_changes",
+          "focuses",
+          "lesson_marks",
+          "certification_exams",
+          "limit_raises",
+          "module_orders",
+          "setting_changes"
+        ],
+        "title": "UserLog",
+        "description": "Every record of one user's log, and the calls a model made about the\nuser's code."
       },
       "ValidationError": {
         "properties": {

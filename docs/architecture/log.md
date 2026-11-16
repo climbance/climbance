@@ -49,6 +49,23 @@ how an account signing in is linked to a user.
 - **The erasure asks for the user id typed back, and `--user` has no
   default.** An erasure cannot be undone, and a default would name the
   author's own log.
+- **A user exports the record and deletes the account from the settings, on
+  either client.** `climb log export` and `climb log erase` serve the
+  operator, and an erasure keeps the account. A user acting without the
+  operator needs both acts in the app.
+- **The export is the JSON `climb log export` prints, saved as a file.** It
+  holds every record an erasure deletes, the card runs and the recall attempts
+  included.
+- **Deleting the account erases the log, then deletes the user in the same
+  transaction.** The user's identities, sessions, app codes and app tokens go
+  with it, and so do the invitations of the identities' emails. The user asked
+  to leave, so no email of theirs stays stored. Signing in again needs a new
+  invitation, and mints a new user.
+- **The deletion asks for the account's name typed back, and the engine checks
+  it.** The name is the one the account menu shows: the verified email, or the
+  user id where no provider linked one. The client signs out after the
+  deletion without sending its outbox, since the outbox belongs to the deleted
+  log.
 
 ## Sittings
 

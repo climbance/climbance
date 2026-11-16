@@ -484,6 +484,43 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/account/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Exported
+     * @description The user's whole log, as `climb log export` prints it.
+     */
+    get: operations['exported_api_account_export_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/account': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Deleted */
+    delete: operations['deleted_api_account_delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/knowledge/snapshot': {
     parameters: {
       query?: never;
@@ -622,6 +659,46 @@ export interface components {
      * @enum {string}
      */
     Act: 'recall' | 'sitting' | 'start';
+    /** Answer */
+    Answer: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Question Id */
+      question_id: string;
+      /** Correct */
+      correct: boolean;
+      /**
+       * Guess
+       * @default false
+       */
+      guess: boolean;
+      grade?: components['schemas']['OpenGrade'] | null;
+      /** Missed */
+      missed?: number[];
+      /** Traps */
+      traps?: number[];
+      /**
+       * Wrong
+       * @default false
+       */
+      wrong: boolean;
+    };
     /**
      * Arm
      * @description Which policy chose the pick, were a comparison to assign one.
@@ -767,6 +844,52 @@ export interface components {
       /** Problem Title */
       problem_title: string | null;
     };
+    /** Call */
+    Call: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Model */
+      model: string;
+      /** Effort */
+      effort: string;
+      /** Prompt */
+      prompt: string;
+      /** Prompt Hash */
+      prompt_hash: string;
+      /** Response */
+      response?: string | null;
+      /** Error */
+      error?: string | null;
+      /** Reasoning */
+      reasoning?: string | null;
+      /** Stop Reason */
+      stop_reason?: string | null;
+      /** Temperature */
+      temperature?: number | null;
+      /** Pin */
+      pin?: string | null;
+      /** Provider */
+      provider?: string | null;
+      /** Input Tokens */
+      input_tokens?: number | null;
+      /** Output Tokens */
+      output_tokens?: number | null;
+      /** Reasoning Tokens */
+      reasoning_tokens?: number | null;
+      /** Cost */
+      cost?: number | null;
+      /** Elapsed Ms */
+      elapsed_ms?: number | null;
+      /** Requests */
+      requests?: number | null;
+      /** Request Ms */
+      request_ms?: number | null;
+    };
     /**
      * Candidate
      * @description A problem offered for a drill. The statement is left out: the clock
@@ -898,6 +1021,39 @@ export interface components {
       /** Returned */
       returned?: string | null;
     };
+    /** CertificationExam */
+    CertificationExam: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Module Id */
+      module_id: string;
+      /** Topic Id */
+      topic_id?: string | null;
+      /** Level */
+      level: number;
+      /** Score */
+      score: number;
+      /** Answered */
+      answered: number;
+      /** Passed */
+      passed: boolean;
+    };
     /** Claim */
     Claim: {
       /**
@@ -922,11 +1078,51 @@ export interface components {
      * @enum {string}
      */
     Confidence: 'guess' | 'leaning' | 'sure';
+    /** Deleting */
+    Deleting: {
+      /** Confirm */
+      confirm: string;
+    };
     /**
      * DeviceKind
      * @enum {string}
      */
     DeviceKind: 'browser' | 'app';
+    /**
+     * Diagnosis
+     * @description Why an attempt failed, inferred. The machine counterpart of
+     *     `SelfLabel`.
+     */
+    Diagnosis: {
+      /** Model */
+      model?: string | null;
+      /** Effort */
+      effort?: string | null;
+      /** Prompt Hash */
+      prompt_hash?: string | null;
+      /** Call Id */
+      call_id?: string | null;
+      /** Pin */
+      pin?: string | null;
+      /** Provider */
+      provider?: string | null;
+      /** Temperature */
+      temperature?: number | null;
+      /** Cost */
+      cost?: number | null;
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Attempt Id */
+      attempt_id: string;
+      mode: components['schemas']['FailureMode'];
+      /** Evidence */
+      evidence: string;
+    };
     /**
      * Failure
      * @description The first case a submission failed, shown whole: `flows.md`.
@@ -954,6 +1150,25 @@ export interface components {
      * @enum {string}
      */
     FailureMode: 'speed' | 'rust' | 'gap' | 'syntax' | 'none';
+    /**
+     * Fill
+     * @description One user's answer to one key-line item: `log.md`, Filling a key line.
+     */
+    Fill: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      /** Item Id */
+      item_id: string;
+      /** Choice */
+      choice: number;
+    };
     /** FillAnswer */
     FillAnswer: {
       /** Choice */
@@ -998,6 +1213,44 @@ export interface components {
       blank: number;
       /** Choices */
       choices: components['schemas']['FillChoice'][];
+    };
+    /**
+     * Focus
+     * @description No module clears the focus. A certification is its module, its topic
+     *     or none for the whole module, and its level.
+     */
+    Focus: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Module Id */
+      module_id?: string | null;
+      /** Topic Id */
+      topic_id?: string | null;
+      /** Subtopic Id */
+      subtopic_id?: string | null;
+      /** Certification Level */
+      certification_level?: number | null;
+      /**
+       * Strict
+       * @default false
+       */
+      strict: boolean;
     };
     /**
      * Gap
@@ -1081,6 +1334,27 @@ export interface components {
       lines: string[];
     };
     /**
+     * Judgement
+     * @description One user's answer to one item: `log.md`, Judging a solution.
+     */
+    Judgement: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      /** Item Id */
+      item_id: string;
+      /** Called Clean */
+      called_clean: boolean;
+      /** Line */
+      line?: number | null;
+    };
+    /**
      * JudgementRates
      * @description Flaws found over the flawed items answered, and clean solutions called
      *     flawed over the clean ones answered. One rate alone hides a user who calls
@@ -1114,6 +1388,54 @@ export interface components {
      */
     Label: {
       mode: components['schemas']['FailureMode'];
+    };
+    /** LessonMark */
+    LessonMark: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Lesson Id */
+      lesson_id: string;
+      /** Read */
+      read: boolean;
+    };
+    /** LimitRaise */
+    LimitRaise: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Added */
+      added: number;
     };
     /**
      * Listed
@@ -1177,6 +1499,58 @@ export interface components {
       /** Email */
       email: string | null;
     };
+    /** ModuleOrder */
+    ModuleOrder: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Module Ids */
+      module_ids: string[];
+    };
+    /**
+     * ModuleStatus
+     * @enum {string}
+     */
+    ModuleStatus: 'active' | 'paused' | 'archived';
+    /** ModuleStatusChange */
+    ModuleStatusChange: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Module Id */
+      module_id: string;
+      status: components['schemas']['ModuleStatus'];
+    };
     /**
      * Named
      * @description One template of the card, as the trainer lists it: what it is called,
@@ -1225,6 +1599,12 @@ export interface components {
       /** Dev Login */
       dev_login: string | null;
     };
+    /**
+     * OpenGrade
+     * @description An open question's grade, from the points ticked: `knowledge.md`.
+     * @enum {string}
+     */
+    OpenGrade: 'k' | 'p' | 'n';
     /** Pause */
     Pause: {
       /**
@@ -1573,6 +1953,35 @@ export interface components {
       last?: components['schemas']['Submitted'] | null;
       sitting: components['schemas']['Sitting'] | null;
     };
+    /** SettingChange */
+    SettingChange: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      name: components['schemas']['SettingName'];
+      /** Value */
+      value: number;
+    };
+    /**
+     * SettingName
+     * @enum {string}
+     */
+    SettingName: 'new_per_day' | 'exam_size';
     /**
      * SignedInDevice
      * @description A live session or app token as its owner sees it. The id is the token's
@@ -1621,6 +2030,39 @@ export interface components {
       /** Pauses */
       pauses?: components['schemas']['Pause'][];
     };
+    /** Stint */
+    Stint: {
+      /** Id */
+      id: string;
+      /** Client Id */
+      client_id: string;
+      /** User Id */
+      user_id: string;
+      /** Device */
+      device: string;
+      /**
+       * At
+       * Format: date-time
+       */
+      at: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      mode: components['schemas']['StintMode'];
+      /** Level */
+      level?: number | null;
+      /** Score */
+      score: number;
+      /** Answered */
+      answered: number;
+    };
+    /**
+     * StintMode
+     * @enum {string}
+     */
+    StintMode: 'next' | 'review' | 'filtered' | 'exam';
     /**
      * Studied
      * @description A card as its page reads it. The ladder, the progress and the recall
@@ -1835,6 +2277,57 @@ export interface components {
       since: {
         [key: string]: number;
       };
+    };
+    /**
+     * UserLog
+     * @description Every record of one user's log, and the calls a model made about the
+     *     user's code.
+     */
+    UserLog: {
+      /** User Id */
+      user_id: string;
+      /** Sittings */
+      sittings: components['schemas']['Sitting'][];
+      /** Attempts */
+      attempts: components['schemas']['Attempt'][];
+      /** Verifications */
+      verifications: components['schemas']['AttemptVerification'][];
+      /** Claims */
+      claims: components['schemas']['AttemptClaim'][];
+      /** Self Labels */
+      self_labels: components['schemas']['SelfLabel'][];
+      /** Diagnoses */
+      diagnoses: components['schemas']['Diagnosis'][];
+      /** Judgements */
+      judgements: components['schemas']['Judgement'][];
+      /** Fills */
+      fills: components['schemas']['Fill'][];
+      /** Predictions */
+      predictions: components['schemas']['Prediction'][];
+      /** Card Runs */
+      card_runs: components['schemas']['CardRun'][];
+      /** Recall Attempts */
+      recall_attempts: components['schemas']['RecallAttempt'][];
+      /** Calls */
+      calls: components['schemas']['Call'][];
+      /** Answers */
+      answers: components['schemas']['Answer'][];
+      /** Stints */
+      stints: components['schemas']['Stint'][];
+      /** Module Status Changes */
+      module_status_changes: components['schemas']['ModuleStatusChange'][];
+      /** Focuses */
+      focuses: components['schemas']['Focus'][];
+      /** Lesson Marks */
+      lesson_marks: components['schemas']['LessonMark'][];
+      /** Certification Exams */
+      certification_exams: components['schemas']['CertificationExam'][];
+      /** Limit Raises */
+      limit_raises: components['schemas']['LimitRaise'][];
+      /** Module Orders */
+      module_orders: components['schemas']['ModuleOrder'][];
+      /** Setting Changes */
+      setting_changes: components['schemas']['SettingChange'][];
     };
     /** ValidationError */
     ValidationError: {
@@ -2699,6 +3192,57 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  exported_api_account_export_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserLog'];
+        };
+      };
+    };
+  };
+  deleted_api_account_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Deleting'];
+      };
+    };
     responses: {
       /** @description Successful Response */
       204: {

@@ -30,7 +30,7 @@ import {
   SYNC_HEADING,
 } from '@climb/core'
 
-import { api } from '@/api/client'
+import { api, type Me } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { ErrorLine } from '@/components/ErrorLine'
 import { PickPanel, PickRow } from '@/components/PickRow'
@@ -40,6 +40,7 @@ import { SectionHeading } from '@/components/SectionHeading'
 import { Panel } from '@/components/Panel'
 import { SignedInDevices } from '@/components/SignedInDevices'
 import { SignOut } from '@/components/SignOut'
+import { YourRecord } from '@/components/YourRecord'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -59,11 +60,12 @@ export function SettingsPage() {
   ) as Values
   // held here: a save remounts the fields, and the line saying so outlives them
   const [said, setSaid] = useState<string | null>(null)
+  const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
 
   return (
     <section className="space-y-section">
       <PageHeader title={SETTINGS} note={SETTINGS_NOTE} />
-      <Account />
+      <Account me={me.data} />
       <Loaded of={OF.settings} state={loadedFrom(k, values)}>
         {/* a value another device set reaches the fields at its sync */}
         {(values) => (
@@ -72,6 +74,8 @@ export function SettingsPage() {
       </Loaded>
       <Sync />
       <Archived />
+      {/* last: the one act on the page that cannot be undone */}
+      <YourRecord me={me.data} />
     </section>
   )
 }
@@ -135,8 +139,7 @@ function Archived() {
   )
 }
 
-function Account() {
-  const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
+function Account({ me }: { me: Me | undefined }) {
   const [apps, setApps] = useState(false)
 
   return (
@@ -145,9 +148,9 @@ function Account() {
       <Panel>
         <div className="flex flex-wrap items-center gap-stack">
           <div className="flex-1">
-            <p className="font-medium">{named(me.data)}</p>
-            <p className={cn('text-meta text-muted-foreground', me.data?.email && 'font-mono')}>
-              {meLine(me.data)}
+            <p className="font-medium">{named(me)}</p>
+            <p className={cn('text-meta text-muted-foreground', me?.email && 'font-mono')}>
+              {meLine(me)}
             </p>
           </div>
           <Button variant="outline" onClick={() => setApps(true)}>

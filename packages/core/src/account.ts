@@ -64,3 +64,29 @@ export async function revokeDevice(
     return { ok: false, refused: String(reason) };
   }
 }
+
+/** The user's whole record as the engine exports it, as the JSON text a file holds. */
+export async function exportedRecord(client: EngineClient): Promise<Outcome<string>> {
+  try {
+    const { data, error } = await client.GET('/api/account/export');
+    return error === undefined
+      ? { ok: true, value: JSON.stringify(data, null, 2) }
+      : { ok: false, refused: described(error) };
+  } catch (reason) {
+    return { ok: false, refused: String(reason) };
+  }
+}
+
+/** Whether the typed confirmation names the account, as the engine checks it. */
+export const confirmsDeletion = (typed: string, me: { email: string | null; user_id: string } | undefined) =>
+  me !== undefined && typed.trim() === (me.email ?? me.user_id);
+
+/** Deletes the account and its whole record. A refusal is named rather than read as deleted. */
+export async function deleteAccount(client: EngineClient, confirm: string): Promise<Outcome<null>> {
+  try {
+    const { error } = await client.DELETE('/api/account', { body: { confirm: confirm.trim() } });
+    return error === undefined ? { ok: true, value: null } : { ok: false, refused: described(error) };
+  } catch (reason) {
+    return { ok: false, refused: String(reason) };
+  }
+}

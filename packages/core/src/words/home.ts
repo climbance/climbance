@@ -86,6 +86,18 @@ export function signOutWarning(n: number, here: ThisDevice): string {
 }
 export const STAY_SIGNED_IN = 'Stay signed in';
 
+// the export and the deletion
+export const YOUR_RECORD = 'Your record';
+export const EXPORT_RECORD = 'Export the record';
+export const EXPORT_NOTE = 'Every record of your practice, as one JSON file.';
+export const RECORD_FILE = 'climbance-record.json';
+export const recordSaved = (where: string) => `Saved to ${where}.`;
+export const DELETE_ACCOUNT = 'Delete the account';
+export const DELETE_ACCOUNT_TITLE = 'Delete the account and its record?';
+export const deleteAccountWarning = (name: string) =>
+  `Your whole record, your sign-in and your invitation are deleted, and this cannot be undone. Signing in again needs a new invitation. Type ${name} to confirm.`;
+export const KEEP_ACCOUNT = 'Keep the account';
+
 // the signed-in devices
 export const REVOKED_NOTE = 'A revoked device is signed out at its next request.';
 export const thisDevice = (here: ThisDevice) => `this ${here}`;

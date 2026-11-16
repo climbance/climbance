@@ -4,6 +4,7 @@ import json
 import pytest
 from commands import connected, run_cli
 from helpers import PROVENANCE, PROVENANCE_FIELDS, T0, browsing, logged, machine_claim, seed_problem
+from matching import card, seeded, template
 from sqlalchemy import select, text
 from sqlalchemy.exc import ProgrammingError
 from test_seed_knowledge import authored
@@ -12,9 +13,19 @@ from climb import mint
 from climb.calls.table import calls
 from climb.cases import CaseLog
 from climb.knowledge import read_module, seed_module, sync
-from climb.log import AttemptLog, SittingStore, erased, whole_log
+from climb.log import (
+    AttemptLog,
+    Provider,
+    SittingStore,
+    account_deleted,
+    erased,
+    invite,
+    invited,
+    signed_in,
+    whole_log,
+)
 from climb.log.owned import KNOWLEDGE
-from climb.log.table import attempts, sessions, users
+from climb.log.table import attempts, identities, sessions, users
 from climb.schema import Diagnosis, FailureMode
 
 AUTHOR = "u-4f9c2a"
@@ -131,6 +142,8 @@ def test_erasing_a_log_leaves_another_user_s_log_whole(practised):
         "judgements": [],
         "fills": [],
         "predictions": [],
+        "card_runs": [],
+        "recall_attempts": [],
         "calls": [],
         "answers": [],
         "stints": [],
@@ -260,3 +273,50 @@ def test_the_export_carries_the_knowledge_log(practised):
 
     assert [answer.client_id for answer in exported.answers] == ["k1"]
     assert [len(getattr(exported, name)) for name in KNOWLEDGE] == [1] * len(KNOWLEDGE_LINES)
+
+
+def test_the_export_carries_the_card_runs_and_the_recalls(practised):
+    """An erasure deletes both, so the copy a user is given holds both."""
+    seeded(practised, card(templates=[template("longest-valid-window")]))
+    browsing(practised, AUTHOR).post("/api/cards/sliding-window/runs").raise_for_status()
+
+    (run,) = whole_log(practised, AUTHOR).card_runs
+    assert run.user_id == AUTHOR
+    assert whole_log(practised, OTHER).card_runs == []
+
+
+@pytest.fixture
+def signed_up(database):
+    """A user an invited email signed in as, and another user beside it."""
+    invite(database, "solver@example.com")
+    invite(database, "other@example.com")
+    user_id = signed_in(database, Provider.GOOGLE, "google-7", "solver@example.com")
+    signed_in(database, Provider.GITHUB, "github-9", "other@example.com")
+    return database, user_id
+
+
+def test_deleting_an_account_leaves_no_trace_of_its_email(signed_up):
+    """The user, its identities and the invitation its email was let in by go,
+    so the email is stored nowhere once the user asked to be deleted."""
+    database, user_id = signed_up
+    browsing(database, user_id)
+
+    counted = account_deleted(database, user_id)
+
+    assert counted["users"] == counted["identities"] == counted["invitations"] == 1
+    assert counted["sessions"] == 1
+    assert not invited(database, "solver@example.com")
+    assert invited(database, "other@example.com")
+    with database.connect() as conn:
+        assert user_id not in set(conn.execute(select(users.c.id)).scalars())
+        assert conn.execute(select(identities.c.email)).scalars().all() == ["other@example.com"]
+
+
+def test_deleting_an_account_erases_its_log(practised):
+    before = whole_log(practised, OTHER)
+
+    counted = account_deleted(practised, AUTHOR)
+
+    assert counted["attempts"] == 1
+    assert whole_log(practised, AUTHOR).attempts == []
+    assert whole_log(practised, OTHER) == before

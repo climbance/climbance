@@ -6,7 +6,7 @@ from climb.api import create_app
 from climb.api.context import SESSION_COOKIE
 from climb.api.signin import Client, SignIn
 from climb.log import Provider, signed_in
-from climb.log.table import sessions
+from climb.log.table import sessions, users
 from climb.storage import Database
 
 USER = "u-4f9c2a"
@@ -82,3 +82,36 @@ def test_signing_out_is_a_write_another_site_cannot_forge(database):
 
     assert response.status_code == 415
     assert client.get("/api/board").status_code == 200
+
+
+def test_the_export_is_the_user_s_whole_log_as_a_file(database):
+    response = browsing(database, USER).get("/api/account/export")
+
+    assert response.json()["user_id"] == USER
+    assert "attachment" in response.headers["content-disposition"]
+
+
+def test_deleting_the_account_ends_its_session(database):
+    """The user is gone, so the cookie it carried signs nobody in."""
+    client = browsing(database, USER)
+
+    response = client.request("DELETE", "/api/account", json={"confirm": USER})
+
+    assert response.status_code == 204
+    assert client.get("/api/me").status_code == 401
+    with database.connect() as conn:
+        assert conn.execute(select(users.c.id)).first() is None
+
+
+def test_deleting_needs_the_account_s_email_typed_back(database):
+    """The address the account menu names, since a mistyped press cannot be
+    undone."""
+    user_id = signed_in(database, Provider.GOOGLE, "google-7", "solver@example.com")
+    client = browsing(database, user_id)
+
+    refused = client.request("DELETE", "/api/account", json={"confirm": user_id})
+
+    assert refused.status_code == 422
+    assert client.get("/api/me").status_code == 200
+    typed = client.request("DELETE", "/api/account", json={"confirm": "solver@example.com"})
+    assert typed.status_code == 204

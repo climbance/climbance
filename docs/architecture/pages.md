@@ -41,6 +41,8 @@ those steps at low fidelity.
   page reads as the phone's Settings screen does: the account first, then
   the Study settings, the daily limit on new questions and the exam size.
   A reader of either client then finds a standing choice in the same place.
+  The record's export and the account's deletion come last on both clients,
+  since the deletion is the one act there that cannot be undone.
 - **A study setting is a record of the user's log**, so a change on one
   client stands on the other. `knowledge.md` gives the records. The device
   name and the reminder hour are about one phone, and stay on the phone's
@@ -603,6 +605,8 @@ what it offers. The inventory is the list both clients build to.
 | Read the sync's state, and sync now | the settings page | Settings, and Home's footer | same |
 | Sign out, naming unsent records | the account menu and the settings page | the account menu and Settings | same |
 | Revoke a signed-in device | the signed-in devices | the signed-in devices | same |
+| Export the record as a file | the settings page, as a download | Settings, into a folder the user picks | by platform |
+| Delete the account, its name typed back | the settings page | Settings | same |
 | Choose the colour scheme | the switch in the navigation | Settings | by platform |
 | Set the device name or the reminder hour | none | Settings | phone only |
 

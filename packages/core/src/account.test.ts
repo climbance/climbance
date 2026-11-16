@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { deviceLine, deviceName, deviceTitle, lastAt, revokeDevice, type EngineClient } from './index';
+import {
+  confirmsDeletion,
+  deleteAccount,
+  deviceLine,
+  deviceName,
+  deviceTitle,
+  exportedRecord,
+  lastAt,
+  revokeDevice,
+  type EngineClient,
+} from './index';
 
 const NOW = Date.parse('2026-11-10T12:00:00Z');
 
@@ -47,5 +57,29 @@ describe("a signed-in device's title and revoke", () => {
   it('names a refused revoke rather than reading it as revoked', async () => {
     const client = { DELETE: () => Promise.resolve({ error: { detail: 'gone' } }) } as unknown as EngineClient;
     expect(await revokeDevice(client, { kind: 'app', id: 'd1' })).toEqual({ ok: false, refused: expect.any(String) });
+  });
+});
+
+describe('deleting the account', () => {
+  const me = { email: 'solver@example.com', user_id: 'u-4f9c2a' };
+
+  it('is confirmed by the name the account menu shows, typed back', () => {
+    expect(confirmsDeletion(' solver@example.com ', me)).toBe(true);
+    expect(confirmsDeletion('u-4f9c2a', me)).toBe(false);
+    expect(confirmsDeletion('u-4f9c2a', { email: null, user_id: 'u-4f9c2a' })).toBe(true);
+    expect(confirmsDeletion('', undefined)).toBe(false);
+  });
+
+  it('names a refused deletion rather than reading it as deleted', async () => {
+    const client = { DELETE: () => Promise.resolve({ error: { detail: 'no' } }) } as unknown as EngineClient;
+    expect(await deleteAccount(client, 'x')).toEqual({ ok: false, refused: expect.any(String) });
+  });
+});
+
+describe('exporting the record', () => {
+  it('reads the record as the text a file holds', async () => {
+    const client = { GET: () => Promise.resolve({ data: { user_id: 'u-4f9c2a' } }) } as unknown as EngineClient;
+    const exported = await exportedRecord(client);
+    expect(exported.ok && JSON.parse(exported.value)).toEqual({ user_id: 'u-4f9c2a' });
   });
 });
