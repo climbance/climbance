@@ -78,7 +78,7 @@ class Submitted(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     attempt: Attempt
-    sitting: Sitting  # ended where the submission solved the problem
+    sitting: Sitting
     verification: AttemptVerification
     failure: Failure | None  # none on a submission that passed every case
 
@@ -261,11 +261,7 @@ def submit(
     verification = mint.attempt_verification(attempt.id, judged)
     log.append_attempt(attempt)
     log.append_verification(verification)
-    if attempt.solved:
-        # a user who solved and left has nothing left to close
-        one = _stored(
-            sittings, one, pauses=_closed(one.pauses, at) if one.paused else one.pauses, ended_at=at
-        )
+    # a solve leaves the sitting running for a better form: `log.md`, Sittings
     return Submitted(
         attempt=attempt,
         sitting=one,

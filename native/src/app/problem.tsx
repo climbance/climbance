@@ -9,6 +9,7 @@ import {
   CLOCK_STARTED_ITSELF,
   CLOCK_UNTIMED,
   CLOCK_RUNNING,
+  claimAsk,
   clockState,
   editorOpening,
   END_KEEP,
@@ -206,9 +207,10 @@ function SittingOn({
   const [tab, setTab] = useState<'statement' | 'code'>('statement');
   const [keys, setKeys] = useState(true);
   const [ending, setEnding] = useState(false);
-  // the claim is asked once the sitting ends on this screen, and answering it
-  // or closing it leaves the screen where it is
-  const [claimed, setClaimed] = useState(false);
+  // the ask last answered: answering or closing it leaves the screen where it
+  // is, and the next solve or the end asks again
+  const [claimed, setClaimed] = useState<string | null>(null);
+  const [submissions, setSubmissions] = useState(0);
   // set by the restore press, and kept with the draft so a reopened screen keeps it
   const restored = useRef<boolean | null>(null);
   const editor = useRef<EditorHandle>(null);
@@ -247,11 +249,15 @@ function SittingOn({
   const sittingId = current?.id ?? null;
   const clock = clockState(current);
   const controls = sittingControls(clock, sittingId);
+  const solvedNow = (submitted ?? statement?.last ?? null)?.attempt.solved === true;
+  // a solve leaves the sitting running: `log.md`
+  const settled = clock.ended || solvedNow;
+  const ask = claimAsk(clock.ended, solvedNow, submissions);
   const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null);
   useEffect(() => {
-    if (!clock.ended || card === null) return;
+    if (!settled || card === null) return;
     void (async () => setAfter(await nextRungAfter(engine(origin, await getToken()), card, problemId)))();
-  }, [clock.ended, card, problemId, origin]);
+  }, [settled, card, problemId, origin]);
 
   // the preference starts a clock the user has not, once per screen
   const autoStarted = useRef(false);
@@ -352,7 +358,7 @@ function SittingOn({
     if (sent.minted) setMoved(sent.minted);
     if (sent.ok) {
       setSubmitted(sent.value.submitted);
-      // a solve ends the sitting
+      setSubmissions((one) => one + 1);
       onSubmitted();
       setMoved(sent.value.moved);
     } else setRefused(sent.refused);
@@ -423,7 +429,7 @@ function SittingOn({
         )}
       </View>
       {/* under the bar rather than in it: a rung's title does not fit beside the clock */}
-      {clock.ended && after && card !== null ? (
+      {settled && after && card !== null ? (
         <View style={{ paddingHorizontal: space[3], paddingBottom: space[1] }}>
           <Button
             mode="contained"
@@ -509,10 +515,11 @@ function SittingOn({
       </View>
       {sittingId !== null ? (
         <ClaimSheet
+          key={ask ?? 'none'}
           sittingId={sittingId}
           drilled={drilled}
-          visible={clock.ended && !claimed}
-          onDone={() => setClaimed(true)}
+          visible={ask !== null && claimed !== ask}
+          onDone={() => setClaimed(ask)}
         />
       ) : null}
       <Sheet

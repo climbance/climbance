@@ -70,11 +70,22 @@ def test_a_defective_problem_s_sittings_count_for_nothing():
     assert execution([submitted("a", 0, solved=True, problem="bad")], PROBLEMS, {}, {}) == {}
 
 
-def test_the_label_is_read_from_the_sitting_s_last_attempt():
-    """A `gap` on the last attempt zeroes a solve the first attempt made."""
-    sitting = [submitted("a", 0, solved=True), submitted("a", 1, solved=True)]
+def test_the_label_is_read_from_the_attempt_that_first_solved():
+    """A `gap` on the solving attempt zeroes the sitting, whatever follows."""
+    sitting = [submitted("a", 0, solved=False), submitted("a", 1, solved=True)]
+    later = submitted("a", 2, solved=True)
     labels = {sitting[1].id: labelled(sitting[1], FailureMode.GAP)}
     found = execution(
-        [*sitting, *(submitted(s, 0, solved=True) for s in "bc")], PROBLEMS, {}, labels
+        [*sitting, later, *(submitted(s, 0, solved=True) for s in "bc")], PROBLEMS, {}, labels
     )
     assert found["greedy"] == (3, 2 / 3)
+
+
+def test_an_attempt_after_the_first_solve_moves_nothing():
+    """The better form submitted after a brute force solve, failed and labelled
+    `gap`, leaves the sitting a first-submission solve."""
+    solve, after = submitted("s", 0, solved=True), submitted("s", 1, solved=False)
+    labels = {after.id: labelled(after, FailureMode.GAP)}
+    assert execution([solve, after], PROBLEMS, {}, labels)["greedy"] == (1, None)
+    three = [solve, after, submitted("t", 0, solved=True), submitted("u", 0, solved=True)]
+    assert execution(three, PROBLEMS, {}, labels)["greedy"] == (3, 1.0)

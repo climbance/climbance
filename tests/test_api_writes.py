@@ -99,7 +99,6 @@ def test_a_user_past_the_submission_cap_is_refused(client, sitting_id):
     minute later. Each submission runs untrusted code on the server."""
     codes: list[int] = []
     while len(codes) < 30 and 429 not in codes:
-        # wrong answers, since a solving one ends the sitting
         codes.append(submitted(client, sitting_id, TRIPLE).status_code)
 
     assert codes[0] == 200

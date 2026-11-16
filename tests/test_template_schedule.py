@@ -91,6 +91,15 @@ def test_a_sitting_rates_good_on_a_first_solve_and_again_unsolved():
     assert ratings(reviews([], attempts, PROBLEMS)["t1"]) == [Rating.Good, Rating.Again]
 
 
+def test_a_failed_attempt_after_the_first_solve_leaves_the_rating():
+    """A failed submission after a solve rates the sitting no lower."""
+    attempts = [
+        submitted("s1", T0, solved=True),
+        submitted("s1", T0 + timedelta(minutes=9), solved=False),
+    ]
+    assert reviews([], attempts, PROBLEMS)["t1"] == [Review(T0, Rating.Good)]
+
+
 def test_only_a_sitting_on_a_live_problem_targeting_the_template_reviews_it():
     """A technique's, a defective and a sitting-less attempt add nothing."""
     attempts = [

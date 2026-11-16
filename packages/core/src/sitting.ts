@@ -249,6 +249,15 @@ export function sittingBack(from: ProblemFrom): string {
       return 'Back to the board';
   }
 }
+/**
+ * When the claim is asked: at each solve and at the end, of the attempts not
+ * yet asked (`pages.md`). The key moves with each, so an answered ask does not
+ * hide the next one.
+ */
+export function claimAsk(ended: boolean, lastSolved: boolean, submissions: number): string | null {
+  return ended || lastSolved ? `${submissions}:${ended}` : null;
+}
+
 export const CLOCK_RUNNING = 'The clock is running';
 export const CLOCK_PAUSED = 'paused';
 export const CLOCK_UNTIMED = 'untimed';

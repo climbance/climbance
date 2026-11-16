@@ -12,8 +12,7 @@ from climb.sitting import RUNS_PER_MINUTE, TooOften, submit
 STARTED = datetime(2026, 9, 10, 8, tzinfo=UTC)
 TEN = datetime(2026, 9, 10, 10, tzinfo=UTC)
 
-# a wrong answer: a solving one ends the sitting, and the cap is counted on
-# one sitting
+# a wrong answer, and the cap is counted on one sitting
 TRIPLE = "def solve(n):\n    return n * 3\n"
 
 

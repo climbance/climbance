@@ -56,9 +56,12 @@ def test_one_sitting_runs_from_begin_to_end(root):
     passing = submit(
         sittings, cases, log, sitting_id, DOUBLE, user_id=USER, now=began + timedelta(minutes=30)
     ).attempt
-    # the solving submission ends the sitting, so nothing is left to close
+    # a solve leaves the sitting running, and the End press closes it
+    running = sittings.get(sitting_id)
+    assert running is not None and running.ended_at is None
+    end(sittings, sitting_id, user_id=USER, now=began + timedelta(minutes=31))
     ended = sittings.get(sitting_id)
-    assert ended is not None and ended.ended_at == began + timedelta(minutes=30)
+    assert ended is not None and ended.ended_at == began + timedelta(minutes=31)
     for asked in unclaimed(log, sitting_id, user_id=USER):
         claim(
             log,

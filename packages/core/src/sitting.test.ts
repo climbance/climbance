@@ -10,6 +10,7 @@ import {
   userDraftKey,
   duration,
   editorOpening,
+  claimAsk,
   endNote,
   RETURNED_NOT_KEPT,
   opening,
@@ -196,3 +197,14 @@ describe('the End confirmation', () => {
   });
 });
 
+describe('the claim ask', () => {
+  it('opens at a solve and again at the end', () => {
+    /** a solve leaves the sitting running, so the claim cannot wait for the end alone */
+    expect(claimAsk(false, false, 1)).toBeNull();
+    const atSolve = claimAsk(false, true, 1);
+    const atEnd = claimAsk(true, true, 1);
+    expect(atSolve).not.toBeNull();
+    expect(atEnd).not.toBe(atSolve);
+    expect(claimAsk(false, true, 2)).not.toBe(atSolve);
+  });
+});

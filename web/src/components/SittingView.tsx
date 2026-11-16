@@ -5,6 +5,7 @@ import {
   CLOCK_STARTED_ITSELF,
   CLOCK_UNTIMED,
   CLOCK_RUNNING,
+  claimAsk,
   clockState,
   editorOpening,
   END_KEEP,
@@ -93,9 +94,9 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   // the way back: the page the problem came from. An ended sitting stays on
   // the page, so the solve reads back
   const back = { to: fromPath(from), label: sittingBack(from) }
-  // the claim is asked once the sitting ends, and answering it closes the
-  // dialog over the page rather than leaving it
-  const [answered, setAnswered] = useState(false)
+  // the ask last answered: answering closes the dialog over the page rather
+  // than leaving it, and the next solve or the end asks again
+  const [answered, setAnswered] = useState<string | null>(null)
   const loaded = useLoaded(
     async (signal) => {
       // without `?sitting=` the statement comes with the sitting running on
@@ -147,11 +148,15 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   const clockNow = clockState(current)
   const { paused, ended, unstarted } = clockNow
   const controls = sittingControls(clockNow, sittingId)
+  const solvedNow = (submitted ?? loaded.data?.last ?? null)?.attempt.solved === true
+  // a solve leaves the sitting running: `log.md`
+  const settled = ended || solvedNow
+  const ask = claimAsk(ended, solvedNow, submissions)
   const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null)
   useEffect(() => {
-    if (!ended || card === null) return
+    if (!settled || card === null) return
     void nextRungAfter(api, card, problemId).then(setAfter)
-  }, [ended, card, problemId])
+  }, [settled, card, problemId])
 
   // the address names the sitting once one exists, replacing itself so the
   // way back leaves the problem rather than returning to it
@@ -287,7 +292,6 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
     if (sent.minted) setMoved(sent.minted)
     if (sent.ok) {
       setSubmitted(sent.value.submitted)
-      // a solve ends the sitting, and the ended sitting asks for the claims
       setSubmissions((one) => one + 1)
       setMoved(sent.value.moved)
     } else setRefused(sent.refused)
@@ -302,9 +306,9 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 py-2">
           {/* the page's one title: it stays in view while the statement
               scrolls, so the statement column repeats none */}
-          {/* the way back, at any point: leaving a sitting ends nothing, and an
-              ended one has nothing left to do here */}
-          {ended ? (
+          {/* the way back, at any point: leaving a sitting ends nothing, and a
+              solved or ended one leads on to it */}
+          {settled ? (
             <>
               <Button asChild variant={after ? 'outline' : 'default'}>
                 <Link to={back.to}>
@@ -449,16 +453,24 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
           )}
         </section>
       </div>
-      {/* the claim the sitting ends on; closing it leaves the attempts to the
-          problem's own techniques, and a reload asks again */}
-      <Dialog open={ended && !answered} onOpenChange={(open) => open || setAnswered(true)}>
+      {/* the claim asked at each solve and at the end; closing it leaves the
+          attempts to the problem's own techniques, and a reload asks again */}
+      <Dialog
+        open={ask !== null && answered !== ask}
+        onOpenChange={(open) => open || setAnswered(ask)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{CLAIM_TITLE}</DialogTitle>
             <DialogDescription>{CLAIM_NOTE}</DialogDescription>
           </DialogHeader>
-          {ended && sittingId !== null && (
-            <ClaimPrompt sittingId={sittingId} drilled={drilled} onDone={() => setAnswered(true)} />
+          {ask !== null && sittingId !== null && (
+            <ClaimPrompt
+              key={ask}
+              sittingId={sittingId}
+              drilled={drilled}
+              onDone={() => setAnswered(ask)}
+            />
           )}
         </DialogContent>
       </Dialog>

@@ -37,6 +37,12 @@ def sittings(attempts: Iterable[Attempt]) -> list[list[Attempt]]:
     return [sorted(group, key=lambda one: one.finished_at) for group in grouped.values()]
 
 
+def through_first_solve(sitting: Sequence[Attempt]) -> Sequence[Attempt]:
+    """The attempts a sitting's verdict reads: `flows.md`, Drill loop."""
+    solve = next((n for n, one in enumerate(sitting) if one.solved_unaided), None)
+    return sitting if solve is None else sitting[: solve + 1]
+
+
 def execution(
     attempts: Iterable[Attempt],
     problems: Mapping[str, Problem],
@@ -46,10 +52,11 @@ def execution(
     """Each technique's sittings counted, and its reading where enough of them
     stand. A sitting counts for every technique its attempts resolve to."""
     scores: dict[str, list[float]] = defaultdict(list)
-    for sitting in sittings(attempts):
-        problem = problems[sitting[0].problem_id]
+    for whole in sittings(attempts):
+        problem = problems[whole[0].problem_id]
         if problem.defective:
             continue
+        sitting = through_first_solve(whole)
         label = labels.get(sitting[-1].id)
         value = score(sitting, label.mode if label else None)
         techniques = {t for one in sitting for t in resolve_techniques(one, problem, claims)}

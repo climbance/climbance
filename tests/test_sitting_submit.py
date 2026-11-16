@@ -258,7 +258,6 @@ def test_solved_is_the_projection_of_the_verification(database):
     """One rule decides both, so the attempt and its verdict cannot disagree."""
     stores = Stores(database)
 
-    # the solving one last: it ends the sitting
     for code in (TRIPLE, "def solve(n)\n", DOUBLE):
         submitted = stores.submitted(code)
         assert submitted.attempt.solved is submitted.verification.verified
@@ -286,14 +285,15 @@ def test_a_refused_submission_stores_no_verification(database):
     assert stores.log.verifications() == []
 
 
-def test_a_solving_submission_ends_the_sitting(database):
-    """A user who solved and left has nothing left to close."""
+def test_a_solving_submission_leaves_the_sitting_running(database):
+    """The better form after a brute force solve joins the same sitting."""
     stores = Stores(database)
 
-    submitted = stores.submitted(DOUBLE, now=NINE)
+    solved = stores.submitted(DOUBLE, now=NINE)
+    further = stores.submitted(TRIPLE, now=NINE_THIRTY)
 
-    assert submitted.sitting.ended_at == NINE
-    assert stores.sittings.get("s1") == submitted.sitting
+    assert solved.sitting.ended_at is None and further.sitting.ended_at is None
+    assert further.attempt.sitting_id == solved.attempt.sitting_id
 
 
 def test_a_wrong_submission_leaves_the_sitting_open(database):
@@ -302,14 +302,13 @@ def test_a_wrong_submission_leaves_the_sitting_open(database):
     assert submitted.sitting.ended_at is None
 
 
-def test_a_solve_while_paused_closes_the_pause(database):
-    """An ended sitting holds no open pause, or its elapsed time would move
-    with the moment it is read."""
+def test_a_solve_while_paused_leaves_the_pause(database):
+    """A pause stops the timing, and a solve made during it resumes nothing."""
     stores = Stores(database, pauses=[{"at": NINE}])
 
     submitted = stores.submitted(DOUBLE, now=NINE_THIRTY)
 
-    assert not submitted.sitting.paused and submitted.sitting.ended_at == NINE_THIRTY
+    assert submitted.sitting.paused and submitted.sitting.ended_at is None
 
 
 def test_a_return_kept_nowhere_reads_back_as_not_kept(database, monkeypatch):
