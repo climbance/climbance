@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from helpers import T0
 from matching import canonical, card, problem, seeded, template
 
-from climb.ladder import CardState, Rung, card_state, ladder, probes
+from climb.ladder import CardState, Rung, card_state, ladder, next_rung, probes
 from climb.mint import generator_match, user_match
-from climb.schema import Attempt, ProblemDifficulty, ProblemStatus, RetirementReason
+from climb.schema import Attempt, ProblemDifficulty, ProblemStatus, RetirementReason, Sitting
 
 TECHNIQUE = "sliding-window"
 
@@ -526,3 +526,120 @@ def test_the_card_states_are_the_five_log_md_names():
     ]
     assert named == list(CardState)
     assert named == ["not_started", "acquiring", "consolidating", "graduated", "lapsed"]
+
+
+def test_a_solved_rung_keeps_its_problem(database):
+    """Ranked by every attempt, the solve moves its problem to the back and an
+    unsolved one takes the rung, so the card's count never rises."""
+    held = a_card(database, size=2)
+    problems = [problem(f"p-{one}", techniques=[TECHNIQUE]) for one in range(3)]
+    solutions = [canonical(one.id) for one in problems]
+    matches = [generator_match(held.templates[0].id, f"s-{one.id}") for one in problems]
+    attempts = [attempted("p-0", at=AFTER), attempted("p-1", at=AFTER)]
+
+    resolved = ladder(held, problems, solutions, matches, attempts, since=BEGAN)
+
+    assert [(one.problem.id, one.solved) for one in resolved.rungs] == [
+        ("p-0", True),
+        ("p-1", True),
+    ]
+
+
+def sat(problem_id: str, *, at: datetime = AFTER, ended: bool = True, id: str | None = None):
+    return Sitting(
+        id=id or f"s-{problem_id}",
+        user_id="u-4f9c2a",
+        problem_id=problem_id,
+        started_at=at,
+        last_active_at=at,
+        ended_at=at if ended else None,
+    )
+
+
+def test_a_skipped_rung_gives_way_to_another_problem_covering_its_templates(database):
+    """The user gave up on that problem, and the form can be met on another."""
+    held = a_card(database, size=1)
+    problems = [problem("p-0", techniques=[TECHNIQUE]), problem("p-1", techniques=[TECHNIQUE])]
+    solutions = [canonical("p-0"), canonical("p-1")]
+    matches = [generator_match(held.templates[0].id, f"s-{one.id}") for one in problems]
+
+    resolved = ladder(
+        held, problems, solutions, matches, [], since=BEGAN, sittings=[sat("p-0")], now=AFTER
+    )
+
+    assert [(one.problem.id, one.skipped) for one in resolved.rungs] == [("p-1", False)]
+
+
+def test_a_skipped_rung_with_no_other_problem_is_served_last(database):
+    held = a_card(database, size=2)
+    problems = [problem("p-0", techniques=[TECHNIQUE]), problem("p-1", techniques=[TECHNIQUE])]
+    matches = [generator_match(held.templates[0].id, "s-p-0")]
+
+    resolved = ladder(
+        held, problems, [canonical("p-0")], matches, [], since=BEGAN, sittings=[sat("p-0")]
+    )
+
+    assert [(one.problem.id, one.skipped) for one in resolved.rungs] == [
+        ("p-1", False),
+        ("p-0", True),
+    ]
+    assert next_rung(resolved.rungs).problem.id == "p-1"
+
+
+def test_a_sitting_with_a_submission_is_no_skip(database):
+    held = a_card(database, size=1)
+    problems = [problem("p-0", techniques=[TECHNIQUE])]
+    failed = attempted("p-0", at=AFTER).model_copy(update={"solved": False, "sitting_id": "s-p-0"})
+
+    resolved = ladder(held, problems, [], [], [failed], since=BEGAN, sittings=[sat("p-0")])
+
+    assert [one.skipped for one in resolved.rungs] == [False]
+
+
+def test_a_sitting_before_the_run_or_still_running_is_no_skip(database):
+    """The skip is measured from the start, as a solve is, and a running
+    sitting has not ended."""
+    held = a_card(database, size=2)
+    problems = [problem("p-0", techniques=[TECHNIQUE]), problem("p-1", techniques=[TECHNIQUE])]
+    sittings = [sat("p-0", at=BEFORE), sat("p-1", ended=False)]
+
+    resolved = ladder(held, problems, [], [], [], since=BEGAN, sittings=sittings, now=AFTER)
+
+    assert [one.skipped for one in resolved.rungs] == [False, False]
+
+
+def test_a_sitting_left_past_the_idle_bound_is_a_skip(database):
+    """The bound ends it, read or not, and the store cannot tell it from End."""
+    held = a_card(database, size=1)
+    problems = [problem("p-0", techniques=[TECHNIQUE])]
+    left = sat("p-0", ended=False)
+
+    resolved = ladder(
+        held, problems, [], [], [], since=BEGAN, sittings=[left], now=AFTER + timedelta(hours=2)
+    )
+
+    assert [one.skipped for one in resolved.rungs] == [True]
+
+
+def test_the_last_sitting_since_the_run_decides(database):
+    """A skip is undone by sitting the problem again and submitting."""
+    held = a_card(database, size=1)
+    problems = [problem("p-0", techniques=[TECHNIQUE])]
+    later = AFTER + timedelta(hours=1)
+    again = attempted("p-0", at=later).model_copy(update={"solved": False, "sitting_id": "s-2"})
+    sittings = [sat("p-0"), sat("p-0", at=later, id="s-2")]
+
+    resolved = ladder(held, problems, [], [], [again], since=BEGAN, sittings=sittings)
+
+    assert [one.skipped for one in resolved.rungs] == [False]
+
+
+def test_the_next_rung_is_required_then_optional_then_skipped():
+    """`flows.md`: the pick offers a skipped rung after the rest."""
+    rungs = [
+        rung(True, False).model_copy(update={"skipped": True}),
+        rung(False, False),
+        rung(True, True),
+    ]
+    assert next_rung(rungs) is rungs[1]
+    assert next_rung([rung(False, False), rung(True, False)]).required

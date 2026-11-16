@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from climb.graduation import Next, NextKind
 from climb.knowledge.schedule import Review
-from climb.ladder import CardState, Rung
+from climb.ladder import CardState, Rung, next_rung
 from climb.schema import Act, Attempt, Card, CardRun, FailureMode, Problem, Rank
 from climb.template_schedule import recall_probability
 
@@ -112,7 +112,7 @@ def offers(
             act = Act.SITTING if problem else Act.RECALL
             offer(Rank.DUE_REVIEW, reading, act, template_id=template, problem_id=problem)
         elif state is CardState.ACQUIRING:
-            rung = next((one for one in reading.rungs if one.required and not one.solved), None)
+            rung = next_rung(reading.rungs)
             if rung is not None:
                 offer(Rank.RUNG, reading, Act.SITTING, problem_id=rung.problem.id)
         if state is CardState.CONSOLIDATING and (probe := _probe(reading, problems, attempts)):

@@ -143,6 +143,12 @@ those steps at low fidelity.
   the card, the technique, the listing or the board, and names that page. An
   ended sitting stays on the page after the claim, and its press is the
   page's next act.
+- **An ended sitting opened from a card offers the card's next rung beside
+  the way back.** The card is read again once the sitting ends, so the solve
+  just made counts. The rung offered is never the problem just sat. Without
+  the press, a user working down a ladder returned to the card between every
+  two rungs. The phone shows the press under the bar, since a rung's title
+  does not fit beside the clock.
 - **An ended sitting's code is read-only.** The code reads back as it was
   submitted, and the next sitting on the problem opens on the signature, as
   `flows.md` gives. A submission typed over the solve would be a solve read

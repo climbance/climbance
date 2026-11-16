@@ -14,6 +14,7 @@ import {
   inProgress,
   cardNote,
   cardProgress,
+  rungAfter,
   runLock,
   runStartLabel,
   ladderView,
@@ -415,6 +416,22 @@ describe("a card's ladder", () => {
     expect([progress.solved, progress.rungs, progress.next?.problemId]).toEqual([1, 2, 'p2']);
     // the fixture's template carries its cases, so a recall is offered
     expect(progress.recallable).toBe(true);
+  });
+
+  it('offers a skipped rung after every rung not skipped', () => {
+    const base = studied(true);
+    const rungs = [
+      { ...base.rungs[1], required: true, skipped: true },
+      { ...base.rungs[1], problem: { ...base.rungs[1].problem, id: 'p3' } },
+    ];
+    expect(cardProgress({ ...base, rungs } as typeof base).next?.problemId).toBe('p3');
+  });
+
+  it('offers after a sitting the next rung other than the problem just sat', () => {
+    expect(rungAfter(studied(true), 'p1')?.problemId).toBe('p2');
+    // a failed sitting on the rung next offers the one after it, here none
+    expect(rungAfter(studied(true), 'p2')).toBeNull();
+    expect(rungAfter(studied(false), 'p1')).toBeNull();
   });
 
   it('names the technique under the title, and since when a run studies it', () => {

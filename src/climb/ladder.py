@@ -5,8 +5,8 @@ Starting a card is here too, since the start draws the probes the ladder is
 not allowed to hold.
 """
 
-from collections.abc import Iterable, Set
-from datetime import datetime
+from collections.abc import Iterable, Sequence, Set
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel
@@ -21,9 +21,11 @@ from climb.schema import (
     CardRun,
     Problem,
     ProblemDifficulty,
+    Sitting,
     Solution,
     TemplateMatch,
 )
+from climb.sitting import over
 
 # how many probes a start draws. One until use says otherwise, which
 # `flows.md` names as deferred
@@ -44,6 +46,8 @@ class Rung(BaseModel):
     # folded from the attempts made since the run began, never marked on the
     # rung: a ladder re-derived under a moved corpus keeps what was solved
     solved: bool = False
+    # its last sitting since the run began ended with no submission: `flows.md`
+    skipped: bool = False
 
 
 class Gap(BaseModel):
@@ -147,11 +151,14 @@ def ladder(
     attempts: Iterable[Attempt],
     *,
     since: datetime | None = None,
+    sittings: Iterable[Sitting] = (),
+    now: datetime | None = None,
 ) -> Ladder:
     """A rung per template the corpus covers, then the selector's fill.
 
     The covering rungs come first, in the order the card authored its
-    templates, and the fill follows least recently attempted first. A retired
+    templates, and the fill follows least recently attempted before the run
+    began. A retired
     problem fills no rung, here and in `coverage`. `since` is when the card's
     run began, and a rung is solved by an attempt finished after it: having
     solved the problem once is not having studied the form.
@@ -159,8 +166,11 @@ def ladder(
     problems = list(problems)
     attempts = list(attempts)
     done = _solved(attempts, since)
+    skipped = _skipped(sittings, attempts, since, now or datetime.now(UTC)) - done
     answers = {solution.id: solution.problem_id for solution in solutions}
-    offered = _offered(card, problems, attempts)
+    # ranked as at the start: `content.md`, a rung keeps its problem
+    ranking = attempts if since is None else [one for one in attempts if one.finished_at < since]
+    offered = _offered(card, problems, ranking)
     rank = {problem.id: place for place, problem in enumerate(offered)}
     by_id = {problem.id: problem for problem in problems if problem.served}
 
@@ -171,7 +181,7 @@ def ladder(
     for covered in coverage([card], problems, solutions, matches):
         filling = sorted(
             {answers[one] for one in covered.solution_ids if answers.get(one) in by_id},
-            key=lambda id: (rank.get(id, len(rank)), id),
+            key=lambda id: (id in skipped, rank.get(id, len(rank)), id),
         )
         if not filling:
             if covered.gap:
@@ -196,6 +206,8 @@ def ladder(
     ]
     # out to `size`, and never past a core template the corpus does not cover
     fill = [one for one in offered if one.id not in covering]
+    # a skipped problem gives way to the selector's next
+    fill = sorted(fill, key=lambda one: one.id in skipped)
     if ProblemDifficulty.EASY in card.selector.difficulty and not any(
         rung.problem.difficulty == ProblemDifficulty.EASY for rung in rungs
     ):
@@ -206,7 +218,16 @@ def ladder(
         Rung(problem=one, templates=[], required=False, solved=one.id in done)
         for one in fill[: max(0, card.selector.size - len(rungs))]
     ]
+    rungs = [one.model_copy(update={"skipped": one.problem.id in skipped}) for one in rungs]
+    # served after the rungs not skipped, each part in the ladder's order
+    rungs.sort(key=lambda one: one.skipped)
     return Ladder(card_slug=card.slug, rungs=rungs, gaps=gaps)
+
+
+def next_rung(rungs: Sequence[Rung]) -> Rung | None:
+    """The rung a card offers next: `flows.md`, The pick."""
+    open_ = [one for one in rungs if not one.solved]
+    return min(open_, key=lambda one: (one.skipped, not one.required), default=None)
 
 
 def _solved(attempts: Iterable[Attempt], since: datetime | None) -> set[str]:
@@ -219,6 +240,21 @@ def _solved(attempts: Iterable[Attempt], since: datetime | None) -> set[str]:
         for attempt in attempts
         if attempt.solved_unaided and attempt.finished_at >= since
     }
+
+
+def _skipped(
+    sittings: Iterable[Sitting], attempts: Iterable[Attempt], since: datetime | None, now: datetime
+) -> set[str]:
+    """The problems whose last sitting since the run began ended with no
+    submission. No run skips nothing, as it solves nothing."""
+    if since is None:
+        return set()
+    submitted = {attempt.sitting_id for attempt in attempts}
+    last: dict[str, Sitting] = {}
+    for one in sorted(sittings, key=lambda one: one.started_at):
+        if one.started_at >= since:
+            last[one.problem_id] = one
+    return {id for id, one in last.items() if over(one, now) and one.id not in submitted}
 
 
 def _offered(card: Card, problems: Iterable[Problem], attempts: Iterable[Attempt]) -> list[Problem]:

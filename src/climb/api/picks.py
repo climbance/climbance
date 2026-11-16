@@ -17,7 +17,14 @@ from climb.graduation import reading
 from climb.ids import new_id
 from climb.knowledge.schedule import Review
 from climb.ladder import Ladder, ladder, met, unmet
-from climb.log import AttemptLog, CardRunLog, PredictionLog, RecallLog, latest_by_attempt
+from climb.log import (
+    AttemptLog,
+    CardRunLog,
+    PredictionLog,
+    RecallLog,
+    SittingStore,
+    latest_by_attempt,
+)
 from climb.matches import MatchLog
 from climb.pick import CardReading, Pick, pick
 from climb.schema import Act, Attempt, Card, CardRun, Prediction, Problem, Rank
@@ -75,12 +82,16 @@ def _gathered(root: Root, user_id: str) -> Gathered:
     )
     solutions, matches = SolutionLog(root).solutions(), MatchLog(root).matches()
     runs, recalls = CardRunLog(root), RecallLog(root).all(user_id)
+    sittings = SittingStore(root).all(user_id)
     cards = CardStore(root).all()
     held: dict[str, tuple[CardRun | None, Ladder]] = {}
     for card in cards:
         run = runs.started(user_id, card.id)
         since = run.started_at if run else None
-        held[card.slug] = (run, ladder(card, problems, solutions, matches, attempts, since=since))
+        held[card.slug] = (
+            run,
+            ladder(card, problems, solutions, matches, attempts, since=since, sittings=sittings),
+        )
     reached = {slug for slug, (run, found) in held.items() if met(run, found.rungs, attempts)}
     deep = depths(cards)
     readings: list[CardReading] = []

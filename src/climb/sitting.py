@@ -35,9 +35,6 @@ from climb.schema import (
 # separating size against it, and generation's own cap sits well above it
 DRILL_CAP_MS = 2_000
 
-# the submissions a user may make in a minute. Each one runs untrusted code on
-# the server, and the broker admits one run at a time, so one user's burst is
-# every other user's wait
 # the runs of one kind a user may start in a minute. The broker admits one
 # run at a time, so a burst is every other user's wait
 RUNS_PER_MINUTE = 10
@@ -497,6 +494,11 @@ def _running(store: SittingStore, sitting_id: str, user_id: str) -> Sitting:
 def _active(one: Sitting) -> datetime:
     # a sitting stored before the field carries none, and its start stands in
     return one.last_active_at or one.started_at
+
+
+def over(one: Sitting, at: datetime) -> bool:
+    """Ended, or ended by the idle bound though no read has closed it yet."""
+    return one.ended_at is not None or _idle(one, at)
 
 
 def _idle(one: Sitting, at: datetime) -> bool:

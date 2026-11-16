@@ -188,6 +188,11 @@ each technique, and a card and a mastery estimate share no data.
   resolving the ladder again costs nothing. A started card is re-derived too.
   Ladder progress is a fold over attempts rather than a mark on a rung, so a
   solved problem stays solved.
+- **A rung keeps its problem while the card's run is open.** The ladder ranks
+  the problems least recently attempted first, counting only the attempts
+  finished before the run began. Ranked by every attempt, each solve moved
+  the solved problem to the back, another problem took its rung, and the
+  card's count of solved rungs stayed at zero.
 - **A retired problem fills no rung.** A defective problem was never a fair
   test. Re-deriving the ladder removes the retired problem, which is the other
   reason a started card is re-derived.

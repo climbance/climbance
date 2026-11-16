@@ -206,13 +206,17 @@ def every_card(root: Root, user_id: UserId) -> list[ListedCard]:
     matches = MatchLog(root).matches()
     runs = CardRunLog(root)
     recalls = RecallLog(root)
+    sittings = SittingStore(root).all(user_id)
     cards = CardStore(root).all()
     by_id = {problem.id: problem for problem in problems}
     held: dict[str, tuple[CardRun | None, Ladder]] = {}
     for card in cards:
         run = runs.started(user_id, card.id)
         since = run.started_at if run else None
-        held[card.slug] = (run, ladder(card, problems, solutions, matches, attempts, since=since))
+        held[card.slug] = (
+            run,
+            ladder(card, problems, solutions, matches, attempts, since=since, sittings=sittings),
+        )
     reached = {slug for slug, (run, resolved) in held.items() if met(run, resolved.rungs, attempts)}
     deep = depths(cards)
     titles = {card.slug: card.title for card in cards}
@@ -245,7 +249,13 @@ def card(root: Root, user_id: UserId, slug: str) -> Studied:
     solutions = SolutionLog(root).solutions()
     matches = MatchLog(root).matches()
     resolved = ladder(
-        found, problems, solutions, matches, attempts, since=run.started_at if run else None
+        found,
+        problems,
+        solutions,
+        matches,
+        attempts,
+        since=run.started_at if run else None,
+        sittings=SittingStore(root).all(user_id),
     )
     # a started card stays open, so only a card not yet started reads the lock
     waiting = (

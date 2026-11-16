@@ -21,6 +21,8 @@ import {
   type ClockMove,
   type Moved,
   moveSitting,
+  nextRung,
+  nextRungAfter,
   sittingControls,
   submitToSitting,
   TOUCH_MS,
@@ -142,6 +144,11 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   const clockNow = clockState(current)
   const { paused, ended, unstarted } = clockNow
   const controls = sittingControls(clockNow, sittingId)
+  const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null)
+  useEffect(() => {
+    if (!ended || card === null) return
+    void nextRungAfter(api, card, problemId).then(setAfter)
+  }, [ended, card, problemId])
 
   // the address names the sitting once one exists, replacing itself so the
   // way back leaves the problem rather than returning to it
@@ -290,12 +297,23 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
           {/* the way back, at any point: leaving a sitting ends nothing, and an
               ended one has nothing left to do here */}
           {ended ? (
-            <Button asChild>
-              <Link to={back.to}>
-                <ChevronLeft />
-                {back.label}
-              </Link>
-            </Button>
+            <>
+              <Button asChild variant={after ? 'outline' : 'default'}>
+                <Link to={back.to}>
+                  <ChevronLeft />
+                  {back.label}
+                </Link>
+              </Button>
+              {after && card !== null && (
+                <Button asChild>
+                  <Link
+                    to={`/problems/${encodeURIComponent(after.problemId)}?card=${encodeURIComponent(card)}`}
+                  >
+                    {nextRung(after.title)}
+                  </Link>
+                </Button>
+              )}
+            </>
           ) : (
             <BackLink to={back.to} label={back.label} />
           )}

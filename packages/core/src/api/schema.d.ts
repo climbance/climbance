@@ -1499,6 +1499,11 @@ export interface components {
        * @default false
        */
       solved: boolean;
+      /**
+       * Skipped
+       * @default false
+       */
+      skipped: boolean;
     };
     /**
      * Seated

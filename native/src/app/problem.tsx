@@ -31,6 +31,8 @@ import {
   PROBLEM_RETIRED,
   type ClockMove,
   moveSitting,
+  nextRung,
+  nextRungAfter,
   sittingControls,
   submitToSitting,
   TOUCH_MS,
@@ -239,6 +241,11 @@ function SittingOn({
   const sittingId = current?.id ?? null;
   const clock = clockState(current);
   const controls = sittingControls(clock, sittingId);
+  const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null);
+  useEffect(() => {
+    if (!clock.ended || card === null) return;
+    void (async () => setAfter(await nextRungAfter(engine(origin, await getToken()), card, problemId)))();
+  }, [clock.ended, card, problemId, origin]);
 
   // the preference starts a clock the user has not, once per screen
   const autoStarted = useRef(false);
@@ -373,7 +380,7 @@ function SittingOn({
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
               {SITTING_ENDED}
             </Text>
-            <Button mode="contained" compact onPress={() => router.back()}>
+            <Button mode={after ? 'outlined' : 'contained'} compact onPress={() => router.back()}>
               {sittingBack(from)}
             </Button>
           </>
@@ -397,6 +404,22 @@ function SittingOn({
           </>
         )}
       </View>
+      {/* under the bar rather than in it: a rung's title does not fit beside the clock */}
+      {clock.ended && after && card !== null ? (
+        <View style={{ paddingHorizontal: space[3], paddingBottom: space[1] }}>
+          <Button
+            mode="contained"
+            onPress={() =>
+              router.replace({
+                pathname: '/problem',
+                params: { problem: after.problemId, card, ...(drilled ? { technique: drilled } : {}) },
+              })
+            }
+          >
+            {nextRung(after.title)}
+          </Button>
+        </View>
+      ) : null}
       {refused ? (
         <View style={{ paddingHorizontal: space[3] }}>
           <ErrorLine>{sittingRefused(refused)}</ErrorLine>

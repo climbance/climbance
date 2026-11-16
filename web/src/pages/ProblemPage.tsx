@@ -62,6 +62,8 @@ export function ProblemPage() {
   if (served && carded)
     return (
       <SittingView
+        // the next rung's press opens another problem on this route
+        key={problemId}
         problemId={problemId}
         drilled={card.data?.card.technique ?? technique}
         card={slug}

@@ -3746,6 +3746,11 @@
             "type": "boolean",
             "title": "Solved",
             "default": false
+          },
+          "skipped": {
+            "type": "boolean",
+            "title": "Skipped",
+            "default": false
           }
         },
         "type": "object",

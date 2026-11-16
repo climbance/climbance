@@ -536,18 +536,44 @@ export interface CardProgress {
   recallable: boolean;
 }
 
+// the engine's `next_rung`: required, then optional, then a skipped rung, each in the ladder's order
+function nextOf(rungs: Studied['rungs']): { problemId: string; title: string } | null {
+  const open = rungs.filter((one) => !one.solved);
+  const next =
+    open.find((one) => !one.skipped && one.required) ??
+    open.find((one) => !one.skipped) ??
+    open.find((one) => one.required) ??
+    open[0];
+  return next ? { problemId: next.problem.id, title: next.problem.title } : null;
+}
+
 export function cardProgress(studied: Studied): CardProgress {
   const open = studied.rungs.filter((one) => !one.solved);
-  const next = open.find((one) => one.required) ?? open[0];
   return {
     solved: studied.rungs.length - open.length,
     rungs: studied.rungs.length,
     recalled: studied.recall.filter((one) => one.last_at !== null).length,
     forms: studied.card.templates.length,
     probes: studied.probes.length,
-    next: next ? { problemId: next.problem.id, title: next.problem.title } : null,
+    next: nextOf(studied.rungs),
     recallable: studied.card.templates.some((one) => (one.cases ?? []).length > 0),
   };
+}
+
+/** The rung an ended sitting offers beside the way back: the card's next, never the problem just sat. */
+export function rungAfter(studied: Studied, problemId: string): { problemId: string; title: string } | null {
+  if (!studied.run) return null;
+  return nextOf(studied.rungs.filter((one) => one.problem.id !== problemId));
+}
+
+/** Reads the card again once a sitting from it ends, so the solve just made counts. */
+export async function nextRungAfter(
+  client: EngineClient,
+  slug: string,
+  problemId: string,
+): Promise<{ problemId: string; title: string } | null> {
+  const { data } = await client.GET('/api/cards/{slug}', { params: { path: { slug } } });
+  return data ? rungAfter(data, problemId) : null;
 }
 
 /** The line under a card's title: its technique, and since when a run studies it. */
