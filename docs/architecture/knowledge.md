@@ -4,8 +4,8 @@ Declarative knowledge: modules of questions a user answers from memory, the
 schedule that spaces them, and the records the answers leave. Part of the
 architecture, and `README.md` is the map.
 
-The rules here were learn's, a personal study app merged into the engine in
-Phase 14. learn's native app became the engine's client. The same rules in
+The rules here were learn's, a personal study app merged into the engine on
+2026-11-10. learn's native app became the engine's client. The same rules in
 TypeScript now live in `packages/core`, which the native app and the web app
 both import. Shared fixtures hold that package and the server to this file.
 

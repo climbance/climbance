@@ -14,7 +14,7 @@ those steps at low fidelity.
   Knowledge.** `## The structure` gives the tree both clients hold. Practice
   holds the board, a technique's candidates, a picked problem and the
   sitting. Problems holds the listing of every problem. Cards holds the card
-  list, one card, and the recall trainer Phase 11 adds.
+  list, one card, and the recall trainer.
   Knowledge holds the knowledge modules of `knowledge.md`: their queues, their
   lessons and their certifications.
 - **The scheme switch and the account menu sit at the right of the
@@ -50,7 +50,7 @@ those steps at low fidelity.
   it and the way back names where the pick came from.
 - **A signed-in user lands on the board, on both clients.** Every sitting
   starts from a technique the user picks there, Continue starts the next
-  queue there, and Phase 18 serves the scheduler's pick on the same page.
+  queue there, and the scheduler's pick is served on the same page.
 - **The board serves the pick above its lists, on both clients.** The pick
   is one row under its own heading, naming the form, the problem or the card,
   and the act it opens. `flows.md` `## The pick` gives what it offers. A user
@@ -185,8 +185,8 @@ those steps at low fidelity.
   sentence names the address that was refused and a URL is kept in the
   browser's history.
 - **A query parameter names where the user came from.** The picked problem is
-  `/problems/:problem_id` whichever page offered it, since Phase 11 opens the
-  same problem as a rung of a card's ladder. `?technique=` names the technique
+  `/problems/:problem_id` whichever page offered it, since a card's ladder opens the
+  same problem as a rung. `?technique=` names the technique
   the pick came from, `?card=` names the card, and `?from=problems` names the
   listing, which holds no record of its own to name. A listing filtered to one
   tag adds that tag as `?technique=`, since picking one tag is drilling for

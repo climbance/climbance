@@ -372,7 +372,7 @@ from. A mode says why the attempt went the way it did.
   that no candidate on the list applies. A mode names why the attempt went the
   way it did, and `none` already carries the verdict that nothing went wrong.
 - **An attempt asked and skipped reads as an attempt the loop never asked**,
-  and that cost is accepted. Every attempt written before Phase 12 carries no
+  and that cost is accepted. Every attempt written before 2026-09-21 carries no
   label, so a reader counting labels reads a denominator of labelled attempts
   rather than a rate of answers.
 
@@ -646,7 +646,7 @@ then taps the line that is wrong. `content.md` gives the items.
   spotted, and the clean items called flawed. A user calling everything flawed
   would score every flaw found, and the second rate exposes that.
 - **The next item is picked unseen first, then by staleness**, until the
-  schedule in Phase 18 picks it.
+  scheduler picks it.
 
 ## Mastery
 

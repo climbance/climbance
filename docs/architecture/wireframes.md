@@ -1,6 +1,6 @@
 # Wireframes
 
-Every page of the web app, drawn at low fidelity, and the pages Phase 11 adds
+Every page of the web app, drawn at low fidelity, and the pages the cards add
 beside them. Part of the architecture, and `README.md` is the map. `pages.md`
 gives the sections, the pages and the design system, and `flows.md` gives the
 steps of a flow. This file draws what the user sees at each step.
@@ -89,7 +89,7 @@ Every page under a section carries the same two rows above its body.
   technique no subtopic names reads no knowledge, as `monotonic-stack` here.
 - The line under the two groups counts the attempts no row holds: the attempts
   no technique resolved, and the attempts on a retired problem.
-- Phase 18 serves the scheduler's pick above both groups, and every technique
+- The scheduler's pick is served above both groups, and every technique
   stays on offer below it. The pick then reads the open runs, so it can name a
   card's next rung beside the cards in progress.
 
@@ -387,7 +387,7 @@ problem's path reads as its record, as "Every problem" gives.
 - The phone reads the same sections and rows with no gutter. Each row of a
   card that requires others names them on a line of its own: `needs Hashing ✓,
   Two pointers`, a tick on each one met.
-- Graduated and lapsed read in the state's place once Phase 18 adds them, and
+- Graduated and lapsed read in the state's place once the scheduler adds them, and
   a due date beside them.
 
 ## A card

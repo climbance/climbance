@@ -583,7 +583,7 @@ The page layout is not designed here, and using the loop decides it.
 - **The editor proposes no name from the standard library.** The editor a
   sitting is typed into highlights syntax and indents. A solver offered
   `bisect_left` after three characters has recalled no form, and the sitting
-  exists to measure recalling the form. The recall trainer Phase 11 adds holds
+  exists to measure recalling the form. The recall trainer holds
   the same rule.
 - **The phone's keyboard offers the names the file already declares.** A
   variable, a parameter or a function the solver wrote is the solver's own
