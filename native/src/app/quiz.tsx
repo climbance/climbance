@@ -603,7 +603,7 @@ function Reviewed({ r, bottom, last, onNext }: { r: Result; bottom: number; last
 
 function Verdict({ r }: { r: Result }) {
   const theme = useTheme();
-  const { head, explain, note } = verdictView(r);
+  const { head, explain, note, misconceptions } = verdictView(r);
   if (!head)
     return explain ? (
       <Text variant="bodyMedium">
@@ -620,6 +620,11 @@ function Verdict({ r }: { r: Result }) {
           <Inline text={explain} variant="bodyMedium" />
         </Text>
       ) : null}
+      {misconceptions.map((line) => (
+        <Text key={line} variant="bodyMedium" selectable>
+          <Inline text={line} variant="bodyMedium" />
+        </Text>
+      ))}
       {note ? (
         <Text variant="bodyMedium" style={{ color: theme.colors.tertiary }}>
           {note}

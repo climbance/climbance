@@ -258,7 +258,7 @@ function Tick(props: {
 }
 
 export function Verdict({ r }: { r: Result }) {
-  const { head, explain, note } = verdictView(r)
+  const { head, explain, note, misconceptions } = verdictView(r)
   return (
     <div className="space-y-1">
       {head && (
@@ -273,6 +273,11 @@ export function Verdict({ r }: { r: Result }) {
           <Inline text={explain} />
         </p>
       )}
+      {misconceptions.map((line) => (
+        <p key={line} className="whitespace-pre-wrap">
+          <Inline text={line} />
+        </p>
+      ))}
       {note && <p className="text-meta text-muted-foreground">{note}</p>}
     </div>
   )

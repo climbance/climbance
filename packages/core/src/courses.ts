@@ -77,6 +77,7 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
     traps: raw.traps ?? [],
     explain: raw.explain ?? '',
     why: raw.why ?? [],
+    misconceptions: (raw.choices ?? []).map((_, i) => raw.misconception_text?.[LETTERS[i]] ?? ''),
     detail: asDetail(raw.detail),
     keyDetail: raw.key_detail ?? [],
     lesson: raw.lesson ?? '',

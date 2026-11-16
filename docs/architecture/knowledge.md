@@ -123,6 +123,9 @@ already made.
 - **A question carries its explanation and its detail**: how the mechanism
   works, an example, pitfalls, version notes and a diagram, each optional but
   the mechanism. The detail is shown on request after an answer.
+- **A wrong choice of a module written by concept names its misconception.**
+  The seed resolves each one to the misconception's text, as
+  `misconception_text`, since no client holds the concepts.
 - **An open question is excluded from exams.** Its grade is the user's own
   report, and an exam reads a verdict the user did not give.
 

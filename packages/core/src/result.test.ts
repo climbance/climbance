@@ -67,6 +67,16 @@ describe('the verdict', () => {
     expect(verdictView(result({ correct: false })).note).toMatch(/^Confidently wrong/);
   });
 
+  it('names the belief each wrong pick embodies, at its displayed position', () => {
+    const q = parseQuestion(
+      { id: 'm', topic: 't', sub: 's1', kind: 'concept', prompt: 'p', choices: ['a', 'b', 'c'], answer: ['A'], misconception_text: { B: 'b holds' } },
+      'c',
+    );
+    // displayed A=c, B=a, C=b: the wrong b sits at C
+    expect(verdictView(result({ q, correct: false, picked: [2] })).misconceptions).toEqual(['C assumes: b holds']);
+    expect(verdictView(result({ q, correct: false, picked: [0] })).misconceptions).toEqual([]);
+  });
+
   it('gives an open question no verdict of its own, only the explanation', () => {
     expect(verdictView(result({ q: open })).head).toBeNull();
   });

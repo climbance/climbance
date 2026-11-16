@@ -5,7 +5,7 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
-DERIVED = ("lesson", "level", "detail")
+DERIVED = ("lesson", "level", "detail", "misconception_text")
 HEADING = re.compile(r"^##\s+(.+?)\s*$", re.M)
 
 
@@ -38,12 +38,18 @@ def derive(where: str, raw: dict[str, Any], concepts: dict[str, dict[str, Any]])
     concept = concepts[name]
     # a choice's letter to the misconception it embodies, by its stable id
     unknown: list[str] = []
-    for ref in raw.get("misconception", {}).values():
+    found: dict[str, str] = {}
+    for letter, ref in raw.get("misconception", {}).items():
         other, wrong = owner(ref, name)
-        if wrong not in {m["id"] for m in concepts.get(other, {}).get("misconceptions", [])}:
+        held = {m["id"]: m["text"] for m in concepts.get(other, {}).get("misconceptions", [])}
+        if wrong in held:
+            found[letter] = held[wrong]
+        else:
             unknown.append(f"{at}: no misconception {wrong} in concept {other}")
     if unknown:
         return sorted(unknown)
+    if found:
+        raw["misconception_text"] = found
     raw["lesson"] = concept["taught_by"]
     raw["level"] = concept["level"]
     raw["detail"] = {"mechanism": concept["claim"], "pitfalls": texts(concept)}

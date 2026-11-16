@@ -38,6 +38,8 @@ class ChoiceBody(Authored):
     # wrong choice's letter to the misconception it embodies, by its id
     concept: str | None = None
     misconception: dict[str, str] | None = None
+    # derived: each of those letters to its misconception's text
+    misconception_text: dict[str, str] | None = None
 
     @model_validator(mode="after")
     def _choices_and_their_answer(self) -> ChoiceBody:

@@ -131,6 +131,15 @@ def test_a_choice_may_name_another_concepts_misconception(tmp_path):
     assert source.unread == []
 
 
+def test_a_wrong_choice_carries_its_misconceptions_text(tmp_path):
+    """A client shows the belief itself and holds no concept to resolve it."""
+    bank = QUESTION + 'misconception = { B = "body-runs-once" }\n'
+
+    raw = read_module(module(tmp_path, bank)).banks[0].questions[0]
+
+    assert raw["misconception_text"] == {"B": "A `while` body always runs once."}
+
+
 def test_a_choice_naming_an_unknown_concepts_misconception_is_unread(tmp_path):
     """`concept#id` resolves like an id of the question's own concept."""
     bank = QUESTION + 'misconception = { B = "nope#x" }\n'

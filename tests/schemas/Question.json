@@ -64,6 +64,21 @@
           "default": null,
           "title": "Misconception"
         },
+        "misconception_text": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Misconception Text"
+        },
         "why": {
           "items": {
             "type": "string"

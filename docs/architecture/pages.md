@@ -360,6 +360,10 @@ platforms.
 - **The queue serves one question at a time, and the page asks for one act at
   a time.** An unanswered question asks for the answer. An answered one reads
   its verdict and the explanation, and Next is the act.
+- **A wrong choice the user picked names the misconception it embodies**, in
+  the verdict, on both clients. The misconception is the belief that leads to
+  the choice, so the user can check it against their own reasoning without
+  opening the detail.
 - **An answered question offers its detail on a press**: how it works, the
   example, the pitfalls, the version notes and the diagram, each where the
   question carries one.

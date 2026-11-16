@@ -42,6 +42,7 @@ export interface RawQuestion {
   traps?: string[];
   explain?: string;
   why?: string[];
+  misconception_text?: Record<string, string>; // a wrong choice's letter to the belief it embodies
   detail?: string | RawDetail; // a plain string is legacy, read as mechanism
   key_detail?: string[];
   traps_detail?: string[];
@@ -138,6 +139,7 @@ export interface Question {
   traps: string[]; // card: known wrong claims
   explain: string;
   why: string[];
+  misconceptions: string[]; // per choice, the belief a wrong one embodies; '' where none
   detail: Detail | null;
   lesson: string; // "slug" or "slug#anchor": where this is taught; "" when unset
   keyDetail: string[]; // card: one explanation per point

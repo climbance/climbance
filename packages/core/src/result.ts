@@ -35,12 +35,13 @@ export interface VerdictView {
   head: { correct: boolean; text: string } | null;
   explain: string;
   note: string;
+  misconceptions: string[]; // one line per wrong pick that embodies one, in displayed order
 }
 
 export function verdictView(r: Result): VerdictView {
   const q = r.q;
   const explain = q.explain ? block(q.explain) : '';
-  if (q.format === 'card') return { head: null, explain, note: '' };
+  if (q.format === 'card') return { head: null, explain, note: '', misconceptions: [] };
   const key = q.format === 'short' ? q.accept[0] : answerKey(q, r.order);
   const note =
     r.correct && r.guess
@@ -48,7 +49,19 @@ export function verdictView(r: Result): VerdictView {
       : !r.correct && !r.guess
         ? 'Confidently wrong: a misconception. Details are worth it here.'
         : '';
-  return { head: { correct: r.correct, text: r.correct ? '✓ Correct.' : `✗ Answer: ${key}.` }, explain, note };
+  const misconceptions =
+    q.format === 'choice'
+      ? [...r.picked]
+          .sort((a, b) => a - b)
+          .filter((pos) => !q.answer.includes(r.order[pos]) && q.misconceptions[r.order[pos]])
+          .map((pos) => `${LETTERS[pos]} assumes: ${block(q.misconceptions[r.order[pos]])}`)
+      : [];
+  return {
+    head: { correct: r.correct, text: r.correct ? '✓ Correct.' : `✗ Answer: ${key}.` },
+    explain,
+    note,
+    misconceptions,
+  };
 }
 
 /** One row of the learner's answer: a ✓, a ✗ or a · mark, a label, and what explains it. */
