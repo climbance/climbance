@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ScrollView, View } from 'react-native';
+import { useKeyboardState } from 'react-native-keyboard-controller';
 import { Modal, Portal, Text, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { space } from '@/ui/tokens';
@@ -19,6 +20,8 @@ export function Sheet(props: {
 }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  // a field in the sheet would otherwise sit under the keyboard, with the act
+  const keyboard = useKeyboardState((state) => (state.isVisible ? state.height : 0));
   return (
     <Portal>
       <Modal
@@ -30,7 +33,9 @@ export function Sheet(props: {
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           maxHeight: '85%',
-          paddingBottom: insets.bottom + 8,
+          // the keyboard's height counts the navigation bar the modal already clears
+          marginBottom: Math.max(0, keyboard - insets.bottom),
+          paddingBottom: (keyboard ? 0 : insets.bottom) + 8,
         }}
       >
         <ScrollView contentContainerStyle={{ padding: space[5], gap: space[3] }}>
