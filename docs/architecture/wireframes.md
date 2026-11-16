@@ -286,7 +286,7 @@ problem's path reads as its record, as "Every problem" gives.
 ## The claim and the label
 
 ```
-+- the claim and the label, over the ended sitting ----------------------+
++- the claim and the label, over the sitting ----------------------------+
 | The claim                                                              |
 | Asked of each attempt now, while the code is minutes old.              |
 |                                                                        |
@@ -308,8 +308,8 @@ problem's path reads as its record, as "Every problem" gives.
 +------------------------------------------------------------------------+
 ```
 
-- The claim and the label open together over the ended sitting, and the two
-  are asked of each attempt the sitting minted in turn.
+- The claim and the label open together over the sitting, at a solve and at
+  its end, and the two are asked in turn of each attempt not yet asked.
 - The technique the problem was picked by is answered for already, since
   selection chose the problem for that technique.
 - The label reads as a question about the solver rather than about the code,

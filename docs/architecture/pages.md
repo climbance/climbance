@@ -140,19 +140,25 @@ those steps at low fidelity.
 - **The sitting names its way back as a press, running or ended.** Leaving a
   sitting's page costs nothing: the clock is the user's to run, and the
   unsent code is kept. The press returns to the page the problem came from:
-  the card, the technique, the listing or the board, and names that page. An
-  ended sitting stays on the page after the claim, and its press is the
-  page's next act.
-- **An ended sitting opened from a card offers the card's next rung beside
-  the way back.** The card is read again once the sitting ends, so the solve
-  just made counts. The rung offered is never the problem just sat. Without
-  the press, a user working down a ladder returned to the card between every
-  two rungs. The phone shows the press under the bar, since a rung's title
+  the card, the technique, the listing or the board, and names that page. A
+  solved or ended sitting stays on the page after the claim, and its press is
+  the page's next act.
+- **The claim is asked at each solve and at the end of the sitting**, of each
+  attempt not yet asked. A solve leaves the sitting running, as `log.md` gives,
+  and asking only at the end would ask about the solving attempt after the
+  next form was typed over it.
+- **A solved or ended sitting opened from a card offers the card's next rung
+  beside the way back.** The card is read again once the sitting is solved, so
+  the solve just made counts. The rung offered is never the problem just sat.
+  Without the press, a user working down a ladder returned to the card between
+  every two rungs. The phone shows the press under the bar, since a rung's title
   does not fit beside the clock.
 - **An ended sitting's code is read-only.** The code reads back as it was
   submitted, and the next sitting on the problem opens on the signature, as
   `flows.md` gives. A submission typed over the solve would be a solve read
   rather than recalled.
+  A solved sitting still running stays editable. A later solve in it moves
+  nothing, since the verdict is read through the first solve.
 - **A reopened sitting reads back its last submission: the code and the
   verdict.** Reading the sitting returns them from the stored attempt and its
   verification. Kept in page state alone, both were lost to a reload, and an
@@ -219,10 +225,10 @@ those steps at low fidelity.
   exists, so the page's address cannot name one from its first load. The
   page adds the parameter once the sitting is minted, replacing the address
   rather than adding a history entry.
-- **A reload reads the sitting `?sitting=` names, running or ended.** A solve
-  ends the sitting, and the claim asked after it would otherwise be lost to a
-  reload. Without the parameter, a reload finds the sitting the problem has
-  running, where one runs.
+- **A reload reads the sitting `?sitting=` names, running or ended.** The End
+  press or the idle bound ends a sitting, and the claim asked after the end
+  would otherwise be lost to a reload. Without the parameter, a reload finds the
+  sitting the problem has running, where one runs.
 - **The phone's Problem screen reopens the sitting the problem has running.**
   The phone has no address to carry `?sitting=`, so opening the screen, or
   the app again after it was closed, reads the running sitting with the
@@ -610,9 +616,10 @@ what it offers. The inventory is the list both clients build to.
   with the rest of the copy. The app going to the background pauses a
   running clock, and returning resumes only that pause, as a hidden page
   does on the web.
-  Once the sitting ends, a sheet from the bottom asks the claim and the
-  label of each attempt in turn, as the web's dialog does, and a press under
-  the editor restores the last solve, which the attempts then report. The
+  At a solve and once the sitting ends, a sheet from the bottom asks the
+  claim and the label of each attempt not yet asked, in turn, as the web's
+  dialog does. A press under the editor restores the last solve, which the
+  attempts then report. The
   sitting is `by platform` for its reopening alone, which the bullet on the
   Problem screen gives.
 - **The phone's Recall screen types the form through the app's keyboard**,

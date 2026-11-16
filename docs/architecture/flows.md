@@ -578,9 +578,18 @@ The page layout is not designed here, and using the loop decides it.
 - **The card is offered, and no sitting requires it.** A user who holds the
   form solves straight away, and a user who does not reads the card first.
   Recognising a form with no card in view is a probe's test.
-- **A sitting ends at a solve, at the End press, or at the idle bound `log.md`
-  gives.** A user who started a clock and left the page has nothing to close,
-  and mastery reads nothing from a sitting with no submission.
+- **A sitting ends at the End press or at the idle bound `log.md` gives.** A
+  user who started a clock and left the page has nothing to close, and mastery
+  reads nothing from a sitting with no submission.
+- **A solved sitting takes further submissions.** A user who solved by brute
+  force submits the better form in the same sitting. Ending the sitting at the
+  solve split one session on one problem into two sittings. The second was
+  solved on its first submission, so it counted as a second review and a
+  second execution score of 1 at the same moment.
+- **A sitting's verdict is read through its first solve.** The rating and the
+  execution score read the attempts up to the first solve and no further. A
+  later attempt that fails, on a form the user is trying, then leaves the
+  verdict as it was.
 - **An attempt nobody timed stays untimed**, rather than carrying a duration
   reconstructed after the fact.
 - **A running clock is paused and resumed**, and the elapsed time the attempt
@@ -738,8 +747,8 @@ to the card it came from.
 3. The problem opens, named by the card the pick came from, and serves the
    statement as the drill loop gives.
 4. The submission, the verdict and the claim run as the drill loop gives them.
-5. The sitting ends and stays on the page, with a press back to the card, where
-   the next rung is.
+5. The solve stays on the page, with a press back to the card, where the next
+   rung is.
 
 - **The ladder follows the card's own template order.** A card authors its
   templates in the order it teaches them, and a rung covering the first template
@@ -757,7 +766,7 @@ to the card it came from.
 - **The page names the card rather than a technique**, since the user came from
   the card. The way back returns to the card, and the claim answers for the
   card's own technique.
-- **A sitting offers a press back to the card, and an ended one stays on the
+- **A sitting offers a press back to the card, and a solved one stays on the
   page.** A user reads a solve back after it passes, so the page does not leave
   by itself. A user solving a ladder is working through a list, and the press
   returns to the card rather than to the board.
@@ -903,10 +912,10 @@ sittings count.
   submitted against tested no form.
 - **A sitting on a defective problem is no review.** The statement asks for
   something its cases do not decide, so the verdict does not rate the form.
-- **A sitting is one review, at the moment of its first submission.** The
-  first submission is the moment the form was retrieved, and later submissions
-  debug it. The rating reads the sitting's attempts as they stand, as `log.md`
-  gives.
+- **A sitting is one review, at the moment of its first submission.** The first
+  submission is the moment the form was retrieved, and later submissions debug
+  it. An attempt after the first solve does not move the rating. The rating
+  reads the sitting's attempts as they stand, as `log.md` gives.
 - **A short exercise drawn from a template is no review of it.** Judging a
   solution or filling its key line picks among lines shown on the screen, and
   a recall types the form from a blank file. FSRS raises a template's stability

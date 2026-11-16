@@ -103,9 +103,10 @@ ended, and every pause between.
   with the moment it was read.
 - **The elapsed time runs from `clock_started_at` and excludes every pause**,
   and the attempt carries it as `time_to_solve_sec`.
-- **A solving submission ends the sitting.** A user who solved and left the page
-  then has nothing left open, and the next press or submission on the problem
-  mints a new sitting.
+- **A solving submission leaves the sitting running.** A further submission,
+  such as the better form after a brute force, joins the sitting and carries its
+  id. A user who solved and left the page leaves the sitting to the idle bound,
+  which ends it at the solve's `last_active_at`. `flows.md` gives why.
 - **The loop decides what starts and ends a pause**, not the record. A button,
   a hidden tab and an idle timer each leave the same interval.
 - **A sitting records the device it was minted on**, as `device`, named as a
@@ -555,7 +556,8 @@ check is owed, and when a graduated template is due again.
   recalls nothing.
 - **Each sitting becomes a rating.** A solve on the first submission rates
   Good, a solve after a failed submission rates Hard, and an unsolved sitting
-  rates Again. Easy is never used.
+  rates Again. Easy is never used. The rating reads the attempts through the
+  first solve.
 - **The ladder's sittings are reviews.** A rung solved with the card in view
   is a warm review, and FSRS gives a first review a short stability. The last
   review before the check is therefore the point the check is measured from.
@@ -742,12 +744,12 @@ model of mastery.
   That prediction is the only stored trace of mastery. It lets a later
   formula be compared with what an earlier one predicted.
 
-- **Execution starts as the mean of a score per sitting.** A solve on the
-  first submission scores 1, a solve after a failed submission 0.5, and an
-  unsolved sitting 0. An unsolved sitting labelled `syntax` scores 0.25, and
-  a sitting labelled `gap` or `rust` scores 0 whatever its verdict. These are
-  starting values, and each moves only on what the stored predictions
-  measure.
+- **Execution starts as the mean of a score per sitting.** A solve on the first
+  submission scores 1, a solve after a failed submission 0.5, and an unsolved
+  sitting 0. The score reads the attempts through the first solve. An unsolved
+  sitting labelled `syntax` scores 0.25, and a sitting labelled `gap` or `rust`
+  scores 0 whatever its verdict. These are starting values, and each moves only
+  on what the stored predictions measure.
 - **Execution reads unknown until a technique holds three sittings.** A mean
   over one or two sittings swings on a single solve, and a board showing it
   would rank techniques on noise.
