@@ -1,4 +1,4 @@
-from collections.abc import Collection, Iterable, Iterator, Mapping
+from collections.abc import Callable, Collection, Iterable, Iterator, Mapping
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
@@ -36,6 +36,7 @@ def seed_cards(
     store: CardStore,
     modules: Collection[str],
     subtopics: Collection[str] = frozenset(),
+    progress: Callable[[str, int], None] = lambda stage, count: None,
 ) -> CardSeedResult:
     """Validate authored cards, mint what identifies them, upsert each one.
 
@@ -108,6 +109,7 @@ def seed_cards(
         else:
             result.ingested += 1
     store.put_all(minted)
+    progress("cards", len(accepted))
 
     return result
 

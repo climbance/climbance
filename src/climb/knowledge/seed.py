@@ -1,6 +1,6 @@
 """Seeding a module: `knowledge.md`, Seeding."""
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from typing import Any
 
@@ -35,7 +35,11 @@ class ModuleSeedResult(BaseModel):
 
 
 def seed_module(
-    source: ModuleSource, *, root: Database, drawer: Drawer | None = None
+    source: ModuleSource,
+    *,
+    root: Database,
+    drawer: Drawer | None = None,
+    progress: Callable[[str, int], None] = lambda stage, count: None,
 ) -> ModuleSeedResult:
     """Checks the module whole, draws each Mermaid source not yet drawn, then
     refreshes every row by slug, minting ids for the new ones and retiring the
@@ -54,6 +58,7 @@ def seed_module(
             drawn = drawer.draw(todo) if todo else []
         except DrawError as error:
             return ModuleSeedResult(refused=[f"diagrams: {error}"])
+        progress("diagrams", len(todo))
     result = ModuleSeedResult(diagrams=len(todo))
     with root.begin() as conn:
         store(conn, todo, drawn, tool)
@@ -73,8 +78,11 @@ def seed_module(
             return ModuleSeedResult(refused=reused)
         module_id = _module(conn, source)
         subs = _topics(conn, source, module_id, result)
+        progress("subtopics", result.subtopics)
         result.questions = _questions(conn, source, module_id, subs, result)
+        progress("questions", result.questions)
         result.lessons = _lessons(conn, source, module_id, result)
+        progress("lessons", result.lessons)
     return result
 
 

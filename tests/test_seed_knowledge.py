@@ -237,6 +237,17 @@ def test_the_terminal_seeds_a_module(database, tmp_path, monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)["questions"] == 3
 
 
+def test_the_terminal_prints_each_stage_to_stderr(database, tmp_path, monkeypatch, capsys):
+    """Each stage reports as it ends: a tunnelled seed runs for minutes."""
+    connected(database, monkeypatch)
+
+    run_cli(monkeypatch, "seed", "knowledge", str(authored(tmp_path)))
+
+    lines = capsys.readouterr().err.splitlines()
+    assert [line.split()[1] for line in lines] == ["subtopics", "questions", "lessons"]
+    assert "seed: questions 3" in lines
+
+
 def _top(line: str) -> str:
     """A graph key above the lesson table: a key written after it joins it."""
     return GRAPH.replace("format = 2\n", f"format = 2\n{line}\n")

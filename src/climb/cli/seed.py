@@ -1,5 +1,6 @@
 import argparse
 import json
+import sys
 import tomllib
 from collections.abc import Iterator
 from pathlib import Path
@@ -35,6 +36,7 @@ def seed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Databa
             store=CardStore(root),
             modules=seeded_modules(root=root),
             subtopics=seeded_subtopics(root=root),
+            progress=_progress,
         )
     except (BadLine, OSError) as exc:
         parser.exit(2, f"seed: {exc}\n")
@@ -46,9 +48,14 @@ def seed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Databa
 
 def _module(source: str, parser: argparse.ArgumentParser, root: Database) -> None:
     try:
-        result = seed_module(read_module(Path(source)), root=root)
+        result = seed_module(read_module(Path(source)), root=root, progress=_progress)
     except (OSError, tomllib.TOMLDecodeError) as exc:
         parser.exit(2, f"seed: {exc}\n")
     print(result.model_dump_json(indent=2))
     if result.refused:
         parser.exit(1)
+
+
+def _progress(stage: str, count: int) -> None:
+    # stderr, so stdout stays the one JSON summary a caller parses
+    print(f"seed: {stage} {count}", file=sys.stderr, flush=True)

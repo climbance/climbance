@@ -201,7 +201,9 @@ def test_seed_cards_command_over_a_directory(database, tmp_path, monkeypatch, ca
     cli.main()
 
     assert len(own(CardStore(database).all())) == 2
-    assert json.loads(capsys.readouterr().out)["ingested"] == 2
+    printed = capsys.readouterr()
+    assert json.loads(printed.out)["ingested"] == 2
+    assert printed.err.splitlines() == ["seed: cards 2"]
 
 
 def test_seed_cards_command_over_one_file(database, tmp_path, monkeypatch, capsys):
