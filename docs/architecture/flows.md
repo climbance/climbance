@@ -771,13 +771,23 @@ to the card it came from.
 - **An attempt finished before the run began counts for nothing.** Having solved
   the problem once is not having studied the form. The run is minted to draw
   that line.
+- **A rung is skipped where its last sitting since the run began ended with no
+  submission**, by the End press or the idle bound. The skip is read from the
+  sitting store, so no record marks it. An End press and an idle sitting count
+  alike, since the store cannot tell a give-up from an interruption.
+- **A skipped rung is served after the rungs not skipped.** The skipped
+  problem gives way on the ladder to another problem covering the same
+  templates, if one exists. Otherwise the rung keeps its problem and comes back
+  once the rungs after it are solved or skipped.
+- **A skip counts for nothing else.** Mastery reads nothing from a sitting with
+  no submission, and FSRS rates no review from it, as `## A template's
+  reviews` gives.
 - **A retired problem fills no rung**, and the ladder is re-derived.
   `content.md` gives both, and the attempts on the retired problem stay in the
   log.
 
 Deferred, since only use answers each:
 
-- Whether a rung the user skips is marked, and what marks it.
 - Whether the ladder is extended while a run is open, and what asks for more
   rungs.
 - The card's reading where a required rung's problem was retired and no problem
@@ -974,8 +984,8 @@ user's cards hold.
 - **A due review comes before a rung.** A graduated form decays while it
   waits, and a ladder picks up where it stopped.
 - **An acquiring card offers its first unsolved rung**, required rungs before
-  optional ones, in the ladder's order. The ladder follows the card's
-  template order, as `## Solving a rung` gives.
+  optional ones, in the ladder's order, a skipped rung after the rest. The
+  ladder follows the card's template order. `## Solving a rung` gives both.
 - **A consolidating card with no probe solved offers its next unattempted
   probe**, ranked with the rungs. Graduation needs a solved probe, and a
   probe needs no wait.
