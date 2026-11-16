@@ -115,6 +115,19 @@ Everything above that is not kept on your device is stored in one database, on
 a server rented from a hosting provider in the European Union. Backups of the database are kept away from that
 server for 30 days.
 
+## How long it is kept
+
+- Your record, your email and your sign-in are kept until you delete your
+  account. Nothing expires by itself, since the record is what shows your
+  progress.
+- Deleting the account removes them from the database at once. The backups
+  hold a copy for up to 30 days more, and the copy is deleted with them.
+- A session ends after 30 days, and a phone's token after 90 days unused. An
+  ended one stays in the database, unable to sign anyone in, until the account
+  is deleted.
+- The server keeps a log of the requests it answered and the errors it met.
+  The log is deleted after 14 days.
+
 ## Your rights
 
 The settings, in the browser and on the phone, export your whole record as a

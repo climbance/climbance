@@ -61,6 +61,11 @@ how an account signing in is linked to a user.
   with it, and so do the invitations of the identities' emails. The user asked
   to leave, so no email of theirs stays stored. Signing in again needs a new
   invitation, and mints a new user.
+- **The record and the account are kept until the user deletes the account.**
+  The engine expires neither by itself, since the board and the schedule read
+  the record. A rule deleting an account left unused is deferred until
+  access is opened beyond invitations. The privacy policy states this period,
+  the backups' 30 days and the logs' 14 days.
 - **The deletion asks for the account's name typed back, and the engine checks
   it.** The name is the one the account menu shows: the verified email, or the
   user id where no provider linked one. The client signs out after the
