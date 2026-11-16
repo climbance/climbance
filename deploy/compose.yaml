@@ -15,9 +15,18 @@
 
 name: climb
 
+# every service logs to the host's journal, which the deployment repo keeps for
+# the 14 days the privacy policy states. Docker's default driver keeps every
+# line until the disk fills
+x-logging: &logging
+  driver: journald
+  options:
+    tag: "{{.Name}}"
+
 services:
   db:
     image: postgres:18
+    logging: *logging
     restart: unless-stopped
     env_file: [.env]
     ports:
@@ -40,6 +49,7 @@ services:
   # deploy, where a failed step inside a restarting service retries forever
   migrate:
     image: ${CLIMB_IMAGE}
+    logging: *logging
     command: ["alembic", "upgrade", "head"]
     env_file: [.env]
     depends_on:
@@ -47,6 +57,7 @@ services:
 
   api:
     image: ${CLIMB_IMAGE}
+    logging: *logging
     restart: unless-stopped
     env_file: [.env]
     ports:
@@ -67,6 +78,7 @@ services:
   # process holding the socket reads no secret either
   broker:
     image: ${CLIMB_IMAGE}
+    logging: *logging
     restart: unless-stopped
     command: ["python", "-m", "climb.broker"]
     # the image's non-root user, in the host's docker group. The id differs
@@ -81,6 +93,7 @@ services:
   # the server extracts both from the image
   caddy:
     image: caddy:2-alpine
+    logging: *logging
     restart: unless-stopped
     env_file: [.env]
     ports:

@@ -72,3 +72,13 @@ def test_the_api_runs_a_submission_through_the_broker(resolved: dict[str, Any]):
     environment = resolved["services"]["api"]["environment"]
 
     assert environment["CLIMB_BROKER"] == f"http://broker:{PORT}"
+
+
+def test_every_service_logs_to_the_host_s_journal(resolved: dict[str, Any]):
+    """The journal keeps the 14 days the privacy policy states, where Docker's
+    default driver keeps every line."""
+    drivers = {
+        name: service.get("logging", {}).get("driver")
+        for name, service in resolved["services"].items()
+    }
+    assert set(drivers.values()) == {"journald"}
