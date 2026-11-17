@@ -9,7 +9,8 @@ A problem, its test cases and its solutions are written across six calls.
 The order matters because each step can reject what came before.
 
 1. The target: a template, naming the form the problem must be solvable by, or
-   a technique, naming only the skill.
+   a technique, naming only the skill. The technique target is deferred, as
+   `corpus.md` gives.
 2. The statement, the canonical solution and the first test cases, from one
    call.
 3. The canonical runs, and its outputs are read against the expected values
@@ -231,12 +232,25 @@ The order matters because each step can reject what came before.
   is claimed. No search ran, so the claim is undemonstrated for the same reason,
   and a resume starts at the input generator rather than at the search. The
   missing input generator costs the fuzz pass besides.
-- **A search that stored no case names one of two reasons, which assert
-  opposite things.** A separating size over the ceiling has established the
-  speedup, and the run reports the size and both timings. A naive solution
-  finishing at the largest storable input has established nothing. The walk
-  bisects up to the ceiling first, since a quadratic naive solution often
-  separates within the last factor of two.
+- **A search that stored no case names its reason, and the reasons assert
+  different things.** `Missing` in `speedup.py` holds each one.
+  - `case_too_large`: a separating size was found and the case at it weighs
+    over the ceiling. The speedup is established, and the run reports the
+    size and both timings.
+  - `naive_finished`: the naive solution finished at the statement's largest
+    input. The search has established nothing.
+  - `count_too_large`: the naive solution finished at the largest storable
+    input, and the repeat count reaching the cap is over its bound. A
+    separation may still sit above either bound.
+  - `canonical_too_slow`: the canonical took over a tenth of the cap where
+    the naive solution exceeded it. The two are within a constant factor, and
+    no count separates them.
+  - `naive_crashed`, `canonical_failed` and `disagreed`: a solution crashed,
+    failed, or the two disagreed at a size the walk reached.
+  - `input_too_large`: no storable input separated. Only drafts written
+    before the repeat count carry it.
+- **The walk bisects up to the ceiling first**, since a quadratic naive
+  solution often separates within the last factor of two.
 - **A naive solution finishing at the largest legal input is a defect in the
   run, not in the problem.** The naive solution reached the form, the input
   generator built a shape the form does not beat, or the template claims a
@@ -310,6 +324,7 @@ flowchart TB
   B ==>|"no naive solution, or one the cases failed"| Z
   P ==>|"the round's call failed"| Z
   S ==>|"nothing separated · the round's call failed"| Z
+  B -->|"no speedup claimed: no naive, no search"| H
   Z -.->|"unexercised, by hand"| X
 ```
 
@@ -337,6 +352,9 @@ a second generator call writes a different problem.
 - **A draft with no naive solution stops at `built`.** The naive call failed,
   or the solution it wrote did not pass the problem's cases, and the search
   has nothing to measure the canonical against.
+- **A template claiming no speedup goes from `built` to `hardened`.** No
+  naive solution is written and no search runs, so the draft never reaches
+  `paced` or `searched`, and a failed round holds it at `built`.
 - **A loop whose round failed stops the draft before `hardened`**, at whatever
   the steps before it reached. A resume runs the loop over the set as the
   statement left it, which is the set the survivors were decided against.
@@ -358,7 +376,7 @@ a second generator call writes a different problem.
   without a call.
 - **The loop's counters are not in the draft either.** The counters sit on
   the site outcomes of the same writing id, and a report reads them there.
-- **Each step's configuration is copied onto the draft.** The four site
+- **Each step's configuration is copied onto the draft.** The six site
   outcomes are written once the loop has run, so a draft that stopped before
   that has none to read a configuration from.
 - **A resume starts at the first step whose configuration or prompt hash
@@ -374,15 +392,18 @@ a second generator call writes a different problem.
   input generator against the naive solution, and the loop's survivors are
   decided against a set the reference settled. A site moving takes the steps
   that read it again.
-- **The naive site is asked again where the naive solution finished at every
-  size**, though its configuration and its prompt hash stand. The naive site is
+- **The naive site is asked again where the search separated nothing for one
+  of two reasons**, though its configuration and its prompt hash stand. The
+  naive solution finished at every size (`naive_finished`), or it ran within a
+  constant factor of the canonical (`canonical_too_slow`). The naive site is
   the one sampled answering site, so a second call is a second draw. A moved
   bound is read before a second draw, since the search costs subprocesses
   where a draw costs a call.
-- **Only that reason draws again.** A search that never ran is the inputs
-  site's to repair. The draft holds the reason, so a resume can tell the two
-  apart. The reference is never asked again for this, since the search does
-  not measure against it.
+- **Only those reasons draw again.** A `canonical_too_slow` draft also
+  re-walks once a bound moves, as the next bullet gives. A search that never
+  ran is the inputs site's to repair. The draft holds the reason, so a resume
+  can tell the two apart. The reference is never asked again for this, since
+  the search does not measure against it.
 - **A draft whose walk stopped at a bound starts at the search once that bound
   moves.** The draft records the ceiling, the canonical's share of the cap, the
   count bound and the search's own revision, and a resume reads the four beside
@@ -456,6 +477,9 @@ a second generator call writes a different problem.
 
 ## Enumerating a problem's other solutions
 
+Deferred until a ladder needs a second canonical for the matcher to read, as
+`corpus.md` gives. No code runs the steps below yet.
+
 A landed problem carries one canonical, written for what its target named. Every
 other way to solve it is found afterwards, over the stored problem.
 
@@ -500,13 +524,16 @@ there is ever asked twice and no two configurations meet the same item.
    either role.
 2. Per site, the prompt hash it would send now. A pair this configuration has
    answered at that prompt hash is skipped.
-3. The blind site writes a reference from the statement, settled against the
+3. The screen site judges the statement for copied material.
+4. The blind site writes a reference from the statement, settled against the
    cases the problem carries rather than against the canonical.
-4. The discrimination site runs the mutation loop over the stored canonical,
-   against the cases written with the statement alone.
-5. The naive site writes the naive solution, and the inputs site builds and
-   searches against it, where the template claims a speedup.
-6. Each site's answer is recorded as its outcome, keyed to the problem.
+5. The discrimination site runs the mutation loop over the stored canonical,
+   against the set as it stood before the rounds: the statement's cases and
+   the kept fuzz inputs. No fuzz pass runs.
+6. The inputs site builds an input generator, where the template claims a
+   speedup, and the search measures it against the stored naive solution.
+   The naive site then writes a naive solution, judged against the cases.
+7. Each site's answer is recorded as its outcome, keyed to the problem.
 
 - **`--only` narrows a replay to the sites it names.** Screening the corpus
   would otherwise pay every other site's call too.
@@ -665,7 +692,9 @@ The page layout is not designed here, and using the loop decides it.
   sitting, and the attempt stays unlabelled. `log.md` gives what a skip leaves.
 - **The loop does not retire a problem.** A statement that asks for something
   its cases do not decide is retired by hand, in the terminal, and `corpus.md`
-  gives who retires one. A self-label written before the retirement stays, and
+  gives who retires one. A sitting can send a retirement request from under
+  the statement, and the request retires nothing until the author acts on it,
+  as `log.md` gives. A self-label written before the retirement stays, and
   the board's read-time exclusion keeps that attempt out of mastery.
 - **Selection never schedules.** Ordering is a view. The user chooses what to
   drill until the scheduler lands.
@@ -812,7 +841,8 @@ trainer never prints the form until the user asks for it as a hint.
    slug.
 2. The trainer draws one template where the user named none: never recalled
    first, then least recently recalled.
-3. The template's title and its trigger are shown, and its form is withheld.
+3. The template's trigger is shown, and its form is withheld. Its title is
+   shown only on a recall the user opened by the template's slug.
 4. The signature the cases call is shown, and the file is otherwise blank.
 5. The user types the form, and asks for a hint where memory fails: the notes,
    then the form itself.

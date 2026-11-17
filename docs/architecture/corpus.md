@@ -17,6 +17,9 @@ architecture, and `README.md` is the map.
 - **The looser target reaches the rest of the vocabulary.** A paradigm and a
   problem class have no form to reproduce, so no template names them, and a
   corpus written from templates alone can never exercise them.
+- **The technique target is deferred until a card's selector names a
+  technique the template-aimed corpus cannot fill.** Generation writes for a
+  template target alone today, and no writer sets `target_technique`.
 - **The target is stored on the problem.** `target_template_id` or
   `target_technique` records what the generator was told rather than what a
   model inferred. The template arm makes the first template match provenance.
@@ -62,8 +65,9 @@ architecture, and `README.md` is the map.
   a verdict means.
 - **A problem is retired by hand, in the terminal.** A problem is served to
   every user, so one user's reading of a statement may not remove the problem
-  from another user's practice. A user's request to retire a problem is
-  deferred until someone other than the author sits.
+  from another user's practice. A user asks for a retirement with a
+  retirement request, which the author reads first. `log.md` gives the
+  record.
 - **Retirement names its reason.** `defective` is a statement that asked for
   something its cases do not decide. `copied` is a problem the screen site
   named a published source for, and its attempts stay in mastery: the solver
@@ -326,8 +330,12 @@ The test cases decide whether a solution to a generated problem is correct.
   against. Zero would put the separating case in the set a replay rebuilds. An
   absent round keeps the case out without inventing a round nothing ran.
 - **Cases that separate nothing are worse than none**, because they license the
-  word `verified` on a canonical that is wrong. A set that does not discriminate
-  is a defect in the problem, and a problem carrying such a set does not land.
+  word `verified` on a canonical that is wrong. The mutation loop strengthens
+  the set before landing, over at most two rounds, and appends every case it
+  wins.
+- **No survivor count blocks landing.** The survivors left after the rounds
+  are counted on the discrimination site's outcome, and the problem lands
+  with them. A bar refusing a problem on that count does not exist.
 - **The cases define the problem, and the statement can disagree with them.**
   A finite set of arguments and returns describes some function. The statement
   is prose, so a mistake lands in the statement rather than in the cases.
@@ -382,7 +390,9 @@ The test cases decide whether a solution to a generated problem is correct.
   `flows.md` gives how a draft without that case is held and leaves.
 - **Consistent is not the same as statable.** A set fitting only "compute f,
   except return 7 on this input" is a function nobody can write a statement
-  for. Such a problem does not land, and the discrimination bar catches it.
+  for. Such a problem does not land: the reference, written from the
+  statement alone, disagrees with the set, and the `disagreed` gate rejects
+  the draft.
 - **The mutation loop that appends cases is in `flows.md`**: the fuzz pass,
   the shrink and the rounds.
 
@@ -424,6 +434,9 @@ A solution the engine wrote for a problem, in one of three roles.
   generated as its own canonical. Asking for a solution by template would
   reach only forms someone authored, where enumeration reaches the techniques
   no card covers.
+- **Enumeration is deferred until a ladder needs a second canonical for the
+  matcher to read.** No code proposes further canonicals today, so each
+  problem carries the canonical the generator wrote.
 - **A later canonical carries less assurance than the first.** The case set
   was built to kill mutants of the first canonical, so a second approach
   passing those cases was never tested on its own failure modes. The later

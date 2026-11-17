@@ -28,9 +28,10 @@ those steps at low fidelity.
   provider verified names the user, with the engine's own id under it. A user
   no provider linked is named by that id instead, since the dev login mints
   no identity to carry an address.
-- **Signed-in devices open a dialog from the account menu**, listing every
-  browser and app signed in as the account, by its name and when it was last
-  used, with a press to revoke it. A lost phone or a browser left signed in
+- **Signed-in devices open from the account menu**, as a dialog on the web
+  and a screen on the phone. The list names every browser and app signed in
+  as the account, by its name and when it was last used, with a press to
+  revoke it. A lost phone or a browser left signed in
   elsewhere is cut off there, where its own sign-out cannot reach.
 - **The list names the device it is read on**, on both clients, and that row
   signs out rather than revoking. Signing out sends the outbox first, and a
@@ -41,8 +42,13 @@ those steps at low fidelity.
   page reads as the phone's Settings screen does: the account first, then
   the Study settings, the daily limit on new questions and the exam size.
   A reader of either client then finds a standing choice in the same place.
-  The record's export and the account's deletion come last on both clients,
-  since the deletion is the one act there that cannot be undone.
+  Feedback comes before the record. The record's export and the account's
+  deletion come last on both clients, since the deletion is the one act there
+  that cannot be undone.
+- **A screen that throws is replaced by an error screen**, on both clients.
+  The screen says the error was reported, and offers Reload and Send
+  feedback. Without it a throw in one screen leaves a blank page, and the user
+  cannot tell a fault from a page still loading.
 - **A study setting is a record of the user's log**, so a change on one
   client stands on the other. `knowledge.md` gives the records. The device
   name and the reminder hour are about one phone, and stay on the phone's
@@ -74,6 +80,10 @@ those steps at low fidelity.
   knowledge study first: the focus, Continue and the modules. The cards in
   progress and the techniques follow. A user reads every study they declared
   on one page before picking what to practise.
+- **The board's two technique lists close from their headings, on both
+  clients**, as `## The design system` gives for a section. A user who has
+  practised many techniques closes the list of untouched ones to reach the
+  practised ones.
 - **The knowledge part reads from the device's copy**, ahead of the engine's
   answer and without it. The board then works offline as the knowledge home
   does, and a phone opened on a train shows a page that works.
@@ -127,6 +137,12 @@ those steps at low fidelity.
   to sit is picking a problem the engine refuses to serve. The user's attempts
   on it stay in the log, and a link kept from before the retirement therefore
   opens a page rather than a 404.
+- **A request to retire the problem is a quiet press under the statement**,
+  on both clients. A reader judges a statement while reading it, so the press
+  sits under the text being judged. Once sent, the press is replaced by a line
+  saying the author reads the request, until the page is left. The problem
+  stays served, and a later visit offers the press again, since a user may
+  send several requests on one problem.
 - **A retired page says so and serves nothing.** The serving call refuses a
   retired problem, so no statement is shown and no clock starts. The page
   reads as the record of what the user did on that problem.
@@ -188,12 +204,13 @@ those steps at low fidelity.
 | `/cards/:slug/recall/:template` | reproduces one template from memory | Cards |
 | `/knowledge` | continues the next queue, or picks another way in | Knowledge |
 | `/knowledge/modules/:module` | reads where each group stands, aims the focus, and starts a filtered queue | Knowledge |
+| `/knowledge/modules/:module/:sub` | reads a subtopic's levels, its lessons and the cards it supports | Knowledge |
 | `/knowledge/queue` | answers one question at a time | Knowledge |
 | `/knowledge/exam` | picks a level exam or a certification's, and takes it | Knowledge |
 | `/knowledge/lessons` | picks a lesson | Knowledge |
 | `/knowledge/lessons/:module/:lesson` | reads a lesson and marks it read | Knowledge |
 | `/knowledge/certifications` | reads where each certification stands | Knowledge |
-| `/settings` | sets the daily limit and the exam size | none |
+| `/settings` | reads the account, sets the daily limit and the exam size, syncs, restores an archived module, sends feedback, exports the record and deletes the account | none |
 | `/login` | signs in | none |
 | `/privacy` | reads the privacy policy | none |
 | `/gallery` | reads the design system, in development alone | none |
@@ -575,6 +592,7 @@ what it offers. The inventory is the list both clients build to.
 | The login | `/login` | Login | same |
 | The privacy policy | `/privacy` | Privacy, from Login and Settings | same |
 | The gallery | `/gallery`, in development | none | web only |
+| The error screen | in place of a page that threw | in place of a screen that threw | by platform |
 
 ### Acts
 
@@ -604,6 +622,8 @@ what it offers. The inventory is the list both clients build to.
 | Type a `short` reply | the browser's keyboard | the app's keyboard | by platform |
 | Read the sync's state, and sync now | the settings page | Settings, and Home's footer | same |
 | Sign out, naming unsent records | the account menu and the settings page | the account menu and Settings | same |
+| Ask for a problem's retirement | a dialog from under the statement | a sheet from under the statement | same |
+| Send feedback | a dialog from the settings page and the error screen | a sheet from Settings and the error screen | same |
 | Revoke a signed-in device | the signed-in devices | the signed-in devices | same |
 | Export the record as a file | the settings page, as a download | Settings, into a folder the user picks | by platform |
 | Delete the account, its name typed back | the settings page | Settings | same |

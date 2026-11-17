@@ -60,7 +60,8 @@ The vocabulary the append-only log references.
   both. Editing an entry changes machine claims, but only for the attempts
   carrying that candidate.
 - **A code is never deleted**, because records carrying it outlive it.
-  Retirement means an entry in an alias map, applied when grouping.
+  Retirement means an entry in an alias map, applied when grouping. The map is
+  deferred until a code is first retired, since none has been.
 - **The vocabulary is read-only once loaded.** Its entries reach a prompt and
   a reader unchanged. An entry edited in memory would be a criterion the file
   does not carry, and nothing could re-derive the machine claims that entry
@@ -126,21 +127,19 @@ each technique, and a card and a mastery estimate share no data.
   claimed is a defect in the run, and `flows.md` names the three things that
   produce one.
 - **The claim is asymptotic: the form beats the naive approach by at least a
-  factor of log n.** The search can demonstrate only part of that today. It
-  separates by wall clock under the sitting's cap, on an input the ceiling
-  holds, and that input carries some hundred thousand integers. A linear or
-  linearithmic naive approach finishes such an input in milliseconds whatever
-  the form does, so the search demonstrates the claim only where the naive
-  approach is at least quadratic or exponential. A claim the search cannot
-  demonstrate holds the draft. Timing one case run many times would
-  demonstrate it, and that is deferred.
+  factor of log n.** The search separates by wall clock under the sitting's
+  cap, on an input the ceiling holds, and that input carries some hundred
+  thousand integers. A linear or linearithmic naive approach finishes such an
+  input in milliseconds whatever the form does. So the search raises the
+  case's repeat count where the walk reaches the ceiling, and times `solve`
+  called that many times on one input. `corpus.md` gives the repeat count.
 - **The statement is written for the solver, not for the search.** One lookup
   in a sorted array is sublinear for the form and linear for the scan it
   replaces. The form and the scan both finish within the cap, so no input
   separates them. Asking for a batch of queries would make the scan quadratic,
-  and the corpus would then carry a question nobody asks. Such a draft is held
-  instead, and the form goes unexercised until the search can time one case run
-  many times.
+  and the corpus would then carry a question nobody asks. The search instead
+  separates the form with a repeated case: one lookup, called many times under
+  one cap.
 - **The claim still reaches the generator**, as the constraints are the
   statement's own. A statement admitting two thousand elements leaves no input
   on which a naive solution exceeds the cap, whatever the input generator
@@ -183,9 +182,9 @@ each technique, and a card and a mastery estimate share no data.
   added field, so a card authored before it keeps working, and a template whose
   form no case checks is study material rather than a recall subject. A
   procedure template carries prose steps, which no case decides.
-- **The ladder is resolved at import and re-derived whenever the corpus moves
-  under it.** The selector is the truth and the ladder a derived view, so
-  resolving the ladder again costs nothing. A started card is re-derived too.
+- **The ladder is derived on every read**, from the selector and the corpus as
+  they stand. The selector is the truth and the ladder a derived view, so
+  deriving the ladder again costs nothing. A started card is re-derived too.
   Ladder progress is a fold over attempts rather than a mark on a rung, so a
   solved problem stays solved.
 - **A rung keeps its problem while the card's run is open.** The ladder ranks
@@ -221,10 +220,11 @@ starts at the roots and an experienced user sees where a card sits.
   another, between codes. A requirement says one card's form is used inside
   another card's, between cards. Kruskal is no kind of disjoint set, and a
   reader taking one relation for the other draws the wrong edges.
-- **The graph is content, authored on the cards and seeded with them.** The
-  seed resolves each slug to the stored card and template. Editing the graph
-  then needs no migration, and a re-seed refreshes the edges as it refreshes
-  the templates.
+- **The graph is content, authored on the cards and seeded with them.** A
+  requirement stores the required card's slug, held by a foreign key to the
+  stored card, and the template's slug, resolved on each check. Editing the
+  graph then needs no migration, and a re-seed refreshes the edges as it
+  refreshes the templates.
 - **The seed refuses a cycle, an unknown slug or a requirement naming an
   optional template.** A cycle locks every card on it for every user. An
   optional template is outside the study set, so a card requiring it would
@@ -356,9 +356,10 @@ gives the exercise and its answers.
   edited.** A build appends items for templates not yet covered. A template
   whose code changed has its old items retired, as a problem is retired, so
   no answer loses its item.
-- **About a quarter of the items are clean.** With no clean item, calling
-  everything flawed would be right every time, and a false alarm could not be
-  counted.
+- **About a quarter of the items are clean, and never fewer.** With no clean
+  item, calling everything flawed would be right every time, and a false
+  alarm could not be counted. A template with few flawed lines raises the
+  clean share, as the bullet below gives.
 - **An item shows the form without its comments and without its harness.** A
   comment can state the very invariant the flaw breaks. The harness is the
   code turning JSON into nodes and back, which a template names in `harness`,
@@ -367,8 +368,10 @@ gives the exercise and its answers.
   A phone fits some forty, so a longer line wraps once under its indent and
   never scrolls sideways where a tap has to land. A form wider than 60 yields
   no item.
-- **A template yields one clean item and three flawed ones**, the flaws on
-  three different lines, which makes the quarter of clean items.
+- **A template yields one clean item and up to three flawed ones**, the flaws
+  on different lines. Three flawed lines make the quarter of clean items. A
+  template with one or two flawed lines still yields its items, a half or a
+  third of them clean, since dropping the template would lose its practice.
 - **A mutant on the harness never makes an item.** The user never sees the
   harness, so a flaw there could be neither read nor tapped.
 - **A mutant that only slows the form never makes an item.** A timeout is a
@@ -443,7 +446,7 @@ either.
   names the template the problem's target named, and the first canonical's match
   names the same one. They cannot drift, because generation writes both in one
   act. The canonicals of a problem written for a technique target still carry
-  their own matches.
+  their own matches, once that target lands, as `corpus.md` defers it.
 - **The matcher answers what generation cannot assert**: which templates a
   solution displays besides the one it was written for, and whether the
   generator's own claim holds. The first answer lets a rung cover a core
@@ -512,5 +515,8 @@ either.
   draws the line between displaying a form and merely admitting it. A score
   taken over the pairs that drew that line measures agreement with itself. The
   eval set is matched by hand from the templates alone, and configurations are
-  compared over the pairs both read. The rules `log.md` gives for scoring a
+  compared over the pairs both read. The rules `log.md` gives for scoring an
   attempt claim apply here unchanged.
+- **The matcher score is deferred until two matcher configurations are
+  compared.** `climb score` scores attempt claims alone today, and no command
+  scores a match.

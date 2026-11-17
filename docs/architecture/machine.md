@@ -10,11 +10,13 @@ the arguments of a test case are written by a model. Each of them carries the
 same fields to stay comparable, and those fields are stated here once.
 
 - **Provenance is the configuration**: model, effort, the endpoint the model was
-  pinned to, temperature, the prompt hash of what that record was sent, and the
-  call that sent it. All of them or none, since a record whose configuration is
-  partly unknown compares with nothing. A model asked for no effort, or a model
-  that rejects the parameter, records the level it ran at rather than an empty
-  field.
+  pinned to, the prompt hash of what that record was sent, and the call that
+  sent it. All of them or none, since a record whose configuration is partly
+  unknown compares with nothing. Temperature is recorded beside them, outside
+  that rule, as the bullets below give.
+- **A model asked for no effort, or a model that rejects the parameter,
+  records `default`** rather than an empty field. The parameter is not sent,
+  so the level the model ran at is the endpoint's own and is not read back.
 - **A configuration is per call site, not per run.** Writing a problem takes
   six calls, and each asks for a different thing. The generator writes a
   statement and a solution. The screen site judges whether the draft copied a
@@ -156,9 +158,12 @@ call returned, so it sits beside the call log.
   gated.** The code and the declaration came from one call, so the count reads
   that site's arithmetic. `corpus.md` names the record that settles the case
   instead.
-- **The search's verdict is filed under every site it judged.** The search times
-  the naive solution against the canonical on an input the input generator made,
-  so neither answer alone makes the verdict decidable. A resume that re-asked
+- **The search's measurements are filed under both sites it judged.** The
+  search times the naive solution against the canonical on an input the input
+  generator made, so neither answer alone makes the verdict decidable. The
+  separating size, the repeat count and the reason nothing separated go on
+  both records. The gate the search raises stays on the input generator's
+  record, since the search ran that site's code. A resume that re-asked
   one of the two sites writes that site's record and no other, so the separating
   size would otherwise be lost with the site the resume reused.
 - **The input generator's bound is on the record, not only on the draft.** A
@@ -214,7 +219,7 @@ call returned, so it sits beside the call log.
   written with.
 - **The item is the problem, and the generator has none.** The generator writes
   a problem rather than answering one, and asking the generator again is a new
-  problem by design. The other three sites are re-asked about a statement the
+  problem by design. The other five sites are re-asked about a statement the
   store already holds.
 
 ## Calls
@@ -264,9 +269,10 @@ holds nothing about what the answer was for.
 - **A rate cap and a gateway failure are absorbed here, never reported
   upward.** Each is a fact about the endpoint rather than about the
   configuration, and a run's abort exists to catch a broken configuration. The
-  waits cover a minute between them, since that is the window a per-minute cap
-  is stated in. The endpoint's own reset time is not read: where it is carried
-  varies by provider, and a wrong parse would sleep for hours.
+  four waits are 5, 15, 30 and 60 seconds, 110 seconds in all. The last alone
+  covers a minute, since that is the window a per-minute cap is stated in.
+  The endpoint's own reset time is not read: where it is carried varies by
+  provider, and a wrong parse would sleep for hours.
 - **A 404 naming no endpoints is asked once more, at the shortest wait.** The
   router's list of endpoints serving a model moves under a pinned request, so
   the answer is state rather than a rejected request. The retry decides whether
@@ -279,5 +285,5 @@ holds nothing about what the answer was for.
   an unset key are answered the same way twice, so retrying them spends the
   abort count slowly instead of at once.
 - **The run path never reads the call log back.** Whether to ask again is
-  decided from the claims, which carry the configuration already. The file is
-  written by every run and loaded only to analyse one.
+  decided from the claims, which carry the configuration already. The table is
+  written by every run and read only to analyse one.

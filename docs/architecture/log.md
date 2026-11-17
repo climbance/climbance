@@ -187,10 +187,11 @@ ended, and every pause between.
   type in both stores would leave privacy to whichever writer chose the file.
 - **The two types share the fields a run is decided by**: the cap, the runner
   and the per-case results. `corpus.md` fixes what each of those means.
-- **The elapsed time is cumulative, from the sitting's start to that
+- **The elapsed time is cumulative, from the clock's start to that
   submission.** A drill mints an attempt per submission, so the second attempt
-  of a sitting carries the whole time since the statement was served, rather
-  than the time since the first submission. `time_to_solve_sec` names the time
+  of a sitting carries the whole time since `clock_started_at`, rather than
+  the time since the first submission. Reading the statement before the first
+  press is not counted. `time_to_solve_sec` names the time
   to solve, and a per-segment number would report three minutes on the attempt
   that solved the problem.
 - **The pauses are excluded already**, since the number is the sitting's
@@ -828,3 +829,57 @@ Deferred, since only use answers each:
 
 - How a calibration groups predictions, and how many it needs before a number
   is read.
+
+## Retirement requests
+
+A user's request that a problem be retired. A `RetirementRequest` holds the
+problem, a reason and the user's note.
+
+- **A user asks for a retirement, and the author retires the problem by hand.**
+  A problem is served to every user, so one user's reading of a statement does
+  not remove the problem from another user's practice. `corpus.md` gives who
+  retires a problem.
+- **The request names one of the two retirement reasons, `defective` or
+  `copied`.** The author retires a problem under a reason, so a request naming
+  the same reasons reads as the retirement it asks for.
+- **The note is required, and at most 2000 characters.** The author judges the
+  problem from the note, and a blank note gives nothing to judge.
+- **A retired problem takes no request.** The problem is no longer served, so
+  the request would ask for nothing.
+- **The problem stays served while the request waits.** A request is evidence
+  for the author, and a wrong request costs only the author's reading.
+- **The author reads the requests in the terminal.** `climb problem --requests`
+  lists every request beside how its problem stands now. `climb problem
+  --retire` prints the problem's requests before asking to confirm.
+- **A request is private to the user**, exported and erased with the rest of
+  the log. The author reads it as the operator, as the author reads the rest
+  of the store.
+- **A user may send several requests on one problem.** Each one is append-only,
+  and the page says a request was sent until the page is left.
+
+Deferred, since only use answers each:
+
+- A reply to the user once the author has read the request.
+- A bound on how many requests one user sends.
+
+## Feedback
+
+A user's note to the author about the engine. A `Feedback` record holds the
+client it was sent from, the path of the page it was sent from, and the note.
+
+- **The note is required, and at most 2000 characters.** A blank note passes a
+  presence check while saying nothing.
+- **The record names the client and the page.** The two clients' paths differ,
+  so the path alone does not say which screen the note is about.
+- **A user's feedback is capped as a run is**, at 10 a minute and 60 an hour.
+  Each note is a row the author reads, and the cap is counted over the user's
+  own records.
+- **The author reads the feedback in the terminal.** `climb feedback` lists
+  every note, newest first.
+- **Feedback is private to the user**, exported and erased with the rest of
+  the log. The author reads it as the operator, as the author reads the rest
+  of the store.
+
+Deferred, since only use answers it:
+
+- A reply to the user once the author has read the note.

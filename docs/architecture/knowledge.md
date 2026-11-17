@@ -106,8 +106,8 @@ already made.
   - `choice`: three to eight options, one or more correct. The options are
     shuffled on every display, so a position carries no answer.
   - `short`: a typed reply, matched against the accepted replies after
-    whitespace, quotes and backticks are removed. Case is ignored unless the
-    question says otherwise.
+    whitespace is removed throughout, and quotes and backticks at either
+    end. Case is ignored unless the question says otherwise.
   - `open`: the user answers in their own head, reveals the key, and ticks the
     points recalled, the traps fallen into, and anything else said wrong.
 - **An open question's key is two to six points.** Each point is one fact the
@@ -123,6 +123,8 @@ already made.
 - **A question carries its explanation and its detail**: how the mechanism
   works, an example, pitfalls, version notes and a diagram, each optional but
   the mechanism. The detail is shown on request after an answer.
+- **An open question's explanation and detail are optional, the mechanism
+  included.** The key already carries the points an answer has to contain.
 - **A wrong choice of a module written by concept names its misconception.**
   The seed resolves each one to the misconception's text, as
   `misconception_text`, since no client holds the concepts.
@@ -219,7 +221,8 @@ questions.
 - **A question names its lesson, or takes the lessons teaching its group.** A
   question with several lessons waits while any one holds it.
 - **A queue offers a lesson where it would serve a new question**, after the
-  reviews, and each lesson at most once per queue.
+  reviews, and each lesson at most once per queue. Once today's new questions
+  are spent, no lesson is offered, since no new question could follow it.
 - **A question comes between two lessons wherever one is left to serve.** Two
   lesson stops in a row break the queue's flow. A queue with nothing but
   lessons left still offers them one after another.
@@ -301,9 +304,9 @@ left to serve.
 - **The review queue serves the weak and due questions alone**, at every level,
   locked or not. It serves no new question.
 - **The filtered queue serves chosen questions from one module**: by topic,
-  subtopic, level, kind, or weak and due alone. Locks do not apply. After the
-  servable ones, it serves learning and retained questions it has not yet
-  asked.
+  subtopic, level, kind, weak alone, or weak and due alone. Locks do not
+  apply. After the servable ones, it serves learning and retained questions
+  it has not yet asked.
 - **Stopping a queue stores a stint**: the queue's mode, how many questions
   were answered, and the score.
 - **A filtered queue starts from a press on the module's groups.** The press
@@ -478,7 +481,8 @@ trigger, as `README.md` requires.
 - **`answers`**: the question, whether the reply was correct, the guess flag,
   and for an open question the grade, the points missed, the traps fallen
   into and the wrong flag.
-- **`stints`**: the mode, the score and the number of questions answered.
+- **`stints`**: the mode, the score, the number of questions answered, and
+  for an exam the level it was taken at.
 - **`module_status_changes`**: the module and its status.
 - **`focuses`**: the module, the topic, the subtopic and the certification,
   each optional, and whether the focus is strict.
@@ -517,8 +521,9 @@ engine translates them at its edge, so the store keeps this project's names.
 - **An `order` line names every module by slug, as `courses`.** A line naming
   a module the store does not hold is refused, as any line naming unknown
   content is.
-- **Two names change at the edge.** The wire's `card` format is stored as an
-  open question, and its `drill` queue as the filtered queue. A line read
+- **Three names change at the edge.** The wire's `card` format is stored as
+  an open question, and its `drill` queue as the filtered queue. Its
+  `exam-L<n>` session is stored as an `exam` stint at level `n`. A line read
   back carries the wire's names again.
 - **A line naming content the store does not hold is refused alone.** The
   rest of the upload is stored, and the reply names each refused line.

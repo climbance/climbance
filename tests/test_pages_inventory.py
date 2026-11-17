@@ -72,6 +72,8 @@ PHONE_PARTS = {
     "The press starting a card's run": "card.tsx",
     "The required cards a locked card waits on, on that press": "card.tsx",
     "A sitting": "problem.tsx",
+    # the root layout wraps every screen in the boundary drawing it
+    "The error screen": "_layout.tsx",
 }
 
 

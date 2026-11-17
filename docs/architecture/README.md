@@ -137,7 +137,7 @@ without redefining them. Grouped by the file that specifies the record.
 - **Defective**: a retirement reason: the statement asks for something its
   cases do not decide.
 - **Enumeration**: a pass over a landed problem proposing other approaches,
-  each generated as a further canonical.
+  each generated as a further canonical. Deferred, as `corpus.md` gives.
 - **Calibration corpus**: the platform problems and attempts under
   `data/old/`, kept for one deferred measurement: how often a matcher names a
   form from a statement alone.
@@ -290,6 +290,12 @@ without redefining them. Grouped by the file that specifies the record.
   and `rust` a form the solver held and did not reach. `gap` is a form the
   solver did not hold, `syntax` a slip in code the solver could have written
   correctly, and `none` an attempt that went the way it should.
+- **Feedback**: a user's note to the author about the engine, naming the
+  client and the page it was sent from. The author reads it with `climb
+  feedback`.
+- **Retirement request**: a user's request that a problem be retired, naming
+  a retirement reason and a note. The author reads it and retires the problem
+  by hand.
 - **Card run**: the record that a card was started, and the probes it was
   given.
 - **Pick**: the one problem or recall the board serves, read from FSRS,
@@ -428,7 +434,7 @@ times. Each record class is specified in one of the files beside it.
 |---|---|
 | [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims, difficulty ratings and fits, trials |
-| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, and the predictions each pick stores |
+| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests and feedback |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
@@ -461,10 +467,17 @@ times. Each record class is specified in one of the files beside it.
 | Judgements | user | private | append-only | the store |
 | Fills | user | private | append-only | the store |
 | Predictions | user | private | append-only | the store |
+| Retirement requests | user | private | append-only | the store |
+| Feedback | user | private | append-only | the store |
 | Attempts | user | private | append-only | the store |
 | Attempt verifications | user | private | append-only | the store |
 | Attempt claims | user | private | append-only | the store |
-| Calls | user | private | append-only | the store |
+| Calls | product, or user where only a user's record names the call | global, or private with that record | append-only | the store |
+| Users | user | private | created once | the store |
+| Identities | user | private | revised in place: the email at each sign-in | the store |
+| Sessions and app tokens | user | private | revised in place: last use and revocation | the store |
+| App codes | user | private | revised in place: redeemed once | the store |
+| Invitations | product | private | added and deleted by the author | the store |
 | Self-labels | user | private | append-only | the store |
 | Diagnoses | user | private | append-only | the store |
 | Answers, stints, module statuses, focuses, lesson marks, certification exams, setting changes, limit raises, module orders | user | private | append-only | the store |
@@ -484,6 +497,15 @@ times. Each record class is specified in one of the files beside it.
     the server costs the time a rebuild takes rather than the log.
   - The database is dumped on a schedule, and the dump is copied off the
     server. A dump left on the same storage as the database is lost with it.
+  - Each client reports an error it did not handle, and the API writes the
+    report as one line of its log. The report names the user, the client,
+    the build, the page and the error's message and stack, and no code the
+    user typed. A table is rejected, since the log already keeps 14 days and
+    the privacy policy already states them.
+  - A client sends each distinct error once per load, and the API refuses a
+    user's reports past 10 a minute. A render failing in a loop would
+    otherwise fill the log. The API counts the reports in memory, per worker,
+    since a report is no stored record.
   - Every service logs to the host's journal, which keeps 14 days. Docker's
     default log driver keeps every line until the disk fills. The privacy
     policy states the 14 days, and the deployment repo sets the journal's
@@ -596,15 +618,29 @@ times. Each record class is specified in one of the files beside it.
     bound. A submission that waits without a bound looks to the user like a
     sandbox that hung. The wait changes no verdict, since the cap is measured
     in the child around the `solve` call.
-  - A user's submissions are capped per minute, and a user's recalls are capped
-    by the same bound. Each runs untrusted code on the server, and the broker
-    admits one run at a time, so one user's burst is every other user's wait.
-    The cap is counted over the user's own records of the last minute, and a
-    run past it is refused before any container starts.
-  - The two are counted apart, each against the bound. A recall runs a
-    template's few cases where a submission runs a problem's whole set, and one
-    counter over both would refuse the cheaper run for the more expensive one's
-    burst.
+  - A user's submissions are capped at 10 a minute and 60 an hour, and a
+    user's recalls are capped by the same bounds. Each runs untrusted code on
+    the server, and the broker admits one run at a time, so one user's burst is
+    every other user's wait. Each cap is counted over the user's own records of
+    its window, and a run past it is refused before any container starts.
+  - A user's submissions and recalls are counted apart, each against the
+    bounds. A recall runs a template's few cases where a submission runs a
+    problem's whole set, and one counter over both would refuse the cheaper run
+    for the more expensive one's burst.
+  - The hour's cap is needed beside the minute's. A run of ten cases that all
+    time out holds the broker about 20 seconds, so 10 runs a minute already
+    keep the broker busy, and the minute's cap alone admits 600 an hour.
+  - A cap on the sandbox time a user takes in an hour is deferred until real
+    use shows one user filling the broker's queue under the counted caps. It
+    would sum the case times each run already stores, a timed-out case counted
+    at the cap, so it limits the resource the users share rather than a count.
+  - A run's code is refused past 65,536 characters, before any container
+    starts. A solution is a few kilobytes, and the code reaches the broker and
+    the container whole.
+  - A run's container holds one CPU. A container with no CPU limit takes every
+    core it can, which slows the API and Postgres beside it. A `solve` call is
+    single-threaded, so the limit takes nothing a solution uses, and gVisor's
+    own threads share the same quota.
   - Generation runs off this server. The mutation loop starts many subprocesses
     at a cap well above the sitting's, so a generation run beside a sitting
     moves the wall clock that sitting's verdict is read from. Generation writes

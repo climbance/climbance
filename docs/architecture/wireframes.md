@@ -40,8 +40,8 @@ Every page under a section carries the same two rows above its body.
   verified, and the engine's own id under it. A user no provider linked is
   named by that id, and the menu says so.
 - Signing out is in that menu, since it is an act on the account rather than a
-  place the navigation names. The settings and the signed-in devices open a
-  dialog each from the same menu.
+  place the navigation names. The same menu links the settings page and opens
+  the signed-in devices in a dialog.
 - The header carries the way back, the title, and the one line identifying what
   the title names.
 - A section's root page carries no way back, since the navigation reaches that
@@ -54,13 +54,38 @@ Every page under a section carries the same two rows above its body.
 | Climbance    [ Practice ]  Problems  Cards  Knowledge           ☀  ≡   |
 +------------------------------------------------------------------------+
 | Practice                                                               |
-| Continue a card in progress, or pick a technique.                      |
+| Continue a card or a module, or pick a technique, stalest first.       |
+|                                                                        |
+| Focus: Python . core                 [ Continue ]  12 due, 5 new       |
+|                                                                        |
+| Modules  2                                                             |
+| +--------------------------------------------------------+             |
+| | Python               level 1 . 40% retained            |             |
+| | System design        level 0 . 12% retained            |             |
+| +--------------------------------------------------------+             |
+|                                                                        |
+| Next                                                                   |
+| +--------------------------------------------------------+             |
+| | Recall: Lower bound           Binary search  [ Recall ]|             |
+| +--------------------------------------------------------+             |
 |                                                                        |
 | Cards in progress  1                                                   |
 | +--------------------------------------------------------+             |
 | | Sliding window    sliding-window        2 days ago     |             |
 | | started 09-28 . ladder 5/8, required 4/5               |             |
 | | recall  ✓ ✓ ✗ · · -                                    |             |
+| +--------------------------------------------------------+             |
+|                                                                        |
+| +--------------------------------------------------------+             |
+| | Judge a solution                                       |             |
+| | Read the solution. Is it correct, or is one line wrong?|             |
+| | Fill the key line                                      |             |
+| | One line of the form is blank. Pick the line that ...  |             |
+| +--------------------------------------------------------+             |
+|                                                                        |
+| Cards to start  3                                                      |
+| +--------------------------------------------------------+             |
+| | Two pointers      two-pointers          root           |             |
 | +--------------------------------------------------------+             |
 |                                                                        |
 | Techniques not practised yet  12                                       |
@@ -77,7 +102,9 @@ Every page under a section carries the same two rows above its body.
 
 - The board is the landing page, so it opens under the navigation with no way
   back.
-- "Cards in progress" reads first: the cards with a run open, the most recently
+- The knowledge study reads first, from the device's copy: the focus with
+  Continue, then the modules. The scheduler's pick follows under Next.
+- "Cards in progress" reads next: the cards with a run open, the most recently
   active first, each the same row the cards list draws for it. A press opens
   the card, where the next rung is.
 - A technique never practised ranks stalest, so the untouched techniques read
@@ -89,9 +116,11 @@ Every page under a section carries the same two rows above its body.
   technique no subtopic names reads no knowledge, as `monotonic-stack` here.
 - The line under the two groups counts the attempts no row holds: the attempts
   no technique resolved, and the attempts on a retired problem.
-- The scheduler's pick is served above both groups, and every technique
-  stays on offer below it. The pick then reads the open runs, so it can name a
-  card's next rung beside the cards in progress.
+- The scheduler's pick is served above the cards and the techniques, and every
+  technique stays on offer below it. The pick then reads the open runs, so it
+  can name a card's next rung beside the cards in progress.
+- The two short exercises, judging and filling, follow the cards in progress.
+  The unlocked cards not yet started follow them, five at most.
 
 ## Every problem
 
@@ -190,7 +219,7 @@ problem's path reads as its record, as "Every problem" gives.
 | ...........................      | |                            |      |
 | ...........................      | |   the editor               |      |
 | ...........................      | |                            |      |
-|                                  | +----------------------------+      |
+| ( Report this problem )          | +----------------------------+      |
 |                                  | [ Submit ]  Cmd+Enter . judged      |
 |                                  |             against the problem's   |
 |                                  |             own test cases          |
@@ -223,6 +252,9 @@ problem's path reads as its record, as "Every problem" gives.
   while the statement scrolls.
 - The statement reads on the left and the editor takes the right, which is the
   one page in two columns.
+- A quiet `Report this problem` press sits under the statement. It opens the
+  dialog asking the author to retire the problem, and `pages.md` gives the
+  request.
 - The editor opens on the signature every case calls, and the statement column
   does not repeat it. A second copy beside the editor's first line says the
   same thing twice.
@@ -836,14 +868,29 @@ problem's path reads as its record, as "Every problem" gives.
 | Exam size                                       [ 40 ]  1 to 500       |
 |                                                                        |
 | [ Save ]  Saved.                                                       |
+|                                                                        |
+| Sync                                                                   |
+| Synced 2 minutes ago                                  ( Sync now )     |
+|                                                                        |
+| Archived modules  1                                                    |
+| System design                                         ( Restore )      |
+|                                                                        |
+| Feedback                                                               |
+| ( Send feedback )                                                      |
+|                                                                        |
+| Your record                                                            |
+| Every record of your practice, as one JSON file.                       |
+| ( Export the record )                         ( Delete the account )   |
 +------------------------------------------------------------------------+
 ```
 
 - The account menu links the page. It carries no way back, since the
   navigation reaches every section from it.
-- The page reads as the phone's Settings screen does: Account, then Study.
-  The phone adds the engine's address, the device name and the reminder hour,
-  which are about one phone.
+- The page reads as the phone's Settings screen does: Account, Study, the
+  sync, the archived modules, Feedback, then the record. The phone adds the
+  device name and the reminder hour, which are about one phone.
+- The record's export and the account's deletion come last, since the
+  deletion is the one act on the page that cannot be undone.
 - The daily limit and the exam size are settings of the log, so a value
   saved here stands on the phone. Each field names its range, and Save waits
   until both fields hold a value in range and one of them changed.
