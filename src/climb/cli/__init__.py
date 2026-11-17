@@ -3,6 +3,7 @@
 import argparse
 import os
 from collections.abc import Callable
+from pathlib import Path
 from typing import TypedDict
 
 from dotenv import find_dotenv, load_dotenv
@@ -14,6 +15,7 @@ from climb.cli.card import card
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
+from climb.cli.difficulty import difficulty
 from climb.cli.feedback import feedback_listed
 from climb.cli.fill import fill
 from climb.cli.gaps import gaps
@@ -30,6 +32,7 @@ from climb.cli.rows import Rows
 from climb.cli.score import score
 from climb.cli.seed import BadLine, seed
 from climb.cli.user_log import user_log
+from climb.difficulty import TRIES
 from climb.runs import CONCURRENCY
 from climb.schema import CallSite, ProblemDifficulty, RetirementReason
 from climb.storage import Database
@@ -320,6 +323,34 @@ def main() -> None:
         help="score the problem the id names by hand, on the contest scale; its band is the label",
     )
 
+    difficulty_parser = _command(sub, "difficulty", "the panel's trials, and a difficulty fit")
+    difficulty_action = difficulty_parser.add_subparsers(dest="action", required=True)
+    trials_parser = difficulty_action.add_parser(
+        "trials",
+        help="every panel member's tries on every served problem",
+        formatter_class=_Defaults,
+    )
+    trials_parser.add_argument(
+        "--tries", type=int, default=TRIES, help="tries per member per problem"
+    )
+    trials_parser.add_argument("--workers", type=int, default=6, help="calls in flight at once")
+    trials_parser.add_argument(
+        "--budget", type=float, default=10.0, help="dollars, then no new call"
+    )
+    fit_parser = difficulty_action.add_parser(
+        "fit",
+        help="fit the stored trials with the anchors', linked to the contest scale",
+        formatter_class=_Defaults,
+    )
+    fit_parser.add_argument("--anchors", type=Path, required=True, help="CSV: id, rating, split")
+    fit_parser.add_argument(
+        "--anchor-trials", type=Path, required=True, help="the anchors' trials, JSON lines"
+    )
+    fit_parser.add_argument(
+        "--scores", type=Path, help="write each problem's score here, JSON lines"
+    )
+    fit_parser.add_argument("--write", action="store_true", help="store the fit and its ratings")
+
     gaps_parser = _command(sub, "gaps", "core templates no stored solution displays")
     gaps_parser.add_argument(
         "--all", action="store_true", help="every core template; only the gaps otherwise"
@@ -464,6 +495,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
         claim_solutions if args.subject == "solutions" else claim if args.by_hand else classify
     )(args, parser, root),
     "problem": problem,
+    "difficulty": difficulty,
     "gaps": lambda args, _parser, root: gaps(args, root),
     "retime": lambda _args, _parser, root: retime(root),
     "generate": generate,
