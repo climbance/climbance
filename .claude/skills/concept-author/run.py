@@ -115,14 +115,6 @@ def register(
     (base / "graph.toml").write_text(graph[:at] + lines + graph[at:])
 
 
-def written_at(concepts: Path, level: int) -> bool:
-    # the file exists above level 0 from the lower levels, so its existence proves nothing
-    if not concepts.exists():
-        return False
-    data = tomllib.loads(concepts.read_text())
-    return any(c.get("level") == level for c in data.get("concept", []) + data.get("empty", []))
-
-
 def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
     runs: Path = args.runs
     name = f"{sub}-L{args.level}"
@@ -149,7 +141,9 @@ def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
         shadow=args.shadow,
     )
     concepts = wt / "modules" / args.module / "concepts" / topic / f"{sub}.toml"
-    if written_at(concepts, args.level) and not job.state():
+    # only the one-session runner wrote concepts with no state, and only at level 0:
+    # above it the file comes from the lower levels, and may hold a re-levelled concept
+    if args.level == 0 and concepts.exists() and not job.state():
         job.mark("s1-write")
     try:
         if not stages.run(job, args.stop_after):
