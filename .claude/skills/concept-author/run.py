@@ -141,8 +141,9 @@ def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
         shadow=args.shadow,
     )
     concepts = wt / "modules" / args.module / "concepts" / topic / f"{sub}.toml"
-    # only the one-session runner wrote concepts with no state, and only at level 0:
-    # above it the file comes from the lower levels, and may hold a re-levelled concept
+    # only the one-session runner wrote concepts with no state, and only at
+    # level 0: above it the file comes from the lower levels, and may hold a
+    # re-levelled concept
     if args.level == 0 and concepts.exists() and not job.state():
         job.mark("s1-write")
     try:
