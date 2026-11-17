@@ -9,12 +9,12 @@ authors = [{ name = "Maksim Lunochkin" }]
 dependencies = [
     "alembic>=1.19.2",
     "authlib>=1.8.0",
-    "fastapi>=0.141.1",
-    "fsrs==6.3.2",
+    "fastapi>=0.162.7",
+    "fsrs==6.3.3",
     "httpx>=0.28.1",
     "itsdangerous>=2.2.0",
     "joserfc>=1.7.5",
-    "openai>=1.60",
+    "openai>=3.51.0",
     "psycopg[binary]>=3.3.5",
     "pydantic>=2.7",
     "python-dotenv>=1.0",
@@ -35,10 +35,10 @@ dev = [
     "mypy>=2.4.1",
     "pyright>=1.1.411",
     "pytest>=8.0",
-    "pytest-asyncio>=1.4.0",
+    "pytest-asyncio>=1.5.0",
     "pytest-cov>=7.1.0",
     "pytest-xdist>=3.6",
-    "ruff>=0.16.0",
+    "ruff>=0.17.5",
     "vulture>=2.16",
 ]
 
