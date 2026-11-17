@@ -79,7 +79,7 @@ from climb.log.table import (
 from climb.matches.table import template_matches
 from climb.outcomes.table import site_outcomes
 from climb.problems.table import problems
-from climb.ratings.table import difficulty_ratings
+from climb.ratings.table import difficulty_fit_members, difficulty_fits, difficulty_ratings
 from climb.schema import (
     Answer,
     Attempt,
@@ -94,11 +94,13 @@ from climb.schema import (
     ClaimSource,
     Diagnosis,
     Diagram,
+    DifficultyFit,
     DifficultyRating,
     Draft,
     DraftCase,
     Feedback,
     Fill,
+    FitMember,
     Focus,
     Judgement,
     JudgementItem,
@@ -206,6 +208,8 @@ STORED: list[Stored] = [
     Stored(Feedback, feedback),
     Stored(RunFault, run_faults),
     Stored(DifficultyRating, difficulty_ratings),
+    Stored(DifficultyFit, difficulty_fits, elsewhere=frozenset({"members"})),
+    Stored(FitMember, difficulty_fit_members, structural=frozenset({"fit_id", "position"})),
     Stored(Trial, trials, through_call=True, required=frozenset({"call_id"})),
     Stored(TemplateMatch, template_matches, through_call=True),
     Stored(SiteOutcome, site_outcomes, through_call=True, required=frozenset({"call_id"})),
@@ -746,6 +750,7 @@ APPEND_ONLY = {
     "solutions",
     "solution_claims",
     "difficulty_ratings",
+    "difficulty_fits",
     "trials",
     "template_matches",
     "verifications",
@@ -790,6 +795,7 @@ CASE_RESULTS = {
     "attempt_verification_case_results",
     "recall_attempt_case_results",
     "card_run_probes",
+    "difficulty_fit_members",
 }
 
 

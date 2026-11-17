@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "FitMember": {
+      "properties": {
+        "ability": {
+          "title": "Ability",
+          "type": "number"
+        },
+        "effort": {
+          "minLength": 1,
+          "title": "Effort",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "pin": {
+          "minLength": 1,
+          "title": "Pin",
+          "type": "string"
+        },
+        "trials": {
+          "minimum": 0,
+          "title": "Trials",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model",
+        "effort",
+        "pin",
+        "ability",
+        "trials"
+      ],
+      "title": "FitMember",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "anchor_set": {
+      "minLength": 1,
+      "title": "Anchor Set",
+      "type": "string"
+    },
+    "anchors_fitted": {
+      "minimum": 2,
+      "title": "Anchors Fitted",
+      "type": "integer"
+    },
+    "anchors_held_out": {
+      "minimum": 1,
+      "title": "Anchors Held Out",
+      "type": "integer"
+    },
+    "baseline_log_loss": {
+      "minimum": 0,
+      "title": "Baseline Log Loss",
+      "type": "number"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "held_out_log_loss": {
+      "minimum": 0,
+      "title": "Held Out Log Loss",
+      "type": "number"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "intercept": {
+      "title": "Intercept",
+      "type": "number"
+    },
+    "members": {
+      "items": {
+        "$ref": "#/$defs/FitMember"
+      },
+      "minItems": 2,
+      "title": "Members",
+      "type": "array"
+    },
+    "problems": {
+      "minimum": 0,
+      "title": "Problems",
+      "type": "integer"
+    },
+    "slope": {
+      "exclusiveMinimum": 0,
+      "title": "Slope",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "anchor_set",
+    "slope",
+    "intercept",
+    "anchors_fitted",
+    "anchors_held_out",
+    "problems",
+    "held_out_log_loss",
+    "baseline_log_loss",
+    "members"
+  ],
+  "title": "DifficultyFit",
+  "type": "object"
+}
