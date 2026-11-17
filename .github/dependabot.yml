@@ -22,6 +22,21 @@ updates:
     groups:
       npm:
         update-types: [minor, patch]
+    # the Expo SDK pins these in expo/bundledNativeModules.json, and the root
+    # override holds web's React to native's; `npx expo install --fix` moves them
+    ignore:
+      - dependency-name: react
+      - dependency-name: react-dom
+      - dependency-name: react-native
+      - dependency-name: "@shopify/react-native-skia"
+      - dependency-name: react-native-gesture-handler
+      - dependency-name: react-native-keyboard-controller
+      - dependency-name: react-native-reanimated
+      - dependency-name: react-native-safe-area-context
+      - dependency-name: react-native-screens
+      - dependency-name: react-native-svg
+      - dependency-name: react-native-webview
+      - dependency-name: react-native-worklets
   # the sandbox image is pinned by digest in broker/container.py and stays
   # out of reach on purpose: moving it re-times every canonical
   - package-ecosystem: docker
