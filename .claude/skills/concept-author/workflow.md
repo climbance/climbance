@@ -52,7 +52,7 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
 │                        └───────────────────┘               │            │
 │        digest: "For you" = what is left, "Decided" = log   │            │
 │                                                            ▼            │
-│                                    commit on the branch, merge py-auto  │
+│                  commit on the branch, merge into py-auto if it checks  │
 └─────────────────────────────────────────────────┬───────────────────────┘
                                                   │
                     ┌─────────────────────────────┴──────────────────────┐

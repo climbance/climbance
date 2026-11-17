@@ -158,7 +158,8 @@ def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
     if not first.startswith("DONE"):
         return f"{sub}: {first}"
     git("add", f"modules/{args.module}", cwd=wt)
-    if not git("status", "--porcelain", cwd=wt):
+    # staged alone: a session can leave files outside the module untracked
+    if not git("diff", "--cached", "--name-only", cwd=wt):
         return f"{sub}: DONE"
     subject = (
         f"fix({args.module}): decide the questions of {topic}/{sub}"
@@ -247,7 +248,16 @@ def merge_checked(main_wt: Path, branch: str, module: str) -> list[str]:
     """Merges a subtopic's branch unless the merged module fails its check, and
     returns the check's errors. Subtopics written in parallel can each pass
     alone and clash together, as two concepts of one id did."""
-    git("merge", "-q", "--no-ff", "--no-commit", branch, cwd=main_wt)
+    merged = subprocess.run(
+        ["git", "merge", "-q", "--no-ff", "--no-commit", branch],
+        cwd=main_wt,
+        capture_output=True,
+        text=True,
+    )
+    if merged.returncode:
+        conflicts = git("diff", "--name-only", "--diff-filter=U", cwd=main_wt, check=False)
+        git("merge", "--abort", cwd=main_wt)
+        return [f"merge conflicts in {conflicts.replace(chr(10), ', ') or merged.stderr.strip()}"]
     done = subprocess.run(
         ["uv", "run", "climb", "module", "check", "--content", str(main_wt / "modules"), module],
         cwd=ENGINE,
@@ -384,7 +394,7 @@ def relevel(args: argparse.Namespace) -> None:
         if not sub_job.state().get("relevel"):
             stages.relevel(sub_job, mine)
         git("add", f"modules/{args.module}", cwd=wt)
-        if git("status", "--porcelain", cwd=wt):
+        if git("diff", "--cached", "--name-only", cwd=wt):
             subject = f"fix({args.module}): re-level {topic}/{sub}"
             git("commit", "-q", "-m", subject, "-m", models(job.models), cwd=wt)
         git("merge", "-q", "--no-ff", "--no-edit", branch, cwd=main_wt)
