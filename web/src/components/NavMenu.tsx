@@ -8,14 +8,19 @@ import { Button } from '@/components/ui/button'
 import { useEdgeFade } from '@/lib/overflow'
 import { cn } from '@/lib/utils'
 
-// the four the navigation names. A technique and a picked problem, which
-// holds its sitting, are steps down from the board, so Practice stays marked
+// the four the navigation names. A technique, a picked problem, which holds
+// its sitting, and the two short exercises are steps down from the board, so
+// Practice stays marked
 const SECTIONS = [
   {
     label: SECTION_PRACTICE,
     to: '/',
     owns: (path: string) =>
-      path === '/' || path.startsWith('/techniques/') || path.startsWith('/problems/'),
+      path === '/' ||
+      path === '/judge' ||
+      path === '/fill' ||
+      path.startsWith('/techniques/') ||
+      path.startsWith('/problems/'),
   },
   // the listing alone: a picked problem is a step down from the board, from a
   // technique or from a card, and the section it sits under cannot say which

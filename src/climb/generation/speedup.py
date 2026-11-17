@@ -11,14 +11,10 @@ from enum import StrEnum
 from functools import partial
 from typing import Any
 
-from climb.generation.agreement import Disagreement, settle
+from climb.generation.agreement import CEILING, Disagreement, settle
 from climb.generation.checks import CAP_MS
 from climb.runner import RunOutcome, answered, run, weighs
 from climb.schema import MachineProvenance, SettledCase
-
-# the most a stored case may weigh, arguments and expected value together.
-# `corpus.md` gives the reason and what a case over it costs
-CEILING = 1_048_576
 
 # the canonical finishes within a tenth of the cap at the separating point, so
 # the case tests the form rather than the machine that ran it

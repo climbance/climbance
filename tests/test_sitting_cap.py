@@ -5,9 +5,10 @@ from helpers import PROVENANCE, stored_problem
 
 from climb.caps import RUNS_PER_HOUR, RUNS_PER_MINUTE, TooOften
 from climb.cases import CaseLog
-from climb.log import AttemptLog, SittingStore
+from climb.log import AttemptLog, Faulted, RunFaultLog, SittingStore
 from climb.mint import case
-from climb.schema import Sitting
+from climb.runner import RunnerError
+from climb.schema import RunKind, Sitting
 from climb.sitting import submit
 
 STARTED = datetime(2026, 9, 10, 8, tzinfo=UTC)
@@ -106,3 +107,25 @@ def test_the_hour_caps_what_the_minute_lets_through(database):
 
     with pytest.raises(TooOften, match="an hour"):
         stores.submit(at=TEN + timedelta(seconds=10 * RUNS_PER_HOUR))
+
+
+def broken(*_args, **_kwargs):
+    raise RunnerError("the run's container exited 137 after 0 of 1 cases")
+
+
+def test_a_faulted_submission_is_stored_and_counted(database, monkeypatch):
+    """A solution can end its own sandbox, so a run answering no result still
+    holds the broker, and a fault loop meets the cap as any burst does."""
+    stores = Stores(database)
+    monkeypatch.setattr("climb.sitting.judge", broken)
+    for _ in range(RUNS_PER_MINUTE):
+        with pytest.raises(Faulted):
+            stores.submit()
+    monkeypatch.undo()
+
+    with pytest.raises(TooOften):
+        stores.submit()
+
+    faults = RunFaultLog(database).for_user("u-4f9c2a")
+    assert [one.kind for one in faults] == [RunKind.SUBMISSION] * RUNS_PER_MINUTE
+    assert stores.log.attempts("u-4f9c2a") == []

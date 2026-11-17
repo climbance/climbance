@@ -46,8 +46,8 @@ describe('module words', () => {
 });
 
 describe("a module's summary", () => {
-  it('names the mastered, the weak and the due in a week', () => {
-    expect(moduleSummary({ mastered: 3, weak: 1, soon: 4 })).toBe('3 mastered · 1 weak · 4 more due within 7 days');
+  it('names the retained, the weak and the due in a week', () => {
+    expect(moduleSummary({ retained: 3, weak: 1, soon: 4 })).toBe('3 retained · 1 weak · 4 more due within 7 days');
   });
 });
 

@@ -11,6 +11,7 @@ prompt writes a different problem rather than the same one again, so editing it
 invalidates no stored draft.
 """
 
+from climb.generation.agreement import CEILING
 from climb.generation.aim import Target
 from climb.generation.bench import BENCH, Bench
 from climb.generation.blind import request_hash as blind_hash
@@ -18,7 +19,6 @@ from climb.generation.inputs import request_hash as inputs_hash
 from climb.generation.naive import request_hash as naive_hash
 from climb.generation.screen import request_hash as screen_hash
 from climb.generation.speedup import (
-    CEILING,
     MARGIN,
     REPEATS_MAX,
     SEARCH_REVISION,

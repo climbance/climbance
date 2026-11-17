@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pydantic import create_model
+from helpers import make_problem
+from pydantic import ValidationError, create_model
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
@@ -68,6 +69,7 @@ from climb.log.table import (
     recall_attempt_case_results,
     recall_attempts,
     retirement_requests,
+    run_faults,
     self_labels,
     sessions,
     sitting_pauses,
@@ -117,6 +119,7 @@ from climb.schema import (
     RecallAttempt,
     Requirement,
     RetirementRequest,
+    RunFault,
     SelfLabel,
     SettingChange,
     SettledCase,
@@ -201,6 +204,7 @@ STORED: list[Stored] = [
     Stored(Prediction, predictions),
     Stored(RetirementRequest, retirement_requests),
     Stored(Feedback, feedback),
+    Stored(RunFault, run_faults),
     Stored(DifficultyRating, difficulty_ratings),
     Stored(Trial, trials, through_call=True, required=frozenset({"call_id"})),
     Stored(TemplateMatch, template_matches, through_call=True),
@@ -480,16 +484,37 @@ def test_one_enum_is_one_postgres_type_however_many_tables_use_it():
 
 
 def test_a_problem_s_rules_hold_in_the_table():
-    """A problem names one target at most, and a retired one names why, as
+    """A problem names exactly one target, and a retired one names why, as
     `Problem` validates."""
     held = checks(problems)
 
     assert held["problems_one_target_check"] == (
-        "target_template_id IS NULL OR target_technique IS NULL"
+        "(target_template_id IS NULL) <> (target_technique IS NULL)"
     )
     assert held["problems_retirement_names_its_reason_check"] == (
         "(status = 'retired') = (retired_reason IS NOT NULL)"
     )
+
+
+def test_a_diagnosis_naming_speed_is_refused_in_the_table():
+    """`Diagnosis` refuses it, and a writer that skips the record meets the
+    same rule in the table."""
+    assert checks(diagnoses)["diagnoses_never_speed_check"] == "mode <> 'speed'"
+
+
+def test_a_problem_naming_no_target_is_refused():
+    """The generator was always told a template or a technique, so a problem
+    naming neither has lost what it was written for."""
+    with pytest.raises(ValidationError, match="names its target"):
+        make_problem(target_template_id=None, target_technique=None)
+
+
+def test_a_blank_statement_is_refused_by_the_record_and_the_table():
+    """A whitespace-only statement passes a presence check while asking
+    nothing, so `corpus.md` requires a non-blank one."""
+    with pytest.raises(ValidationError):
+        make_problem(statement=" \n ")
+    assert checks(problems)["problems_statement_written_check"] == "statement ~ '\\S'"
 
 
 def test_a_card_holds_one_optional_template_at_most():
@@ -737,6 +762,7 @@ APPEND_ONLY = {
     "predictions",
     "retirement_requests",
     "feedback",
+    "run_faults",
     "answers",
     "stints",
     "module_status_changes",

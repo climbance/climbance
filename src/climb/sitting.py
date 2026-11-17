@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from climb import mint
 from climb.caps import capped
 from climb.cases import CaseLog
-from climb.log import AttemptLog, SittingStore
+from climb.log import AttemptLog, RunFaultLog, SittingStore
 from climb.problems import ProblemStore
 from climb.runner import CaseRun, judge, runner
 from climb.schema import (
@@ -27,6 +27,7 @@ from climb.schema import (
     FailureMode,
     Pause,
     Problem,
+    RunKind,
     SelfLabel,
     Sitting,
     TestCase,
@@ -244,10 +245,20 @@ def submit(
         _ended_idle(sittings, one)
         raise Refused(f"sitting {sitting_id} was left idle and has ended")
     # before the run: a submission past the cap starts no container
-    capped(lambda since: len(log.attempts(user_id, since=since)), at, "submissions")
+    faults = RunFaultLog(log.root)
+    capped(
+        lambda since: (
+            len(log.attempts(user_id, since=since))
+            + len(faults.for_user(user_id, kind=RunKind.SUBMISSION, since=since))
+        ),
+        at,
+        "submissions",
+    )
     one = _stored(sittings, one, at)
     problem_cases = cases.for_problem(one.problem_id)
-    runs = judge(code, problem_cases, cap_ms=DRILL_CAP_MS)
+    runs = faults.counted(
+        user_id, RunKind.SUBMISSION, at, lambda: judge(code, problem_cases, cap_ms=DRILL_CAP_MS)
+    )
     judged = Execution(cap_ms=DRILL_CAP_MS, runner=runner(), results=[result for result, _ in runs])
     attempt = mint.attempt(one, code, solved=judged.verified, finished_at=at, restored=restored)
     verification = mint.attempt_verification(attempt.id, judged)
@@ -365,7 +376,7 @@ def modes(attempt: Attempt, run: AttemptVerification | None) -> list[FailureMode
 def label(log: AttemptLog, attempt_id: str, mode: FailureMode, *, user_id: str) -> SelfLabel:
     """The user's own verdict on why the attempt went the way it did."""
     attempt = owned_attempt(log, attempt_id, user_id=user_id)
-    if mode not in modes(attempt, _verification(log, attempt_id)):
+    if mode not in modes(attempt, _verification(log, attempt_id, user_id)):
         # a label contradicting the verdict answers a settled question
         raise Refused(f"{mode.value} is not open to this attempt")
     written = mint.self_label(attempt_id, mode)
@@ -373,9 +384,9 @@ def label(log: AttemptLog, attempt_id: str, mode: FailureMode, *, user_id: str) 
     return written
 
 
-def _verification(log: AttemptLog, attempt_id: str) -> AttemptVerification | None:
+def _verification(log: AttemptLog, attempt_id: str, user_id: str) -> AttemptVerification | None:
     # the latest run: a submission mints one, and a re-run appends another
-    runs = [one for one in log.verifications() if one.attempt_id == attempt_id]
+    runs = log.verifications(user_id, attempt_id=attempt_id)
     return runs[-1] if runs else None
 
 

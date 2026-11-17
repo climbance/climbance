@@ -347,6 +347,9 @@ certification.
   the rest as waiting outside it.
 - **A focus degrades with the content.** An unknown module means no focus, an
   unknown topic keeps the module, and an unknown subtopic keeps the topic.
+  A client degrades a stored focus as it reads it, once the content moved. A
+  focus line naming content the store does not hold is refused at the sync,
+  so no degraded focus is written to the log.
 - **A certification focus covers its scope and every prerequisite group**, so
   the unmet prerequisites come first.
 
@@ -482,7 +485,8 @@ trigger, as `README.md` requires.
   and for an open question the grade, the points missed, the traps fallen
   into and the wrong flag.
 - **`stints`**: the mode, the score, the number of questions answered, and
-  for an exam the level it was taken at.
+  for an exam the level it was taken at. A certification's exam also names
+  the certification, by its wire id.
 - **`module_status_changes`**: the module and its status.
 - **`focuses`**: the module, the topic, the subtopic and the certification,
   each optional, and whether the focus is strict.
@@ -521,10 +525,16 @@ engine translates them at its edge, so the store keeps this project's names.
 - **An `order` line names every module by slug, as `courses`.** A line naming
   a module the store does not hold is refused, as any line naming unknown
   content is.
-- **Three names change at the edge.** The wire's `card` format is stored as
+- **Four names change at the edge.** The wire's `card` format is stored as
   an open question, and its `drill` queue as the filtered queue. Its
-  `exam-L<n>` session is stored as an `exam` stint at level `n`. A line read
+  `exam-L<n>` session is stored as an `exam` stint at level `n`. Its
+  `cert-<id>` session is stored as an `exam` stint at the certification's
+  level, naming the certification. A line read
   back carries the wire's names again.
+- **The snapshot's scheduling rules keep `mastered_stability_days`** for the
+  stability at which a question is retained. An installed app reads that key
+  from every snapshot, so renaming it would break a build already on a
+  phone.
 - **A line naming content the store does not hold is refused alone.** The
   rest of the upload is stored, and the reply names each refused line.
 - **A sync returns the user's records since a cursor**, one append order per

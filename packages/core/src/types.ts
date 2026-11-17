@@ -3,7 +3,7 @@ import type { Certs, RawCerts } from './certs';
 import type { Graph, RawGraph } from './graph';
 
 export type Format = 'choice' | 'short' | 'card';
-export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'mastered';
+export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'retained';
 export type Grade = 'k' | 'p' | 'n';
 
 export interface TopicDef {

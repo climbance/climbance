@@ -12,19 +12,29 @@ WHOLE = "all"
 WIRE_MODES = {"drill": "filtered"}
 STORE_MODES = {ours: theirs for theirs, ours in WIRE_MODES.items()}
 EXAM = "exam-L"
+CERTIFICATION = "cert-"
 
 
 class Unknown(Exception):
     """A record naming content the store does not hold. The client drops it."""
 
 
-def mode_in(mode: str) -> tuple[str, int | None]:
+def mode_in(mode: str) -> tuple[str, int | None, str | None]:
+    """The stint's mode, an exam's level, and a certification exam's id."""
     if mode.startswith(EXAM):
-        return "exam", int(mode.removeprefix(EXAM))
-    return WIRE_MODES.get(mode, mode), None
+        return "exam", int(mode.removeprefix(EXAM)), None
+    if mode.startswith(CERTIFICATION):
+        certification = mode.removeprefix(CERTIFICATION)
+        level = certification.rpartition("-")[2]
+        if level not in LEVEL_NAMES:
+            raise Unknown(f"unknown certification {certification}")
+        return "exam", LEVEL_NAMES.index(level), certification
+    return WIRE_MODES.get(mode, mode), None, None
 
 
-def mode_out(mode: str, level: int | None) -> str:
+def mode_out(mode: str, level: int | None, certification: str | None) -> str:
+    if certification is not None:
+        return f"{CERTIFICATION}{certification}"
     return f"{EXAM}{level}" if mode == "exam" else STORE_MODES.get(mode, mode)
 
 

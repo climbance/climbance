@@ -62,7 +62,7 @@ export function FocusCard(props: Props) {
     [b, focus, props.exams, newPerDay, newLimit, now],
   );
   const color: Record<FocusPart, string> = {
-    mastered: tone.done,
+    retained: tone.done,
     learning: theme.colors.primary,
     // owed rather than held, so neutral, as the web's bar reads it
     review: theme.colors.outline,

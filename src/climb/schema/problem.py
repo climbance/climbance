@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from pydantic import Field, model_validator
 
+from climb.schema.authored import Text
 from climb.schema.provenance import MachineProvenance
 from climb.schema.target import one_target
 
@@ -29,7 +30,7 @@ class Problem(MachineProvenance):
         default_factory=list[str]
     )  # read off the canonicals; re-derivable
     difficulty: ProblemDifficulty | None = None
-    statement: str = Field(min_length=1)  # what the problem asks; matching reads it
+    statement: Text  # what the problem asks; matching reads it
     # The target: what the generator was told, never a claim that the problem
     # exercises nothing else. One of the two, by the kind the target named.
     # The template arm makes the first template match provenance
@@ -61,6 +62,10 @@ class Problem(MachineProvenance):
     @model_validator(mode="after")
     def _one_target(self) -> Problem:
         one_target(self.target_template_id, self.target_technique)
+        # the generator was always told something: a problem names what it was
+        # written for, where a site outcome before landing may not
+        if self.target_template_id is None and self.target_technique is None:
+            raise ValueError("a problem names its target: a template or a technique")
         return self
 
     @model_validator(mode="after")

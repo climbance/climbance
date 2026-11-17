@@ -139,3 +139,24 @@ def test_an_unstarted_or_acquiring_card_waits_for_nothing():
     unsolved = [Rung(problem=RUNG, templates=["t1"], required=True)]
     assert reading(CARD, None, RUNGS, [], PROBLEMS, []) == (CardState.NOT_STARTED, None)
     assert reading(CARD, RUN, unsolved, [], PROBLEMS, []) == (CardState.ACQUIRING, None)
+
+
+LATER = make_problem("p2", target_technique=None, target_template_id="t1")
+
+
+def test_a_rung_a_later_problem_added_leaves_a_graduated_card_graduated():
+    """Graduation asserts the forms are kept, and a generation run after it
+    adds a problem rather than a form."""
+    added = Rung(problem=LATER, templates=["t1"], required=True, joined=CHECKED.created_at + DAY)
+    state, _ = reading(CARD, RUN, [*RUNGS, added], PROBED, PROBLEMS | {"p2": LATER}, [CHECKED])
+    assert state is CardState.GRADUATED
+
+
+def test_a_rung_there_before_graduation_still_holds_the_card_acquiring():
+    """A required rung the ladder held all along was never solved, so the card
+    never graduated."""
+    held = Rung(problem=LATER, templates=["t1"], required=True, joined=T0)
+    state, upcoming = reading(
+        CARD, RUN, [*RUNGS, held], PROBED, PROBLEMS | {"p2": LATER}, [CHECKED]
+    )
+    assert (state, upcoming) == (CardState.ACQUIRING, None)

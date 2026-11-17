@@ -352,6 +352,9 @@ The test cases decide whether a solution to a generated problem is correct.
   size would store less. Such a case would name how its input is built rather
   than what the input holds, and a run would build the input before judging
   it.
+- **Every case is weighed before it joins the set.** A case the generator or
+  a round proposed over the ceiling is dropped as it is settled, as the fuzz
+  pass and the search drop theirs, so no stored case exceeds the ceiling.
 - **A separating case may carry a repeat count**, and the cap covers the calls
   together. A form whose one application is sublinear separates on no input the
   ceiling holds, since a linear scan of the largest storable array takes two

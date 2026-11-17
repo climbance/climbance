@@ -70,6 +70,8 @@ The app stores what you do in it, so that it can show your progress:
   note;
 - each note of feedback you send: the note, the app it was sent from and the
   page;
+- each submission or recall the server failed to run: when, which kind, and
+  the server's message;
 - each answer to a knowledge question, each round of questions, and your
   study choices: the focus, each module's status and order, the lessons you
   marked read, certification exams, your daily limit and its raises, and the

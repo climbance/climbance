@@ -10,6 +10,8 @@ from climb.generation import Corpus, write_problems
 from climb.outcomes import OutcomeLog
 from climb.problems import ProblemStore
 from climb.runner import runner
+from climb.schema import SolutionRole
+from climb.verifications import VerificationLog
 
 BUILDS = "def solve(size, seed):\n    return [list(range(size))]\n"
 
@@ -47,6 +49,20 @@ def test_a_canonical_passing_every_case_within_the_bar_lists_no_case(root, monke
     assert first == f"runner {runner()}, cap 2000 ms, bar 200 ms"
     assert listed == []
     assert last.startswith("0 of ")
+
+
+def test_each_canonical_s_run_is_stored(root, monkeypatch, capsys):
+    """A retiming is a run on the runner configured now, so it is stored
+    beside the run the problem landed on rather than only printed."""
+    stored = landed(root, monkeypatch)
+    canonical = Corpus.at(root).solutions.for_problem(stored.id, SolutionRole.CANONICAL)[0]
+    before = len(VerificationLog(root).for_solution(canonical.id))
+
+    run_cli(monkeypatch, "retime")
+
+    runs = VerificationLog(root).for_solution(canonical.id)
+    assert len(runs) == before + 1
+    assert (runs[-1].cap_ms, runs[-1].runner) == (2000, runner())
 
 
 def test_a_case_past_the_bar_is_listed_by_problem_canonical_and_case(root, monkeypatch, capsys):

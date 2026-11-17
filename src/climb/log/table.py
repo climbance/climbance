@@ -25,6 +25,7 @@ from climb.schema import (
     FailureMode,
     Hint,
     RetirementReason,
+    RunKind,
 )
 from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
 
@@ -257,6 +258,7 @@ diagnoses = Table(
     Column("evidence", Text, nullable=False),
     # a model wrote every diagnosis
     call_column(nullable=False),
+    CheckConstraint("mode <> 'speed'", name="never_speed"),
 )
 
 
@@ -353,6 +355,21 @@ retirement_requests = Table(
     Column("reason", enumerated(RetirementReason), nullable=False),
     Column("note", Text, nullable=False),
     CheckConstraint("note ~ '\\S' AND length(note) <= 2000", name="note_written"),
+)
+
+
+# one user's run the sandbox answered no result for, counted by the caps:
+# `log.md`, Run faults
+run_faults = Table(
+    "run_faults",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("user_id", Text, ForeignKey("users.id"), nullable=False, index=True),
+    Column("kind", enumerated(RunKind), nullable=False),
+    Column("detail", Text, nullable=False),
+    CheckConstraint("length(detail) <= 2000", name="detail_bounded"),
 )
 
 

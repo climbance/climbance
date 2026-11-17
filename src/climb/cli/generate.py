@@ -73,8 +73,6 @@ def generate(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
     outcomes = OutcomeLog(root)
     bench = chosen_bench(args, parser)
 
-    # the log as the run found it, so what this run paid is the tail past it
-    before = len(calls.all())
     reached: list[tuple[Target, GenerationResult]] = []
     total = len(aimed) * args.count
     print(f"{total} problem(s) over {len(aimed)} template(s)", file=sys.stderr, flush=True)
@@ -101,7 +99,7 @@ def generate(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
             break
 
     results = [result for _, result in reached]
-    print(finale(reached, summary(results, aimed, bench), calls.all()[before:]))
+    print(finale(reached, summary(results, aimed, bench), calls.appended))
     if any(result.aborted for result in results):
         parser.exit(1, f"generate: aborted after {ABORT_AFTER} consecutive failures\n")
     failed = any(result.failed for result in results)
@@ -159,7 +157,6 @@ def resumed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Dat
         else:
             resumable.append((target, draft))
 
-    before = len(calls.all())
     reached: list[tuple[Target, Resumed]] = []
     for index, (target, draft) in enumerate(resumable, start=1):
         # the row a written problem ends on, at the sweep's own counter
@@ -180,7 +177,7 @@ def resumed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Dat
 
     results = [result for _, result in reached]
     closing = resume_summary(results, bench, held_back=held_back)
-    print(finale(reached, closing, calls.all()[before:]))
+    print(finale(reached, closing, calls.appended))
     if not any(result.drafted for result in results):
         parser.exit(1, "generate: no problem stored\n")
 

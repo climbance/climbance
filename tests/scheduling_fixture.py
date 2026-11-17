@@ -14,8 +14,6 @@ ABOUT = (
     "The other sections were generated outside this repository, and are regenerated once a "
     "server feature reads their rules. Do not edit by hand."
 )
-# the TypeScript core's name for the glossary's retained
-STATE_NAMES = {"retained": "mastered"}
 
 T0 = datetime.fromisoformat("2026-01-05T09:00:00+00:00")
 GOOD: dict[str, Any] = {"ok": True}
@@ -71,7 +69,7 @@ def expected(records: list[Line], nows: list[str]) -> dict[str, Any]:
         "difficulty": memory.difficulty if memory else None,
         "due": iso(memory.due) if memory else None,
         "passed": passed(reviews),
-        "status": [STATE_NAMES.get(s, s) for s in (state(reviews, m) for m in moments)],
+        "status": [state(reviews, m) for m in moments],
         "ready": [servable(reviews, m) for m in moments],
     }
 
@@ -125,7 +123,7 @@ CASES: list[tuple[str, list[Line], list[str]]] = [
         [due_of(LONG, minutes=5), due_of(LONG, minutes=10)],
     ),
     ("relearned: Relearning to Review", RELEARNED, [due_of(LONG, minutes=60)]),
-    ("mastered at 21 days stability", RETAINED, [due_of(RETAINED, -1), due_of(RETAINED)]),
+    ("retained at 21 days stability", RETAINED, [due_of(RETAINED, -1), due_of(RETAINED)]),
     ("records out of order", [r(9, GOOD), r(0, GOOD), r(3, GOOD)], [at(10)]),
     ("no attempts", [], [at(0)]),
 ]

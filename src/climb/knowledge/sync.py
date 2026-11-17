@@ -148,8 +148,9 @@ def _record(names: _Names, line: dict[str, Any]) -> tuple[Table, dict[str, Any]]
         raise Unknown(f"unknown kind {kind}")
     table = KINDS[kind][0]
     if kind == "session":
-        mode, level = mode_in(line["mode"])
-        return table, {"mode": mode, "level": level, "score": line["score"], "answered": line["n"]}
+        mode, level, certification = mode_in(line["mode"])
+        values = {"mode": mode, "level": level, "score": line["score"], "answered": line["n"]}
+        return table, values | {"certification": certification}
     if kind == "focus":
         return table, _focus(names, line)
     if kind == "setting":
@@ -194,13 +195,14 @@ def _slugs(value: object) -> list[str]:
 
 
 def _focus(names: _Names, line: dict[str, Any]) -> dict[str, Any]:
-    """Degrades as `knowledge.md` gives: an unknown topic keeps the module, and
-    an unknown subtopic keeps the topic."""
+    """Refuses a topic or a subtopic the store does not hold, as an unknown
+    module is: the degrade `knowledge.md` gives is a client's reading of a
+    stored focus, never a rewrite of the line."""
     if line.get("course") is None:
         return {"strict": bool(line.get("strict"))}
     module_id = names.module(line["course"])
-    topic = names.topics.get((module_id, line.get("topic") or ""))
-    sub = names.subtopics.get((module_id, line.get("sub") or "")) if topic else None
+    topic = _topic(names, module_id, line.get("topic"))
+    sub = _subtopic(names, module_id, line.get("sub"))
     values: dict[str, Any] = {"module_id": module_id, "topic_id": topic, "subtopic_id": sub}
     if certification := line.get("cert"):
         scope, level = certification_in(line["course"], certification)
@@ -217,6 +219,14 @@ def _topic(names: _Names, module_id: str, slug: str | None) -> str | None:
     return names.topics[(module_id, slug)]
 
 
+def _subtopic(names: _Names, module_id: str, slug: str | None) -> str | None:
+    if slug is None:
+        return None
+    if (module_id, slug) not in names.subtopics:
+        raise Unknown(f"unknown subtopic {slug}")
+    return names.subtopics[(module_id, slug)]
+
+
 def _since(conn: Connection, table: Table, user_id: str, after: int) -> list[dict[str, Any]]:
     query = select(table).where(table.c.user_id == user_id, table.c.appended > after)
     return [dict(row) for row in conn.execute(query.order_by(table.c.appended)).mappings()]
@@ -229,7 +239,7 @@ def _line(kind: str, row: dict[str, Any], names: _Names) -> dict[str, Any]:
         module, question = names.owned[row["question_id"]]
         return line | answer_out({**row, "module": module, "question": question})
     if kind == "session":
-        mode = mode_out(row["mode"], row["level"])
+        mode = mode_out(row["mode"], row["level"], row["certification"])
         return line | {"mode": mode, "score": row["score"], "n": row["answered"]}
     if kind == "setting":
         return line | {"name": row["name"], "n": row["value"]}

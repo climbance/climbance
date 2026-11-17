@@ -158,7 +158,7 @@ export function moduleRows(b: Board, now: number): ModuleRow[] {
   });
 }
 
-export type FocusPart = 'mastered' | 'learning' | 'review' | 'unseen';
+export type FocusPart = 'retained' | 'learning' | 'review' | 'unseen';
 
 /** The focus panel: how far the focus is along, what is owed now, and what comes next. */
 export interface FocusView {
@@ -174,7 +174,7 @@ export interface FocusView {
 }
 
 const PART_LABEL: Record<FocusPart, string> = {
-  mastered: 'mastered',
+  retained: 'retained',
   learning: 'learning',
   review: 'to review',
   unseen: 'unseen',
@@ -183,11 +183,11 @@ const PART_LABEL: Record<FocusPart, string> = {
 export function focusView(b: Board, focus: Focus, queue: Queue, exams: CertRecord[], now: number): FocusView {
   const qs = focusScope(b, focus);
   const inScope = new Set(qs);
-  const n: Record<FocusPart, number> = { mastered: 0, learning: 0, review: 0, unseen: 0 };
+  const n: Record<FocusPart, number> = { retained: 0, learning: 0, review: 0, unseen: 0 };
   let locked = 0;
   for (const q of qs) {
     const s = b.status(q, now);
-    if (s === 'mastered' || s === 'learning' || s === 'unseen') n[s]++;
+    if (s === 'retained' || s === 'learning' || s === 'unseen') n[s]++;
     else n.review++;
     if (s === 'unseen' && !b.unlocked(q)) locked++;
   }

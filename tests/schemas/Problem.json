@@ -139,6 +139,7 @@
     },
     "statement": {
       "minLength": 1,
+      "pattern": "\\S",
       "title": "Statement",
       "type": "string"
     },

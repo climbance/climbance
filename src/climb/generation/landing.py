@@ -1,16 +1,14 @@
-"""Storing a problem the runs kept: its cases, both solutions and the match.
-
-Four stores and no atomic write, so the order stands in for one: the problem
-is written last, and a run that dies part way leaves orphans rather than a
-problem whose parts are missing.
-"""
+"""Storing a problem the runs kept: its cases, its solutions, the verification
+runs of the canonical and the reference, and the match, in one transaction."""
 
 from dataclasses import dataclass
 
 from climb import mint
 from climb.cases import CaseLog
+from climb.generation.checks import CAP_MS
 from climb.matches import MatchLog
 from climb.problems import ProblemStore
+from climb.runner import runner, verify
 from climb.schema import (
     Draft,
     MachineProvenance,
@@ -21,6 +19,7 @@ from climb.schema import (
 )
 from climb.solutions import SolutionLog
 from climb.storage import Database
+from climb.verifications import VerificationLog
 
 
 @dataclass(frozen=True)
@@ -30,10 +29,17 @@ class Corpus:
     cases: CaseLog
     solutions: SolutionLog
     matches: MatchLog
+    verifications: VerificationLog
 
     @classmethod
     def at(cls, root: Database) -> Corpus:
-        return cls(ProblemStore(root), CaseLog(root), SolutionLog(root), MatchLog(root))
+        return cls(
+            ProblemStore(root),
+            CaseLog(root),
+            SolutionLog(root),
+            MatchLog(root),
+            VerificationLog(root),
+        )
 
 
 def copied(provenance: MachineProvenance | None) -> MachineProvenance:
@@ -57,58 +63,76 @@ def landing(draft: Draft) -> list[SettledCase]:
 
 
 def land(corpus: Corpus, template: Template, draft: Draft) -> Problem:
+    provenance = copied(draft.generator_provenance)
+    problem = mint.generated_problem(
+        draft.title,
+        draft.statement,
+        target_template_id=template.id,
+        difficulty=draft.difficulty,
+        provenance=provenance,
+    )
+    # the case's own call rather than the problem's: a mutation round and the
+    # speedup search propose arguments at their own configuration
+    cases = [
+        mint.case(
+            problem.id,
+            case.args,
+            case.expected,
+            expected_from=case.expected_from,
+            round=case.round,
+            repeats=case.repeats,
+            provenance=case.provenance,
+        )
+        for case in landing(draft)
+    ]
+    canonical = mint.solution(
+        problem.id, draft.canonical, SolutionRole.CANONICAL, provenance=provenance
+    )
+    if draft.reference is None:
+        raise ValueError("a landing draft carries the reference its blind call wrote")
+    reference = mint.solution(
+        problem.id,
+        draft.reference,
+        SolutionRole.REFERENCE,
+        provenance=copied(draft.blind_provenance),
+    )
+    solutions = [canonical, reference]
+    if draft.naive is not None:
+        # stored so a later search measures against the solution this run paid
+        # for. Absent where the template claims no speedup, since nothing
+        # measures a form that is its own optimum
+        solutions.append(
+            mint.solution(
+                problem.id,
+                draft.naive,
+                SolutionRole.NAIVE,
+                provenance=copied(draft.naive_provenance),
+            )
+        )
+    # the run each of the two landed on, over the set as it landed, and before
+    # the transaction so no run holds it open: `corpus.md`, Verification runs
+    runs = [
+        mint.verification(
+            one.id,
+            cap_ms=CAP_MS,
+            runner=runner(),
+            results=verify(one.code, cases, cap_ms=CAP_MS),
+        )
+        for one in (canonical, reference)
+    ]
     # one transaction: a reader finds the problem with every part of it or
     # finds nothing, and the problem goes first, since every other record
     # names it
     with corpus.problems.root.transaction():
-        provenance = copied(draft.generator_provenance)
-        problem = mint.generated_problem(
-            draft.title,
-            draft.statement,
-            target_template_id=template.id,
-            difficulty=draft.difficulty,
-            provenance=provenance,
-        )
         corpus.problems.put(problem)
-        for case in landing(draft):
-            # the case's own call rather than the problem's: a mutation round
-            # and the speedup search propose arguments at their own
-            # configuration
-            corpus.cases.append(
-                mint.case(
-                    problem.id,
-                    case.args,
-                    case.expected,
-                    expected_from=case.expected_from,
-                    round=case.round,
-                    repeats=case.repeats,
-                    provenance=case.provenance,
-                )
-            )
-        canonical = mint.solution(
-            problem.id, draft.canonical, SolutionRole.CANONICAL, provenance=provenance
-        )
-        corpus.solutions.append(canonical)
-        blind = copied(draft.blind_provenance)
-        if draft.reference is None:
-            raise ValueError("a landing draft carries the reference its blind call wrote")
-        corpus.solutions.append(
-            mint.solution(problem.id, draft.reference, SolutionRole.REFERENCE, provenance=blind)
-        )
-        if draft.naive is not None:
-            # stored so a later search measures against the solution this run
-            # paid for. Absent where the template claims no speedup, since
-            # nothing measures a form that is its own optimum
-            corpus.solutions.append(
-                mint.solution(
-                    problem.id,
-                    draft.naive,
-                    SolutionRole.NAIVE,
-                    provenance=copied(draft.naive_provenance),
-                )
-            )
+        for case in cases:
+            corpus.cases.append(case)
+        for solution in solutions:
+            corpus.solutions.append(solution)
+        for run in runs:
+            corpus.verifications.append(run)
         corpus.matches.append(mint.generator_match(template.id, canonical.id))
-        return problem
+    return problem
 
 
 __all__ = ["Corpus", "copied", "land", "landing"]

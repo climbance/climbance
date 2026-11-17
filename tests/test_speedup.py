@@ -1,7 +1,8 @@
 import pytest
 from helpers import a_call
 
-from climb.generation.speedup import CEILING, MARGIN, Missing, search
+from climb.generation.agreement import CEILING
+from climb.generation.speedup import MARGIN, Missing, search
 from climb.runner import weighs
 from climb.schema import ExpectedSource, MachineProvenance
 

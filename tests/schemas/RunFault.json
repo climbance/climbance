@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "RunKind": {
+      "enum": [
+        "submission",
+        "recall"
+      ],
+      "title": "RunKind",
+      "type": "string"
+    }
+  },
+  "description": "A user's run the sandbox answered no result for: `log.md`, Run faults.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "detail": {
+      "maxLength": 2000,
+      "title": "Detail",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/RunKind"
+    },
+    "user_id": {
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "kind",
+    "detail"
+  ],
+  "title": "RunFault",
+  "type": "object"
+}

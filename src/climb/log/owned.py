@@ -25,6 +25,7 @@ from climb.log.judgements import JudgementLog
 from climb.log.predictions import PredictionLog
 from climb.log.recalls import RecallLog
 from climb.log.retirement_requests import RetirementRequestLog
+from climb.log.run_faults import RunFaultLog
 from climb.log.runs import CardRunLog
 from climb.log.sittings import SittingStore
 from climb.log.store import AttemptLog
@@ -47,6 +48,7 @@ from climb.log.table import (
     recall_attempt_case_results,
     recall_attempts,
     retirement_requests,
+    run_faults,
     self_labels,
     sessions,
     sitting_pauses,
@@ -73,6 +75,7 @@ from climb.schema import (
     Prediction,
     RecallAttempt,
     RetirementRequest,
+    RunFault,
     SelfLabel,
     SettingChange,
     Sitting,
@@ -112,6 +115,7 @@ class UserLog(BaseModel):
     recall_attempts: list[RecallAttempt]
     retirement_requests: list[RetirementRequest]
     feedback: list[Feedback]
+    run_faults: list[RunFault]
     calls: list[Call]
     # the knowledge log: `knowledge.md`, The records
     answers: list[Answer]
@@ -151,6 +155,7 @@ def whole_log(root: Database, user_id: str) -> UserLog:
             "recall_attempts": RecallLog(root).all(user_id),
             "retirement_requests": RetirementRequestLog(root).for_user(user_id),
             "feedback": FeedbackLog(root).for_user(user_id),
+            "run_faults": RunFaultLog(root).for_user(user_id),
             "calls": called,
             # rows, each validated into the record its field names
             **{name: _knowledge(root, table, user_id) for name, table in KNOWLEDGE.items()},
@@ -235,6 +240,7 @@ def _erase(conn: Connection, user_id: str) -> dict[str, int]:
         (predictions, predictions.c.user_id == user_id),
         (retirement_requests, retirement_requests.c.user_id == user_id),
         (feedback, feedback.c.user_id == user_id),
+        (run_faults, run_faults.c.user_id == user_id),
         (card_run_probes, card_run_probes.c.card_run_id.in_(started)),
         (card_runs, card_runs.c.user_id == user_id),
         *((table, table.c.user_id == user_id) for table in KNOWLEDGE.values()),

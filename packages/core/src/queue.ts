@@ -207,7 +207,7 @@ export class Queue {
       q = ranked(pool, b, now, rng)[0] ?? null;
       if (!q && this.want === null) {
         const rest = this.scope.filter(
-          (x) => ['learning', 'mastered'].includes(b.status(x, now)) && !this.asked.has(qkey(x)),
+          (x) => ['learning', 'retained'].includes(b.status(x, now)) && !this.asked.has(qkey(x)),
         );
         q = ranked(rest, b, now, rng)[0] ?? null;
       }

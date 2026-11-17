@@ -2,6 +2,7 @@ from climb.runner.encoding import agrees, as_json, weighs
 from climb.runner.execution import (
     STARTUP_MS,
     CaseRun,
+    RunnerError,
     RunOutcome,
     defines_solve,
     run,
@@ -15,6 +16,7 @@ __all__ = [
     "CaseRun",
     "NoValue",
     "RunOutcome",
+    "RunnerError",
     "agrees",
     "answered",
     "as_json",

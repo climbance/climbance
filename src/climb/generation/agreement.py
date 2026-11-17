@@ -8,9 +8,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from climb.runner.encoding import agrees
+from climb.runner.encoding import agrees, weighs
 from climb.runner.outputs import NoValue
 from climb.schema import DraftCase, ExpectedSource, MachineProvenance, SettledCase
+
+# the most a stored case may weigh, arguments and expected value together.
+# `corpus.md` gives the reason and what a case over it costs
+CEILING = 1_048_576
 
 
 @dataclass(frozen=True)
@@ -78,6 +82,11 @@ def settle(
     settled = Settled()
     for one, ours, theirs in zip(args, canonical, reference, strict=True):
         case = list(one)
+        # never stored, so never settled: the ceiling holds for every case
+        # the set carries, whichever site proposed it
+        expected = ours if isinstance(theirs, NoValue) else theirs
+        if weighs(case) + weighs(expected) > CEILING:
+            continue
         if isinstance(theirs, NoValue):
             settled.cases.append(
                 SettledCase(

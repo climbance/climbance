@@ -97,7 +97,9 @@ each technique, and a card and a mastery estimate share no data.
   what a problem is about rather than which form solves it.
 - **A ladder whose selector admits easy holds an easy rung** wherever the
   corpus holds an easy problem for the selector. The selector's fill takes an
-  easy problem first when no covering rung is easy. Ordered by attempts
+  easy problem first when no covering rung is easy, one rung past `size` where
+  the covering rungs already fill it. An empty difficulty list admits easy, as
+  it admits every level. Ordered by attempts
   alone, `dp-1d-linear` filled eight rungs with medium problems while its easy
   problems waited. A learner starting the card then met no problem that
   applies the form unchanged.

@@ -42,7 +42,7 @@ export function status(
   if (!attempts.length || !memory) return 'unseen';
   if (!isPass(attempts[attempts.length - 1])) return 'weak';
   if (now >= memory.due) return 'due';
-  return memory.stability >= rules.fsrs.mastered_stability_days ? 'mastered' : 'learning';
+  return memory.stability >= rules.fsrs.mastered_stability_days ? 'retained' : 'learning';
 }
 
 /** Servable now: unseen, or FSRS's due (a weak question's step or interval) has come. */
@@ -60,7 +60,7 @@ export const PRIORITY: Record<Status, number> = {
   due: 1,
   unseen: 2,
   learning: 3,
-  mastered: 4,
+  retained: 4,
 };
 
 const NONE: Attempt[] = [];

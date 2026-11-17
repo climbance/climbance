@@ -9,10 +9,9 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from climb.generation.agreement import Disagreement, settle
+from climb.generation.agreement import CEILING, Disagreement, settle
 from climb.generation.inputs import InputGenerator
 from climb.generation.shrinking import Candidate, shrink
-from climb.generation.speedup import CEILING
 from climb.mutation import Mutant, kill, survivors
 from climb.runner import NoValue, outputs, weighs
 from climb.schema import MachineProvenance, SettledCase

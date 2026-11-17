@@ -3,7 +3,9 @@ from helpers import browsing
 from matching import card, seeded, template
 
 from climb.caps import RUNS_PER_MINUTE
-from climb.log import RecallLog
+from climb.log import RecallLog, RunFaultLog
+from climb.runner import RunnerError
+from climb.schema import RunKind
 
 USER = "u-4f9c2a"
 TECHNIQUE = "sliding-window"
@@ -210,4 +212,23 @@ def test_code_past_the_bound_is_refused_before_it_runs(client, database):
     refused = client.post(recalls(client), json={"code": padded})
 
     assert refused.status_code == 422
+    assert RecallLog(database).all(USER) == []
+
+
+def test_a_faulted_recall_answers_503_and_counts(client, database, monkeypatch):
+    """The sandbox's fault is not the request's, and the run held the broker
+    all the same, so the next recall past the cap is refused."""
+
+    def broken(*_args, **_kwargs):
+        raise RunnerError("the run's container exited 137 after 0 of 2 cases")
+
+    monkeypatch.setattr("climb.recall.judged", broken)
+    for _ in range(RUNS_PER_MINUTE):
+        assert client.post(recalls(client), json={"code": LOWER}).status_code == 503
+    monkeypatch.undo()
+
+    assert client.post(recalls(client), json={"code": LOWER}).status_code == 429
+    assert [one.kind for one in RunFaultLog(database).for_user(USER)] == [
+        RunKind.RECALL
+    ] * RUNS_PER_MINUTE
     assert RecallLog(database).all(USER) == []

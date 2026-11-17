@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 
 from climb import mint
 from climb.caps import capped
-from climb.log import RecallLog, latest_recalls
+from climb.log import RecallLog, RunFaultLog, latest_recalls
 from climb.runner import CaseRun, agrees, as_json, run, runner
 from climb.schema import (
     LADDER,
@@ -21,6 +21,7 @@ from climb.schema import (
     Hint,
     Json,
     RecallAttempt,
+    RunKind,
     Template,
     TemplateCase,
 )
@@ -49,14 +50,23 @@ def reproduce(
         raise Refused(f"the hints are taken in order: {', '.join(LADDER)}")
     # before the run: a recall past the cap starts no container, as a
     # submission past it does not
-    capped(lambda since: len(log.all(user_id, since=since)), at, "recalls")
+    faults = RunFaultLog(log.root)
+    capped(
+        lambda since: (
+            len(log.all(user_id, since=since))
+            + len(faults.for_user(user_id, kind=RunKind.RECALL, since=since))
+        ),
+        at,
+        "recalls",
+    )
+    execution = faults.counted(user_id, RunKind.RECALL, at, lambda: judged(template, code))
     record = mint.recall_attempt(
         user_id,
         card_id,
         template.id,
         code=code,
         hints=hints,
-        execution=judged(template, code),
+        execution=execution,
     )
     log.append(record)
     return record

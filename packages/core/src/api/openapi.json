@@ -4591,6 +4591,7 @@
           "statement": {
             "type": "string",
             "minLength": 1,
+            "pattern": "\\S",
             "title": "Statement"
           },
           "target_template_id": {
@@ -4964,6 +4965,50 @@
         ],
         "title": "Retiring"
       },
+      "RunFault": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/RunKind"
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 2000,
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "kind",
+          "detail"
+        ],
+        "title": "RunFault",
+        "description": "A user's run the sandbox answered no result for: `log.md`, Run faults."
+      },
+      "RunKind": {
+        "type": "string",
+        "enum": [
+          "submission",
+          "recall"
+        ],
+        "title": "RunKind"
+      },
       "Rung": {
         "properties": {
           "problem": {
@@ -4989,6 +5034,18 @@
             "type": "boolean",
             "title": "Skipped",
             "default": false
+          },
+          "joined": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joined"
           }
         },
         "type": "object",
@@ -5478,6 +5535,18 @@
             "type": "integer",
             "minimum": 0.0,
             "title": "Answered"
+          },
+          "certification": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certification"
           }
         },
         "type": "object",
@@ -6076,6 +6145,13 @@
             "type": "array",
             "title": "Feedback"
           },
+          "run_faults": {
+            "items": {
+              "$ref": "#/components/schemas/RunFault"
+            },
+            "type": "array",
+            "title": "Run Faults"
+          },
           "calls": {
             "items": {
               "$ref": "#/components/schemas/Call"
@@ -6163,6 +6239,7 @@
           "recall_attempts",
           "retirement_requests",
           "feedback",
+          "run_faults",
           "calls",
           "answers",
           "stints",

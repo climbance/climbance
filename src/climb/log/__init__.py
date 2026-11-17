@@ -9,6 +9,7 @@ from climb.log.owned import UserLog, account_deleted, erased, whole_log
 from climb.log.predictions import PredictionLog
 from climb.log.recalls import RecallLog, latest_recalls
 from climb.log.retirement_requests import RetirementRequestLog
+from climb.log.run_faults import Faulted, RunFaultLog
 from climb.log.runs import CardRunLog
 from climb.log.sessions import LIFETIME, hashed, opened, revoked, user_of
 from climb.log.sittings import SittingStore
@@ -21,6 +22,7 @@ __all__ = [
     "AttemptLog",
     "CardRunLog",
     "DeviceKind",
+    "Faulted",
     "FeedbackLog",
     "FillLog",
     "JudgementLog",
@@ -28,6 +30,7 @@ __all__ = [
     "Provider",
     "RecallLog",
     "RetirementRequestLog",
+    "RunFaultLog",
     "SignedInDevice",
     "SittingStore",
     "UserLog",

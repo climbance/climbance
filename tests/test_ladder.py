@@ -643,3 +643,33 @@ def test_the_next_rung_is_required_then_optional_then_skipped():
     ]
     assert next_rung(rungs) is rungs[1]
     assert next_rung([rung(False, False), rung(True, False)]).required
+
+
+def test_an_empty_difficulty_list_admits_the_easy_rung(database):
+    """An empty list is the whole range, so the selector admits easy."""
+    held = a_card(database, size=2)
+    problems = [
+        problem(f"p-{one}", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "medium"})
+        for one in range(3)
+    ] + [problem("p-easy", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "easy"})]
+
+    resolved = ladder(held, problems, [], [], [])
+
+    assert [one.problem.id for one in resolved.rungs] == ["p-easy", "p-0"]
+
+
+def test_the_easy_rung_holds_past_a_size_the_covering_rungs_fill(database):
+    """The covering rungs come first and may fill `size`, and a learner would
+    then meet no problem that applies the form unchanged."""
+    held = a_card(database, size=2)
+    first, second = held.templates
+    problems = [
+        problem(f"p-{one}", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "medium"})
+        for one in (1, 2)
+    ] + [problem("p-easy", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "easy"})]
+    solutions = [canonical("p-1"), canonical("p-2")]
+    matches = [generator_match(first.id, "s-p-1"), generator_match(second.id, "s-p-2")]
+
+    resolved = ladder(held, problems, solutions, matches, [])
+
+    assert [one.problem.id for one in resolved.rungs] == ["p-1", "p-2", "p-easy"]

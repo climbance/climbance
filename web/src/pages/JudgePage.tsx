@@ -28,6 +28,7 @@ import { WrappedText } from '@/components/PythonCode'
 import { Tag } from '@/components/Tag'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { exerciseBack } from '@/lib/paths'
 
 type JudgedItem = components['schemas']['JudgedItem']
 type JudgeDecided = components['schemas']['JudgeDecided']
@@ -76,6 +77,7 @@ export function JudgePage() {
   return (
     <section className="space-y-section">
       <PageHeader
+        back={exerciseBack(card, item?.card_title)}
         title={item ? item.template_title : JUDGE_TITLE}
         note={item ? item.card_title : JUDGE_NOTE}
       />

@@ -48,6 +48,9 @@ class Rung(BaseModel):
     solved: bool = False
     # its last sitting since the run began ended with no submission: `flows.md`
     skipped: bool = False
+    # when the first match placing it was written, so graduation can leave out
+    # a rung a later problem added: `log.md`, Card states. None on a fill rung
+    joined: datetime | None = None
 
 
 class Gap(BaseModel):
@@ -165,6 +168,8 @@ def ladder(
     """
     problems = list(problems)
     attempts = list(attempts)
+    solutions = list(solutions)
+    matches = list(matches)
     done = _solved(attempts, since)
     skipped = _skipped(sittings, attempts, since, now or datetime.now(UTC)) - done
     answers = {solution.id: solution.problem_id for solution in solutions}
@@ -195,12 +200,22 @@ def ladder(
             continue
         covering.setdefault(filling[0], []).append(covered.template_id)
 
+    # the first record saying so, whichever writer stands now: a hand pass
+    # confirming a rung later does not move when it joined
+    placed: dict[tuple[str, str], datetime] = {}
+    for match in matches:
+        if match.matched and match.solution_id in answers:
+            key = (match.template_id, answers[match.solution_id])
+            placed[key] = min(placed.get(key, match.created_at), match.created_at)
     rungs = [
         Rung(
             problem=by_id[id],
             templates=templates,
             required=bool(core & set(templates)),
             solved=id in done,
+            joined=min(
+                (placed[(one, id)] for one in templates if (one, id) in placed), default=None
+            ),
         )
         for id, templates in covering.items()
     ]
@@ -208,15 +223,18 @@ def ladder(
     fill = [one for one in offered if one.id not in covering]
     # a skipped problem gives way to the selector's next
     fill = sorted(fill, key=lambda one: one.id in skipped)
-    if ProblemDifficulty.EASY in card.selector.difficulty and not any(
-        rung.problem.difficulty == ProblemDifficulty.EASY for rung in rungs
-    ):
-        # `content.md`: a ladder whose selector admits easy holds an easy rung
+    room = max(0, card.selector.size - len(rungs))
+    # empty admits the whole range, easy included
+    admits = not card.selector.difficulty or ProblemDifficulty.EASY in card.selector.difficulty
+    if admits and not any(rung.problem.difficulty == ProblemDifficulty.EASY for rung in rungs):
+        # `content.md`: a ladder whose selector admits easy holds an easy rung,
+        # past `size` where the covering rungs already fill it
         easy = [one for one in fill if one.difficulty == ProblemDifficulty.EASY]
         fill = easy[:1] + [one for one in fill if one not in easy[:1]]
+        room = max(room, len(easy[:1]))
     rungs += [
         Rung(problem=one, templates=[], required=False, solved=one.id in done)
-        for one in fill[: max(0, card.selector.size - len(rungs))]
+        for one in fill[:room]
     ]
     rungs = [one.model_copy(update={"skipped": one.problem.id in skipped}) for one in rungs]
     # served after the rungs not skipped, each part in the ladder's order

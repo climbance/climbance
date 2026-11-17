@@ -3,7 +3,7 @@ from helpers import a_call
 
 from climb.generation import Disagreement, Misdeclaration, misdeclared
 from climb.generation import settle as settle_by
-from climb.generation.agreement import agrees
+from climb.generation.agreement import CEILING, agrees
 from climb.runner import NoValue, RunOutcome
 from climb.schema import DraftCase, ExpectedSource, MachineProvenance
 
@@ -137,3 +137,14 @@ def test_a_stored_case_names_the_solution_that_computed_it():
         ExpectedSource.CANONICAL,
     ]
     assert [one.args for one in settled.tested] == [[1]]
+
+
+def test_a_case_over_the_ceiling_is_never_settled():
+    """The ceiling holds for every stored case, so a case a generator or a round
+    proposed over it is dropped as a fuzz pass drops one."""
+    heavy = "x" * CEILING
+
+    settled = settle(cases([1], [2]), canonical=[1, heavy], reference=[1, heavy])
+
+    assert [one.args for one in settled.cases] == [[1]]
+    assert settled.disagreements == []

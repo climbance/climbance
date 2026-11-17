@@ -169,7 +169,12 @@ stints = _logged(
     Column("level", Integer),
     Column("score", Integer, nullable=False),
     Column("answered", Integer, nullable=False),
+    Column("certification", Text),
     CheckConstraint("(mode = 'exam') = (level IS NOT NULL)", name="an_exam_names_its_level"),
+    CheckConstraint(
+        "certification IS NULL OR (mode = 'exam' AND certification <> '')",
+        name="a_certification_names_an_exam",
+    ),
     CheckConstraint(f"level {LEVEL}", name="level_in_range"),
     CheckConstraint("score BETWEEN 0 AND answered", name="scored"),
 )

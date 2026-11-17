@@ -403,3 +403,19 @@ def test_the_terminal_retires_a_module(database, tmp_path, monkeypatch, capsys):
     run_cli(monkeypatch, "module", "retire", "python")
 
     assert "python: 8 rows retired" in capsys.readouterr().out
+
+
+def test_a_topic_gone_from_the_files_retires_its_subtopics(database, tmp_path):
+    """A subtopic left live under a retired topic would stay in the snapshot
+    and the queues with nothing above it."""
+    first = authored(tmp_path)
+    (first / "course.toml").write_text(
+        COURSE + '\n[[topic]]\nslug = "extra"\ntier = 2\ntitle = "Extra"\nsubs = ["more"]\n'
+    )
+    seed_module(read_module(first), root=database)
+
+    seed_module(read_module(authored(tmp_path / "again")), root=database)
+
+    stored = {row["slug"]: row for row in rows(database, subtopics)}
+    assert stored["more"]["retired_at"] is not None
+    assert stored["types"]["retired_at"] is None

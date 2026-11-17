@@ -18,9 +18,11 @@ problems = Table(
     Column("retired_reason", enumerated(RetirementReason)),
     # the engine wrote every problem, so every one names its call
     call_column(nullable=False),
-    CheckConstraint("statement <> ''", name="statement_written"),
+    CheckConstraint("statement ~ '\\S'", name="statement_written"),
     CheckConstraint("target_template_id <> '' AND target_technique <> ''", name="target_named"),
-    CheckConstraint("target_template_id IS NULL OR target_technique IS NULL", name="one_target"),
+    CheckConstraint(
+        "(target_template_id IS NULL) <> (target_technique IS NULL)", name="one_target"
+    ),
     CheckConstraint(
         "(status = 'retired') = (retired_reason IS NOT NULL)", name="retirement_names_its_reason"
     ),

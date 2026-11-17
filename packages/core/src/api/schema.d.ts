@@ -1988,6 +1988,29 @@ export interface components {
       note: string;
     };
     /**
+     * RunFault
+     * @description A user's run the sandbox answered no result for: `log.md`, Run faults.
+     */
+    RunFault: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      kind: components['schemas']['RunKind'];
+      /** Detail */
+      detail: string;
+    };
+    /**
+     * RunKind
+     * @enum {string}
+     */
+    RunKind: 'submission' | 'recall';
+    /**
      * Rung
      * @description One problem on a ladder, with the templates its canonicals display.
      *
@@ -2011,6 +2034,8 @@ export interface components {
        * @default false
        */
       skipped: boolean;
+      /** Joined */
+      joined?: string | null;
     };
     /**
      * Seated
@@ -2192,6 +2217,8 @@ export interface components {
       score: number;
       /** Answered */
       answered: number;
+      /** Certification */
+      certification?: string | null;
     };
     /**
      * StintMode
@@ -2447,6 +2474,8 @@ export interface components {
       retirement_requests: components['schemas']['RetirementRequest'][];
       /** Feedback */
       feedback: components['schemas']['Feedback'][];
+      /** Run Faults */
+      run_faults: components['schemas']['RunFault'][];
       /** Calls */
       calls: components['schemas']['Call'][];
       /** Answers */

@@ -5,8 +5,10 @@ from matching import card, seeded
 
 from climb.calls import CallLog
 from climb.generation import Corpus, land
+from climb.generation.checks import CAP_MS
 from climb.schema import (
     Call,
+    CaseOutcome,
     Draft,
     ExpectedSource,
     MachineProvenance,
@@ -108,6 +110,23 @@ def test_one_act_writes_every_part(database, template):
     ]
 
 
+def test_the_canonical_and_the_reference_land_with_their_runs(database, template):
+    """A run is a fact about the cap and the runner, so the run each solution
+    landed on is stored as its own record rather than implied."""
+    corpus = Corpus.at(database)
+
+    problem = land(corpus, template, drafted())
+
+    solutions = corpus.solutions.for_problem(problem.id)
+    runs = corpus.verifications.all()
+    assert [one.solution_id for one in runs] == [one.id for one in solutions]
+    assert all(one.cap_ms == CAP_MS for one in runs)
+    assert [[case.outcome for case in one.results] for one in runs] == [
+        [CaseOutcome.PASSED],
+        [CaseOutcome.PASSED],
+    ]
+
+
 NAIVE = "def solve(xs):\n    return len([one for one in xs])\n"
 
 
@@ -150,11 +169,12 @@ def test_a_landing_that_fails_part_way_writes_nothing(database, template, monkey
     with pytest.raises(OSError, match="disk"):
         land(corpus, template, drafted())
 
-    assert (corpus.problems.all(), corpus.cases.cases(), corpus.solutions.solutions()) == (
-        [],
-        [],
-        [],
-    )
+    assert (
+        corpus.problems.all(),
+        corpus.cases.cases(),
+        corpus.solutions.solutions(),
+        corpus.verifications.all(),
+    ) == ([], [], [], [])
 
 
 def test_the_problem_carries_what_the_generation_call_asserted(database, template):

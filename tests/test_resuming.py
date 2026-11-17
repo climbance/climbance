@@ -21,7 +21,8 @@ from climb.generation import (
     sending,
     write_problems,
 )
-from climb.generation.speedup import CEILING, MARGIN, REPEATS_MAX, SEARCH_REVISION
+from climb.generation.agreement import CEILING
+from climb.generation.speedup import MARGIN, REPEATS_MAX, SEARCH_REVISION
 from climb.outcomes import OutcomeLog
 from climb.schema import CallSite, Card, Configuration, Draft, WritingState
 

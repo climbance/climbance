@@ -182,8 +182,9 @@ without redefining them. Grouped by the file that specifies the record.
 - **Rejected**: a draft's terminal state. The gate names why: `no_value`,
   `copied`, `untested`, `disagreed` or `unexercised`.
 - **Held**: a draft stopped at a state a resume can re-enter.
-- **Landing**: the last step: the problem, its cases, its solutions and the
-  generator's template match are stored together.
+- **Landing**: the last step: the problem, its cases, its solutions, the
+  verification runs of the canonical and the reference, and the generator's
+  template match are stored together.
 - **Resume**: `generate --resume`: re-entering every held draft at the first
   step whose configuration or prompt hash moved.
 - **Mutant**: the canonical with one semantic change made on the parsed tree.
@@ -293,6 +294,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Feedback**: a user's note to the author about the engine, naming the
   client and the page it was sent from. The author reads it with `climb
   feedback`.
+- **Run fault**: a user's run the sandbox answered no result for, stored so
+  the run caps count it.
 - **Retirement request**: a user's request that a problem be retired, naming
   a retirement reason and a note. The author reads it and retires the problem
   by hand.
@@ -434,7 +437,7 @@ times. Each record class is specified in one of the files beside it.
 |---|---|
 | [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims, difficulty ratings and fits, trials |
-| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests and feedback |
+| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests, run faults and feedback |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
@@ -469,6 +472,7 @@ times. Each record class is specified in one of the files beside it.
 | Predictions | user | private | append-only | the store |
 | Retirement requests | user | private | append-only | the store |
 | Feedback | user | private | append-only | the store |
+| Run faults | user | private | append-only | the store |
 | Attempts | user | private | append-only | the store |
 | Attempt verifications | user | private | append-only | the store |
 | Attempt claims | user | private | append-only | the store |
@@ -623,6 +627,9 @@ times. Each record class is specified in one of the files beside it.
     the server, and the broker admits one run at a time, so one user's burst is
     every other user's wait. Each cap is counted over the user's own records of
     its window, and a run past it is refused before any container starts.
+  - A run the sandbox answers no result for is stored as a run fault, and
+    the caps count it. A solution can end its own container, and the run held
+    the broker as long as a judged one. `log.md` gives the record.
   - A user's submissions and recalls are counted apart, each against the
     bounds. A recall runs a template's few cases where a submission runs a
     problem's whole set, and one counter over both would refuse the cheaper run

@@ -1,9 +1,12 @@
+import pytest
 from fastapi.testclient import TestClient
 from helpers import browsing
+from sqlalchemy import select
 from test_seed_knowledge import authored
 
 from climb.api.app import create_app
 from climb.knowledge import read_module, seed_module
+from climb.knowledge.table import stints
 
 USER = "u-4f9c2a"
 OTHER = "u-7d31b0"
@@ -60,6 +63,26 @@ def test_the_wire_s_drill_and_level_exam_map_to_the_store_s_names(database, tmp_
     back = synced(database, tmp_path, sessions)["records"]
 
     assert [one["mode"] for one in back] == ["drill", "exam-L2"]
+
+
+def test_a_certification_exam_s_session_is_stored_and_reads_back_whole(database, tmp_path):
+    """The client writes `cert-<id>` when a certification's exam ends. Refused,
+    the line left the outbox and the exam left no stint."""
+    session = {"kind": "session", "client_id": "s1", "t": T,
+               "mode": "cert-python-core-associate", "score": 8, "n": 10}  # fmt: skip
+
+    result = synced(database, tmp_path, [session])
+
+    assert result["refused"] == []
+    (back,) = result["records"]
+    assert back["mode"] == "cert-python-core-associate"
+    with database.connect() as conn:
+        (row,) = conn.execute(select(stints)).mappings()
+    assert (row["mode"], row["level"], row["certification"]) == (
+        "exam",
+        1,
+        "python-core-associate",
+    )
 
 
 def test_a_certification_focus_names_its_topic_and_level(database, tmp_path):
@@ -200,3 +223,18 @@ def test_the_sync_needs_a_signed_in_user(database):
         client.post("/api/knowledge/sync", json={"device": "phone", "records": []}).status_code
         == 401
     )
+
+
+@pytest.mark.parametrize(
+    ("topic", "sub", "reason"),
+    [("nowhere", None, "unknown topic nowhere"), ("core", "nowhere", "unknown subtopic nowhere")],
+)
+def test_a_focus_naming_unknown_content_is_refused(database, tmp_path, topic, sub, reason):
+    """A line stored degraded would keep the degrade after the content returns,
+    so the line is refused as an unknown module is."""
+    focus = {"kind": "focus", "client_id": "f1", "t": T, "course": "python", "topic": topic,
+             "sub": sub, "strict": False}  # fmt: skip
+
+    result = synced(database, tmp_path, [focus])
+
+    assert result["refused"] == [{"client_id": "f1", "reason": reason}]

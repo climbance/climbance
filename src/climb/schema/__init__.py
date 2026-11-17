@@ -70,6 +70,7 @@ from climb.schema.rating import BANDS, DifficultyRating, RatingSource, band
 from climb.schema.recall import LADDER, Hint, RecallAttempt
 from climb.schema.record import AttemptRecord
 from climb.schema.retirement_request import RetirementRequest
+from climb.schema.run_fault import RunFault, RunKind
 from climb.schema.seed import CardSeed, TemplateSeed
 from climb.schema.sitting import Pause, Sitting
 from climb.schema.solution import Solution, SolutionRole
@@ -149,6 +150,8 @@ __all__ = [
     "Requirement",
     "RetirementReason",
     "RetirementRequest",
+    "RunFault",
+    "RunKind",
     "Selector",
     "SelfLabel",
     "SettingChange",

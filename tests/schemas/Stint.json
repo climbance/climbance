@@ -22,6 +22,19 @@
       "title": "At",
       "type": "string"
     },
+    "certification": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Certification"
+    },
     "client_id": {
       "minLength": 1,
       "title": "Client Id",

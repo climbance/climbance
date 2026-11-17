@@ -23,7 +23,7 @@ import { engine } from '@/lib/engine';
 import { getToken } from '@/lib/settings';
 import { useStore } from '@/lib/store';
 import { BottomBar, ErrorLine, optionTile, Press, ScreenHeader, styles, tones } from '@/ui/common';
-import { font, space } from '@/ui/tokens';
+import { font, radius, space } from '@/ui/tokens';
 
 type FilledItem = components['schemas']['FilledItem'];
 type FillDecided = components['schemas']['FillDecided'];
@@ -83,7 +83,13 @@ export default function FillScreen() {
           <>
             <Text style={muted}>{item.asks}</Text>
             <Text style={{ fontFamily: font.mono }}>{judgeExample(item.example)}</Text>
-            <View style={{ borderRadius: 12, overflow: 'hidden', backgroundColor: theme.colors.surfaceVariant }}>
+            <View
+              style={{
+                borderRadius: radius(theme).xl,
+                overflow: 'hidden',
+                backgroundColor: theme.colors.surfaceVariant,
+              }}
+            >
               {item.lines.map((_, index) => {
                 const number = index + 1;
                 const blank = number === item.blank;

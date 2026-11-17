@@ -95,23 +95,13 @@ export function BoardPage() {
                 </section>
               )}
 
-              {/* what the card graph opens next, the shallowest first */}
               {/* the short exercises, across every card: `pages.md`, Judging, Filling */}
-              <Link
-                to="/judge"
-                className="block rounded-xl border bg-card px-4 py-3 hover:bg-accent"
-              >
-                <span className="font-medium">{JUDGE_TITLE}</span>
-                <span className="mt-1 block text-meta text-muted-foreground">{JUDGE_NOTE}</span>
-              </Link>
-              <Link
-                to="/fill"
-                className="block rounded-xl border bg-card px-4 py-3 hover:bg-accent"
-              >
-                <span className="font-medium">{FILL_TITLE}</span>
-                <span className="mt-1 block text-meta text-muted-foreground">{FILL_NOTE}</span>
-              </Link>
+              <PickPanel>
+                <PickRow to="/judge" title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} />
+                <PickRow to="/fill" title={FILL_TITLE} note={FILL_NOTE} stats={[]} />
+              </PickPanel>
 
+              {/* what the card graph opens next, the shallowest first */}
               {next.cards.length > 0 && (
                 <section className="space-y-stack">
                   <SectionHeading title={BOARD_NEXT} count={next.cards.length + next.more} />

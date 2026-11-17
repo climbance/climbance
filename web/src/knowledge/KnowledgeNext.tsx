@@ -56,10 +56,10 @@ import { useKnowledge } from '@/knowledge/context'
 import { useLearner } from '@/knowledge/learner'
 import { CERTIFICATIONS, EXAM, KNOWLEDGE, modulePath } from '@/knowledge/paths'
 
-// the focus bar reads in the flame for what is held, mastered then learning.
+// the focus bar reads in the flame for what is held, retained then learning.
 // What is owed reads neutral, since the flame is progress and a review is not
 const PART_TONE: Record<FocusPart, string> = {
-  mastered: 'bg-brand',
+  retained: 'bg-brand',
   learning: 'bg-brand/65',
   review: 'bg-foreground/25',
   unseen: 'bg-muted',

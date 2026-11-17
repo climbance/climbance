@@ -38,8 +38,36 @@ def reading(
     recalls: Sequence[RecallAttempt],
 ) -> tuple[CardState, Next | None]:
     state = card_state(run is not None, rungs)
-    if run is None or state is not CardState.CONSOLIDATING:
+    if run is None or state is CardState.NOT_STARTED:
         return state, None
+    if state is CardState.CONSOLIDATING:
+        past, waits, _ = _past_ladder(card, run, rungs, attempts, problems, recalls)
+        return past, waits
+    # a graduated card no longer reads the ladder, so the rungs a later problem
+    # added are left out: `log.md`, Card states
+    unsolved = [rung for rung in rungs if rung.required and not rung.solved]
+    held = [rung for rung in rungs if rung not in unsolved]
+    if not any(rung.required for rung in held):
+        return state, None
+    past, waits, graduated = _past_ladder(card, run, held, attempts, problems, recalls)
+    if graduated is None or any(
+        rung.joined is None or rung.joined <= graduated for rung in unsolved
+    ):
+        return state, None
+    return past, waits
+
+
+def _past_ladder(
+    card: Card,
+    run: CardRun,
+    rungs: Sequence[Rung],
+    attempts: Sequence[Attempt],
+    problems: Mapping[str, Problem],
+    recalls: Sequence[RecallAttempt],
+) -> tuple[CardState, Next | None, datetime | None]:
+    """Consolidating, graduated or lapsed once every required rung is solved,
+    with when the card first graduated."""
+    first: datetime | None = None
     found = reviews(recalls, attempts, problems)
     recallable = [one.id for one in card.templates if one.cases]
     probe = _probe_solved(run, attempts, problems)
@@ -50,13 +78,14 @@ def reading(
         if any(at is None for at in passed.values()) or (not graduated and probe is None):
             waiting = [t for t, at in passed.items() if at is None]
             state = CardState.LAPSED if graduated else CardState.CONSOLIDATING
-            return state, _next_check(waiting, found)
+            return state, _next_check(waiting, found), first
         moments = [at for at in passed.values() if at is not None]
         moment: datetime = max(moments + ([probe] if probe else []))
         graduated = True
+        first = first or moment
         lapsed = _lapses(recallable, found, after=moment)
         if not lapsed:
-            return CardState.GRADUATED, _next_recall(recallable, found)
+            return CardState.GRADUATED, _next_recall(recallable, found), first
         pending = lapsed
 
 

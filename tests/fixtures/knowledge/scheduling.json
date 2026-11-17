@@ -512,7 +512,7 @@
     "due": "2026-03-13T09:00:00+00:00",
     "passed": true,
     "status": [
-     "mastered",
+     "retained",
      "due"
     ],
     "ready": [
@@ -647,7 +647,7 @@
     "due": "2061-01-03T09:10:00+00:00",
     "passed": true,
     "status": [
-     "mastered",
+     "retained",
      "due"
     ],
     "ready": [
@@ -851,7 +851,7 @@
    }
   },
   {
-   "name": "mastered at 21 days stability",
+   "name": "retained at 21 days stability",
    "records": [
     {
      "t": "2026-01-05T09:00:00+00:00",
@@ -901,7 +901,7 @@
     "due": "2026-08-15T09:10:00+00:00",
     "passed": true,
     "status": [
-     "mastered",
+     "retained",
      "due"
     ],
     "ready": [
@@ -946,7 +946,7 @@
     "due": "2026-02-19T09:00:00+00:00",
     "passed": true,
     "status": [
-     "mastered"
+     "retained"
     ],
     "ready": [
      false

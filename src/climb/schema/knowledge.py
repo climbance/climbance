@@ -209,11 +209,15 @@ class Stint(KnowledgeRecord):
     level: int | None = Field(default=None, ge=0, le=3)  # an exam's alone
     score: int = Field(ge=0)  # the answers that were correct
     answered: int = Field(ge=0)
+    # a certification's exam, by its wire id: `knowledge.md`, The wire
+    certification: str | None = Field(default=None, min_length=1)
 
     @model_validator(mode="after")
     def _an_exam_names_its_level(self) -> Stint:
         if (self.mode is StintMode.EXAM) != (self.level is not None):
             raise ValueError("an exam names its level, and no queue does")
+        if self.certification is not None and self.mode is not StintMode.EXAM:
+            raise ValueError("a certification names an exam, and no queue")
         return self
 
 

@@ -8,6 +8,7 @@ from time import monotonic
 
 from climb.calls import CallLog, Transport
 from climb.drafts import DraftStore
+from climb.generation.agreement import CEILING
 from climb.generation.aim import Target
 from climb.generation.answering import building, paced
 from climb.generation.bench import BENCH, Bench
@@ -27,7 +28,7 @@ from climb.generation.hardening import harden
 from climb.generation.inputs import InputGenerator
 from climb.generation.resuming import draws_again, re_asks, reaches
 from climb.generation.screen import Verdict, screen
-from climb.generation.speedup import CEILING, MARGIN, REPEATS_MAX, SEARCH_REVISION
+from climb.generation.speedup import MARGIN, REPEATS_MAX, SEARCH_REVISION
 from climb.generation.steps import SILENT, Notes
 from climb.generation.timing import timed
 from climb.generation.verdicts import (

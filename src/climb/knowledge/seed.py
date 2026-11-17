@@ -159,7 +159,11 @@ def _topics(
     _write(conn, subtopics, sub_rows, stored_subs)
     result.retired += _retire(conn, subtopics, [row["id"] for row in held_subs.values()])
     result.topics = len(listed)
-    result.retired += _retire(conn, topics, [row["id"] for row in held.values()])
+    gone = [row["id"] for row in held.values()]
+    # a removed topic's subtopics go with it, or they stay live under nothing
+    orphaned = _rows(conn, subtopics, subtopics.c.topic_id.in_(gone))
+    result.retired += _retire(conn, subtopics, [row["id"] for row in orphaned])
+    result.retired += _retire(conn, topics, gone)
     return subs
 
 

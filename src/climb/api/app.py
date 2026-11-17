@@ -17,6 +17,7 @@ from climb.api.reads import router as reads
 from climb.api.signin import SignIn, install
 from climb.api.writes import router as writes
 from climb.caps import TooOften
+from climb.log import Faulted
 from climb.sitting import Missing, Refused
 from climb.storage import Database
 
@@ -45,6 +46,7 @@ def create_app(
     app.middleware("http")(_json_writes)
     app.add_exception_handler(Refused, _refused)
     app.add_exception_handler(TooOften, _refused)
+    app.add_exception_handler(Faulted, _refused)
     app.include_router(reads, prefix=PREFIX)
     app.include_router(writes, prefix=PREFIX)
     app.include_router(account, prefix=PREFIX)
@@ -83,5 +85,8 @@ async def _refused(_: Request, error: Exception) -> JSONResponse:
     # later
     if isinstance(error, TooOften):
         return JSONResponse({"detail": str(error)}, status_code=429)
+    # the sandbox's fault rather than the request's, and the run still counts
+    if isinstance(error, Faulted):
+        return JSONResponse({"detail": str(error)}, status_code=503)
     status = 404 if isinstance(error, Missing) else 409
     return JSONResponse({"detail": str(error)}, status_code=status)

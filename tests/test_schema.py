@@ -60,6 +60,13 @@ def test_a_diagnosis_carries_its_provenance_whole():
         make_diagnosis("a1", FailureMode.RUST, prompt_hash=None)
 
 
+def test_a_diagnosis_never_names_speed():
+    """Whether the solver was slow is the solver's own judgement, and no
+    record holds the bar a model would judge it against."""
+    with pytest.raises(ValidationError, match="never names speed"):
+        make_diagnosis("a1", FailureMode.SPEED)
+
+
 def test_attempt_roundtrip(database):
     log = AttemptLog(database)
     stored_problem(database, "p1")

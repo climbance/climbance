@@ -310,7 +310,7 @@ flowchart TB
   B -->|"<b>naive</b>: the naive solution, where a speedup is claimed"| P["paced"]
   P -->|"the input separating it from the canonical"| S["searched"]
   S -->|"<b>discrimination</b>: the fuzz pass, then the rounds"| H["hardened"]
-  H -->|"the problem, its cases, its solutions and the match"| L(["landed"])
+  H -->|"the problem, its cases, its solutions, their runs and the match"| L(["landed"])
 
   D -.->|"no_value"| X(["rejected<br/><i>terminal, and names the gate</i>"])
   C -.->|"copied"| X

@@ -25,6 +25,7 @@ import { WrappedText } from '@/components/PythonCode'
 import { Tag } from '@/components/Tag'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { exerciseBack } from '@/lib/paths'
 
 type FilledItem = components['schemas']['FilledItem']
 type FillDecided = components['schemas']['FillDecided']
@@ -70,6 +71,7 @@ export function FillPage() {
   return (
     <section className="space-y-section">
       <PageHeader
+        back={exerciseBack(card, item?.card_title)}
         title={item ? item.template_title : FILL_TITLE}
         note={item ? item.card_title : FILL_NOTE}
       />

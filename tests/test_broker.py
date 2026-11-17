@@ -20,6 +20,7 @@ from climb.broker.container import (
     docker,
 )
 from climb.runner import child
+from climb.runner.remote import RUNNER
 
 DOUBLE = "def solve(n):\n    return n * 2\n"
 RUN = {"code": DOUBLE, "args": [[1], [2]], "cap_ms": 3000}
@@ -345,3 +346,11 @@ def test_a_command_that_never_reads_its_input_still_meets_the_deadline():
 
     assert time.monotonic() - started < 10
     assert done.how == "expired"
+
+
+def test_the_runner_string_names_the_image_s_interpreter():
+    """A stored run names its interpreter through `remote.RUNNER`, copied rather
+    than imported, so an image bump that left it behind would mislabel every
+    run measured after it."""
+    (version,) = re.findall(r"^python:(\d+\.\d+\.\d+)-", IMAGE)
+    assert f"container/cpython-{version}" == RUNNER

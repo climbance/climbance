@@ -497,6 +497,10 @@ lapsed.
 - **A graduated card no longer reads the ladder.** Graduation asserts that the
   forms are kept, and a later generation run adds problems to a ladder rather
   than forms. Only a lapse moves a graduated card.
+- **A rung carries when it joined the ladder**: the first template match
+  placing it, which the generator writes at landing. No ladder is stored, so
+  a card graduated under the rungs that joined before its graduation, and a
+  required rung joining after it is left out of the card state.
 - **A card state is not mastery.** Mastery is per technique and counts
   sittings and drills, as `## Mastery` gives. A graduated card raises no
   technique's reading, since `content.md` keeps cards and mastery apart.
@@ -861,6 +865,23 @@ Deferred, since only use answers each:
 
 - A reply to the user once the author has read the request.
 - A bound on how many requests one user sends.
+
+## Run faults
+
+A user's submission or recall the sandbox answered no result for. A
+`RunFault` holds the user, the kind of run, the time and the runner's message.
+
+- **A fault is stored because a solution can cause one.** A solution can kill
+  its own entry process, or reach the container's process limit, and either
+  ends the container before any case reports. The run held the broker all the
+  same.
+- **The caps count faults beside attempts.** A run of each kind counts once
+  against its own caps, whether it stored an attempt or a fault. Without the
+  count, a solution ending its sandbox would run past every cap.
+- **A fault answers 503 and stores no attempt.** The sandbox gave no verdict,
+  so nothing is judged, and the user reads that the run still counts.
+- **A fault is private to the user**, exported and erased with the rest of
+  the log. The author reads it as the operator.
 
 ## Feedback
 
