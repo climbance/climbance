@@ -7,7 +7,7 @@ from climb.calls import CallLog
 from climb.generation import Corpus, write_problems
 from climb.outcomes import OutcomeLog
 from climb.problems import ProblemStore
-from climb.schema import ProblemDifficulty, ProblemStatus, RetirementReason
+from climb.schema import ProblemDifficulty, ProblemStatus, RetirementReason, band
 
 BUILDS = "def solve(size, seed):\n    return [list(range(size))]\n"
 
@@ -196,18 +196,19 @@ def test_retire_takes_no_second_id(root, monkeypatch, capsys):
     assert ProblemStore(root).get(stored.id).status is ProblemStatus.CREATED
 
 
-def test_a_rating_by_hand_moves_the_label_the_page_shows(root, monkeypatch, capsys):
-    """The page names the generator's label beside the rating, since the two
-    disagreeing is what the relabel is for."""
+def test_a_score_by_hand_moves_the_label_the_page_shows(root, monkeypatch, capsys):
+    """The page names the generator's label beside the score's band, since the
+    two disagreeing is what the rating is for."""
     stored = landed(root, monkeypatch)
-    other = next(one for one in ProblemDifficulty if one is not stored.difficulty)
+    score = {ProblemDifficulty.HARD: 1000.0}.get(stored.difficulty, 2400.0)
+    other = band(score)
 
-    shown(monkeypatch, stored.id[:8], "--rate", str(other))
+    shown(monkeypatch, stored.id[:8], "--rate", f"{score:g}")
     shown(monkeypatch, stored.id[:8])
 
     out = capsys.readouterr().out
-    assert f"{stored.difficulty} -> {other}" in out
-    assert f"{other} (generator: {stored.difficulty})" in out
+    assert f"{stored.difficulty} -> {other} ({score:g})" in out
+    assert f"{other} ({score:g}, generator: {stored.difficulty})" in out
     assert ProblemStore(root).get(stored.id).difficulty == stored.difficulty
 
 
@@ -215,7 +216,7 @@ def test_a_rating_names_its_problem(root, monkeypatch, capsys):
     landed(root, monkeypatch)
 
     with pytest.raises(SystemExit) as exit_info:
-        shown(monkeypatch, "--rate", "easy")
+        shown(monkeypatch, "--rate", "1200")
 
     assert exit_info.value.code == 2
 

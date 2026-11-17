@@ -309,9 +309,9 @@ def main() -> None:
     )
     problem_parser.add_argument(
         "--rate",
-        type=ProblemDifficulty,
-        choices=list(ProblemDifficulty),
-        help="rate the problem the id names by hand, standing over the generator's label",
+        type=float,
+        metavar="SCORE",
+        help="score the problem the id names by hand, on the contest scale; its band is the label",
     )
 
     gaps_parser = _command(sub, "gaps", "core templates no stored solution displays")

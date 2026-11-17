@@ -65,7 +65,7 @@ from climb.schema.problem import (
     RetirementReason,
 )
 from climb.schema.provenance import MachineProvenance
-from climb.schema.rating import DifficultyRating
+from climb.schema.rating import BANDS, DifficultyRating, RatingSource, band
 from climb.schema.recall import LADDER, Hint, RecallAttempt
 from climb.schema.record import AttemptRecord
 from climb.schema.seed import CardSeed, TemplateSeed
@@ -76,6 +76,7 @@ from climb.schema.technique import Kind, Technique
 from climb.schema.verification import AttemptVerification, Execution, Verification
 
 __all__ = [
+    "BANDS",
     "BODIES",
     "LADDER",
     "RETURNED_KEPT",
@@ -138,6 +139,7 @@ __all__ = [
     "Question",
     "QuestionFormat",
     "Rank",
+    "RatingSource",
     "RecallAttempt",
     "Requirement",
     "RetirementReason",
@@ -164,5 +166,6 @@ __all__ = [
     "Topic",
     "Verification",
     "WritingState",
+    "band",
     "severest",
 ]

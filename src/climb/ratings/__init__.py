@@ -1,4 +1,4 @@
-from climb.ratings.standing import with_standing_difficulty
+from climb.ratings.standing import standing_ratings, with_standing_difficulty
 from climb.ratings.store import RatingLog
 
-__all__ = ["RatingLog", "with_standing_difficulty"]
+__all__ = ["RatingLog", "standing_ratings", "with_standing_difficulty"]

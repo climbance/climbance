@@ -30,6 +30,7 @@ from climb.schema import (
     Probe,
     Problem,
     ProblemDifficulty,
+    RatingSource,
     RecallAttempt,
     SelfLabel,
     SiteOutcome,
@@ -117,13 +118,13 @@ def user_solution_claim(
     )
 
 
-def user_rating(problem_id: str, difficulty: ProblemDifficulty) -> DifficultyRating:
+def user_rating(problem_id: str, score: float) -> DifficultyRating:
     return DifficultyRating(
         id=new_id(),
         created_at=datetime.now(UTC),
         problem_id=problem_id,
-        difficulty=difficulty,
-        source=ClaimSource.USER,
+        score=score,
+        source=RatingSource.USER,
     )
 
 

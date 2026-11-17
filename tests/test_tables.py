@@ -193,7 +193,7 @@ STORED: list[Stored] = [
     Stored(KeyLineChoice, key_line_choices, structural=frozenset({"item_id", "position"})),
     Stored(Fill, fills),
     Stored(Prediction, predictions),
-    Stored(DifficultyRating, difficulty_ratings, through_call=True),
+    Stored(DifficultyRating, difficulty_ratings),
     Stored(TemplateMatch, template_matches, through_call=True),
     Stored(SiteOutcome, site_outcomes, through_call=True, required=frozenset({"call_id"})),
     Stored(Sitting, sittings, elsewhere=frozenset({"pauses"})),

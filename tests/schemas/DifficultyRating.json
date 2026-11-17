@@ -1,39 +1,24 @@
 {
   "$defs": {
-    "ClaimSource": {
+    "RatingSource": {
       "enum": [
         "user",
-        "classifier"
+        "fit"
       ],
-      "title": "ClaimSource",
-      "type": "string"
-    },
-    "ProblemDifficulty": {
-      "enum": [
-        "easy",
-        "medium",
-        "hard"
-      ],
-      "title": "ProblemDifficulty",
+      "title": "RatingSource",
       "type": "string"
     }
   },
   "properties": {
-    "call_id": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Call Id"
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
     },
-    "cost": {
+    "deviation": {
       "anyOf": [
         {
+          "exclusiveMinimum": 0,
           "type": "number"
         },
         {
@@ -41,19 +26,12 @@
         }
       ],
       "default": null,
-      "title": "Cost"
+      "title": "Deviation"
     },
-    "created_at": {
-      "format": "date-time",
-      "title": "Created At",
-      "type": "string"
-    },
-    "difficulty": {
-      "$ref": "#/$defs/ProblemDifficulty"
-    },
-    "effort": {
+    "fit_id": {
       "anyOf": [
         {
+          "minLength": 1,
           "type": "string"
         },
         {
@@ -61,86 +39,30 @@
         }
       ],
       "default": null,
-      "title": "Effort"
+      "title": "Fit Id"
     },
     "id": {
       "title": "Id",
       "type": "string"
-    },
-    "model": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Model"
-    },
-    "pin": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Pin"
     },
     "problem_id": {
       "minLength": 1,
       "title": "Problem Id",
       "type": "string"
     },
-    "prompt_hash": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Prompt Hash"
-    },
-    "provider": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Provider"
+    "score": {
+      "title": "Score",
+      "type": "number"
     },
     "source": {
-      "$ref": "#/$defs/ClaimSource"
-    },
-    "temperature": {
-      "anyOf": [
-        {
-          "type": "number"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Temperature"
+      "$ref": "#/$defs/RatingSource"
     }
   },
   "required": [
     "id",
     "created_at",
     "problem_id",
-    "difficulty",
+    "score",
     "source"
   ],
   "title": "DifficultyRating",

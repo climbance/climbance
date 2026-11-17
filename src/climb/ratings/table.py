@@ -1,7 +1,7 @@
-from sqlalchemy import CheckConstraint, Column, ForeignKey, Table, Text
+from sqlalchemy import CheckConstraint, Column, Double, ForeignKey, Table, Text
 
-from climb.schema import ClaimSource, ProblemDifficulty
-from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
+from climb.schema import RatingSource
+from climb.storage import appended_column, enumerated, metadata, timestamp
 
 difficulty_ratings = Table(
     "difficulty_ratings",
@@ -10,8 +10,13 @@ difficulty_ratings = Table(
     appended_column(),
     Column("created_at", timestamp(), nullable=False),
     Column("problem_id", Text, ForeignKey("problems.id"), nullable=False, index=True),
-    Column("difficulty", enumerated(ProblemDifficulty), nullable=False),
-    Column("source", enumerated(ClaimSource), nullable=False),
-    call_column(nullable=True),
-    CheckConstraint("(source = 'classifier') = (call_id IS NOT NULL)", name="call_matches_source"),
+    Column("score", Double, nullable=False),
+    Column("deviation", Double),
+    Column("source", enumerated(RatingSource), nullable=False),
+    # a key once the fits are stored: `corpus.md`, Difficulty fits
+    Column("fit_id", Text),
+    CheckConstraint(
+        "(source = 'fit') = (fit_id IS NOT NULL) AND (source = 'fit') = (deviation IS NOT NULL)",
+        name="fit_matches_source",
+    ),
 )

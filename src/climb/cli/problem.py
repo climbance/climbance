@@ -17,7 +17,7 @@ from climb.cli.display import (
 )
 from climb.generation import Corpus
 from climb.outcomes import OutcomeLog
-from climb.ratings import RatingLog, with_standing_difficulty
+from climb.ratings import RatingLog, standing_ratings, with_standing_difficulty
 from climb.schema import (
     Problem,
     Solution,
@@ -77,20 +77,21 @@ def rated_by_hand(
     """A `user` rating, which stands over every machine one. Appended without
     a prompt: a later rating supersedes it, and both stay readable."""
     if not args.id:
-        parser.exit(2, "problem: --rate names the level; the id names the problem\n")
+        parser.exit(2, "problem: --rate names the score; the id names the problem\n")
     one = one_of(stored, args.id, parser, "problem")
     ratings = RatingLog(root)
     (before,) = with_standing_difficulty([one], ratings.for_problem(one.id))
-    ratings.append(mint.user_rating(one.id, args.rate))
-    print(f"problem {one.id}: {before.difficulty} -> {args.rate}")
+    rating = mint.user_rating(one.id, args.rate)
+    ratings.append(rating)
+    print(f"problem {one.id}: {before.difficulty} -> {rating.label} ({rating.score:g})")
 
 
 def labelled(one: Problem, root: Database) -> str:
-    """The standing difficulty, and the generator's where a rating moved it."""
-    (rated,) = with_standing_difficulty([one], RatingLog(root).for_problem(one.id))
-    if rated.difficulty == one.difficulty:
-        return str(rated.difficulty)
-    return f"{rated.difficulty} (generator: {one.difficulty})"
+    """The standing label and score, and the generator's label beside them."""
+    stands = standing_ratings(RatingLog(root).for_problem(one.id)).get(one.id)
+    if stands is None:
+        return str(one.difficulty)
+    return f"{stands.label} ({stands.score:g}, generator: {one.difficulty})"
 
 
 def listed(stored: list[Problem], corpus: Corpus, root: Database) -> None:
