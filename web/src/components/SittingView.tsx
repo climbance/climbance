@@ -45,6 +45,7 @@ import { ElapsedClock } from '@/components/ElapsedClock'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
 import { ProblemFacts } from '@/components/ProblemFacts'
+import { ReportProblem } from '@/components/ReportProblem'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -408,6 +409,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
         <section className="space-y-stack">
           <ProblemFacts problemId={problemId} technique={drilled} submissions={submissions} />
           <Markdown>{served.statement}</Markdown>
+          <ReportProblem problemId={problemId} />
         </section>
         {/* the verdict sits under the editor: one page is the whole sitting */}
         <section className="flex flex-col gap-stack lg:sticky lg:top-6 lg:h-[calc(100vh-10rem)]">

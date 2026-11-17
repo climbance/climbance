@@ -1,0 +1,54 @@
+{
+  "$defs": {
+    "RetirementReason": {
+      "enum": [
+        "defective",
+        "copied"
+      ],
+      "title": "RetirementReason",
+      "type": "string"
+    }
+  },
+  "description": "One user's request that a problem be retired: `log.md`, Retirement\nrequests.",
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "note": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Note",
+      "type": "string"
+    },
+    "problem_id": {
+      "minLength": 1,
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/RetirementReason"
+    },
+    "user_id": {
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "problem_id",
+    "reason",
+    "note"
+  ],
+  "title": "RetirementRequest",
+  "type": "object"
+}

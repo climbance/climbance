@@ -14,6 +14,7 @@ from climb.cli.card import card
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
+from climb.cli.feedback import feedback_listed
 from climb.cli.fill import fill
 from climb.cli.gaps import gaps
 from climb.cli.generate import generate
@@ -308,6 +309,11 @@ def main() -> None:
         help="why --retire retires it: defective leaves mastery, copied stays in it",
     )
     problem_parser.add_argument(
+        "--requests",
+        action="store_true",
+        help="every user's request to retire a problem, the latest first",
+    )
+    problem_parser.add_argument(
         "--rate",
         type=float,
         metavar="SCORE",
@@ -358,6 +364,8 @@ def main() -> None:
     for name, help in (("add", "let the email sign in"), ("remove", "stop the email signing in")):
         invite_action.add_parser(name, help=help).add_argument("email")
     invite_action.add_parser("list", help="every email invited")
+
+    _command(sub, "feedback", "every user's feedback, newest first")
 
     judge_parser = _command(sub, "judge", "the judging exercise's items")
     judge_action = judge_parser.add_subparsers(dest="action", required=True)
@@ -470,6 +478,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
         retired(args, root) if args.action == "retire" else module(args, parser)
     ),
     "invite": invitation,
+    "feedback": lambda _args, _parser, root: feedback_listed(root),
 }
 
 

@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from climb.api.account import router as account
 from climb.api.apps import router as apps
 from climb.api.devlogin import router as dev_login_router
+from climb.api.feedback import router as feedback
 from climb.api.filling import router as filling
 from climb.api.judging import router as judging
 from climb.api.knowledge import router as knowledge
@@ -15,7 +16,8 @@ from climb.api.picks import router as picks
 from climb.api.reads import router as reads
 from climb.api.signin import SignIn, install
 from climb.api.writes import router as writes
-from climb.sitting import Missing, Refused, TooOften
+from climb.caps import TooOften
+from climb.sitting import Missing, Refused
 from climb.storage import Database
 
 # the path whatever serves the pages routes to the API, on the pages' origin
@@ -42,6 +44,7 @@ def create_app(
     app.state.dev_user = dev_login
     app.middleware("http")(_json_writes)
     app.add_exception_handler(Refused, _refused)
+    app.add_exception_handler(TooOften, _refused)
     app.include_router(reads, prefix=PREFIX)
     app.include_router(writes, prefix=PREFIX)
     app.include_router(account, prefix=PREFIX)
@@ -50,6 +53,7 @@ def create_app(
     app.include_router(filling, prefix=PREFIX)
     app.include_router(picks, prefix=PREFIX)
     app.include_router(apps, prefix=PREFIX)
+    app.include_router(feedback, prefix=PREFIX)
     if sign_in is not None:
         install(app, sign_in, PREFIX)
     if dev_login is not None:

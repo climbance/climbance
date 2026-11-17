@@ -3,11 +3,12 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from helpers import PROVENANCE, stored_problem
 
+from climb.caps import RUNS_PER_HOUR, RUNS_PER_MINUTE, TooOften
 from climb.cases import CaseLog
 from climb.log import AttemptLog, SittingStore
 from climb.mint import case
 from climb.schema import Sitting
-from climb.sitting import RUNS_PER_MINUTE, TooOften, submit
+from climb.sitting import submit
 
 STARTED = datetime(2026, 9, 10, 8, tzinfo=UTC)
 TEN = datetime(2026, 9, 10, 10, tzinfo=UTC)
@@ -93,3 +94,15 @@ def test_the_cap_counts_one_user_s_own_submissions(database):
     theirs = stores.submit(sitting_id="s2", user_id="u-77b3e1")
 
     assert theirs.verification.results
+
+
+def test_the_hour_caps_what_the_minute_lets_through(database):
+    """Ten a minute is 600 an hour, so the hour holds a user's queue to a share
+    the other users can wait out."""
+    stores = Stores(database)
+    # six a minute, under the minute's cap throughout
+    for n in range(RUNS_PER_HOUR):
+        stores.submit(at=TEN + timedelta(seconds=10 * n))
+
+    with pytest.raises(TooOften, match="an hour"):
+        stores.submit(at=TEN + timedelta(seconds=10 * RUNS_PER_HOUR))

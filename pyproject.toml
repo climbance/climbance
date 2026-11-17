@@ -124,9 +124,9 @@ layers = [
     "climb.cli | climb.api",
     "climb.pick",
     "climb.graduation",
-    "climb.generation : climb.ladder : climb.recall : climb.judging",
+    "climb.generation : climb.ladder : climb.recall : climb.judging : climb.retirement : climb.feedback",
     "climb.attempt_claims : climb.solution_claims : climb.matches : climb.board : climb.cards : climb.sitting : climb.template_schedule",
-    "climb.classifier : climb.mint : climb.log : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs",
+    "climb.classifier : climb.mint : climb.log : climb.caps : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs",
     "climb.runner",
     "climb.schema : climb.ids : climb.storage : climb.standing",
 ]

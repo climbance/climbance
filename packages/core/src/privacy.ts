@@ -66,6 +66,10 @@ The app stores what you do in it, so that it can show your progress:
   it;
 - each form you write from memory: your code, how it did on the form's test
   cases, and which hints you took;
+- each request that a problem be retired: the problem, the reason and your
+  note;
+- each note of feedback you send: the note, the app it was sent from and the
+  page;
 - each answer to a knowledge question, each round of questions, and your
   study choices: the focus, each module's status and order, the lessons you
   marked read, certification exams, your daily limit and its raises, and the
@@ -126,7 +130,9 @@ server for 30 days.
   ended one stays in the database, unable to sign anyone in, until the account
   is deleted.
 - The server keeps a log of the requests it answered and the errors it met.
-  The log is deleted after 14 days.
+  When the app meets an error it did not expect, it sends the error and the
+  page to that log, with your user id and none of your code. The log is
+  deleted after 14 days.
 
 ## Your rights
 

@@ -38,6 +38,9 @@ MEMORY = "512m"
 # each process a case starts with a host process. A backstop above the limit
 # `child.py` sets on each case, because reaching this one ends the sandbox
 PROCESSES = "256"
+# one core, so a run leaves the rest to the API and Postgres. A single-threaded
+# `solve` uses no more, and gVisor's own threads share the quota
+CPUS = "1"
 # docker's options, so they sit before the image: after it they would be
 # arguments to `python`
 FLAGS = (
@@ -58,6 +61,8 @@ FLAGS = (
     MEMORY,
     "--pids-limit",
     PROCESSES,
+    "--cpus",
+    CPUS,
     # an init as the container's first process, which reaps what a solution
     # orphaned. A zombie counts against the process limit, and the entry
     # process reaps only the children it forked itself

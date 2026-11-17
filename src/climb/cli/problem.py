@@ -16,10 +16,12 @@ from climb.cli.display import (
     sites,
 )
 from climb.generation import Corpus
+from climb.log import RetirementRequestLog
 from climb.outcomes import OutcomeLog
 from climb.ratings import RatingLog, standing_ratings, with_standing_difficulty
 from climb.schema import (
     Problem,
+    RetirementRequest,
     Solution,
     TemplateMatch,
     TestCase,
@@ -34,6 +36,8 @@ def problem(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Dat
     stored = corpus.problems.all()
     if not stored:
         parser.exit(0, "problem: no problem is stored\n")
+    if args.requests:
+        return requests_listed(stored, root)
     if args.retire:
         return retired_by_hand(args, parser, stored, corpus, root)
     if args.rate:
@@ -58,6 +62,8 @@ def retired_by_hand(
     if not one.served:
         parser.exit(0, f"problem {one.id}: already {standing(one)}\n")
     print(page(one, corpus, root))
+    for request in RetirementRequestLog(root).for_problem(one.id):
+        print(request_line(request))
     try:
         answer = input(f"retire {one.id} as {args.reason}? [y/N]: ").strip().lower()
     except EOFError:
@@ -92,6 +98,20 @@ def labelled(one: Problem, root: Database) -> str:
     if stands is None:
         return str(one.difficulty)
     return f"{stands.label} ({stands.score:g}, generator: {one.difficulty})"
+
+
+def requests_listed(stored: list[Problem], root: Database) -> None:
+    """Every request, the latest first, beside how its problem stands now."""
+    standings = {one.id: standing(one) for one in stored}
+    requests = RetirementRequestLog(root).all()
+    for request in reversed(requests):
+        print(f"{request.problem_id}  {standings[request.problem_id]:<20}  {request_line(request)}")
+    print(f"{len(requests)} request(s)")
+
+
+def request_line(request: RetirementRequest) -> str:
+    when = request.created_at.date().isoformat()
+    return f"{when}  {request.user_id}  {request.reason}: {request.note}"
 
 
 def listed(stored: list[Problem], corpus: Corpus, root: Database) -> None:

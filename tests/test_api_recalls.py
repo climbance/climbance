@@ -2,8 +2,8 @@ import pytest
 from helpers import browsing
 from matching import card, seeded, template
 
+from climb.caps import RUNS_PER_MINUTE
 from climb.log import RecallLog
-from climb.sitting import RUNS_PER_MINUTE
 
 USER = "u-4f9c2a"
 TECHNIQUE = "sliding-window"
@@ -200,3 +200,14 @@ def test_the_prompt_lists_the_card_s_templates(client):
         },
     ]
     assert LOWER not in str(listed)
+
+
+def test_code_past_the_bound_is_refused_before_it_runs(client, database):
+    """A run's code travels to the broker whole, so a megabyte of it is refused
+    at the request rather than carried into a container."""
+    padded = LOWER + "#" * 65_536
+
+    refused = client.post(recalls(client), json={"code": padded})
+
+    assert refused.status_code == 422
+    assert RecallLog(database).all(USER) == []

@@ -10,6 +10,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import { SchemeProvider, useScheme } from '@/lib/scheme';
 import { StoreProvider } from '@/lib/store';
+import { Broke } from '@/ui/broke';
 
 export default function RootLayout() {
   return (
@@ -51,7 +52,9 @@ function Themed() {
             <ThemeProvider value={nav}>
               <StoreProvider>
                 <StatusBar style={dark ? 'light' : 'dark'} />
-                <Stack screenOptions={{ headerShown: false }} />
+                <Broke>
+                  <Stack screenOptions={{ headerShown: false }} />
+                </Broke>
                 <NavigationScrim />
               </StoreProvider>
             </ThemeProvider>

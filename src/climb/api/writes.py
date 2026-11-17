@@ -4,6 +4,7 @@ run."""
 
 from collections.abc import Callable
 from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -12,10 +13,11 @@ from climb.api.context import Root, UserId
 from climb.cards import CardStore
 from climb.cases import CaseLog
 from climb.ladder import Locked, start
-from climb.log import AttemptLog, CardRunLog, RecallLog, SittingStore
+from climb.log import AttemptLog, CardRunLog, RecallLog, RetirementRequestLog, SittingStore
 from climb.matches import MatchLog
 from climb.problems import ProblemStore
 from climb.recall import reproduce
+from climb.retirement import requested
 from climb.schema import (
     AttemptClaim,
     Card,
@@ -24,10 +26,13 @@ from climb.schema import (
     FailureMode,
     Hint,
     RecallAttempt,
+    RetirementReason,
+    RetirementRequest,
     SelfLabel,
     Sitting,
     Template,
 )
+from climb.schema.authored import Text
 from climb.sitting import (
     Asked,
     Submitted,
@@ -49,9 +54,13 @@ from climb.storage import Database
 
 router = APIRouter()
 
+# characters rather than bytes, and far above any solution: a submission past
+# it starts no container
+Code = Annotated[str, Field(max_length=65_536)]
+
 
 class Submission(BaseModel):
-    code: str
+    code: Code
     # the page restored an earlier solve in this sitting: `log.md`
     restored: bool = False
 
@@ -65,7 +74,7 @@ class Reproduction(BaseModel):
     """What the trainer sends: the form as typed, and the hints taken before
     it ran."""
 
-    code: str
+    code: Code
     hints: list[Hint] = []
 
 
@@ -163,6 +172,29 @@ def begun(root: Root, user_id: UserId, problem_id: str, body: Begin | None = Non
         ProblemStore(root), SittingStore(root), problem_id, user_id=user_id, device=device, now=at
     )
     return Timed(sitting=one, elapsed_sec=one.elapsed(at))
+
+
+class Retiring(BaseModel):
+    reason: RetirementReason
+    # checked as the record checks it, so a blank note answers 422, not 500
+    note: Text = Field(max_length=2000)
+
+
+@router.post("/problems/{problem_id}/retirement-requests", status_code=201)
+def retirement_requested(
+    root: Root, user_id: UserId, problem_id: str, body: Retiring
+) -> RetirementRequest:
+    """A request the author reads before retiring the problem by hand. No user
+    retires a problem every user is served."""
+    return requested(
+        ProblemStore(root),
+        RetirementRequestLog(root),
+        problem_id,
+        user_id=user_id,
+        reason=body.reason,
+        note=body.note,
+        now=datetime.now(UTC),
+    )
 
 
 @router.post("/sittings/{sitting_id}/submissions")

@@ -87,6 +87,17 @@ export function signOutWarning(n: number, here: ThisDevice): string {
 export const STAY_SIGNED_IN = 'Stay signed in';
 
 // the export and the deletion
+export const FEEDBACK = 'Feedback';
+export const SEND_FEEDBACK = 'Send feedback';
+export const FEEDBACK_TITLE = 'Send feedback to the author';
+export const FEEDBACK_EXPLAINED =
+  'What works, what broke, what you miss. The note is kept with your record, with the page you sent it from.';
+export const FEEDBACK_LABEL = 'Your note';
+export const FEEDBACK_SEND = 'Send';
+export const FEEDBACK_SENT = 'Sent. Thank you.';
+export const BROKE_TITLE = 'Something broke';
+export const BROKE_EXPLAINED = 'The error was reported to the author. Reloading usually brings the page back.';
+export const RELOAD = 'Reload';
 export const YOUR_RECORD = 'Your record';
 export const EXPORT_RECORD = 'Export the record';
 export const EXPORT_NOTE = 'Every record of your practice, as one JSON file.';

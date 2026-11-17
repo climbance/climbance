@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   ACCOUNT,
   ARCHIVED_MODULES,
+  FEEDBACK,
   meLine,
   named,
   RESTORE,
@@ -39,6 +40,7 @@ import { PageHeader } from '@/components/PageHeader'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Panel } from '@/components/Panel'
 import { SignedInDevices } from '@/components/SignedInDevices'
+import { SendFeedback } from '@/components/SendFeedback'
 import { SignOut } from '@/components/SignOut'
 import { YourRecord } from '@/components/YourRecord'
 import { Button } from '@/components/ui/button'
@@ -74,6 +76,10 @@ export function SettingsPage() {
       </Loaded>
       <Sync />
       <Archived />
+      <section className="space-y-stack">
+        <SectionHeading title={FEEDBACK} />
+        <SendFeedback />
+      </section>
       {/* last: the one act on the page that cannot be undone */}
       <YourRecord me={me.data} />
     </section>

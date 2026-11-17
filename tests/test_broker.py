@@ -151,6 +151,7 @@ def test_the_container_runs_the_entry_process_s_script_whole():
         ["--memory", "512m"],
         ["--memory-swap", "512m"],
         ["--pids-limit", "256"],
+        ["--cpus", "1"],
         ["--init"],
         ["--env", "CLIMB_SANDBOX=1"],
     ],

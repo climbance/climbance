@@ -1,6 +1,7 @@
 import pytest
 from commands import connected, run_cli
 from generating import SLOW, FakeWriter
+from helpers import browsing
 from matching import card, seeded, template
 
 from climb.calls import CallLog
@@ -231,3 +232,32 @@ def test_a_copy_is_retired_under_its_own_reason(root, monkeypatch, capsys):
     retired = ProblemStore(root).get(stored.id)
     assert retired.retired_reason is RetirementReason.COPIED
     assert not retired.defective
+
+
+def test_the_requests_list_beside_how_each_problem_stands(root, monkeypatch, capsys):
+    """The author reads every request in the terminal, where retiring is."""
+    stored = landed(root, monkeypatch)
+    browsing(root, "u-4f9c2a").post(
+        f"/api/problems/{stored.id}/retirement-requests",
+        json={"reason": "copied", "note": "This retells a published problem."},
+    ).raise_for_status()
+
+    shown(monkeypatch, "--requests")
+
+    out = capsys.readouterr().out
+    assert f"{stored.id}  created" in out
+    assert "u-4f9c2a  copied: This retells a published problem." in out
+
+
+def test_retiring_shows_the_problem_s_requests_before_the_question(root, monkeypatch, capsys):
+    stored = landed(root, monkeypatch)
+    browsing(root, "u-4f9c2a").post(
+        f"/api/problems/{stored.id}/retirement-requests",
+        json={"reason": "defective", "note": "Its cases decide something else."},
+    ).raise_for_status()
+    answering(monkeypatch, "n")
+
+    with pytest.raises(SystemExit):
+        shown(monkeypatch, "--retire", stored.id[:8])
+
+    assert "defective: Its cases decide something else." in capsys.readouterr().out

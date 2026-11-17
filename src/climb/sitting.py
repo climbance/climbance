@@ -10,6 +10,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from climb import mint
+from climb.caps import capped
 from climb.cases import CaseLog
 from climb.log import AttemptLog, SittingStore
 from climb.problems import ProblemStore
@@ -35,10 +36,6 @@ from climb.schema import (
 # separating size against it, and generation's own cap sits well above it
 DRILL_CAP_MS = 2_000
 
-# the runs of one kind a user may start in a minute. The broker admits one
-# run at a time, so a burst is every other user's wait
-RUNS_PER_MINUTE = 10
-
 # how long a sitting may go untouched before the loop ends it at the moment it
 # was last touched. `log.md` gives why the ending is read-time
 IDLE_MINUTES = 45
@@ -50,10 +47,6 @@ class Refused(ValueError):
 
 class Missing(Refused):
     """A record the request names that the user cannot reach."""
-
-
-class TooOften(Refused):
-    """More submissions in the last minute than the cap allows."""
 
 
 class Failure(BaseModel):
@@ -251,8 +244,7 @@ def submit(
         _ended_idle(sittings, one)
         raise Refused(f"sitting {sitting_id} was left idle and has ended")
     # before the run: a submission past the cap starts no container
-    if len(log.attempts(user_id, since=at - timedelta(minutes=1))) >= RUNS_PER_MINUTE:
-        raise TooOften(f"{RUNS_PER_MINUTE} submissions a minute is the cap")
+    capped(lambda since: len(log.attempts(user_id, since=since)), at, "submissions")
     one = _stored(sittings, one, at)
     problem_cases = cases.for_problem(one.problem_id)
     runs = judge(code, problem_cases, cap_ms=DRILL_CAP_MS)

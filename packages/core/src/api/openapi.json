@@ -658,6 +658,56 @@
         }
       }
     },
+    "/api/problems/{problem_id}/retirement-requests": {
+      "post": {
+        "summary": "Retirement Requested",
+        "description": "A request the author reads before retiring the problem by hand. No user\nretires a problem every user is served.",
+        "operationId": "retirement_requested_api_problems__problem_id__retirement_requests_post",
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Retiring"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetirementRequest"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sittings/{sitting_id}/submissions": {
       "post": {
         "summary": "Submission",
@@ -1454,6 +1504,76 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback": {
+      "post": {
+        "summary": "Feedback Sent",
+        "operationId": "feedback_sent_api_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sending"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feedback"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/errors": {
+      "post": {
+        "summary": "Error Reported",
+        "description": "One line in the API's log, which the host keeps 14 days: `README.md`,\nBoundaries.",
+        "operationId": "error_reported_api_errors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorReport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -2736,6 +2856,14 @@
         ],
         "title": "ClaimSource"
       },
+      "Client": {
+        "type": "string",
+        "enum": [
+          "web",
+          "native"
+        ],
+        "title": "Client"
+      },
       "Confidence": {
         "type": "string",
         "enum": [
@@ -2888,6 +3016,51 @@
         "title": "Diagnosis",
         "description": "Why an attempt failed, inferred. The machine counterpart of\n`SelfLabel`."
       },
+      "ErrorReport": {
+        "properties": {
+          "client": {
+            "$ref": "#/components/schemas/Client"
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Version"
+          },
+          "page": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Page"
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 2000,
+            "title": "Message"
+          },
+          "stack": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stack"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client",
+          "version",
+          "page",
+          "message"
+        ],
+        "title": "ErrorReport",
+        "description": "An error a client met and did not handle. It carries no code the user\ntyped."
+      },
       "Failure": {
         "properties": {
           "case_id": {
@@ -2947,6 +3120,51 @@
           "none"
         ],
         "title": "FailureMode"
+      },
+      "Feedback": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "client": {
+            "$ref": "#/components/schemas/Client"
+          },
+          "page": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Page"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "client",
+          "page",
+          "note"
+        ],
+        "title": "Feedback",
+        "description": "One user's feedback on the engine: `log.md`, Feedback."
       },
       "Fill": {
         "properties": {
@@ -4628,6 +4846,7 @@
         "properties": {
           "code": {
             "type": "string",
+            "maxLength": 65536,
             "title": "Code"
           },
           "hints": {
@@ -4680,6 +4899,70 @@
           "copied"
         ],
         "title": "RetirementReason"
+      },
+      "RetirementRequest": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "user_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "problem_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Problem Id"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/RetirementReason"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "problem_id",
+          "reason",
+          "note"
+        ],
+        "title": "RetirementRequest",
+        "description": "One user's request that a problem be retired: `log.md`, Retirement\nrequests."
+      },
+      "Retiring": {
+        "properties": {
+          "reason": {
+            "$ref": "#/components/schemas/RetirementReason"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "note"
+        ],
+        "title": "Retiring"
       },
       "Rung": {
         "properties": {
@@ -4829,6 +5112,33 @@
         ],
         "title": "SelfLabel",
         "description": "The user's own verdict on why an attempt went the way it did."
+      },
+      "Sending": {
+        "properties": {
+          "client": {
+            "$ref": "#/components/schemas/Client"
+          },
+          "page": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Page"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client",
+          "page",
+          "note"
+        ],
+        "title": "Sending"
       },
       "SeparatingCase": {
         "properties": {
@@ -5262,6 +5572,7 @@
         "properties": {
           "code": {
             "type": "string",
+            "maxLength": 65536,
             "title": "Code"
           },
           "restored": {
@@ -5751,6 +6062,20 @@
             "type": "array",
             "title": "Recall Attempts"
           },
+          "retirement_requests": {
+            "items": {
+              "$ref": "#/components/schemas/RetirementRequest"
+            },
+            "type": "array",
+            "title": "Retirement Requests"
+          },
+          "feedback": {
+            "items": {
+              "$ref": "#/components/schemas/Feedback"
+            },
+            "type": "array",
+            "title": "Feedback"
+          },
           "calls": {
             "items": {
               "$ref": "#/components/schemas/Call"
@@ -5836,6 +6161,8 @@
           "predictions",
           "card_runs",
           "recall_attempts",
+          "retirement_requests",
+          "feedback",
           "calls",
           "answers",
           "stints",

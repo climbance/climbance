@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ACCOUNT,
   ARCHIVED_MODULES,
+  FEEDBACK,
   meLine,
   named,
   RESTORE,
@@ -42,6 +43,7 @@ import { useScheme } from '@/lib/scheme';
 import { useStore } from '@/lib/store';
 import { useMe } from '@/ui/account';
 import { BottomBar, styles, SyncLine, Press, ScreenHeader } from '@/ui/common';
+import { SendFeedback } from '@/ui/feedback';
 import { YourRecord } from '@/ui/record';
 import { Heading, PickPanel, PickRow } from '@/ui/rows';
 import { useSignOut } from '@/ui/signout';
@@ -88,10 +90,7 @@ export default function SettingsScreen() {
   const hourOk = validReminderHour(hour);
   const deviceOk = validDeviceName(form.device);
   const valid = study.valid && hourOk && deviceOk;
-  const changed =
-    form.device !== st.settings.device ||
-    hour !== st.settings.reminderHour ||
-    study.changed.length > 0;
+  const changed = form.device !== st.settings.device || hour !== st.settings.reminderHour || study.changed.length > 0;
 
   const save = async () => {
     if (!valid) return;
@@ -224,6 +223,12 @@ export default function SettingsScreen() {
                 />
               ))}
             </PickPanel>
+          </>
+        ) : null}
+        {st.hasToken ? (
+          <>
+            <Heading title={FEEDBACK} />
+            <SendFeedback />
           </>
         ) : null}
         {/* last: the one act on the screen that cannot be undone */}

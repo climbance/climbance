@@ -3,6 +3,7 @@ import { Route, Routes, useMatch } from 'react-router'
 
 import { LOADING } from '@climb/core'
 import { LOGIN, PRIVACY } from '@/api/client'
+import { Broke } from '@/components/Broke'
 import { NavMenu } from '@/components/NavMenu'
 import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
 import { cn } from '@/lib/utils'
@@ -62,37 +63,39 @@ function App() {
     <Session>
       {!signingIn && !readingPolicy && <NavMenu wide={wide} />}
       <main className={cn('mx-auto p-gutter', wide ? 'max-w-wide' : 'max-w-reading')}>
-        <Suspense fallback={<p className="text-meta text-muted-foreground">{LOADING}</p>}>
-          <Routes>
-            {/* the board is where every sitting starts: the user picks the
+        <Broke>
+          <Suspense fallback={<p className="text-meta text-muted-foreground">{LOADING}</p>}>
+            <Routes>
+              {/* the board is where every sitting starts: the user picks the
                 technique, never a problem id */}
-            <Route index element={<BoardPage />} />
-            <Route path="problems" element={<ProblemsPage />} />
-            <Route path="judge" element={<JudgePage />} />
-            <Route path="fill" element={<FillPage />} />
-            <Route path="cards" element={<CardsPage />} />
-            <Route path="cards/:slug" element={<CardPage />} />
-            <Route path="cards/:slug/recall" element={<DrawnRecallPage />} />
-            <Route path="cards/:slug/recall/:template" element={<RecallPage />} />
-            <Route path="techniques/:technique" element={<TechniquePage />} />
-            {/* the path names the problem, and `?technique=` names where the
+              <Route index element={<BoardPage />} />
+              <Route path="problems" element={<ProblemsPage />} />
+              <Route path="judge" element={<JudgePage />} />
+              <Route path="fill" element={<FillPage />} />
+              <Route path="cards" element={<CardsPage />} />
+              <Route path="cards/:slug" element={<CardPage />} />
+              <Route path="cards/:slug/recall" element={<DrawnRecallPage />} />
+              <Route path="cards/:slug/recall/:template" element={<RecallPage />} />
+              <Route path="techniques/:technique" element={<TechniquePage />} />
+              {/* the path names the problem, and `?technique=` names where the
                 pick came from: Phase 11 opens the same page from a ladder */}
-            <Route path="problems/:problemId" element={<ProblemPage />} />
-            <Route path="knowledge" element={<KnowledgePage />} />
-            <Route path="knowledge/queue" element={<QueuePage />} />
-            <Route path="knowledge/modules/:module" element={<ModulePage />} />
-            <Route path="knowledge/modules/:module/:sub" element={<SubtopicPage />} />
-            <Route path="knowledge/lessons" element={<LessonsPage />} />
-            <Route path="knowledge/lessons/:module/:lesson" element={<LessonPage />} />
-            <Route path="knowledge/certifications" element={<CertificationsPage />} />
-            <Route path="knowledge/exam" element={<ExamPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path={LOGIN} element={<LoginPage />} />
-            <Route path={PRIVACY} element={<PrivacyPage />} />
-            {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
+              <Route path="problems/:problemId" element={<ProblemPage />} />
+              <Route path="knowledge" element={<KnowledgePage />} />
+              <Route path="knowledge/queue" element={<QueuePage />} />
+              <Route path="knowledge/modules/:module" element={<ModulePage />} />
+              <Route path="knowledge/modules/:module/:sub" element={<SubtopicPage />} />
+              <Route path="knowledge/lessons" element={<LessonsPage />} />
+              <Route path="knowledge/lessons/:module/:lesson" element={<LessonPage />} />
+              <Route path="knowledge/certifications" element={<CertificationsPage />} />
+              <Route path="knowledge/exam" element={<ExamPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path={LOGIN} element={<LoginPage />} />
+              <Route path={PRIVACY} element={<PrivacyPage />} />
+              {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </Broke>
       </main>
     </Session>
   )

@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "Client": {
+      "enum": [
+        "web",
+        "native"
+      ],
+      "title": "Client",
+      "type": "string"
+    }
+  },
+  "description": "One user's feedback on the engine: `log.md`, Feedback.",
+  "properties": {
+    "client": {
+      "$ref": "#/$defs/Client"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "note": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Note",
+      "type": "string"
+    },
+    "page": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Page",
+      "type": "string"
+    },
+    "user_id": {
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "client",
+    "page",
+    "note"
+  ],
+  "title": "Feedback",
+  "type": "object"
+}

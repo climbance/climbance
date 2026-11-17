@@ -54,6 +54,7 @@ import { Sheet } from '@/ui/sheet';
 import type { Key } from '@/lib/keys';
 import { KeyPad } from '@/ui/keys';
 import { Markdown } from '@/ui/markdown';
+import { ReportProblem } from '@/ui/report';
 import { ClaimSheet } from '@/ui/claim';
 import { Badge } from '@/ui/rows';
 import { ElapsedClock, SubmissionVerdict } from '@/ui/verdict';
@@ -471,6 +472,7 @@ function SittingOn({
       >
         {facts}
         <Markdown>{statement.statement}</Markdown>
+        <ReportProblem problemId={problemId} />
       </ScrollView>
       <View style={{ flex: 1, display: tab === 'code' ? 'flex' : 'none' }}>
         <CodeEditor

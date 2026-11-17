@@ -6,9 +6,10 @@ wrote, and nothing about it is safer than a submission.
 
 import ast
 from collections.abc import Iterable, Sequence
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from climb import mint
+from climb.caps import capped
 from climb.log import RecallLog, latest_recalls
 from climb.runner import CaseRun, agrees, as_json, run, runner
 from climb.schema import (
@@ -23,7 +24,7 @@ from climb.schema import (
     Template,
     TemplateCase,
 )
-from climb.sitting import DRILL_CAP_MS, RUNS_PER_MINUTE, Missing, Refused, TooOften
+from climb.sitting import DRILL_CAP_MS, Missing, Refused
 
 DECIDED = {"timeout": CaseOutcome.TIMEOUT, "crashed": CaseOutcome.CRASHED}
 
@@ -48,8 +49,7 @@ def reproduce(
         raise Refused(f"the hints are taken in order: {', '.join(LADDER)}")
     # before the run: a recall past the cap starts no container, as a
     # submission past it does not
-    if len(log.all(user_id, since=at - timedelta(minutes=1))) >= RUNS_PER_MINUTE:
-        raise TooOften(f"{RUNS_PER_MINUTE} recalls a minute is the cap")
+    capped(lambda since: len(log.all(user_id, since=since)), at, "recalls")
     record = mint.recall_attempt(
         user_id,
         card_id,

@@ -106,6 +106,19 @@ export const PROBLEM_FALLBACK = 'The problem';
 export const PROBLEM_OPENING = 'Opening the problem…';
 export const PROBLEM_RETIRED =
   'This problem was retired: its statement asked for something its cases do not decide. It is served to nobody, and your attempts on it stay in your log.';
+
+// a request that the author retire the problem: `corpus.md`, Problems
+export const REPORT_PROBLEM = 'Report this problem';
+export const REPORT_TITLE = 'Ask for this problem to be retired';
+export const REPORT_EXPLAINED =
+  'The author reads every request and retires a problem by hand. Until then the problem stays served, to you and to everyone else.';
+export const REPORT_REASONS = [
+  { value: 'defective', label: 'The statement asks for something its cases do not decide' },
+  { value: 'copied', label: 'It copies a published problem' },
+] as const;
+export const REPORT_NOTE_LABEL = 'What is wrong';
+export const REPORT_SEND = 'Send';
+export const REPORT_SENT = 'Sent. The author reads it before retiring the problem.';
 export const SITTING_STATEMENT = 'Statement';
 export const SITTING_CODE = 'Code';
 export const ELAPSED_TIME = 'Elapsed time';

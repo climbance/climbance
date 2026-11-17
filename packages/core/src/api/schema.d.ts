@@ -260,6 +260,27 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/problems/{problem_id}/retirement-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Retirement Requested
+     * @description A request the author reads before retiring the problem by hand. No user
+     *     retires a problem every user is served.
+     */
+    post: operations['retirement_requested_api_problems__problem_id__retirement_requests_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/sittings/{sitting_id}/submissions': {
     parameters: {
       query?: never;
@@ -644,6 +665,44 @@ export interface paths {
      *     second take before any outcome returns the first prediction.
      */
     post: operations['taken_api_pick_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/feedback': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Feedback Sent */
+    post: operations['feedback_sent_api_feedback_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/errors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Error Reported
+     * @description One line in the API's log, which the host keeps 14 days: `README.md`,
+     *     Boundaries.
+     */
+    post: operations['error_reported_api_errors_post'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1074,6 +1133,11 @@ export interface components {
      */
     ClaimSource: 'user' | 'classifier';
     /**
+     * Client
+     * @enum {string}
+     */
+    Client: 'web' | 'native';
+    /**
      * Confidence
      * @enum {string}
      */
@@ -1124,6 +1188,22 @@ export interface components {
       evidence: string;
     };
     /**
+     * ErrorReport
+     * @description An error a client met and did not handle. It carries no code the user
+     *     typed.
+     */
+    ErrorReport: {
+      client: components['schemas']['Client'];
+      /** Version */
+      version: string;
+      /** Page */
+      page: string;
+      /** Message */
+      message: string;
+      /** Stack */
+      stack?: string | null;
+    };
+    /**
      * Failure
      * @description The first case a submission failed, shown whole: `flows.md`.
      */
@@ -1150,6 +1230,26 @@ export interface components {
      * @enum {string}
      */
     FailureMode: 'speed' | 'rust' | 'gap' | 'syntax' | 'none';
+    /**
+     * Feedback
+     * @description One user's feedback on the engine: `log.md`, Feedback.
+     */
+    Feedback: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      client: components['schemas']['Client'];
+      /** Page */
+      page: string;
+      /** Note */
+      note: string;
+    };
     /**
      * Fill
      * @description One user's answer to one key-line item: `log.md`, Filling a key line.
@@ -1861,6 +1961,33 @@ export interface components {
      */
     RetirementReason: 'defective' | 'copied';
     /**
+     * RetirementRequest
+     * @description One user's request that a problem be retired: `log.md`, Retirement
+     *     requests.
+     */
+    RetirementRequest: {
+      /** Id */
+      id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** User Id */
+      user_id: string;
+      /** Problem Id */
+      problem_id: string;
+      reason: components['schemas']['RetirementReason'];
+      /** Note */
+      note: string;
+    };
+    /** Retiring */
+    Retiring: {
+      reason: components['schemas']['RetirementReason'];
+      /** Note */
+      note: string;
+    };
+    /**
      * Rung
      * @description One problem on a ladder, with the templates its canonicals display.
      *
@@ -1929,6 +2056,14 @@ export interface components {
       /** Attempt Id */
       attempt_id: string;
       mode: components['schemas']['FailureMode'];
+    };
+    /** Sending */
+    Sending: {
+      client: components['schemas']['Client'];
+      /** Page */
+      page: string;
+      /** Note */
+      note: string;
     };
     /** SeparatingCase */
     SeparatingCase: {
@@ -2308,6 +2443,10 @@ export interface components {
       card_runs: components['schemas']['CardRun'][];
       /** Recall Attempts */
       recall_attempts: components['schemas']['RecallAttempt'][];
+      /** Retirement Requests */
+      retirement_requests: components['schemas']['RetirementRequest'][];
+      /** Feedback */
+      feedback: components['schemas']['Feedback'][];
       /** Calls */
       calls: components['schemas']['Call'][];
       /** Answers */
@@ -2830,6 +2969,41 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Timed'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  retirement_requested_api_problems__problem_id__retirement_requests_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        problem_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Retiring'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RetirementRequest'];
         };
       };
       /** @description Validation Error */
@@ -3488,6 +3662,70 @@ export interface operations {
         content: {
           'application/json': components['schemas']['Prediction'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  feedback_sent_api_feedback_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Sending'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Feedback'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  error_reported_api_errors_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ErrorReport'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Validation Error */
       422: {

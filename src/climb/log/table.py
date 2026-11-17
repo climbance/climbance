@@ -15,7 +15,17 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 
-from climb.schema import Act, Arm, CaseOutcome, ClaimSource, Confidence, FailureMode, Hint
+from climb.schema import (
+    Act,
+    Arm,
+    CaseOutcome,
+    ClaimSource,
+    Client,
+    Confidence,
+    FailureMode,
+    Hint,
+    RetirementReason,
+)
 from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
 
 # the engine's own user, whose id a private record's `user_id` references. The
@@ -327,6 +337,38 @@ judgements = Table(
     Column("called_clean", Boolean, nullable=False),
     Column("line", Integer),
     CheckConstraint("called_clean = (line IS NULL)", name="a_flaw_is_tapped"),
+)
+
+
+# one user's request that a problem be retired, read by hand before the
+# retirement: `log.md`, Retirement requests
+retirement_requests = Table(
+    "retirement_requests",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("user_id", Text, ForeignKey("users.id"), nullable=False, index=True),
+    Column("problem_id", Text, ForeignKey("problems.id"), nullable=False, index=True),
+    Column("reason", enumerated(RetirementReason), nullable=False),
+    Column("note", Text, nullable=False),
+    CheckConstraint("note ~ '\\S' AND length(note) <= 2000", name="note_written"),
+)
+
+
+# one user's remark on the engine, read by the author: `log.md`, Feedback
+feedback = Table(
+    "feedback",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("user_id", Text, ForeignKey("users.id"), nullable=False, index=True),
+    Column("client", enumerated(Client), nullable=False),
+    Column("page", Text, nullable=False),
+    Column("note", Text, nullable=False),
+    CheckConstraint("length(page) BETWEEN 1 AND 200", name="page_named"),
+    CheckConstraint("note ~ '\\S' AND length(note) <= 2000", name="note_written"),
 )
 
 

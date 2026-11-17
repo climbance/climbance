@@ -19,10 +19,12 @@ from climb.knowledge.table import (
     setting_changes,
     stints,
 )
+from climb.log.feedback import FeedbackLog
 from climb.log.fills import FillLog
 from climb.log.judgements import JudgementLog
 from climb.log.predictions import PredictionLog
 from climb.log.recalls import RecallLog
+from climb.log.retirement_requests import RetirementRequestLog
 from climb.log.runs import CardRunLog
 from climb.log.sittings import SittingStore
 from climb.log.store import AttemptLog
@@ -36,6 +38,7 @@ from climb.log.table import (
     card_run_probes,
     card_runs,
     diagnoses,
+    feedback,
     fills,
     identities,
     invitations,
@@ -43,6 +46,7 @@ from climb.log.table import (
     predictions,
     recall_attempt_case_results,
     recall_attempts,
+    retirement_requests,
     self_labels,
     sessions,
     sitting_pauses,
@@ -58,6 +62,7 @@ from climb.schema import (
     CardRun,
     CertificationExam,
     Diagnosis,
+    Feedback,
     Fill,
     Focus,
     Judgement,
@@ -67,6 +72,7 @@ from climb.schema import (
     ModuleStatusChange,
     Prediction,
     RecallAttempt,
+    RetirementRequest,
     SelfLabel,
     SettingChange,
     Sitting,
@@ -104,6 +110,8 @@ class UserLog(BaseModel):
     predictions: list[Prediction]
     card_runs: list[CardRun]
     recall_attempts: list[RecallAttempt]
+    retirement_requests: list[RetirementRequest]
+    feedback: list[Feedback]
     calls: list[Call]
     # the knowledge log: `knowledge.md`, The records
     answers: list[Answer]
@@ -141,6 +149,8 @@ def whole_log(root: Database, user_id: str) -> UserLog:
             "predictions": PredictionLog(root).for_user(user_id),
             "card_runs": CardRunLog(root).all(user_id),
             "recall_attempts": RecallLog(root).all(user_id),
+            "retirement_requests": RetirementRequestLog(root).for_user(user_id),
+            "feedback": FeedbackLog(root).for_user(user_id),
             "calls": called,
             # rows, each validated into the record its field names
             **{name: _knowledge(root, table, user_id) for name, table in KNOWLEDGE.items()},
@@ -223,6 +233,8 @@ def _erase(conn: Connection, user_id: str) -> dict[str, int]:
         (judgements, judgements.c.user_id == user_id),
         (fills, fills.c.user_id == user_id),
         (predictions, predictions.c.user_id == user_id),
+        (retirement_requests, retirement_requests.c.user_id == user_id),
+        (feedback, feedback.c.user_id == user_id),
         (card_run_probes, card_run_probes.c.card_run_id.in_(started)),
         (card_runs, card_runs.c.user_id == user_id),
         *((table, table.c.user_id == user_id) for table in KNOWLEDGE.values()),

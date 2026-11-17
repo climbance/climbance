@@ -29,6 +29,7 @@ from climb.schema.case import (
 from climb.schema.configuration import Configuration
 from climb.schema.diagnosis import Diagnosis
 from climb.schema.draft import Draft, DraftCase, SettledCase, WritingState
+from climb.schema.feedback import Client, Feedback
 from climb.schema.judgement import ItemStatus, Judgement, JudgementItem
 from climb.schema.keyline import Fill, KeyLineChoice, KeyLineItem
 from climb.schema.knowledge import (
@@ -68,6 +69,7 @@ from climb.schema.provenance import MachineProvenance
 from climb.schema.rating import BANDS, DifficultyRating, RatingSource, band
 from climb.schema.recall import LADDER, Hint, RecallAttempt
 from climb.schema.record import AttemptRecord
+from climb.schema.retirement_request import RetirementRequest
 from climb.schema.seed import CardSeed, TemplateSeed
 from climb.schema.sitting import Pause, Sitting
 from climb.schema.solution import Solution, SolutionRole
@@ -98,6 +100,7 @@ __all__ = [
     "CertificationExam",
     "CertificationSettings",
     "ClaimSource",
+    "Client",
     "Confidence",
     "Configuration",
     "Diagnosis",
@@ -108,6 +111,7 @@ __all__ = [
     "Execution",
     "ExpectedSource",
     "FailureMode",
+    "Feedback",
     "Fill",
     "Focus",
     "Gate",
@@ -144,6 +148,7 @@ __all__ = [
     "RecallAttempt",
     "Requirement",
     "RetirementReason",
+    "RetirementRequest",
     "Selector",
     "SelfLabel",
     "SettingChange",
