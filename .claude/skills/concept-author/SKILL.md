@@ -201,8 +201,9 @@ nohup uv run python .claude/skills/concept-author/run.py --level 0 \
   and a worktree of it in `../py-runs/wt/integration`. Each subtopic is
   written in a worktree of its own, on a branch cut from `py-auto`. A
   subtopic whose digest reads `DONE` is committed there, the pre-commit hook
-  running the module check, and merged into `py-auto`. A run never touches
-  `main`.
+  running the module check, and merged into `py-auto`. The merge is committed
+  only if the merged module passes its check, since two subtopics written in
+  parallel once each wrote a concept of one id. A run never touches `main`.
 - **Re-levelling.** `run.py --relevel` re-levels the written concepts,
   as `concepts.md` `### Re-levelling` gives. An assess session proposes
   moves from a table of every claim, a fresh verify session keeps the moves
@@ -229,6 +230,7 @@ nohup uv run python .claude/skills/concept-author/run.py --level 0 \
   names the steps a subtopic finished, so it goes on from the next.
 - **The usage limit.** A session ending on the usage limit fails nothing.
   The step waits until the reset the message names, five minutes past it,
-  or 15 minutes when the message names no hour, then runs again.
+  or 15 minutes when the message names no hour, then runs again. A session
+  ending on a lost connection waits 5 minutes and runs again too.
 - **Before a long run,** write one subtopic with `--only <sub>` and read its
   digest, since a fault in a brief repeats in every subtopic.

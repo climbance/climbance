@@ -14,6 +14,8 @@ background` gives the rest.
 import argparse
 import concurrent.futures as cf
 import json
+import re
+import shutil
 import subprocess
 import time
 import tomllib
@@ -231,7 +233,9 @@ def schedule(args: argparse.Namespace, main_wt: Path, subs: list, needs: dict) -
                     line = f"{sub}: FAILED: {error}"
                 if line.endswith("DONE"):
                     branch = f"{args.branch}-{sub}-L{args.level}"
-                    git("merge", "-q", "--no-ff", "--no-edit", branch, cwd=main_wt)
+                    if errors := merge_checked(main_wt, branch, args.module):
+                        line = f"{sub}: FAILED: merge: check: {errors[-1]}"
+                if line.endswith("DONE"):
                     finished.add(sub)
                 else:
                     failed.add(sub)
@@ -239,9 +243,30 @@ def schedule(args: argparse.Namespace, main_wt: Path, subs: list, needs: dict) -
     print(f"report: {report}")
 
 
+def merge_checked(main_wt: Path, branch: str, module: str) -> list[str]:
+    """Merges a subtopic's branch unless the merged module fails its check, and
+    returns the check's errors. Subtopics written in parallel can each pass
+    alone and clash together, as two concepts of one id did."""
+    git("merge", "-q", "--no-ff", "--no-commit", branch, cwd=main_wt)
+    done = subprocess.run(
+        ["uv", "run", "climb", "module", "check", "--content", str(main_wt / "modules"), module],
+        cwd=ENGINE,
+        capture_output=True,
+        text=True,
+    )
+    out = done.stdout + done.stderr
+    if not re.search(r"^0 errors", out, re.M):
+        git("merge", "--abort", cwd=main_wt)
+        return [line for line in out.splitlines() if line.startswith("error")] or [out[-200:]]
+    git("commit", "-q", "--no-edit", cwd=main_wt)
+    return []
+
+
 def cwd_of(pid: str) -> Path | None:
+    # macOS keeps lsof in /usr/sbin, off a default PATH
+    lsof = shutil.which("lsof") or "/usr/sbin/lsof"
     out = subprocess.run(
-        ["lsof", "-a", "-d", "cwd", "-Fn", "-p", pid], capture_output=True, text=True
+        [lsof, "-a", "-d", "cwd", "-Fn", "-p", pid], capture_output=True, text=True
     )
     paths = [line[1:] for line in out.stdout.splitlines() if line.startswith("n")]
     return Path(paths[0]) if paths else None

@@ -154,10 +154,13 @@ class Job:
             with log.open() as f:
                 f.seek(start)
                 events = f.read()
-            wait = limit_reset(events)
-            if wait is None:
+            if (wait := limit_reset(events)) is not None:
+                self.progress(f"{step}: usage limit, waiting {wait / 60:.0f} min")
+            elif unreachable(events):
+                wait = 5 * 60
+                self.progress(f"{step}: API unreachable, waiting {wait / 60:.0f} min")
+            else:
                 break
-            self.progress(f"{step}: usage limit, waiting {wait / 60:.0f} min")
             time.sleep(wait)
         self.tokens(step, model, events)
 
@@ -522,6 +525,14 @@ def solve(job: Job, out: Path) -> None:
         capture_output=True,
     )
     job.progress("stage 3 solver: findings.md written")
+
+
+def unreachable(events: str) -> bool:
+    """The session ended on a lost connection, which a later try can pass."""
+    results = [
+        line for line in events.splitlines() if line.startswith('{"') and '"type":"result"' in line
+    ]
+    return bool(results) and '"api_error":"connection_failed"' in results[-1]
 
 
 def limit_reset(events: str) -> float | None:
