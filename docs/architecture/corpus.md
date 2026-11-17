@@ -73,49 +73,148 @@ architecture, and `README.md` is the map.
   excluding only the failures would raise a solve rate because a problem was
   broken. The attempts stay readable, and the board stops counting them.
 
-## Difficulty ratings
+## Difficulty
 
+A problem's difficulty is a score on the contest scale, with a deviation. The
+label a problem is served with, easy, medium or hard, is derived from that
+score.
+
+- **A difficulty score reads on the contest scale.** The contest scale is the
+  rating scale of the public programming contests. There a problem's rating is
+  the contestant rating at which a solve is expected half the time. A score in
+  those units says how hard a problem is to anyone who has entered a contest,
+  where a label says it in three words.
+- **A score carries its deviation**, one standard error on the contest scale.
+  A rating method reports how sure it is, and a reader comparing a user with a
+  problem needs that certainty as much as the score.
+- **The label is the band the standing score falls in.** A band is a range of
+  scores one label covers, and the three bands are a fixed table in the code.
+  One number then answers both the score and the label, so the two never
+  disagree.
 - **A label reads on the scale of the public problem platforms.** Easy,
   medium and hard mean what the platforms' three levels mean, since a user
-  compares a label with those. The criteria for each level are written below
-  this section's rules.
+  compares a label with those. The criteria for each level are written below.
+- **The bands' cuts are set when the first fit scores the corpus.** They are
+  read so that the derived labels agree with the criteria below on the served
+  problems as often as possible. The criteria then keep the meaning a label had
+  before scores existed.
 - **Whether a ladder requires an easy rung of a user who passed the recall is
   deferred** until real sittings show what the easy rung adds. A recall checks
   the user types the form, and an easy problem that the user sees it.
-- **A problem's `difficulty` is the generator's rating, and stays as
-  written.** The generator judges the problem it wrote, and nothing has read
-  the problem yet. A problem is never edited, so a corrected label cannot
-  overwrite that field.
-- **A `DifficultyRating` stores one later judgement of one problem's
-  difficulty.** It carries an engine-minted `id`, the `problem_id`, the
-  `difficulty`, its `source` and `created_at`. A rating with `source`
-  `classifier` carries provenance whole, as any machine record does.
+- **A problem's `difficulty` is the label the generator aimed at, and stays
+  as written.** The generator is told a label by `generate --difficulty`, and
+  writes to the criteria below. A problem is never edited, so a score found
+  later cannot overwrite that field.
+- **A `DifficultyRating` stores one judgement of one problem's score.** It
+  carries an engine-minted `id`, the `problem_id`, the `score`, the
+  `deviation`, its `source` and `created_at`. A rating with `source` `fit`
+  names the difficulty fit that computed it, by `fit_id`. A rating with
+  `source` `user` names nothing more.
 - **Ratings are product data, global and append-only.** A problem is served to
-  every user, so its label is the same for every user. A rating replaced by a
+  every user, so its score is the same for every user. A rating replaced by a
   later one stays readable beside it.
 - **The standing difficulty is read at every read and never stored.** The
-  standing rating answers, by the standing rule: a `user` rating stands over a
-  `classifier` one, and among each source's ratings the latest stands. With no
-  rating, the problem's own `difficulty` answers.
+  standing rating answers, by the standing rule. A `user` rating stands over a
+  `fit` one, and among each source's ratings the latest stands. With no
+  rating, the problem has no score, and its label is the generator's
+  `difficulty`.
+- **A problem landed after the latest fit has no score until a fit reads it.**
+  Whether a new problem is scored against the members' fitted abilities, or by
+  fitting again, is deferred to the first problem landed after the first fit.
 - **Every reader of a label reads the standing difficulty.** These readers are
   the badge, the listing's filter and a card's selector.
-- **A loaded problem carries its standing difficulty in `difficulty`.** The
-  loader folds the ratings in, as it folds the derived techniques in. The
-  problem store alone returns the generator's label.
+- **A loaded problem carries the label of its standing score in
+  `difficulty`.** The loader folds the ratings in, as it folds the derived
+  techniques in. The problem store alone returns the generator's label. A
+  reader of the score reads the standing rating, since no record of the
+  problem holds a score.
 - **A `user` rating is written by hand, in the terminal, beside retirement.**
-  A learner's reading of a problem does not change the label another user is
-  served.
-- **A model call writing ratings is deferred.** The by-hand pass covers the
-  corpus while the corpus holds tens of problems. The call is the
-  `classifier` source when the corpus outgrows a by-hand pass.
-- **A difficulty estimated from attempts is deferred.** Whether an estimate
-  is a rating with a source of its own is decided when it is planned.
+  It names a score on the contest scale. A learner's reading of a problem does
+  not change the score another user is served.
+- **The label ratings stored before scores existed are deleted** when the
+  `score` field lands, after their labels have informed the bands' cuts. A
+  rating carrying a label alone would be a second shape every reader branches
+  on, as `README.md` `## Repo constraints` gives.
+- **A difficulty estimated from users' attempts is deferred.** Whether an
+  estimate is a rating with a source of its own is decided when it is planned.
+
+### Difficulty fits
+
+A difficulty fit scores every problem it reads from the trials of a panel of
+models, and links those scores to the contest scale through anchors.
+
+- **The scores come from models, and no user's attempt is needed.** A panel
+  is a set of model configurations, each a member, chosen so that the members
+  range from weak to strong. A trial is one member's solution to one problem,
+  run against that problem's cases.
+- **A fit is a difficulty-only item response model over the trials.** Each
+  member has an ability and each problem a difficulty. A member solves a
+  problem with the logistic chance of the ability minus the difficulty. A
+  discrimination per problem is deferred until it lowers the log-loss below.
+- **The members are chosen so that solve rates spread between 0 and 1** across
+  the corpus. A problem every member solves, or none, carries no difficulty a
+  fit can read. Which models, which efforts and how many trials each are
+  deferred to the pilot on the anchors.
+- **Anchors link the fit to the contest scale.** An anchor is an external
+  problem whose contest rating was fitted from the contestants who solved it.
+  The panel's trials on the anchors are fitted with the corpus. A linear
+  mapping from the fitted difficulty to the contest rating, set on the
+  anchors, then converts every problem's difficulty into a score.
+- **An anchor is never served, never stored with the corpus and never in
+  git.** It is a third-party problem, and `README.md` `## Invariants` keeps
+  every third-party statement and case out of git. Each anchor's licence is
+  recorded where the anchors are kept, outside this repository.
+- **The anchor set is fixed before any trial runs, and named by its hash.**
+  The fit record cites the hash, so a fit's scores are traceable to the anchors
+  without naming one. A changed anchor set is a new hash, and the fits on the
+  old one stay readable.
+- **Some anchors are held out of the mapping.** The log-loss of the panel's
+  trials on them is the fit's one metric. Each held-out anchor's contest rating
+  is converted back to a fitted difficulty, and the chance each member solves
+  it is read from the logistic curve. A change to the panel, the model or the
+  mapping is kept only where it lowers that log-loss.
+- **A `DifficultyFit` stores one fit.** It carries an engine-minted `id`,
+  `created_at`, the members' configurations, the anchor set's hash, the
+  mapping, each member's ability and the held-out log-loss. Each problem's
+  score is a `DifficultyRating` naming the fit. Fits are product data, global
+  and append-only.
+- **The latest fit stands for every problem it read.** One fit scores the
+  corpus at once, so its problems' ratings are mutually consistent. A rating
+  from an earlier fit stays readable, and no reader mixes two fits' scores.
+
+### Trials
+
+- **A `Trial` stores one member's solution to one problem and its verdict.**
+  It carries an engine-minted `id`, the `problem_id`, the `try_number`, the
+  `outcome`, `cases_passed`, `cases_run`, the `cap_ms` and `runner` the cases
+  ran under, and `created_at`. The member's configuration, the prompt hash and
+  the tokens are its provenance, read off its call as on any machine record.
+- **A trial's `outcome` is its severest case outcome**, and `solved` is every
+  case run passing. Code that ran no case has no outcome. Per-case results are
+  not kept, since a fit reads only whether the member solved the problem.
+- **A trial is distinct from an attempt.** An attempt is a user's solution in
+  the user's private log. A trial is a model's solution, product data, global
+  and append-only. A trial never enters the user's log, and no reader of
+  mastery reads one.
+- **A trial on a corpus problem is in the store.** Its verdict is read from
+  the problem's own cases, by the runner a sitting uses.
+- **A trial on an anchor is never in the store**, and neither is the call
+  that wrote it. The call's prompt holds the anchor's statement, and no
+  third-party statement is stored with the corpus. The trial and its call are
+  kept beside the anchors, outside every repository. The trial keeps its own
+  shape there, so one fit reads both kinds.
+- **The code reading the anchors and running a trial on one lives outside
+  this repository.** An anchor reads its input from standard input, where a
+  corpus problem's cases call `solve`. That runner and the anchors' format
+  belong with the anchors.
 
 ### The criteria
 
-A rater checks a problem against these in order, and the first level that
-fits is the label. Each criterion counts the steps a solution takes beyond one
-template's form, so two raters reading one statement reach one label.
+The generator aims at a label by these criteria, and the bands' cuts are set
+to reproduce them. A rater checks a problem against these in order, and the
+first level that fits is the label. Each criterion counts the steps a solution
+takes beyond one template's form, so two raters reading one statement reach
+one label.
 
 - **Easy: the solution is one basic form applied unchanged, or a direct
   approach that fits the limits.** The basic forms are the templates the table

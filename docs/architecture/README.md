@@ -109,10 +109,31 @@ without redefining them. Grouped by the file that specifies the record.
   ceiling put out of reach.
 - **Solution claim**: a claim about a solution the engine wrote. Product data,
   and what a problem's techniques are folded from.
-- **Difficulty rating**: a judgement of a problem's difficulty written after
-  landing, by hand or by a model. A `DifficultyRating` record stores one.
-- **Standing difficulty**: the label a problem is served with: its standing
-  rating, or the generator's `difficulty` where no rating exists.
+- **Difficulty score** (score): a problem's difficulty as one number on the
+  contest scale.
+- **Contest scale**: the rating scale of the public programming contests,
+  where a problem's rating is the contestant rating at which a solve is
+  expected half the time.
+- **Deviation**: one standard error of a score, on the contest scale.
+- **Band**: the range of scores one label covers: easy, medium or hard.
+- **Difficulty rating**: one judgement of a problem's score and deviation,
+  written after landing, by hand or by a difficulty fit. A `DifficultyRating`
+  record stores one.
+- **Standing difficulty**: the score a problem is served with, its standing
+  rating's, and the label of the band it falls in. With no rating, the label
+  is the generator's `difficulty` and there is no score.
+- **Panel**: the model configurations whose trials a difficulty fit reads,
+  ranging from weak to strong. Each configuration is a **member**.
+- **Trial**: one member's solution to one problem, with its verdict. A `Trial`
+  record stores one. An attempt is a different thing: a user's solution.
+- **Anchor**: an external problem whose contest rating was fitted from the
+  contestants who solved it. Never served, never stored with the corpus, and
+  never in git.
+- **Anchor set**: the fixed list of anchors a fit reads, named by its hash.
+  Some of its anchors are held out of the mapping.
+- **Difficulty fit** (fit): one item response fit over the panel's trials,
+  linked to the contest scale on the anchors. A `DifficultyFit` record stores
+  one.
 - **Defective**: a retirement reason: the statement asks for something its
   cases do not decide.
 - **Enumeration**: a pass over a landed problem proposing other approaches,
@@ -406,7 +427,7 @@ times. Each record class is specified in one of the files beside it.
 | File | Holds |
 |---|---|
 | [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
-| [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims |
+| [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims, difficulty ratings and fits, trials |
 | [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, and the predictions each pick stores |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
@@ -427,6 +448,8 @@ times. Each record class is specified in one of the files beside it.
 | Solutions | product | global | append-only | the store |
 | Solution claims | product | global | append-only | the store |
 | Difficulty ratings | product | global | append-only | the store |
+| Difficulty fits | product | global | append-only | the store |
+| Trials | product | global | append-only | the store, or beside the anchors for an anchor's trial |
 | Verification runs | product | global | append-only | the store |
 | Template matches | product | global | append-only | the store |
 | Judgement items | product | global | created once; only its status moves | the store |

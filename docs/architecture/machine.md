@@ -5,9 +5,9 @@ it. Part of the architecture. `README.md` is the map.
 
 ## Machine records
 
-Claims, template matches, solution claims, canonical solutions and the
-arguments of a test case are written by a model. Each of them carries the same
-fields to stay comparable, and those fields are stated here once.
+Claims, template matches, solution claims, canonical solutions, trials and
+the arguments of a test case are written by a model. Each of them carries the
+same fields to stay comparable, and those fields are stated here once.
 
 - **Provenance is the configuration**: model, effort, the endpoint the model was
   pinned to, temperature, the prompt hash of what that record was sent, and the
