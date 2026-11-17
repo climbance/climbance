@@ -18,6 +18,7 @@ from climb.problems import ProblemStore
 from climb.ratings import RatingLog
 from climb.solution_claims import SolutionClaimLog
 from climb.solutions import SolutionLog
+from climb.trials import TrialLog
 from climb.verifications import VerificationLog
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -243,6 +244,7 @@ APPEND_ONLY = (
     SolutionLog,
     SolutionClaimLog,
     RatingLog,
+    TrialLog,
     JudgementLog,
     FillLog,
     OutcomeLog,

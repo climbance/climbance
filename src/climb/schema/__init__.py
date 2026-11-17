@@ -73,6 +73,7 @@ from climb.schema.sitting import Pause, Sitting
 from climb.schema.solution import Solution, SolutionRole
 from climb.schema.solution_claim import SolutionClaim
 from climb.schema.technique import Kind, Technique
+from climb.schema.trial import Trial
 from climb.schema.verification import AttemptVerification, Execution, Verification
 
 __all__ = [
@@ -164,6 +165,7 @@ __all__ = [
     "TemplateSeed",
     "TestCase",
     "Topic",
+    "Trial",
     "Verification",
     "WritingState",
     "band",

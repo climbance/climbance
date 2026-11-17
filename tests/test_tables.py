@@ -127,11 +127,13 @@ from climb.schema import (
     TemplateMatch,
     TestCase,
     Topic,
+    Trial,
     Verification,
 )
 from climb.solution_claims.table import solution_claims
 from climb.solutions.table import solutions
 from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
+from climb.trials.table import trials
 from climb.verifications.table import verification_case_results, verifications
 
 # every stored record and its table. Each store adds its own as its tables land
@@ -194,6 +196,7 @@ STORED: list[Stored] = [
     Stored(Fill, fills),
     Stored(Prediction, predictions),
     Stored(DifficultyRating, difficulty_ratings),
+    Stored(Trial, trials, through_call=True, required=frozenset({"call_id"})),
     Stored(TemplateMatch, template_matches, through_call=True),
     Stored(SiteOutcome, site_outcomes, through_call=True, required=frozenset({"call_id"})),
     Stored(Sitting, sittings, elsewhere=frozenset({"pauses"})),
@@ -712,6 +715,7 @@ APPEND_ONLY = {
     "solutions",
     "solution_claims",
     "difficulty_ratings",
+    "trials",
     "template_matches",
     "verifications",
     "site_outcomes",

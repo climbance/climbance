@@ -45,6 +45,7 @@ from climb.schema import (
     TemplateMatch,
     TestCase,
     Topic,
+    Trial,
     Verification,
 )
 
@@ -61,6 +62,7 @@ RECORDS: list[type[BaseModel]] = [
     Solution,
     SolutionClaim,
     DifficultyRating,
+    Trial,
     JudgementItem,
     Judgement,
     KeyLineItem,
