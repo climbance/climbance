@@ -9,7 +9,7 @@ export interface SettingRecord {
 
 export const SETTING_DEFAULT: Record<SettingName, number> = { new_per_day: 10, exam_size: 40 };
 
-// the engine refuses a value outside these: `knowledge.md`, The records
+// the engine refuses a value outside these: `knowledge.md`, Settings
 export const SETTING_RANGE: Record<SettingName, [number, number]> = { new_per_day: [0, 200], exam_size: [1, 500] };
 
 export function validSetting(name: SettingName, n: number): boolean {

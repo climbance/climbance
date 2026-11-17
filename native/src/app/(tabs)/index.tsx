@@ -166,6 +166,14 @@ function BoardBody({
   // the knowledge reading, from the device's copy: `log.md`, Mastery
   const known = (row: Board['rows'][number]) => (learner ? techniqueKnowledge(learner, row) : null);
   const { untouched, practised, foot } = boardView(board, known);
+  // each list closes from its own heading, as the web's board does: `pages.md`
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
+  const toggle = (id: string) =>
+    setClosed((was) => {
+      const next = new Set(was);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
   const studying = inProgress(cards);
   const next = nextCards(cards);
   const view = pick ? pickView(pick) : null;
@@ -219,35 +227,49 @@ function BoardBody({
       ) : null}
       {untouched.length > 0 ? (
         <>
-          <Heading title={BOARD_UNTOUCHED} count={untouched.length} />
-          <Panel padded style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 20, rowGap: 8 }}>
-            {untouched.map((row) => (
-              <Text
-                key={row.technique}
-                variant="bodyLarge"
-                accessibilityRole="link"
-                onPress={() => open(row.technique)}
-                style={{ color: theme.colors.primary }}
-              >
-                {row.technique}
-              </Text>
-            ))}
-          </Panel>
+          <Heading
+            title={BOARD_UNTOUCHED}
+            count={untouched.length}
+            closed={closed.has('untouched')}
+            onToggle={() => toggle('untouched')}
+          />
+          {closed.has('untouched') ? null : (
+            <Panel padded style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 20, rowGap: 8 }}>
+              {untouched.map((row) => (
+                <Text
+                  key={row.technique}
+                  variant="bodyLarge"
+                  accessibilityRole="link"
+                  onPress={() => open(row.technique)}
+                  style={{ color: theme.colors.primary }}
+                >
+                  {row.technique}
+                </Text>
+              ))}
+            </Panel>
+          )}
         </>
       ) : null}
       {practised.length > 0 ? (
         <>
-          <Heading title={BOARD_PRACTISED} count={practised.length} />
-          <PickPanel>
-            {practised.map((row) => (
-              <PickRow
-                key={row.technique}
-                title={row.technique}
-                stats={techniqueStats(row, now, known(row))}
-                onPress={() => open(row.technique)}
-              />
-            ))}
-          </PickPanel>
+          <Heading
+            title={BOARD_PRACTISED}
+            count={practised.length}
+            closed={closed.has('practised')}
+            onToggle={() => toggle('practised')}
+          />
+          {closed.has('practised') ? null : (
+            <PickPanel>
+              {practised.map((row) => (
+                <PickRow
+                  key={row.technique}
+                  title={row.technique}
+                  stats={techniqueStats(row, now, known(row))}
+                  onPress={() => open(row.technique)}
+                />
+              ))}
+            </PickPanel>
+          )}
         </>
       ) : null}
       {foot ? (

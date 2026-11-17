@@ -337,6 +337,26 @@ describe('scripted queue', () => {
   }
 });
 
+describe('a lesson past the new-question limit', () => {
+  it('is not offered once the day\'s new questions are spent', () => {
+    const c = data.queue.find((one: { name: string }) => one.name.startsWith('lessons: pretest'))!;
+    const cat = loadSnapshot({ format: 5, courses: c.courses } as Snapshot);
+    const f = currentFocus(c.focus, cat)!;
+    const recs: Recs = [];
+    const board = () => Board.build(cat, recs, null, f.course);
+    // the pretest's two questions spend a limit of two, where the lesson came next
+    const queue = focusQueue(board(), f, 2);
+    const picked: (string | null)[] = [];
+    for (const step of c.steps.slice(0, 3)) {
+      const q = queue.pick(board(), parseTime(step.at));
+      picked.push(isLessonItem(q) ? `lesson:${q.lesson.slug}` : q ? qkey(q) : null);
+      if (q && !isLessonItem(q)) recs.push({ t: step.at, course: q.course, id: q.id, ok: true });
+    }
+    expect(picked.slice(0, 2)).toEqual(['ls:g1', 'ls:g2']);
+    expect(picked[2]?.startsWith('lesson:') ?? false).toBe(false);
+  });
+});
+
 describe('waiting outside a strict focus', () => {
   for (const c of data.outside) {
     it(c.name, () => {

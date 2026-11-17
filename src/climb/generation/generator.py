@@ -24,8 +24,9 @@ from climb.schema import (
 )
 
 # unmeasured: none of the gates a generator is scored by has run yet. Sampled
-# where the other three are greedy, and `machine.md` gives the reason. Pinned
-# to AI Studio rather than Vertex, whose endpoints advertise no temperature
+# as the naive site is, where the four other sites are greedy, and `machine.md`
+# gives the reason. Pinned to AI Studio rather than Vertex, whose endpoints
+# advertise no temperature
 GENERATOR_DEFAULT = Configuration(
     model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio"
 )

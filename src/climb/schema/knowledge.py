@@ -55,7 +55,7 @@ class SettingName(StrEnum):
     EXAM_SIZE = "exam_size"
 
 
-# the values each setting admits: `knowledge.md`, The records
+# the values each setting admits: `knowledge.md`, Settings
 SETTING_RANGE: dict[SettingName, tuple[int, int]] = {
     SettingName.NEW_PER_DAY: (0, 200),
     SettingName.EXAM_SIZE: (1, 500),

@@ -175,8 +175,10 @@ export class Queue {
   }
 
   /** A lesson due to be read whose levels are in scope, at the slot of a new question. */
-  private lessonItem(b: Board): LessonItem | null {
+  private lessonItem(b: Board, now: number): LessonItem | null {
     if (this.kind !== 'mix' && this.kind !== 'focus') return null;
+    // the lesson leads into new questions, and none follows once today's are spent
+    if (!this.newLeft(b, now)) return null;
     const subs = new Set(this.scope.map((q) => q.sub));
     for (const c of b.courses) {
       for (const x of b.lessons(c)) {
@@ -194,7 +196,7 @@ export class Queue {
     // a stop right after a stop breaks the queue's flow, so a question comes
     // between two lessons wherever one is left: `knowledge.md`, Lessons
     const lesson = () => {
-      const item = this.lessonItem(b);
+      const item = this.lessonItem(b, now);
       if (item) this.offered.add(`${item.course.slug}:${item.lesson.slug}`);
       return item;
     };

@@ -46,7 +46,7 @@ class SiteOutcome(MachineProvenance):
     id: str
     created_at: datetime
     site: CallSite
-    # minted per writing, so the four sites of one writing group
+    # minted per writing, so the six sites of one writing group
     # and a rejected draft still has an identity
     writing_id: str = Field(min_length=1)
     # the target, as on the draft and the problem. Both absent where nothing

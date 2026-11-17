@@ -67,7 +67,8 @@ def outstanding(
     now. `hashes` is what each question would be sent, keyed by card and
     solution. A question stands while any of its pairs carries no record at
     that text, so a settled pair is re-answered by the call the unsettled one
-    beside it needs."""
+    beside it needs. A pair the user matched by hand is settled at every
+    configuration: `content.md`, Template matches."""
     card_of = {
         template.id: question.card.id
         for question in asking
@@ -77,8 +78,13 @@ def outstanding(
         (match.template_id, match.solution_id)
         for match in matches
         if match.template_id in card_of
-        and at_configuration(
-            match, configuration, hashes.get((card_of[match.template_id], match.solution_id), "")
+        and (
+            match.source is MatchSource.USER
+            or at_configuration(
+                match,
+                configuration,
+                hashes.get((card_of[match.template_id], match.solution_id), ""),
+            )
         )
     }
     return [

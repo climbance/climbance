@@ -22,7 +22,7 @@ from climb.schema import (
 
 @dataclass(frozen=True)
 class Writing:
-    """The four sites of one writing, grouped by a minted id.
+    """The six sites of one writing, grouped by a minted id.
 
     Silent by default, so `write_one` and `harden` are callable without a
     store and a test needs none.

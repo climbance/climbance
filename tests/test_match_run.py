@@ -188,9 +188,9 @@ def test_fresh_asks_again(database):
     assert len(MatchLog(database).matches()) == 4
 
 
-def test_a_hand_match_is_never_what_a_run_leans_on(database):
-    """It is the reference a machine run is scored against, so it settles
-    nothing about what still has to be read."""
+def test_a_solution_matched_by_hand_on_every_pair_is_not_asked(database):
+    """The user's record stands over the machine's, so a call over pairs the
+    user settled buys a verdict nothing reads."""
     cards, corpus = seeded(database), stored(database, problem("p1", techniques=["sliding-window"]))
     hashes = {(cards[0].id, "s-p1"): request_hash(cards[0], corpus[0], canonicals(*corpus)[0])}
     user = [
@@ -209,8 +209,31 @@ def test_a_hand_match_is_never_what_a_run_leans_on(database):
         outstanding(
             questions(cards, corpus, canonicals(*corpus)), user, hashes, configuration=DEFAULT
         )
-        != []
+        == []
     )
+
+
+def test_a_solution_matched_by_hand_on_some_pairs_is_still_asked(database):
+    """The call answers the unsettled pairs, and one call carries them all."""
+    cards, corpus = seeded(database), stored(database, problem("p1", techniques=["sliding-window"]))
+    hashes = {(cards[0].id, "s-p1"): request_hash(cards[0], corpus[0], canonicals(*corpus)[0])}
+    first = cards[0].templates[0]
+    user = [
+        TemplateMatch(
+            id="m0",
+            created_at=datetime.now(UTC),
+            template_id=first.id,
+            solution_id="s-p1",
+            matched=True,
+            source=MatchSource.USER,
+        )
+    ]
+
+    asked = outstanding(
+        questions(cards, corpus, canonicals(*corpus)), user, hashes, configuration=DEFAULT
+    )
+
+    assert [question.solution.id for question in asked] == ["s-p1"]
 
 
 def test_a_limit_cuts_the_run(database):
