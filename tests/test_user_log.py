@@ -26,7 +26,7 @@ from climb.log import (
 )
 from climb.log.owned import KNOWLEDGE
 from climb.log.table import attempts, identities, sessions, users
-from climb.schema import Diagnosis, FailureMode
+from climb.schema import Cause, Diagnosis, FailureMode
 
 AUTHOR = "u-4f9c2a"
 OTHER = "u-b71e03"
@@ -87,7 +87,7 @@ def practise(database, user_id: str) -> None:
             id=f"d-{user_id}",
             created_at=T0,
             attempt_id=attempt_id,
-            mode=FailureMode.RUST,
+            cause=Cause.FORM,
             evidence="a timeout",
             **PROVENANCE_FIELDS,
         )

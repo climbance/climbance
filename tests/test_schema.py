@@ -7,9 +7,11 @@ from pydantic import ValidationError
 from climb.calls import CallLog
 from climb.log import AttemptLog
 from climb.schema import (
+    IMPLIED,
     Attempt,
     AttemptClaim,
     AttemptRecord,
+    Cause,
     ClaimSource,
     Confidence,
     Diagnosis,
@@ -40,11 +42,11 @@ def make_attempt(id: str) -> Attempt:
     )
 
 
-def make_diagnosis(attempt_id: str, mode: FailureMode, **overrides) -> Diagnosis:
+def make_diagnosis(attempt_id: str, cause: Cause, **overrides) -> Diagnosis:
     fields = {
         "id": f"d-{attempt_id}",
         "attempt_id": attempt_id,
-        "mode": mode,
+        "cause": cause,
         "evidence": "loop bound off by one",
         "created_at": datetime.now(UTC),
         **PROVENANCE_FIELDS,
@@ -57,14 +59,17 @@ def test_a_diagnosis_carries_its_provenance_whole():
     configuration as any machine record is. A version string could say
     neither."""
     with pytest.raises(ValidationError, match="machine record needs"):
-        make_diagnosis("a1", FailureMode.RUST, prompt_hash=None)
+        make_diagnosis("a1", Cause.FORM, prompt_hash=None)
 
 
-def test_a_diagnosis_never_names_speed():
-    """Whether the solver was slow is the solver's own judgement, and no
-    record holds the bar a model would judge it against."""
-    with pytest.raises(ValidationError, match="never names speed"):
-        make_diagnosis("a1", FailureMode.SPEED)
+def test_a_failure_mode_implies_a_cause_only_where_it_names_a_fault():
+    """A diagnosis is scored against a label through the cause the label
+    implies, and `speed` and `none` name no fault to diagnose."""
+    assert IMPLIED == {
+        FailureMode.SYNTAX: Cause.SLIP,
+        FailureMode.GAP: Cause.FORM,
+        FailureMode.RUST: Cause.FORM,
+    }
 
 
 def test_attempt_roundtrip(database):
@@ -82,7 +87,7 @@ def test_attempt_roundtrip(database):
     )
     attempt = make_attempt("a1")
     log.append_attempt(attempt)
-    log.append_diagnosis(make_diagnosis("a1", FailureMode.RUST))
+    log.append_diagnosis(make_diagnosis("a1", Cause.FORM))
 
     assert log.attempts() == [attempt]
     assert log.diagnoses()[0].attempt_id == "a1"

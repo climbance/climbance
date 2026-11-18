@@ -15,6 +15,7 @@ from climb.cli.card import card
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
+from climb.cli.diagnose import diagnose
 from climb.cli.difficulty import difficulty
 from climb.cli.feedback import feedback_listed
 from climb.cli.fill import fill
@@ -32,6 +33,9 @@ from climb.cli.rows import Rows
 from climb.cli.score import score
 from climb.cli.seed import BadLine, seed
 from climb.cli.user_log import user_log
+from climb.diagnoser import DEFAULT as DIAGNOSER
+from climb.diagnoser import Tool
+from climb.diagnosing import SAMPLE
 from climb.difficulty import TRIES
 from climb.runs import CONCURRENCY
 from climb.schema import CallSite, ProblemDifficulty, RetirementReason
@@ -398,6 +402,36 @@ def main() -> None:
 
     _command(sub, "feedback", "every user's feedback, newest first")
 
+    diagnose_parser = _command(sub, "diagnose", "where a failed solution's fault lies")
+    diagnosed = diagnose_parser.add_subparsers(dest="subject", required=True)
+    on_attempts = diagnosed.add_parser("attempts", help="the failed attempts with code")
+    on_mutants = diagnosed.add_parser("mutants", help="the labelled mutants, sampled per operator")
+    on_score = diagnosed.add_parser(
+        "score", help="the call scored per label mode, after reading what it has not"
+    )
+    on_score.add_argument("--stored", action="store_true", help="score what is stored, no call")
+    on_attempts.set_defaults(per_operator=SAMPLE, all=False)
+    for one in (on_attempts, on_score):
+        _user_argument(one)
+    for one in (on_mutants, on_score):
+        one.add_argument("--per-operator", type=int, default=SAMPLE, help="mutants per operator")
+        one.add_argument("--all", action="store_true", help="every labelled mutant")
+    for one in (on_attempts, on_mutants, on_score):
+        one.add_argument("--limit", type=int, help="ask about at most this many")
+        one.add_argument(
+            "--tool",
+            action="append",
+            choices=[tool.value for tool in Tool],
+            help="evidence beyond the baseline; repeatable",
+        )
+        _configuration_arguments(
+            one,
+            _rows("named", "--model", opens_by_default=DIAGNOSER.model),
+            "--model",
+            model="a diagnosis configuration; repeatable",
+        )
+        _run_arguments(one, record="diagnosis", per=" per model and endpoint")
+
     judge_parser = _command(sub, "judge", "the judging exercise's items")
     judge_action = judge_parser.add_subparsers(dest="action", required=True)
     judge_action.add_parser(
@@ -511,6 +545,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     ),
     "invite": invitation,
     "feedback": lambda _args, _parser, root: feedback_listed(root),
+    "diagnose": diagnose,
 }
 
 

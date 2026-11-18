@@ -433,12 +433,24 @@ without redefining them. Grouped by the file that specifies the record.
   from an empty claim, which answers nothing.
 - **Fallback**: the problem's own techniques, answering an attempt no claim
   covers.
+- **Labelled mutant**: a mutant of a template's form, read from a flawed
+  judgement item or a key-line item's wrong choice, labelled `rust` and named
+  by its operator. The diagnosis call is scored against the labelled mutants.
 - **Self-label**: the user's own verdict on why an attempt went the way it
   did.
-- **Diagnosis**: the machine's verdict on why an attempt failed. A
-  `Diagnosis` record stores it.
+- **Diagnosis**: the machine's verdict on why an attempt failed, naming a
+  cause. A `Diagnosis` record stores it.
+- **Diagnosis call**: the model call reading a failed attempt or a labelled
+  mutant and naming its cause.
+- **Tool**: a piece of evidence the diagnosis call is given beyond its
+  baseline, such as the first case the solution failed. Each is scored by the
+  difference it makes.
+- **Mutant diagnosis**: the diagnosis call's verdict on a labelled mutant. A
+  `MutantDiagnosis` record stores it, keyed to the mutant.
+- **Cause**: where a diagnosis places the fault: `slip`, outside the form the
+  solver held, or `form`, in the form itself.
 - **Failure mode**: why an attempt went the way it did, as one of five words a
-  self-label and a diagnosis both name. `speed` is the time the solver took,
+  self-label names. `speed` is the time the solver took,
   and `rust` a form the solver held and did not reach. `gap` is a form the
   solver did not hold, `syntax` a slip in code the solver could have written
   correctly, and `none` an attempt that went the way it should.
@@ -620,6 +632,7 @@ times. Each record class is specified in one of the files beside it.
 | Trials | product | global | append-only | the store, or beside the anchors for an anchor's trial |
 | Verification runs | product | global | append-only | the store |
 | Template matches | product | global | append-only | the store |
+| Mutant diagnoses | product | global | append-only | the store |
 | Judgement items | product | global | created once; only its status moves | the store |
 | Key-line items | product | global | created once; only its status moves | the store |
 | Site outcomes | product | global | append-only | the store |

@@ -77,6 +77,7 @@ from climb.log.table import (
     users,
 )
 from climb.matches.table import template_matches
+from climb.mutant_diagnoses import mutant_diagnoses
 from climb.outcomes.table import site_outcomes
 from climb.problems.table import problems
 from climb.ratings.table import difficulty_fit_members, difficulty_fits, difficulty_ratings
@@ -113,6 +114,7 @@ from climb.schema import (
     Module,
     ModuleOrder,
     ModuleStatusChange,
+    MutantDiagnosis,
     Pause,
     Prediction,
     Probe,
@@ -151,6 +153,7 @@ STORED: list[Stored] = [
     Stored(AttemptClaim, attempt_claims, through_call=True),
     Stored(SelfLabel, self_labels),
     Stored(Diagnosis, diagnoses, through_call=True, required=frozenset({"call_id"})),
+    Stored(MutantDiagnosis, mutant_diagnoses, through_call=True, required=frozenset({"call_id"})),
     Stored(AttemptVerification, attempt_verifications, elsewhere=frozenset({"results"})),
     Stored(
         CaseResult,
@@ -500,12 +503,6 @@ def test_a_problem_s_rules_hold_in_the_table():
     )
 
 
-def test_a_diagnosis_naming_speed_is_refused_in_the_table():
-    """`Diagnosis` refuses it, and a writer that skips the record meets the
-    same rule in the table."""
-    assert checks(diagnoses)["diagnoses_never_speed_check"] == "mode <> 'speed'"
-
-
 def test_a_problem_naming_no_target_is_refused():
     """The generator was always told a template or a technique, so a problem
     naming neither has lost what it was written for."""
@@ -752,6 +749,7 @@ APPEND_ONLY = {
     "difficulty_ratings",
     "difficulty_fits",
     "trials",
+    "mutant_diagnoses",
     "template_matches",
     "verifications",
     "site_outcomes",

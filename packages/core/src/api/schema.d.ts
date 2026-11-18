@@ -1083,6 +1083,12 @@ export interface components {
       /** Returned */
       returned?: string | null;
     };
+    /**
+     * Cause
+     * @description The two-way verdict a diagnosis names: `log.md`, Diagnoses.
+     * @enum {string}
+     */
+    Cause: 'slip' | 'form';
     /** CertificationExam */
     CertificationExam: {
       /** Id */
@@ -1186,7 +1192,7 @@ export interface components {
       created_at: string;
       /** Attempt Id */
       attempt_id: string;
-      mode: components['schemas']['FailureMode'];
+      cause: components['schemas']['Cause'];
       /** Evidence */
       evidence: string;
     };

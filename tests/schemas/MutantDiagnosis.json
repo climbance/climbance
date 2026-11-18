@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "Cause": {
+      "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses.",
+      "enum": [
+        "slip",
+        "form"
+      ],
+      "title": "Cause",
+      "type": "string"
+    }
+  },
+  "description": "A diagnosis of a labelled mutant, which is no attempt: `log.md`,\nLabelled mutants.",
+  "properties": {
+    "call_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Call Id"
+    },
+    "cause": {
+      "$ref": "#/$defs/Cause"
+    },
+    "code_hash": {
+      "minLength": 1,
+      "title": "Code Hash",
+      "type": "string"
+    },
+    "cost": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cost"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "effort": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Effort"
+    },
+    "evidence": {
+      "title": "Evidence",
+      "type": "string"
+    },
+    "form_digest": {
+      "minLength": 1,
+      "title": "Form Digest",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "pin": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pin"
+    },
+    "prompt_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Hash"
+    },
+    "provider": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider"
+    },
+    "temperature": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Temperature"
+    },
+    "template_id": {
+      "minLength": 1,
+      "title": "Template Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "template_id",
+    "form_digest",
+    "code_hash",
+    "cause",
+    "evidence"
+  ],
+  "title": "MutantDiagnosis",
+  "type": "object"
+}

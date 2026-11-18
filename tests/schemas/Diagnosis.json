@@ -1,14 +1,12 @@
 {
   "$defs": {
-    "FailureMode": {
+    "Cause": {
+      "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses.",
       "enum": [
-        "speed",
-        "rust",
-        "gap",
-        "syntax",
-        "none"
+        "slip",
+        "form"
       ],
-      "title": "FailureMode",
+      "title": "Cause",
       "type": "string"
     }
   },
@@ -29,6 +27,9 @@
       ],
       "default": null,
       "title": "Call Id"
+    },
+    "cause": {
+      "$ref": "#/$defs/Cause"
     },
     "cost": {
       "anyOf": [
@@ -66,9 +67,6 @@
     "id": {
       "title": "Id",
       "type": "string"
-    },
-    "mode": {
-      "$ref": "#/$defs/FailureMode"
     },
     "model": {
       "anyOf": [
@@ -135,7 +133,7 @@
     "id",
     "created_at",
     "attempt_id",
-    "mode",
+    "cause",
     "evidence"
   ],
   "title": "Diagnosis",

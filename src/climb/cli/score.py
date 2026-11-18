@@ -19,13 +19,13 @@ from climb.storage import Database
 
 
 def configurations(
-    args: argparse.Namespace, parser: argparse.ArgumentParser
+    args: argparse.Namespace, parser: argparse.ArgumentParser, default: Configuration = DEFAULT
 ) -> tuple[Configuration, ...]:
-    """The rows `--model` opened, over the built-in classifier."""
+    """The rows `--model` opened, over the built-in configuration."""
     named = getattr(args, "named", None)
     if not named:
-        return (DEFAULT,)
-    unpinned = [model for model, _, provider, _ in named if not provider and model != DEFAULT.model]
+        return (default,)
+    unpinned = [model for model, _, provider, _ in named if not provider and model != default.model]
     if unpinned:
         # Not defaulted to the built-in pin: an endpoint carries some models
         # and not others.
@@ -33,11 +33,11 @@ def configurations(
     built = tuple(
         Configuration(
             model=model,
-            effort=effort or DEFAULT.effort,
-            pin=provider or DEFAULT.pin,
+            effort=effort or default.effort,
+            pin=provider or default.pin,
             # Unlike the provider, part of what identifies a claim: a model
             # named without one runs at the built-in temperature.
-            temperature=chosen(temperature, parser, command="score", fallback=DEFAULT.temperature),
+            temperature=chosen(temperature, parser, command="score", fallback=default.temperature),
         )
         for model, effort, provider, temperature in named
     )

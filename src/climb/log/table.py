@@ -19,6 +19,7 @@ from climb.schema import (
     Act,
     Arm,
     CaseOutcome,
+    Cause,
     ClaimSource,
     Client,
     Confidence,
@@ -254,11 +255,10 @@ diagnoses = Table(
     appended_column(),
     Column("created_at", timestamp(), nullable=False),
     Column("attempt_id", Text, ForeignKey("attempts.id"), nullable=False, index=True),
-    Column("mode", enumerated(FailureMode), nullable=False),
+    Column("cause", enumerated(Cause), nullable=False),
     Column("evidence", Text, nullable=False),
     # a model wrote every diagnosis
     call_column(nullable=False),
-    CheckConstraint("mode <> 'speed'", name="never_speed"),
 )
 
 

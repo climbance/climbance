@@ -27,7 +27,7 @@ from climb.schema.case import (
     severest,
 )
 from climb.schema.configuration import Configuration
-from climb.schema.diagnosis import Diagnosis
+from climb.schema.diagnosis import IMPLIED, Cause, Diagnosis, MutantDiagnosis
 from climb.schema.draft import Draft, DraftCase, SettledCase, WritingState
 from climb.schema.feedback import Client, Feedback
 from climb.schema.fit import DifficultyFit, FitMember
@@ -84,6 +84,7 @@ from climb.schema.verification import AttemptVerification, Execution, Verificati
 __all__ = [
     "BANDS",
     "BODIES",
+    "IMPLIED",
     "LADDER",
     "RETURNED_KEPT",
     "Act",
@@ -100,6 +101,7 @@ __all__ = [
     "CardSeed",
     "CaseOutcome",
     "CaseResult",
+    "Cause",
     "CertificationExam",
     "CertificationSettings",
     "ClaimSource",
@@ -140,6 +142,7 @@ __all__ = [
     "ModuleOrder",
     "ModuleStatus",
     "ModuleStatusChange",
+    "MutantDiagnosis",
     "OpenGrade",
     "Pause",
     "Prediction",

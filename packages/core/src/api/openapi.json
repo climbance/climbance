@@ -2755,6 +2755,15 @@
         ],
         "title": "CaseResult"
       },
+      "Cause": {
+        "type": "string",
+        "enum": [
+          "slip",
+          "form"
+        ],
+        "title": "Cause",
+        "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses."
+      },
       "CertificationExam": {
         "properties": {
           "id": {
@@ -3012,8 +3021,8 @@
             "type": "string",
             "title": "Attempt Id"
           },
-          "mode": {
-            "$ref": "#/components/schemas/FailureMode"
+          "cause": {
+            "$ref": "#/components/schemas/Cause"
           },
           "evidence": {
             "type": "string",
@@ -3025,7 +3034,7 @@
           "id",
           "created_at",
           "attempt_id",
-          "mode",
+          "cause",
           "evidence"
         ],
         "title": "Diagnosis",
