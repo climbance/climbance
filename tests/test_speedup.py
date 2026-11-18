@@ -1,19 +1,64 @@
+import math
+from collections.abc import Callable, Sequence
+from typing import Any
+
 import pytest
 from helpers import a_call
 
+from climb.generation import speedup
 from climb.generation.agreement import CEILING
 from climb.generation.speedup import MARGIN, Missing, search
-from climb.runner import weighs
+from climb.runner import CaseRun, RunOutcome, weighs
 from climb.schema import ExpectedSource, MachineProvenance
 
+# what each solution answers and what one call costs, by the code the search
+# is handed. The search reads its times from the runner, so a runner that
+# reports given times rather than measured ones decides every test the same
+# way on a loaded machine
+SOLUTIONS: dict[str, tuple[Callable[..., Any], Callable[..., float]]] = {}
+
+
+def solution(name: str, answer: Callable[..., Any], ms: Callable[..., float] = lambda *_: 0) -> str:
+    SOLUTIONS[name] = (answer, ms)
+    return name
+
+
+def given_run(
+    code: str,
+    args: Sequence[Sequence[Any]],
+    *,
+    cap_ms: int,
+    repeats: Sequence[int] | None = None,
+    stop_early: bool = False,
+) -> list[CaseRun]:
+    answer, ms = SOLUTIONS[code]
+    runs = []
+    for one, count in zip(args, repeats or [1] * len(args), strict=True):
+        try:
+            value = answer(*one)
+        except Exception as error:
+            runs.append(CaseRun(RunOutcome.CRASHED, error=repr(error)))
+            continue
+        elapsed = ms(*one) * count
+        if elapsed > cap_ms:
+            runs.append(CaseRun(RunOutcome.TIMEOUT))
+        else:
+            runs.append(CaseRun(RunOutcome.RETURNED, value=value, elapsed_ms=round(elapsed)))
+    return runs
+
+
+@pytest.fixture(autouse=True)
+def _given_times(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(speedup, "run", given_run)
+
+
 # a naive solution whose cost grows with the square of the size, as a naive
-# solution usually does. Two sleeps take 20ms and three take 45ms, and the cap
-# sits between them, so a bound of two finishes. Which size the search settles
-# on is the naive solution's answer rather than the search's, and no test
-# asserts a number: a loaded machine moves it by one where the behaviour under
-# test is the same
-SLEEPS = "import time\n\n\ndef solve(n):\n    time.sleep(n * n / 200)\n    return n\n"
-FAST = "def solve(n):\n    return n\n"
+# solution usually does: two calls take 20ms and three take 45ms, and the cap
+# sits between them, so a bound of two finishes
+SLEEPS = solution("square", lambda n: n, lambda n: n * n * 5)
+FAST = solution("fast", lambda n: n)
+FOREVER = solution("forever", lambda n: n, lambda n: math.inf)
+LENGTH = solution("length", len)
 CAP_MS = 37
 MEASURE_MS = 2000
 
@@ -111,10 +156,8 @@ def test_a_canonical_that_cannot_answer_at_that_size_separates_nothing():
     assert found.missing is Missing.CANONICAL_FAILED
 
 
-# one sleep of 8ms at any size: over a tenth of the cap, and inside the cap by
-# more than a loaded machine delays one wakeup. A sleep per call of a count
-# summed a delay per wakeup, and crossed the cap under the suite's own load
-TENTH_SLOW = "import time\n\n\ndef solve(n):\n    time.sleep(0.008)\n    return n\n"
+# 8ms at any size: over a tenth of the cap, and inside it
+TENTH_SLOW = solution("tenth", lambda n: n, lambda n: 8)
 
 
 def test_a_canonical_over_a_tenth_of_the_cap_separates_nothing():
@@ -129,7 +172,7 @@ def test_a_canonical_over_a_tenth_of_the_cap_separates_nothing():
 def test_a_naive_solution_that_crashes_is_neither():
     """A recursion limit at size says nothing about how long the naive
     solution takes."""
-    found = searched(naive="def solve(n):\n    raise ValueError(n)\n")
+    found = searched(naive=solution("raises", lambda n: [][n]))
 
     assert found.missing is Missing.NAIVE_CRASHED
 
@@ -137,7 +180,7 @@ def test_a_naive_solution_that_crashes_is_neither():
 def test_a_naive_solution_beyond_the_measuring_cap_carries_no_time():
     """It exceeded the cap being separated, and by how much was never
     measured."""
-    found = searched(naive="def solve(n):\n    while True:\n        pass\n", measure_ms=200)
+    found = searched(naive=FOREVER, measure_ms=200)
 
     assert found.found
     assert found.size == 1
@@ -163,9 +206,9 @@ def test_an_input_over_the_ceiling_is_not_a_case():
     the cap can be divided by."""
     found = search(
         lambda size: [list(range(size))],
-        canonical="def solve(xs):\n    return len(xs)\n",
-        naive="def solve(xs):\n    return len(xs)\n",
-        reference="def solve(xs):\n    return len(xs)\n",
+        canonical=LENGTH,
+        naive=LENGTH,
+        reference=LENGTH,
         provenance=MachineProvenance.of(a_call()),
         cap_ms=CAP_MS,
         largest=10_000,
@@ -182,14 +225,13 @@ def test_the_walk_tries_the_largest_storable_input_before_giving_up():
     not, and the naive solution exceeds the cap at three."""
     # the case weighs its answer beside its arguments
     ceiling = weighs([list(range(3))]) + weighs(3)
-    listed = "import time\n\n\ndef solve(xs):\n    time.sleep(len(xs) ** 2 / 200)\n"
-    listed += "    return len(xs)\n"
+    listed = solution("listed", len, lambda xs: len(xs) ** 2 * 5)
 
     found = searched(
         make=lambda size: [list(range(size))],
-        canonical="def solve(xs):\n    return len(xs)\n",
+        canonical=LENGTH,
         naive=listed,
-        reference="def solve(xs):\n    return len(xs)\n",
+        reference=LENGTH,
         ceiling=ceiling,
     )
 
@@ -200,11 +242,11 @@ def test_the_walk_tries_the_largest_storable_input_before_giving_up():
 def unstorable():
     """A search that reaches a separating size and cannot store the case: the
     arguments fit and the answer does not, which the case carries together."""
-    big = "    return list(range(10000))\n"
+    big = solution("big", lambda n: list(range(10000)))
     return searched(
-        canonical="def solve(n):\n" + big,
-        naive="import time\n\n\ndef solve(n):\n    time.sleep(n / 100)\n" + big,
-        reference="def solve(n):\n" + big,
+        canonical=big,
+        naive=solution("big-slow", lambda n: list(range(10000)), lambda n: n * 10),
+        reference=big,
         ceiling=200,
     )
 
@@ -238,7 +280,7 @@ def test_a_naive_solution_that_finishes_is_told_from_an_input_that_does_not_fit(
 def test_the_case_carries_the_reference_s_answer_and_not_the_naive_solution_s():
     """Two solutions, two jobs: the naive one is timed and the reference is
     what says what the case returns."""
-    found = searched(naive="import time\n\n\ndef solve(n):\n    time.sleep(n)\n    return -n\n")
+    found = searched(naive=solution("negated", lambda n: -n, lambda n: n * 1000))
 
     assert found.case.expected == found.size
     assert found.case.expected_from is ExpectedSource.REFERENCE
@@ -256,7 +298,7 @@ def test_the_expected_value_is_the_reference_s_where_it_computed_one():
 def test_the_expected_value_is_the_canonical_s_beyond_the_reference_s_reach():
     """Nothing else can compute it, and the case is then evidence about the
     cap rather than about the verdict."""
-    found = searched(reference="def solve(n):\n    while True:\n        pass\n", measure_ms=200)
+    found = searched(reference=FOREVER, measure_ms=200)
 
     assert found.case.expected_from is ExpectedSource.CANONICAL
 
@@ -264,7 +306,7 @@ def test_the_expected_value_is_the_canonical_s_beyond_the_reference_s_reach():
 def test_two_solutions_disagreeing_at_that_size_is_not_a_case():
     """A canonical correct on the small cases and wrong at scale is what the
     separating input catches."""
-    found = searched(canonical="def solve(n):\n    return n + 1\n")
+    found = searched(canonical=solution("off-by-one", lambda n: n + 1))
 
     assert found.missing is Missing.DISAGREED
     assert found.disagreement.canonical == found.disagreement.reference + 1
@@ -272,8 +314,8 @@ def test_two_solutions_disagreeing_at_that_size_is_not_a_case():
 
 # one call is 3ms against a cap of 37, so the ceiling stops the size walk long
 # before the naive solution is slow enough and only a count separates the two
-SLOW_ONCE = "import time\n\n\ndef solve(xs):\n    time.sleep(0.003)\n    return len(xs)\n"
-COUNTS = "def solve(xs):\n    return len(xs)\n"
+SLOW_ONCE = solution("slow-once", len, lambda xs: 3)
+COUNTS = LENGTH
 
 
 def counted(**overrides):
