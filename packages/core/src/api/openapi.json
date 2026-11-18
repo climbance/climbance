@@ -3328,6 +3328,10 @@
             "type": "integer",
             "title": "Blank"
           },
+          "blank_end": {
+            "type": "integer",
+            "title": "Blank End"
+          },
           "choices": {
             "items": {
               "$ref": "#/components/schemas/FillChoice"
@@ -3347,6 +3351,7 @@
           "example",
           "lines",
           "blank",
+          "blank_end",
           "choices"
         ],
         "title": "FilledItem",

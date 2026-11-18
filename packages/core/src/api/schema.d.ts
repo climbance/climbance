@@ -1320,6 +1320,8 @@ export interface components {
       lines: string[];
       /** Blank */
       blank: number;
+      /** Blank End */
+      blank_end: number;
       /** Choices */
       choices: components['schemas']['FillChoice'][];
     };

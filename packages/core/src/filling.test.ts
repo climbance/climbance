@@ -8,6 +8,14 @@ type Served = components['schemas']['FilledItem'];
 const item = {
   lines: ['def solve(xs):', '    ', '    return lo'],
   blank: 2,
+  blank_end: 2,
+  choices: [],
+} as unknown as Served;
+
+const statement = {
+  lines: ['for c in cols:', '    ', '', '        continue'],
+  blank: 2,
+  blank_end: 3,
   choices: [],
 } as unknown as Served;
 
@@ -19,6 +27,18 @@ describe('a served item', () => {
 
   it("fills the blank with the form's line once decided", () => {
     expect(filledLine(item, 1, { right: false, line: 'lo = 0', case: null })).toBe('    lo = 0');
+  });
+
+  it('blanks every row of a statement spanning two, the marker on the first', () => {
+    expect([1, 2].map((index) => filledLine(statement, index, null))).toEqual([`    ${FILL_BLANK}`, '']);
+  });
+
+  it('fills each row of the blank with its line of the statement', () => {
+    const decided = { right: true, line: 'if (c in a\n        or c in b):', case: null };
+    expect([1, 2].map((index) => filledLine(statement, index, decided))).toEqual([
+      '    if (c in a',
+      '            or c in b):',
+    ]);
   });
 
   it("shows a wrong choice's separating case", () => {

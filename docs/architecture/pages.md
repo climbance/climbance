@@ -323,13 +323,13 @@ gives the exercise and `content.md` the items.
 - **The page opens from the board and from a card**, as judging does. A card's
   press adds `?card=`.
 - **The item reads as its template's title, one of its cases and the code**,
-  with the blanked line marked in place.
+  with the blanked statement marked in place over every line it spans.
 - **The choices are presses below the code, shuffled on every serve.** A
   position then carries no answer. One press sends the fill, since a choice is
-  one line and needs no second step.
+  one statement and needs no second step.
 - **The engine decides the fill, and the page shows the decision.** The result
-  reads as right or wrong, and fills the blank with the form's line. A wrong
-  choice shows its separating case.
+  reads as right or wrong, and fills the blank with the form's statement. A
+  wrong choice shows its separating case.
 - **Next serves the following item**, unseen first, then the stalest.
 
 ## The knowledge pages

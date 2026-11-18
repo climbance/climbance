@@ -8,6 +8,7 @@ import {
   FILL_WRONG,
   fill,
   filledLine,
+  inBlank,
   judgeDepth,
   judgeExample,
   nextFilled,
@@ -88,13 +89,14 @@ export function FillPage() {
             <ol className="font-mono text-sm">
               {item.lines.map((_, index) => {
                 const number = index + 1
+                const blank = inBlank(item, index)
                 return (
                   <li
                     key={number}
                     className={cn(
                       'flex gap-3 px-3 py-1',
-                      number === item.blank && 'bg-muted',
-                      number === item.blank &&
+                      blank && 'bg-muted',
+                      blank &&
                         decided &&
                         (decided.right
                           ? 'border-l-4 border-verdict-passed'

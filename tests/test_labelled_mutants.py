@@ -1,5 +1,7 @@
 from datetime import UTC, datetime
 
+from test_key_lines import in_range
+
 from climb.judging import items, key_lines, labelled_mutants
 from climb.mutation import Operator
 from climb.schema import FailureMode, ItemStatus, Template, TemplateCase
@@ -86,3 +88,15 @@ def test_a_retired_item_and_a_clean_one_yield_nothing():
 
     assert labelled_mutants([one for one in judged if one.clean], []) == []
     assert labelled_mutants(retired, []) == []
+
+
+def test_a_two_line_choice_is_spliced_over_both_lines_of_its_blank():
+    """A statement's choice replaces the whole statement, so the mutant differs
+    from the form on the one line its change moved."""
+    keyed = [one for one in key_lines(in_range(), now=NOW) if one.line == 4]
+    form = keyed[0].code.splitlines()
+
+    for one in labelled_mutants([], keyed):
+        lines = one.code.splitlines()
+        assert len(lines) == len(form)
+        assert sum(a != b for a, b in zip(lines, form, strict=True)) == 1

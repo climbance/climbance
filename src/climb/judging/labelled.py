@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from climb.judging.keylines import filled_in
 from climb.mutation import Operator, operator_of
 from climb.schema import (
     CaseOutcome,
@@ -44,13 +45,9 @@ def labelled_mutants(
     for item in keyed:
         if item.status is not ItemStatus.SERVED:
             continue
-        lines = item.code.splitlines()
-        indent = lines[item.line - 1][: -len(lines[item.line - 1].lstrip())]
         for choice in item.choices:
-            if choice.correct:
-                continue
-            lines[item.line - 1] = indent + choice.text
-            _keep(found, item, "\n".join(lines) + "\n", item.line, choice)
+            if not choice.correct:
+                _keep(found, item, filled_in(item, choice.text), item.line, choice)
     return sorted(found.values(), key=lambda one: (one.template_id, one.line, one.change))
 
 

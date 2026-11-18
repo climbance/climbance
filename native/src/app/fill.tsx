@@ -14,6 +14,7 @@ import {
   type components,
   fill,
   filledLine,
+  inBlank,
   judgeDepth,
   judgeExample,
   nextFilled,
@@ -92,7 +93,7 @@ export default function FillScreen() {
             >
               {item.lines.map((_, index) => {
                 const number = index + 1;
-                const blank = number === item.blank;
+                const blank = inBlank(item, index);
                 return (
                   <View
                     key={number}

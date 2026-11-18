@@ -16,11 +16,17 @@ export const fillFrom = (cardTitle: string) => `Fill ${cardTitle}`;
 /** The blank as the code shows it, under the line's own indent. */
 export const FILL_BLANK = '▁▁▁▁▁▁';
 
-/** The line the code shows at `index`: the blank's marker, or the form's line once decided. */
+/** Whether the line at `index` is a row of the blank, which spans the whole statement. */
+export const inBlank = (item: Served, index: number) => index + 1 >= item.blank && index + 1 <= item.blank_end;
+
+/** The line the code shows at `index`: the blank's marker, or the form's statement once decided. */
 export function filledLine(item: Served, index: number, decided: Decided | null): string {
   const line = item.lines[index] ?? '';
-  if (index + 1 !== item.blank) return line;
-  return line + (decided ? decided.line : FILL_BLANK);
+  if (!inBlank(item, index)) return line;
+  const head = item.lines[item.blank - 1] ?? '';
+  const row = index + 1 - item.blank;
+  if (decided) return head + (decided.line.split('\n')[row] ?? '');
+  return row === 0 ? head + FILL_BLANK : '';
 }
 
 /** The next item to fill, from every card or from one. `null` where none is left. */

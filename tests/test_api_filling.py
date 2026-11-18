@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 import pytest
 from helpers import browsing
 from matching import card, seeded, template
-from test_key_lines import CASES, FORM
+from test_key_lines import CASES, FORM, RANGE, RANGE_CASES
 
 from climb.judging import build_key_lines
 from climb.keylines import KeyLineStore
@@ -34,7 +34,7 @@ def test_an_item_is_served_with_its_line_blank_and_no_answer(client, database):
 
     (item,) = [one for one in KeyLineStore(database).all() if one.id == served["item_id"]]
     assert served["lines"][item.line - 1].strip() == ""
-    assert served["blank"] == item.line
+    assert served["blank"] == served["blank_end"] == item.line
     assert sorted(one["text"] for one in served["choices"]) == sorted(
         one.text for one in item.choices
     )
@@ -73,3 +73,25 @@ def test_a_choice_the_item_lacks_is_refused(client, database):
 
     assert client.post(f"/api/filling/{item.id}", json={"choice": 9}).status_code == 422
     assert FillLog(database).for_user(USER) == []
+
+
+def test_a_statement_spanning_two_lines_is_served_blank_on_both(database):
+    """The blank covers the whole statement, so no choice reads as half."""
+    (held,) = seeded(
+        database,
+        card(
+            slug="range",
+            templates=[
+                template(
+                    "range", code=RANGE, cases=[c.model_dump() for c in RANGE_CASES], harness=[]
+                )
+            ],
+        ),
+    )
+    added, _ = build_key_lines([held], [], now=datetime(2026, 11, 16, tzinfo=UTC))
+    KeyLineStore(database).add([one for one in added if one.line == 4])
+
+    served = browsing(database, USER).get("/api/filling/next").json()
+
+    assert (served["blank"], served["blank_end"]) == (4, 5)
+    assert served["lines"][3:5] == ["        ", ""]

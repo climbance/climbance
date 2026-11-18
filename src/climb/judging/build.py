@@ -87,10 +87,13 @@ def build(
 
 
 def rebuild[T: Built](
-    cards: Sequence[Card], held: Sequence[T], make: Callable[[Template], list[T]]
+    cards: Sequence[Card],
+    held: Sequence[T],
+    make: Callable[[Template], list[T]],
+    current_shape: Callable[[T], bool] = lambda _: True,
 ) -> tuple[list[T], list[str]]:
     """The items to add and the ids to retire: a template already served at its
-    current code is left alone."""
+    current code, in the current shape, is left alone."""
     served: dict[str, list[T]] = {}
     for one in held:
         if one.status is ItemStatus.SERVED:
@@ -100,7 +103,9 @@ def rebuild[T: Built](
     for card in cards:
         for template in card.templates:
             current = served.get(template.id, [])
-            if current and all(one.form_digest == digest(template.code) for one in current):
+            if current and all(
+                one.form_digest == digest(template.code) and current_shape(one) for one in current
+            ):
                 continue
             retired += [one.id for one in current]
             added += make(template)

@@ -782,8 +782,8 @@ then taps the line that is wrong. `content.md` gives the items.
 
 ### Filling a key line
 
-The user reads a template's form with one line blanked and picks the line that
-belongs there. `content.md` gives the items.
+The user reads a template's form with one statement blanked and picks the
+statement that belongs there. `content.md` gives the items.
 
 - **A `Fill` stores one answer**: its `id`, `user_id`, `item_id`,
   `created_at`, and the choice the user picked, by its position in the item.

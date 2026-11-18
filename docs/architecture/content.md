@@ -381,34 +381,44 @@ gives the exercise and its answers.
 
 ## Key-line items
 
-The forms the key-line exercise serves, each with one line blanked. `log.md`
-gives the exercise and its fills. A key-line item is built from the same
-mutants a judgement item is, under the same rules for comments, the harness,
-the width and timeouts.
+The forms the key-line exercise serves, each with one statement blanked.
+`log.md` gives the exercise and its fills. A key-line item is built from the
+same mutants a judgement item is, under the same rules for comments, the
+harness, the width and timeouts.
 
-- **An item is one template's form with one line blanked, and three or four
-  choices for that line.** One choice is the line as the form writes it. Each
-  other choice is the line as one mutant writes it.
+- **An item is one template's form with one statement blanked, and three or
+  four choices for that statement.** One choice is the statement as the form
+  writes it. Each other choice is the statement as one mutant writes it.
+- **A blank covers a whole statement, every line of it.** A statement is one
+  logical line of Python, so a long `if` condition wrapped over two lines is
+  one statement. Blanking only the first of those lines makes every choice read
+  as an unclosed bracket, such as `if (c in cols or r - c in diag1`. The
+  mutants of either line are choices for the one blank.
+- **An item blanking part of a statement is retired at the next build**, and
+  its template is built again. Items built before blanks covered whole
+  statements carry that shape.
 - **Each choice is run against the template's cases when the item is built.**
-  The form's own line passes every case, and each other choice fails at least
-  one. A mutant every case passes may be equivalent to the form, so a choice
-  built from it could be a second right answer.
+  The form's own statement passes every case, and each other choice fails at
+  least one. A mutant every case passes may be equivalent to the form, so a
+  choice built from it could be a second right answer.
 - **A wrong choice stores its separating case** and the value it returned
   there, as a flawed judgement item does. The case is the evidence shown after
   the fill.
-- **A line is blanked where at least two mutants that change that line alone
-  fail a case.** A line with one such mutant gives a choice between two lines,
-  which a guess answers half the time. Two mutants writing the same text are
-  one choice.
-- **The blanked line is found by its mutants, and its role is not stored.** The
-  lines that carry the invariant, the update and the edge case are the ones
-  mutants of a condition, an index and a bound reach. A role read off the
-  syntax tree is deferred until a fill shows that the mutants' lines miss the
-  form's key line.
-- **A template yields up to three items, each blanking a different line**,
+- **A statement is blanked where at least two mutants that change one of its
+  lines alone fail a case.** A statement with one such mutant gives a choice
+  between two, which a guess answers half the time. Two mutants writing the
+  same text are one choice.
+- **The blanked statement is found by its mutants, and its role is not
+  stored.** The lines that carry the invariant, the update and the edge case
+  are the ones mutants of a condition, an index and a bound reach. A role read
+  off the syntax tree is deferred until a fill shows that the mutants' lines
+  miss the form's key line.
+- **A template yields up to three items, each blanking a different
+  statement**,
   spread over the form as the flawed judgement items are.
-- **A choice shows the line without its indent.** The blank keeps the indent,
-  so the choices differ only in what the line computes.
+- **A choice shows the statement without the indent of its first line.** The
+  blank keeps that indent, so the choices differ only in what the statement
+  computes. A wrapped line keeps its indent relative to the first.
 - **An item is product data, minted when the items are built, and never
   edited.** A template whose code changed has its old items retired, as a
   judgement item is.

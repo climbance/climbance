@@ -191,6 +191,8 @@ ignore_names = [
     "model_config",
     # the judging page reads what an item is about, and no module does
     "card_title", "template_title", "example", "asks",
+    # the fill page reads where the blank ends, and no module does
+    "blank_end",
     # the board shows the guide's panel until the user has acted, and no module reads it
     "acted",
     # pytest reads the plugins a conftest names, and calls its hooks by name

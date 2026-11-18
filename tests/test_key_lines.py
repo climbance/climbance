@@ -32,8 +32,34 @@ CASES = [
 ]
 
 
+RANGE = """def solve(xs, lo, hi):
+    count = 0
+    for x in xs:
+        if (x < lo
+                or x > hi):
+            continue
+        count += 1
+    return count
+"""
+
+RANGE_CASES = [
+    TemplateCase(args=args, expected=expected)
+    for args, expected in [
+        ([[1, 2, 3, 4, 5], 2, 4], 3),
+        ([[2], 2, 2], 1),
+        ([[0, 9], 1, 8], 0),
+        ([[5], 1, 8], 1),
+        ([[1], 1, 1], 1),
+    ]
+]
+
+
 def search(code: str = FORM):
     return template(code, cases=CASES, harness=[])
+
+
+def in_range():
+    return template(RANGE, cases=RANGE_CASES, harness=[])
 
 
 def test_each_item_blanks_a_different_line_of_the_form():
@@ -47,6 +73,33 @@ def test_the_form_s_own_line_is_one_choice_and_passes():
     for one in key_lines(search(), now=NOW):
         (right,) = [choice for choice in one.choices if choice.correct]
         assert right.text == one.code.splitlines()[one.line - 1].strip()
+
+
+def test_a_statement_spanning_two_lines_is_blanked_whole():
+    """Half an `if` reads as unclosed in every choice."""
+    (statement,) = [one for one in key_lines(in_range(), now=NOW) if one.line == 4]
+
+    assert all(len(choice.text.splitlines()) == 2 for choice in statement.choices)
+    assert any("x >= hi" in choice.text for choice in statement.choices)
+    assert not any(one.line == 5 for one in key_lines(in_range(), now=NOW))
+
+
+def test_an_item_blanking_half_a_statement_is_rebuilt():
+    """An item blanking half a statement is retired at the next build."""
+    (statement,) = [one for one in key_lines(in_range(), now=NOW) if one.line == 4]
+    half = statement.model_copy(
+        update={
+            "choices": [
+                choice.model_copy(update={"text": choice.text.splitlines()[0] + str(at)})
+                for at, choice in enumerate(statement.choices)
+            ]
+        }
+    )
+
+    added, retired = build_key_lines([card(in_range())], [half], now=NOW)
+
+    assert retired == [half.id]
+    assert added
 
 
 def test_every_other_choice_fails_a_case_it_names():
