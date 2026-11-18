@@ -179,12 +179,13 @@ def setup(args: argparse.Namespace) -> tuple[Path, list[tuple[str, str, str]], d
         git("worktree", "add", str(main_wt), args.branch)
     subs, needs, titles = plan(args.source)
     register(main_wt, args.module, subs, needs, titles)
-    # two jobs append lessons to the end of one graph.toml
+    # two jobs append lessons to graph.toml and skips to check.toml
     attributes = main_wt / ".gitattributes"
-    rule = f"modules/{args.module}/graph.toml merge=union\n"
-    if rule not in (attributes.read_text() if attributes.exists() else ""):
-        with attributes.open("a") as f:
-            f.write(rule)
+    for name in ("graph.toml", "check.toml"):
+        rule = f"modules/{args.module}/{name} merge=union\n"
+        if rule not in (attributes.read_text() if attributes.exists() else ""):
+            with attributes.open("a") as f:
+                f.write(rule)
     if git("status", "--porcelain", cwd=main_wt):
         git("add", ".gitattributes", f"modules/{args.module}", cwd=main_wt)
         git("commit", "-q", "-m", f"chore({args.module}): name the subtopics to write", cwd=main_wt)
