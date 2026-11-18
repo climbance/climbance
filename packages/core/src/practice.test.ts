@@ -498,9 +498,14 @@ describe('the cards the board offers to start', () => {
       card('b'),
       card('a'),
     ];
-    const next = nextCards(cards, 2);
+    const next = nextCards(cards, null, 2);
     expect(next.cards.map((one) => one.slug)).toEqual(['a', 'b']);
     expect(next.more).toBe(1);
+  });
+
+  it("leaves out the card the pick already names", () => {
+    const next = nextCards([card('a'), card('b')], 'a');
+    expect(next.cards.map((one) => one.slug)).toEqual(['b']);
   });
 });
 

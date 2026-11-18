@@ -92,6 +92,9 @@ those steps at low fidelity.
   the card graph offers, rather than a list of every technique. It names five
   at most, and a link to the cards list counts the rest, so the board stays one
   glance with a dozen roots open.
+  - The list leaves out the card the pick names. On a new account the pick
+    offers the first card to start, and the board would otherwise name that
+    card twice.
 - **The board is the overview of the user's practice.** It reads the
   knowledge study first: the focus, Continue and the modules. The cards in
   progress and the techniques follow. A user reads every study they declared

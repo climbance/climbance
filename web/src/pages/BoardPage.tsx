@@ -51,7 +51,7 @@ export function BoardPage() {
   // the pick only adds to the board, so a failed one reads as none
   const pick = useLoaded((signal) => api.GET('/api/pick', { signal }), 'pick')
   const studying = inProgress(cards.data ?? [])
-  const next = nextCards(cards.data ?? [])
+  const next = nextCards(cards.data ?? [], pick.data?.card_slug ?? null)
   const { catalog, board: learnerBoard, order, now, acted, ready } = useLearner()
   const all = useMemo(() => (catalog ? learnerBoard(null) : null), [catalog, learnerBoard])
   const modules = useMemo(() => (all ? orderedModuleRows(all, order, now) : []), [all, order, now])

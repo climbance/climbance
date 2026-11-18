@@ -208,11 +208,16 @@ export const NEXT_CARDS = 5;
 
 /**
  * The cards the board offers to start: unlocked and never started, the
- * shallowest first, the rest counted.
+ * shallowest first, the rest counted. `picked` is the pick's card, which the
+ * Next row already names.
  */
-export function nextCards(cards: ListedCard[], most = NEXT_CARDS): { cards: ListedCard[]; more: number } {
+export function nextCards(
+  cards: ListedCard[],
+  picked: string | null = null,
+  most = NEXT_CARDS,
+): { cards: ListedCard[]; more: number } {
   const open = cards
-    .filter((card) => !card.status.started_at && (card.waiting ?? []).length === 0)
+    .filter((card) => !card.status.started_at && (card.waiting ?? []).length === 0 && card.slug !== picked)
     .sort((a, b) => a.depth - b.depth || a.slug.localeCompare(b.slug));
   return { cards: open.slice(0, most), more: Math.max(0, open.length - most) };
 }

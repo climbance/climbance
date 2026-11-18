@@ -187,7 +187,7 @@ function BoardBody({
       return next;
     });
   const studying = inProgress(cards);
-  const next = nextCards(cards);
+  const next = nextCards(cards, pick?.card_slug ?? null);
   const view = pick ? pickView(pick) : null;
   const { origin } = useStore().settings;
   return (

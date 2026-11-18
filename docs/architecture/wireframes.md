@@ -120,7 +120,8 @@ Every page under a section carries the same two rows above its body.
   technique stays on offer below it. The pick then reads the open runs, so it
   can name a card's next rung beside the cards in progress.
 - The two short exercises, judging and filling, follow the cards in progress.
-  The unlocked cards not yet started follow them, five at most.
+  The unlocked cards not yet started follow them, five at most, without the
+  card the pick names.
 
 ## The board, before the first act
 
