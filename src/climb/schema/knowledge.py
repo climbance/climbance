@@ -35,6 +35,13 @@ class QuestionFormat(StrEnum):
     OPEN = "open"
 
 
+class Measure(StrEnum):
+    """The test an answer was given in: `knowledge.md`, Baseline tests."""
+
+    BASELINE = "baseline"
+    DELAYED = "delayed"
+
+
 class OpenGrade(StrEnum):
     """An open question's grade, from the points ticked: `knowledge.md`."""
 
@@ -48,6 +55,8 @@ class StintMode(StrEnum):
     REVIEW = "review"
     FILTERED = "filtered"
     EXAM = "exam"
+    BASELINE = "baseline"
+    DELAYED = "delayed"
 
 
 class SettingName(StrEnum):
@@ -194,6 +203,7 @@ class Answer(KnowledgeRecord):
     missed: list[int] = Field(default_factory=list[int])
     traps: list[int] = Field(default_factory=list[int])
     wrong: bool = False
+    measure: Measure | None = None  # a test's answer, which the schedule skips
 
     @model_validator(mode="after")
     def _ticks_belong_to_a_grade(self) -> Answer:
@@ -204,6 +214,9 @@ class Answer(KnowledgeRecord):
         return self
 
 
+LEVELLED = (StintMode.EXAM, StintMode.BASELINE, StintMode.DELAYED)
+
+
 class Stint(KnowledgeRecord):
     mode: StintMode
     level: int | None = Field(default=None, ge=0, le=3)  # an exam's alone
@@ -211,11 +224,17 @@ class Stint(KnowledgeRecord):
     answered: int = Field(ge=0)
     # a certification's exam, by its wire id: `knowledge.md`, The wire
     certification: str | None = Field(default=None, min_length=1)
+    # a baseline or delayed test's topic, with its level above
+    module_id: str | None = None
+    topic_id: str | None = None
 
     @model_validator(mode="after")
     def _an_exam_names_its_level(self) -> Stint:
-        if (self.mode is StintMode.EXAM) != (self.level is not None):
-            raise ValueError("an exam names its level, and no queue does")
+        if (self.mode in LEVELLED) != (self.level is not None):
+            raise ValueError("an exam or a test names its level, and no queue does")
+        tested = self.mode in (StintMode.BASELINE, StintMode.DELAYED)
+        if tested != (self.module_id is not None and self.topic_id is not None):
+            raise ValueError("a baseline or delayed test names its module and topic alone")
         if self.certification is not None and self.mode is not StintMode.EXAM:
             raise ValueError("a certification names an exam, and no queue")
         return self

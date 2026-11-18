@@ -63,4 +63,6 @@ def answer_out(row: dict[str, Any]) -> dict[str, Any]:
             line[ticks] = row[ticks]
     if row["wrong"]:
         line["wrong"] = True
+    if row.get("measure") is not None:
+        line["measure"] = row["measure"]
     return line

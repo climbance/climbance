@@ -111,6 +111,9 @@ def sync(
     return result
 
 
+TESTS = ("baseline", "delayed")
+
+
 class _Names:
     """Every slug against its minted id, both ways, read once per sync."""
 
@@ -148,9 +151,7 @@ def _record(names: _Names, line: dict[str, Any]) -> tuple[Table, dict[str, Any]]
         raise Unknown(f"unknown kind {kind}")
     table = KINDS[kind][0]
     if kind == "session":
-        mode, level, certification = mode_in(line["mode"])
-        values = {"mode": mode, "level": level, "score": line["score"], "answered": line["n"]}
-        return table, values | {"certification": certification}
+        return table, _session(names, line)
     if kind == "focus":
         return table, _focus(names, line)
     if kind == "setting":
@@ -166,7 +167,9 @@ def _record(names: _Names, line: dict[str, Any]) -> tuple[Table, dict[str, Any]]
         if question is None:
             raise Unknown(f"unknown question {module}/{line['id']}")
         ticks = {
-            key: line[key] for key in ("guess", "grade", "missed", "traps", "wrong") if key in line
+            key: line[key]
+            for key in ("guess", "grade", "missed", "traps", "wrong", "measure")
+            if key in line
         }
         return table, {"question_id": question, "correct": line["ok"], **ticks}
     if kind == "status":
@@ -185,6 +188,16 @@ def _record(names: _Names, line: dict[str, Any]) -> tuple[Table, dict[str, Any]]
         "answered": line["n"],
         "passed": line["passed"],
     }
+
+
+def _session(names: _Names, line: dict[str, Any]) -> dict[str, Any]:
+    mode, level, certification = mode_in(line["mode"])
+    values = {"mode": mode, "level": level, "score": line["score"], "answered": line["n"]}
+    if mode in TESTS:
+        module_id = names.module(line["course"])
+        topic = _topic(names, module_id, line["topic"])
+        values |= {"module_id": module_id, "topic_id": topic, "level": line["level"]}
+    return values | {"certification": certification}
 
 
 def _slugs(value: object) -> list[str]:
@@ -240,7 +253,11 @@ def _line(kind: str, row: dict[str, Any], names: _Names) -> dict[str, Any]:
         return line | answer_out({**row, "module": module, "question": question})
     if kind == "session":
         mode = mode_out(row["mode"], row["level"], row["certification"])
-        return line | {"mode": mode, "score": row["score"], "n": row["answered"]}
+        line |= {"mode": mode, "score": row["score"], "n": row["answered"]}
+        if row["mode"] in TESTS:
+            topic = names.slug[row["topic_id"]]
+            line |= {"course": names.slug[row["module_id"]], "topic": topic, "level": row["level"]}
+        return line
     if kind == "setting":
         return line | {"name": row["name"], "n": row["value"]}
     if kind == "raise":

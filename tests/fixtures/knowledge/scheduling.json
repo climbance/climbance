@@ -954,6 +954,73 @@
    }
   },
   {
+   "name": "a baseline answer is no review",
+   "records": [
+    {
+     "t": "2026-01-05T09:00:00+00:00",
+     "course": "py",
+     "id": "q1",
+     "ok": false,
+     "measure": "baseline"
+    },
+    {
+     "t": "2026-01-06T09:00:00+00:00",
+     "course": "py",
+     "id": "q1",
+     "ok": true
+    }
+   ],
+   "now": [
+    "2026-01-06T09:05:00+00:00",
+    "2026-01-06T09:10:00+00:00"
+   ],
+   "expected": {
+    "ratings": [
+     3
+    ],
+    "stability": 2.3065,
+    "difficulty": 2.118103970459016,
+    "due": "2026-01-06T09:10:00+00:00",
+    "passed": true,
+    "status": [
+     "learning",
+     "due"
+    ],
+    "ready": [
+     false,
+     true
+    ]
+   }
+  },
+  {
+   "name": "a measured answer alone leaves the question unseen",
+   "records": [
+    {
+     "t": "2026-01-05T09:00:00+00:00",
+     "course": "py",
+     "id": "q1",
+     "ok": true,
+     "measure": "delayed"
+    }
+   ],
+   "now": [
+    "2026-01-05T09:00:00+00:00"
+   ],
+   "expected": {
+    "ratings": [],
+    "stability": null,
+    "difficulty": null,
+    "due": null,
+    "passed": false,
+    "status": [
+     "unseen"
+    ],
+    "ready": [
+     true
+    ]
+   }
+  },
+  {
    "name": "no attempts",
    "records": [],
    "now": [

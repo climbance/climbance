@@ -23,6 +23,8 @@ export function buildHistory(records: AttemptRecord[]): History {
   const sorted = [...records].sort((a, b) => (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
   const hist: History = new Map();
   for (const r of sorted) {
+    // a test's answer is no review: `knowledge.md`, Baseline and delayed tests
+    if (r.measure) continue;
     const k = qkey(r);
     let list = hist.get(k);
     if (!list) hist.set(k, (list = []));

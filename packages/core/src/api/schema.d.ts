@@ -757,6 +757,7 @@ export interface components {
        * @default false
        */
       wrong: boolean;
+      measure?: components['schemas']['Measure'] | null;
     };
     /**
      * Arm
@@ -1601,6 +1602,12 @@ export interface components {
       /** Email */
       email: string | null;
     };
+    /**
+     * Measure
+     * @description The test an answer was given in: `knowledge.md`, Baseline tests.
+     * @enum {string}
+     */
+    Measure: 'baseline' | 'delayed';
     /** ModuleOrder */
     ModuleOrder: {
       /** Id */
@@ -2221,12 +2228,16 @@ export interface components {
       answered: number;
       /** Certification */
       certification?: string | null;
+      /** Module Id */
+      module_id?: string | null;
+      /** Topic Id */
+      topic_id?: string | null;
     };
     /**
      * StintMode
      * @enum {string}
      */
-    StintMode: 'next' | 'review' | 'filtered' | 'exam';
+    StintMode: 'next' | 'review' | 'filtered' | 'exam' | 'baseline' | 'delayed';
     /**
      * Studied
      * @description A card as its page reads it. The ladder, the progress and the recall

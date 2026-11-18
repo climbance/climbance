@@ -14,7 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
-from climb.schema import ModuleStatus, OpenGrade, QuestionFormat, SettingName, StintMode
+from climb.schema import Measure, ModuleStatus, OpenGrade, QuestionFormat, SettingName, StintMode
 from climb.storage import appended_column, enumerated, metadata, timestamp
 
 # a slug as `Slug` spells it
@@ -156,6 +156,7 @@ answers = _logged(
     Column("missed", ARRAY(Integer), nullable=False),
     Column("traps", ARRAY(Integer), nullable=False),
     Column("wrong", Boolean, nullable=False),
+    Column("measure", enumerated(Measure)),
     CheckConstraint(
         "grade IS NOT NULL OR (missed = '{}' AND traps = '{}' AND NOT wrong)",
         name="ticks_belong_to_a_grade",
@@ -170,7 +171,16 @@ stints = _logged(
     Column("score", Integer, nullable=False),
     Column("answered", Integer, nullable=False),
     Column("certification", Text),
-    CheckConstraint("(mode = 'exam') = (level IS NOT NULL)", name="an_exam_names_its_level"),
+    Column("module_id", Text, ForeignKey("modules.id")),
+    Column("topic_id", Text, ForeignKey("topics.id")),
+    CheckConstraint(
+        "(mode IN ('exam', 'baseline', 'delayed')) = (level IS NOT NULL)",
+        name="an_exam_names_its_level",
+    ),
+    CheckConstraint(
+        "(mode IN ('baseline', 'delayed')) = (module_id IS NOT NULL AND topic_id IS NOT NULL)",
+        name="a_test_names_its_topic",
+    ),
     CheckConstraint(
         "certification IS NULL OR (mode = 'exam' AND certification <> '')",
         name="a_certification_names_an_exam",

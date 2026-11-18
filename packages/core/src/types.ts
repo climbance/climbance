@@ -163,7 +163,11 @@ export interface AttemptRecord {
   missed?: number[]; // card: 0-based points not recalled
   traps?: number[]; // card: 0-based traps fallen into
   wrong?: true; // card: something else said wrong
+  measure?: Measure; // a test's answer, which the schedule skips
 }
+
+/** The test an answer was given in: `knowledge.md`, Baseline and delayed tests. */
+export type Measure = 'baseline' | 'delayed';
 
 export type CourseStatus = 'active' | 'paused' | 'archived';
 
@@ -191,6 +195,10 @@ export interface SessionRecord {
   mode: string;
   score: number;
   n: number;
+  // a baseline or delayed test's topic and level
+  course?: string;
+  topic?: string;
+  level?: number;
 }
 
 export interface Attempt {

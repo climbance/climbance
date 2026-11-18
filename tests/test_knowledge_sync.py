@@ -85,6 +85,34 @@ def test_a_certification_exam_s_session_is_stored_and_reads_back_whole(database,
     )
 
 
+def test_a_baseline_test_round_trips_with_its_measured_answers(database, tmp_path):
+    """The delayed test is read from these answers four weeks on, by topic."""
+    session = {"kind": "session", "client_id": "s1", "t": T, "mode": "baseline", "score": 1,
+               "n": 1, "course": "python", "topic": "core", "level": 0}  # fmt: skip
+    answer = attempt("c1", measure="baseline")
+
+    result = synced(database, tmp_path, [session, answer])
+
+    assert result["refused"] == []
+    back = {line["kind"]: line for line in result["records"]}
+    assert back["attempt"]["measure"] == "baseline"
+    assert {k: back["session"][k] for k in ("mode", "course", "topic", "level")} == {
+        "mode": "baseline",
+        "course": "python",
+        "topic": "core",
+        "level": 0,
+    }
+
+
+def test_a_baseline_test_naming_no_topic_is_refused(database, tmp_path):
+    session = {"kind": "session", "client_id": "s1", "t": T, "mode": "baseline", "score": 0,
+               "n": 0, "course": "python", "topic": "nowhere", "level": 0}  # fmt: skip
+
+    (refused,) = synced(database, tmp_path, [session])["refused"]
+
+    assert "nowhere" in str(refused)
+
+
 def test_a_certification_focus_names_its_topic_and_level(database, tmp_path):
     focus = {"kind": "focus", "client_id": "f1", "t": T, "course": "python", "topic": "core",
              "sub": None, "strict": True, "cert": "python-core-associate"}  # fmt: skip

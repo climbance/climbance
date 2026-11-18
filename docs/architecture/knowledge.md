@@ -396,6 +396,62 @@ certification.
 - **An exam is offered only once everything else in its certification
   holds.** A certification exam passed is stored as its own record.
 
+## Baseline and delayed tests
+
+The baseline test measures what a user holds of a topic before studying it.
+The delayed test asks the same questions four weeks or more later. The
+difference between the two scores is the learning gain the strategy claims.
+A lesson's pretest is a different thing, as `## Lessons` gives.
+
+- **A topic gets one baseline test, offered before its first new question.**
+  When the next or the focus queue would serve the first new question of a
+  topic the user has answered nothing in, it offers the baseline test first.
+  The test samples the topic's subtopics at that question's level. A lesson
+  is offered only once two of its questions were answered, its pretest, so a
+  test waiting for the first lesson would follow practice answers.
+- **One test per topic, rather than per subtopic or per module.** A test per
+  subtopic would interrupt every lesson, and a test per module would ask
+  about topics the user may never open.
+- **The test samples two questions per subtopic, at most twenty.** Only
+  `choice` and `short` questions are sampled, since an open question's grade
+  is the user's own report, as an exam excludes it too.
+- **The test gives no feedback until the end**, as an exam does. A shown key
+  would teach the next question's answer.
+- **The user may skip the baseline test once.** A skip stores a baseline
+  stint that answered nothing, so the test is not offered again. A skipped
+  topic gets no delayed test.
+- **A test answer carries the test it was given in**: `baseline` or
+  `delayed`, as the answer's `measure`. A practice answer carries none.
+- **The schedule ignores every answer carrying a measure.** FSRS replay, the
+  question states, passed and the daily new-question limit all skip it.
+  Most baseline answers are wrong, on questions the user has not studied. As
+  ordinary answers they would make those questions weak, and the review
+  queue would serve them before their lesson is read.
+- **The rule exists in Python and in `packages/core`**, held together by the
+  shared fixtures, as `README.md` gives for the schedule.
+- **The delayed test asks the baseline test's questions again**, in a new
+  order. The two tests then ask items of the same difficulty, so the gain is
+  read question by question. A user remembering a baseline question counts
+  toward what the product taught.
+- **The delayed test is offered from four weeks after the baseline test.** It
+  is a stop at the start of the next queue, like a lesson offered there, and
+  stays offered until it is taken. Four weeks is the delay the strategy's
+  claim names.
+- **The baseline's questions are read from its answers**, never stored as a
+  list. A topic has one baseline test, so the answers measuring `baseline` on
+  that topic's questions are the test.
+- **The gain is derived from the answers on every read**, per topic and per
+  user, and never stored. Reading it over every user belongs to the
+  retention report.
+
+Deferred, since only use answers each:
+
+- A baseline test at each further level of a topic.
+- Whether a delayed test still offered after some months stops being
+  offered.
+- A baseline test for a card's techniques. These tests cover the knowledge
+  modules alone.
+
 ## Projections
 
 A projection reads the user's log forward: the practice the schedule will ask
@@ -483,10 +539,12 @@ trigger, as `README.md` requires.
   record uploaded a day late was still answered when the user answered it.
 - **`answers`**: the question, whether the reply was correct, the guess flag,
   and for an open question the grade, the points missed, the traps fallen
-  into and the wrong flag.
+  into and the wrong flag. A test answer also names its measure, `baseline`
+  or `delayed`.
 - **`stints`**: the mode, the score, the number of questions answered, and
   for an exam the level it was taken at. A certification's exam also names
-  the certification, by its wire id.
+  the certification, by its wire id. A `baseline` or `delayed` stint names
+  its module, its topic and its level.
 - **`module_status_changes`**: the module and its status.
 - **`focuses`**: the module, the topic, the subtopic and the certification,
   each optional, and whether the focus is strict.
@@ -531,6 +589,9 @@ engine translates them at its edge, so the store keeps this project's names.
   `cert-<id>` session is stored as an `exam` stint at the certification's
   level, naming the certification. A line read
   back carries the wire's names again.
+- **A test's lines carry its topic.** A `session` line whose mode is
+  `baseline` or `delayed` names its `course`, its `topic` and its `level`. An
+  `attempt` line given in a test carries its `measure`.
 - **The snapshot's scheduling rules keep `mastered_stability_days`** for the
   stability at which a question is retained. An installed app reads that key
   from every snapshot, so renaming it would break a build already on a

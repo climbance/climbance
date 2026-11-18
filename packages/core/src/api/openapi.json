@@ -1672,6 +1672,16 @@
             "type": "boolean",
             "title": "Wrong",
             "default": false
+          },
+          "measure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Measure"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -4003,6 +4013,15 @@
         "title": "Me",
         "description": "Who the session signs in as. The engine mints the id, and the address is\nthe provider's, so a user reached by the dev login carries none."
       },
+      "Measure": {
+        "type": "string",
+        "enum": [
+          "baseline",
+          "delayed"
+        ],
+        "title": "Measure",
+        "description": "The test an answer was given in: `knowledge.md`, Baseline tests."
+      },
       "ModuleOrder": {
         "properties": {
           "id": {
@@ -5552,6 +5571,28 @@
               }
             ],
             "title": "Certification"
+          },
+          "module_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Module Id"
+          },
+          "topic_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Id"
           }
         },
         "type": "object",
@@ -5574,7 +5615,9 @@
           "next",
           "review",
           "filtered",
-          "exam"
+          "exam",
+          "baseline",
+          "delayed"
         ],
         "title": "StintMode"
       },

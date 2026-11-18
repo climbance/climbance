@@ -548,6 +548,11 @@ without redefining them. Grouped by the file that specifies the record.
 - **Filtered queue**: the queue serving questions the user chose by topic,
   subtopic, level or kind, locked or not.
 - **Stint**: the record of one queue or one exam, stored when it stops.
+- **Baseline test**: a sample of a topic's questions, asked before its first
+  lesson, whose answers the schedule ignores. Distinct from a lesson's pretest.
+- **Delayed test**: the baseline test's questions asked again four weeks or
+  more later. The difference in score is the learning gain.
+- **Measure**: the test an answer was given in, `baseline` or `delayed`.
 - **Focus**: the module, topic, subtopic or certification the next queue is
   aimed at.
 - **Module status**: active, paused or archived, set by the user.
@@ -595,7 +600,7 @@ times. Each record class is specified in one of the files beside it.
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
 | [`wireframes.md`](wireframes.md) | Each page drawn at low fidelity |
-| [`knowledge.md`](knowledge.md) | Modules, where their authoring rules live, questions, lessons, the schedule, the queues, certifications, and the user's knowledge log |
+| [`knowledge.md`](knowledge.md) | Modules, where their authoring rules live, questions, lessons, the schedule, the queues, certifications, the baseline and delayed tests, and the user's knowledge log |
 | [`model.toml`](model.toml) | The engine's context and containers as one model: each element's stable ID, its role, the doc section that specifies it, and its relations |
 
 ## Data classes

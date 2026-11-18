@@ -88,7 +88,9 @@ def history(answers: Iterable[Answer]) -> dict[str, list[Review]]:
     """Each question's reviews, in the order the user gave them."""
     reviews: dict[str, list[Review]] = defaultdict(list)
     for a in sorted(answers, key=lambda a: a.at):
-        reviews[a.question_id].append(Review(a.at, rating(a)))
+        # a test's answer is no review: `knowledge.md`, Baseline tests
+        if a.measure is None:
+            reviews[a.question_id].append(Review(a.at, rating(a)))
     return dict(reviews)
 
 

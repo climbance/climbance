@@ -1,5 +1,14 @@
 {
   "$defs": {
+    "Measure": {
+      "description": "The test an answer was given in: `knowledge.md`, Baseline and delayed tests.",
+      "enum": [
+        "baseline",
+        "delayed"
+      ],
+      "title": "Measure",
+      "type": "string"
+    },
     "OpenGrade": {
       "description": "An open question's grade, from the points ticked: `knowledge.md`.",
       "enum": [
@@ -55,6 +64,17 @@
     "id": {
       "title": "Id",
       "type": "string"
+    },
+    "measure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Measure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "missed": {
       "items": {

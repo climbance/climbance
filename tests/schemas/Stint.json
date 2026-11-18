@@ -5,7 +5,9 @@
         "next",
         "review",
         "filtered",
-        "exam"
+        "exam",
+        "baseline",
+        "delayed"
       ],
       "title": "StintMode",
       "type": "string"
@@ -71,10 +73,34 @@
     "mode": {
       "$ref": "#/$defs/StintMode"
     },
+    "module_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Module Id"
+    },
     "score": {
       "minimum": 0,
       "title": "Score",
       "type": "integer"
+    },
+    "topic_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Topic Id"
     },
     "user_id": {
       "minLength": 1,

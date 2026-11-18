@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from climb.knowledge.schedule import history, passed, replay, servable, state
-from climb.schema.knowledge import Answer, OpenGrade
+from climb.schema.knowledge import Answer, Measure, OpenGrade
 
 FIXTURE = Path(__file__).parent / "fixtures" / "knowledge" / "scheduling.json"
 ABOUT = (
@@ -56,6 +56,7 @@ def answer(n: int, record: Line) -> Answer:
         correct=record["ok"],
         guess=record.get("guess", False),
         grade=OpenGrade(record["grade"]) if "grade" in record else None,
+        measure=Measure(record["measure"]) if "measure" in record else None,
     )
 
 
@@ -125,6 +126,16 @@ CASES: list[tuple[str, list[Line], list[str]]] = [
     ("relearned: Relearning to Review", RELEARNED, [due_of(LONG, minutes=60)]),
     ("retained at 21 days stability", RETAINED, [due_of(RETAINED, -1), due_of(RETAINED)]),
     ("records out of order", [r(9, GOOD), r(0, GOOD), r(3, GOOD)], [at(10)]),
+    (
+        "a baseline answer is no review",
+        [r(0, {**AGAIN, "measure": "baseline"}), r(1, GOOD)],
+        [at(1, 300), at(1, 600)],
+    ),
+    (
+        "a measured answer alone leaves the question unseen",
+        [r(0, {**GOOD, "measure": "delayed"})],
+        [at(0)],
+    ),
     ("no attempts", [], [at(0)]),
 ]
 
