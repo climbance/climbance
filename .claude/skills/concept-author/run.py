@@ -200,11 +200,14 @@ def schedule(args: argparse.Namespace, main_wt: Path, subs: list, needs: dict) -
     # the pilot wrote these at levels 0 and 1 by hand
     finished = done | ({"control-flow", "functions"} if args.level <= 1 else set())
     known = {s for _, s, _ in subs}
-    # --decide takes subtopics already written through the decide step
+    # --decide takes subtopics already written through the decide step, and
+    # --only takes a pilot one for review, its write steps marked in state.json
+    pilot = finished - done
     todo = [
         x
         for x in subs
-        if (args.decide or x[1] not in finished) and (not args.only or x[1] in args.only)
+        if (args.decide or x[1] not in finished or (args.only and x[1] in pilot))
+        and (not args.only or x[1] in args.only)
     ]
     failed: set[str] = set()
     running: dict[cf.Future[str], str] = {}
