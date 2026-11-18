@@ -10,7 +10,7 @@
       "type": "string"
     }
   },
-  "description": "One case of a generated problem's set. The provenance is the proposing\ncall's rather than the problem's \u2014 `corpus.md` gives why.",
+  "description": "One case of a generated problem's set. The provenance is the proposing\ncall's rather than the problem's \u2014 `cli/generation/test-cases.md` gives\nwhy.",
   "properties": {
     "args": {
       "items": {},

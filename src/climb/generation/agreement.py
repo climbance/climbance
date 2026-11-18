@@ -13,7 +13,7 @@ from climb.runner.outputs import NoValue
 from climb.schema import DraftCase, ExpectedSource, MachineProvenance, SettledCase
 
 # the most a stored case may weigh, arguments and expected value together.
-# `corpus.md` gives the reason and what a case over it costs
+# `cli/generation/test-cases.md` gives the reason and what a case over it costs
 CEILING = 1_048_576
 
 

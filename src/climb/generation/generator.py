@@ -31,7 +31,7 @@ GENERATOR_DEFAULT = Configuration(
     model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio"
 )
 
-# item 4 restates the criteria in `corpus.md`, Difficulty ratings
+# item 4 restates the criteria in `cli/difficulty/criteria.md`
 SYSTEM = f"""You write practice problems for one form of a technique.
 
 You are given a template: a form a solver reproduces from memory, its cue, and
@@ -230,8 +230,8 @@ class Generated(BaseModel):
 
     @model_validator(mode="after")
     def _the_statement_carries_the_signature(self) -> Generated:
-        # corpus.md, "The statement carries the signature": three prompts read
-        # the order off it
+        # `cli/generation/test-cases.md`, "The statement carries the signature":
+        # three prompts read the order off it
         named = parameters(self.statement)
         if named is None:
             raise ValueError("the statement ends with the `def solve(...)` line its cases pass")

@@ -29,7 +29,7 @@ starts at the roots and an experienced user sees where a card sits.
 - **A root card requires nothing.** The roots teach the basic forms, such as
   hashing, two pointers and a prefix sum. The easy problems sit on the roots,
   since a basic form applied unchanged is easy by the criteria in
-  `../corpus.md`.
+  `../cli/difficulty/criteria.md`.
 - **A card's depth is the longest chain of requirements below the card.** The
   pages lay the graph out by depth, and the board orders the cards it offers by
   depth. Depth is derived from the graph on every read, never stored.

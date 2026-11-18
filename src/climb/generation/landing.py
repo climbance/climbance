@@ -110,7 +110,8 @@ def land(corpus: Corpus, template: Template, draft: Draft) -> Problem:
             )
         )
     # the run each of the two landed on, over the set as it landed, and before
-    # the transaction so no run holds it open: `corpus.md`, Verification runs
+    # the transaction so no run holds it open:
+    # `cli/generation/verification-runs.md`
     runs = [
         mint.verification(
             one.id,

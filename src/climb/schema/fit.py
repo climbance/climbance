@@ -1,4 +1,4 @@
-"""One difficulty fit over the panel's trials: `corpus.md`, Difficulty fits."""
+"""One difficulty fit over the panel's trials: `cli/difficulty/fits.md`."""
 
 from datetime import datetime
 

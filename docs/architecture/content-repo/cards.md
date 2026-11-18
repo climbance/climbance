@@ -98,9 +98,10 @@ from the template matches and the card's selector, and stores none of it.
   factor of log n.** The search separates by wall clock under the sitting's
   cap, on an input the ceiling holds, and that input carries some hundred
   thousand integers. A linear or linearithmic naive approach finishes such an
-  input in milliseconds whatever the form does. So the search raises the
-  case's repeat count where the walk reaches the ceiling, and times `solve`
-  called that many times on one input. `../corpus.md` gives the repeat count.
+  input in milliseconds whatever the form does. So the search raises the case's
+  repeat count where the walk reaches the ceiling, and times `solve` called
+  that many times on one input. `../cli/generation/test-cases.md` gives the
+  repeat count.
 - **The statement is written for the solver, not for the search.** One lookup
   in a sorted array is sublinear for the form and linear for the scan it
   replaces. The form and the scan both finish within the cap, so no input
@@ -130,9 +131,9 @@ A template's cases let the recall trainer run what the user typed.
   template**, in `equivalent`, and the check stops reporting it. The list is
   authoring alone, and the seed stores none. An entry no survivor matches any
   longer is reported as stale, since an edit to the form moves its lines.
-- **The cases call `solve`**, as a problem's cases do. `../corpus.md` gives why
-  that name is fixed: a function called `lower_bound` announces the form the
-  recall is asking for.
+- **The cases call `solve`**, as a problem's cases do.
+  `../cli/generation/test-cases.md` gives why that name is fixed: a function
+  called `lower_bound` announces the form the recall is asking for.
 - **A template whose answer is a set says so, and its cases are compared after
   the top level is sorted.** Every subset and every permutation of an input is
   one answer, and two correct reproductions emit that answer in different

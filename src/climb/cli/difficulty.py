@@ -1,6 +1,6 @@
 """The panel's trials on the corpus, and a difficulty fit over them.
 
-`corpus.md` `### Difficulty fits` gives the design. The anchors are read from
+`cli/difficulty/fits.md` gives the design. The anchors are read from
 files outside every repository, named on the command line, and never stored.
 """
 

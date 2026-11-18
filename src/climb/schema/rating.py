@@ -1,4 +1,5 @@
-"""A judgement of a problem's contest-scale score, as `corpus.md` gives."""
+"""A judgement of a problem's contest-scale score, as `cli/difficulty/README.md`
+gives."""
 
 from datetime import datetime
 from enum import StrEnum
@@ -14,7 +15,7 @@ class RatingSource(StrEnum):
 
 
 # Each label's lowest score, easy first. Provisional: the first fit sets the
-# cuts against the criteria's labels, as `corpus.md` gives
+# cuts against the criteria's labels, as `cli/difficulty/README.md` gives
 BANDS: tuple[tuple[float, ProblemDifficulty], ...] = (
     (float("-inf"), ProblemDifficulty.EASY),
     (1300.0, ProblemDifficulty.MEDIUM),

@@ -5,7 +5,7 @@ from climb.problems.table import problems
 from climb.schema import Problem, ProblemStatus, RetirementReason
 from climb.storage import CONFIGURATION, Database, called, configurations, configured
 
-# what a stored problem may still move: `corpus.md` gives the states
+# what a stored problem may still move: `api/problems.md` gives the states
 STATUS = {"status", "retired_reason"}
 
 

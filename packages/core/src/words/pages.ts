@@ -107,7 +107,7 @@ export const PROBLEM_OPENING = 'Opening the problem…';
 export const PROBLEM_RETIRED =
   'This problem was retired: its statement asked for something its cases do not decide. It is served to nobody, and your attempts on it stay in your log.';
 
-// a request that the author retire the problem: `corpus.md`, Problems
+// a request that the author retire the problem: `api/problems.md`
 export const REPORT_PROBLEM = 'Report this problem';
 export const REPORT_TITLE = 'Ask for this problem to be retired';
 export const REPORT_EXPLAINED =

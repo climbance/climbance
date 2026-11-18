@@ -1,7 +1,8 @@
 """The mutation loop, run over a drafted problem before it lands.
 
 A mutant the case set leaves standing names a case that has to exist, and one
-call per round asks for it. `corpus.md` gives the bound the loop stops at.
+call per round asks for it. `cli/generation/test-cases.md` gives the bound the
+loop stops at.
 """
 
 from collections.abc import Sequence

@@ -1,5 +1,6 @@
 """The speedup search over the input generator's inputs, and what it leaves on
-the inputs site. `corpus.md` gives what a separating size means."""
+the inputs site. `cli/generation/test-cases.md` gives what a separating size
+means."""
 
 from collections.abc import Callable
 from typing import Any, cast

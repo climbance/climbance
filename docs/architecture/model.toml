@@ -199,8 +199,7 @@ kind = "component"
 container = "api"
 name = "Runner"
 role = "Runs code against a problem's cases, through the broker or the local subprocess, and reads each case's outcome."
-doc = "corpus.md"
-section = "Execution"
+doc = "api/runner.md"
 
 [[element]]
 id = "run-faults"
@@ -318,8 +317,7 @@ kind = "component"
 container = "api"
 name = "Problems"
 role = "Reads a problem from the corpus: its statement, its templates and its test cases."
-doc = "corpus.md"
-section = "Problems"
+doc = "api/problems.md"
 
 # Components of the command line
 
@@ -332,6 +330,22 @@ role = "Reads an attempt's code and claims the techniques it used, filling what 
 doc = "log.md"
 section = "Attempt claims"
 bullet = "The classifier is prompted, not trained."
+
+[[element]]
+id = "generation"
+kind = "component"
+container = "cli"
+name = "Generation"
+role = "Writes each problem through its six call sites, and lands it with its cases and its solutions."
+doc = "cli/generation/README.md"
+
+[[element]]
+id = "difficulty"
+kind = "component"
+container = "cli"
+name = "Difficulty"
+role = "Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."
+doc = "cli/difficulty/README.md"
 
 [[element]]
 id = "matcher"
@@ -664,3 +678,23 @@ label = "appends a machine template match"
 from = "exercise-items"
 to = "database"
 label = "reads the templates and appends the items"
+
+[[relation]]
+from = "generation"
+to = "model-router"
+label = "sends each call site's prompt"
+
+[[relation]]
+from = "generation"
+to = "database"
+label = "revises the drafts and lands each problem"
+
+[[relation]]
+from = "difficulty"
+to = "model-router"
+label = "asks each panel member for a solution"
+
+[[relation]]
+from = "difficulty"
+to = "database"
+label = "appends the trials, the fits and the ratings"

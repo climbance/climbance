@@ -1,4 +1,4 @@
-"""A fit and its ratings from the trials: `corpus.md`, Difficulty fits."""
+"""A fit and its ratings from the trials: `cli/difficulty/fits.md`."""
 
 from collections import defaultdict
 from collections.abc import Sequence

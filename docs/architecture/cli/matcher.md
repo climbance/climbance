@@ -33,10 +33,11 @@ work: an author names no solution, so nothing is authored here either.
   false negative. It replaces no hand pass: the pairs it reaches are the ones a
   ladder wanted, which is a sample nobody drew at random.
 - **The same fact sits on the problem and in a match.** `target_template_id`
-  names the template the problem's target named, and the first canonical's match
-  names the same one. They cannot drift, because generation writes both in one
-  act. The canonicals of a problem written for a technique target still carry
-  their own matches, once that target lands, as `../corpus.md` defers it.
+  names the template the problem's target named, and the first canonical's
+  match names the same one. They cannot drift, because generation writes both
+  in one act. The canonicals of a problem written for a technique target still
+  carry their own matches, once that target lands, as `generation/problem.md`
+  defers it.
 
 ## What the matcher answers
 

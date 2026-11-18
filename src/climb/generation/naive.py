@@ -3,7 +3,7 @@ speedup search measures the canonical against.
 
 It settles no case and rejects no draft, so it is the one answering site that
 may be told which form to avoid and which technique earns that form, and the
-one that is sampled. `corpus.md` gives what it may never do.
+one that is sampled. `cli/generation/solutions.md` gives what it may never do.
 """
 
 from climb.calls import CallLog, Transport, prompt_hash

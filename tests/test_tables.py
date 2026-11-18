@@ -512,7 +512,7 @@ def test_a_problem_naming_no_target_is_refused():
 
 def test_a_blank_statement_is_refused_by_the_record_and_the_table():
     """A whitespace-only statement passes a presence check while asking
-    nothing, so `corpus.md` requires a non-blank one."""
+    nothing, so `cli/generation/problem.md` requires a non-blank one."""
     with pytest.raises(ValidationError):
         make_problem(statement=" \n ")
     assert checks(problems)["problems_statement_written_check"] == "statement ~ '\\S'"

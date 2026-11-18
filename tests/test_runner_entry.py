@@ -70,7 +70,7 @@ def test_a_solution_s_output_reaches_no_line_the_broker_parses():
 
 
 def test_each_case_runs_in_a_process_of_its_own():
-    """`corpus.md` requires that no case observes another, and a solution
+    """`api/runner.md` requires that no case observes another, and a solution
     writing to process-wide state would otherwise carry it to the next case."""
     assert [each["value"] for each in lines(COUNTED, [[], [], []])] == ["1", "1", "1"]
 

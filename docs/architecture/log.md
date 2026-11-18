@@ -186,7 +186,7 @@ ended, and every pause between.
   own code are private, and a solution's verification is product data. One
   type in both stores would leave privacy to whichever writer chose the file.
 - **The two types share the fields a run is decided by**: the cap, the runner
-  and the per-case results. `corpus.md` fixes what each of those means.
+  and the per-case results. `api/runner.md` fixes what each of those means.
 - **The elapsed time is cumulative, from the clock's start to that
   submission.** A drill mints an attempt per submission, so the second attempt
   of a sitting carries the whole time since `clock_started_at`, rather than
@@ -864,7 +864,7 @@ model of mastery.
   recognition for exactly the techniques the user cannot spot. Grades written
   before that test are stored and ignored.
 - **Sittings and drills on a defective problem do not count**, solved or not.
-  `corpus.md` gives the reason for sittings. A drill on such a problem was
+  `api/problems.md` gives the reason for sittings. A drill on such a problem was
   graded against a statement that asks the wrong thing.
 - **Recall attempts do not count toward mastery.** Typing a form from memory
   is neither spotting it in a problem nor solving a problem with it. The card
@@ -953,8 +953,8 @@ problem, a reason and the user's note.
 
 - **A user asks for a retirement, and the author retires the problem by hand.**
   A problem is served to every user, so one user's reading of a statement does
-  not remove the problem from another user's practice. `corpus.md` gives who
-  retires a problem.
+  not remove the problem from another user's practice. `api/problems.md` gives
+  who retires a problem.
 - **The request names one of the two retirement reasons, `defective` or
   `copied`.** The author retires a problem under a reason, so a request naming
   the same reasons reads as the retirement it asks for.

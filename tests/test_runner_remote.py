@@ -44,7 +44,7 @@ def returned(value: object, elapsed_ms: int = 1) -> dict[str, Any]:
 
 
 def test_a_request_carries_the_code_the_arguments_and_the_cap_and_nothing_else():
-    """`corpus.md` keeps the comparison above the runner, and a sandbox told
+    """`api/runner.md` keeps the comparison above the runner, and a sandbox told
     what a case expects can be made to agree with it."""
     body = request(DOUBLE, [[1], [2]], 2000, [1, 1], False)
 

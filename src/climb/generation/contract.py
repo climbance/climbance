@@ -1,8 +1,8 @@
 """What every solution this engine runs must be, stated once.
 
 Four prompts ask for code, and each stated the same three facts in its own
-words. `corpus.md` gives the entry point as an invariant, so a per-prompt copy
-of it is a copy that can drift.
+words. `cli/generation/test-cases.md` gives the entry point as an invariant, so
+a per-prompt copy of it is a copy that can drift.
 
 Each prompt still writes its own signature: the two that answer a statement take
 what the prose describes, and the input generator takes a size and a seed.
@@ -20,7 +20,8 @@ ENTRY = "one module-level function named `solve`"
 
 ALONE = "The code stands alone: no input is read and nothing is printed."
 
-# corpus.md, "The statement carries the signature, and the order is why"
+# `cli/generation/test-cases.md`, "The statement carries the signature, and the
+# order is why"
 SIGNATURE = "a `def solve(...)` line naming the parameters in the order the cases pass them"
 
 POSITIONAL = (

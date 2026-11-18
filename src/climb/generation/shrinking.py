@@ -1,5 +1,5 @@
 """Shrinking a built input to the smallest that still kills what it killed.
-`corpus.md` gives what may shrink and against what."""
+`flows.md` gives what may shrink and against what."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

@@ -1,7 +1,7 @@
 """A run in the broker's container, over HTTP: the same JSON in and out.
 
-`corpus.md` keeps the comparison above this boundary, so a request carries the
-code, the arguments and the cap, and never what a case expects.
+`api/runner.md` keeps the comparison above this boundary, so a request carries
+the code, the arguments and the cap, and never what a case expects.
 """
 
 from collections.abc import Sequence

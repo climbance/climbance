@@ -21,7 +21,7 @@ def test_a_value_agrees_with_itself(value):
 
 @given(st.lists(json_values))
 def test_a_tuple_and_a_list_are_one_answer(items):
-    """`corpus.md`: a case is decided by JSON equality, and JSON has no
+    """`api/runner.md`: a case is decided by JSON equality, and JSON has no
     tuple."""
     assert agrees(tuple(items), items)
 
@@ -36,7 +36,8 @@ def test_key_order_does_not_decide_a_case(mapping):
 
 
 def test_a_boolean_and_an_integer_are_two_answers():
-    """`corpus.md`: `True` and `1` are two, where a tuple and a list are one."""
+    """`api/runner.md`: `True` and `1` are two, where a tuple and a list are
+    one."""
     assert not agrees(True, 1)
     assert not agrees(False, 0)
 

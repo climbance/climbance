@@ -1,4 +1,4 @@
-"""One panel member's solution to one problem: `corpus.md`, Trials."""
+"""One panel member's solution to one problem: `cli/difficulty/trials.md`."""
 
 from datetime import datetime
 

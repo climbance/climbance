@@ -3,7 +3,7 @@ from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer, Table, Text
 from climb.schema import CaseOutcome
 from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
 
-# an anchor's trials are never stored here: `corpus.md`, Trials
+# an anchor's trials are never stored here: `cli/difficulty/trials.md`
 trials = Table(
     "trials",
     metadata,

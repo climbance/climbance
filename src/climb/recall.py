@@ -121,7 +121,8 @@ def drawn(card: Card, recalled: Iterable[RecallAttempt]) -> Template | None:
 
 def signature(template: Template) -> str:
     """The line the cases call, which the trainer gives the user to type
-    against. `corpus.md`: the parameter order has to be stated somewhere."""
+    against. `cli/generation/test-cases.md`: the parameter order has to be
+    stated somewhere."""
     for node in ast.parse(template.code).body:
         if isinstance(node, ast.FunctionDef) and node.name == "solve":
             returns = f" -> {ast.unparse(node.returns)}" if node.returns else ""

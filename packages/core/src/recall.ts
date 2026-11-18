@@ -17,7 +17,7 @@ export const HINT_NAMES: Record<Hint, string> = { notes: 'the notes', form: 'the
 
 export const nextHint = (taken: Hint[]): Hint | null => HINTS[taken.length] ?? null;
 
-// the signature, and the file otherwise blank: `corpus.md` gives why the
+// the signature, and the file otherwise blank: `cli/generation/test-cases.md` gives why the
 // parameter order is stated rather than inferred
 export const recallBlank = (signature: string) => `${signature}\n    `;
 
@@ -25,7 +25,7 @@ export const recallBlank = (signature: string) => `${signature}\n    `;
 export const recallOptional = (prompt: Prompted | undefined): boolean =>
   prompt?.templates.some((one) => one.slug === prompt.template_slug && one.optional) ?? false;
 
-// a wrong answer and a timeout read apart, in the order `corpus.md` folds a run by
+// a wrong answer and a timeout read apart, in the order `cli/generation/verification-runs.md` folds a run by
 export const OUTCOME_LABELS = {
   passed: 'passed',
   wrong: 'wrong answer',

@@ -9,7 +9,8 @@ from climb.mutation.mutants import Mutant
 from climb.runner import decide, run
 from climb.schema import CaseOutcome, Json
 
-# how many times the loop asks for cases before it stops. `corpus.md` gives why
+# how many times the loop asks for cases before it stops.
+# `cli/generation/test-cases.md` gives why
 ROUNDS = 2
 
 # what a mutant may take against what the canonical took on the same case, and

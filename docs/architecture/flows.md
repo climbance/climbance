@@ -10,7 +10,7 @@ The order matters because each step can reject what came before.
 
 1. The target: a template, naming the form the problem must be solvable by, or
    a technique, naming only the skill. The technique target is deferred, as
-   `corpus.md` gives.
+   `cli/generation/problem.md` gives.
 2. The statement, the canonical solution and the first test cases, from one
    call.
 3. The canonical runs, and its outputs are read against the expected values
@@ -478,7 +478,7 @@ a second generator call writes a different problem.
 ## Enumerating a problem's other solutions
 
 Deferred until a ladder needs a second canonical for the matcher to read, as
-`corpus.md` gives. No code runs the steps below yet.
+`cli/generation/solutions.md` gives. No code runs the steps below yet.
 
 A landed problem carries one canonical, written for what its target named. Every
 other way to solve it is found afterwards, over the stored problem.
@@ -691,11 +691,12 @@ The page layout is not designed here, and using the loop decides it.
 - **A skipped label stops nothing.** The loop moves to the next attempt of the
   sitting, and the attempt stays unlabelled. `log.md` gives what a skip leaves.
 - **The loop does not retire a problem.** A statement that asks for something
-  its cases do not decide is retired by hand, in the terminal, and `corpus.md`
-  gives who retires one. A sitting can send a retirement request from under
-  the statement, and the request retires nothing until the author acts on it,
-  as `log.md` gives. A self-label written before the retirement stays, and
-  the board's read-time exclusion keeps that attempt out of mastery.
+  its cases do not decide is retired by hand, in the terminal, and
+  `api/problems.md` gives who retires one. A sitting can send a retirement
+  request from under the statement, and the request retires nothing until the
+  author acts on it, as `log.md` gives. A self-label written before the
+  retirement stays, and the board's read-time exclusion keeps that attempt out
+  of mastery.
 - **Selection never schedules.** Ordering is a view. The user chooses what to
   drill until the scheduler lands.
 
@@ -872,9 +873,9 @@ trainer never prints the form until the user asks for it as a hint.
   template no case checks is named and never opened, as
   `content-repo/cards.md` has it read rather than recalled.
 - **The signature is shown.** The cases call the form with a parameter order,
-  and that order has to be stated somewhere, as `corpus.md` says of a
-  statement. A signature the user infers wrongly fails every case for a form
-  recalled correctly.
+  and that order has to be stated somewhere, as `cli/generation/test-cases.md`
+  says of a statement. A signature the user infers wrongly fails every case for
+  a form recalled correctly.
 - **The file is otherwise blank, and the editor proposes no library name.**
   The editor the drill loop gives holds the same rule, and a solver offered
   `bisect_left` after three characters has recalled no form. The phone's

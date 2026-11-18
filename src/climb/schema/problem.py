@@ -50,7 +50,7 @@ class Problem(MachineProvenance):
 
     @property
     def defective(self) -> bool:
-        # by reason rather than by status: `corpus.md` leaves room for a
+        # by reason rather than by status: `api/problems.md` leaves room for a
         # retirement whose attempts are kept
         return self.retired_reason is RetirementReason.DEFECTIVE
 

@@ -1,4 +1,4 @@
-"""The panel and its trials on corpus problems: `corpus.md`, Trials."""
+"""The panel and its trials on corpus problems: `cli/difficulty/trials.md`."""
 
 import re
 from contextlib import AbstractContextManager, nullcontext
@@ -19,7 +19,8 @@ class Member:
     max_tokens: int
 
 
-# weak to strong, as the pilot on the anchors chose them: `corpus.md`
+# weak to strong, as the pilot on the anchors chose them:
+# `cli/difficulty/fits.md`
 PANEL = (
     Member(
         Configuration(model="meta-llama/llama-3.1-8b-instruct", effort="default", pin="groq"),

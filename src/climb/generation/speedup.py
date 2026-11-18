@@ -47,7 +47,7 @@ class Missing(StrEnum):
     bounds, so a separation may still sit above either.
     `CASE_TOO_LARGE` proves it and carries the size, and only the case is lost.
     `NAIVE_FINISHED` is a defect in the run rather than in the problem, and
-    `corpus.md` gives the three things that produce it.
+    `content-repo/cards.md` gives the three things that produce it.
     """
 
     NAIVE_FINISHED = "naive_finished"
@@ -134,8 +134,9 @@ def search(
 
     if walk.over is None:
         if not walk.capped:
-            # the walk reached the statement's own bound, which `corpus.md`
-            # names a defect in the run rather than a size the ceiling hid
+            # the walk reached the statement's own bound, which
+            # `content-repo/cards.md` names a defect in the run rather than a
+            # size the ceiling hid
             return Searched(missing=Missing.NAIVE_FINISHED)
         return _repeated(
             walk,

@@ -1,6 +1,6 @@
 """Every served problem's canonicals, run at the drill cap on whichever backend
 is configured and each run stored, and each case one of them does not pass
-within a tenth of the cap. `corpus.md` gives why a tenth."""
+within a tenth of the cap. `cli/generation/test-cases.md` gives why a tenth."""
 
 from climb import mint
 from climb.generation import Corpus
@@ -24,7 +24,8 @@ def retime(root: Database) -> None:
         cases = corpus.cases.for_problem(problem.id)
         for canonical in corpus.solutions.for_problem(problem.id, SolutionRole.CANONICAL):
             results = [one for one, _ in judge(canonical.code, cases, cap_ms=DRILL_CAP_MS)]
-            # stored, since a run is a fact about the runner: `corpus.md`
+            # stored, since a run is a fact about the runner:
+            # `cli/generation/verification-runs.md`
             corpus.verifications.append(
                 mint.verification(
                     canonical.id, cap_ms=DRILL_CAP_MS, runner=runner(), results=results

@@ -126,8 +126,9 @@ def draws_again(draft: Draft, target: Target) -> bool:
     )
 
 
-# the reasons a raised bound can answer. A walk that reached the statement's
-# own bound is not among them: `corpus.md` names that a defect in the run
+# the reasons a raised bound can answer. A walk that reached the statement's own
+# bound is not among them: `content-repo/cards.md` names that a defect in the
+# run
 BOUNDED = (
     Missing.INPUT_TOO_LARGE,
     Missing.COUNT_TOO_LARGE,

@@ -50,10 +50,11 @@ same fields to stay comparable, and those fields are stated here once.
   keeps records taken before the parameter existed scorable rather than
   excluded.
 
-- **The generator and the naive site are sampled**, for the reason `corpus.md`
-  gives: each produces an artifact rather than a verdict about one. The
-  generator's variance buys diversity across a corpus of statements, and the
-  naive site's variance buys a second draw where the first draw wrote the form.
+- **The generator and the naive site are sampled**, for the reason
+  `cli/generation/solutions.md` gives: each produces an artifact rather than a
+  verdict about one. The generator's variance buys diversity across a corpus of
+  statements, and the naive site's variance buys a second draw where the first
+  draw wrote the form.
 - **The other four sites are greedy.** Greedy answers make two configurations
   of one site comparable over the same item. Those sites answer about a
   statement that already exists, and each answer decides something.
@@ -156,8 +157,8 @@ call returned, so it sits beside the call log.
   statement exists.
 - **A canonical contradicting its own call's declarations is counted, not
   gated.** The code and the declaration came from one call, so the count reads
-  that site's arithmetic. `corpus.md` names the record that settles the case
-  instead.
+  that site's arithmetic. `cli/generation/test-cases.md` names the record that
+  settles the case instead.
 - **The search's measurements are filed under both sites it judged.** The
   search times the naive solution against the canonical on an input the input
   generator made, so neither answer alone makes the verdict decidable. The
@@ -177,7 +178,8 @@ call returned, so it sits beside the call log.
   a label differing from the aim is stored as written.
 - **The bound is not a denominator.** The bound counts whatever the input
   generator's `size` counts, which is a list length on one problem and a grid's
-  side on another. `corpus.md` gives what a separating size is comparable with.
+  side on another. `cli/generation/test-cases.md` gives what a separating size
+  is comparable with.
 - **Two of a problem's records can carry different verdicts.** The input
   generator's record answers for the search that judged it when it was written,
   and a later naive solution's record answers for the search that judged the

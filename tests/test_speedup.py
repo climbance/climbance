@@ -361,7 +361,7 @@ def test_a_count_no_ceiling_bounds_still_stops():
 
 def test_a_size_the_statement_bounds_is_not_repeated():
     """A walk that reached the statement's own bound is a defect in the run,
-    which `corpus.md` names, rather than a size the ceiling hid."""
+    which `content-repo/cards.md` names, rather than a size the ceiling hid."""
     found = counted(largest=2, ceiling=CEILING)
 
     assert found.missing is Missing.NAIVE_FINISHED

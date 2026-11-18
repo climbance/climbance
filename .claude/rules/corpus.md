@@ -11,6 +11,9 @@ paths:
   - "src/climb/drafts/**"
 ---
 
-Read `docs/architecture/corpus.md` before changing this code. It gives
-problems, test cases, solutions, solution claims, verification and execution,
-and it wins over the code on any difference.
+Read `docs/architecture/cli/generation/README.md` before changing this code,
+and the file it names for problems, test cases, solutions or verification
+runs. `docs/architecture/api/runner.md` gives execution,
+`docs/architecture/api/problems.md` serving and retiring a problem, and
+`docs/architecture/cli/classifier.md` the solution claims. They win over the
+code on any difference.

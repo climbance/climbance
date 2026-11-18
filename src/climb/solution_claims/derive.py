@@ -19,9 +19,9 @@ def derive(
 ) -> dict[str, list[str]]:
     """The techniques each problem's canonicals were read as, keyed by problem.
 
-    The reference is excluded, for the reason `corpus.md` gives. A canonical
-    nothing has read contributes nothing, which is not a verdict that it used
-    no technique. A claimed code brings every code it is a kind of.
+    The reference is excluded, for the reason `cli/generation/problem.md` gives.
+    A canonical nothing has read contributes nothing, which is not a verdict
+    that it used no technique. A claimed code brings every code it is a kind of.
     """
     standing = standing_solution_claims(claims)
     derived: dict[str, set[str]] = {problem.id: set() for problem in problems}

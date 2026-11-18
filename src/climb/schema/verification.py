@@ -1,5 +1,5 @@
 """One execution of code against a problem's cases: a solution's, or an
-attempt's. `corpus.md` fixes what a stored result means."""
+attempt's. `api/runner.md` fixes what a stored result means."""
 
 from datetime import datetime
 

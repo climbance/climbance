@@ -28,8 +28,8 @@ TRIGGER = (
 
 
 def upgrade() -> None:
-    # a label rating carries no score, and `corpus.md` deletes it rather than
-    # keep a second shape: the table is written again, empty
+    # a label rating carries no score, and `cli/difficulty/README.md` deletes it
+    # rather than keep a second shape: the table is written again, empty
     op.drop_table("difficulty_ratings")
     RATING_SOURCE.create(op.get_bind())
     op.create_table(

@@ -1,5 +1,5 @@
 """A user's request that a problem be retired. The author reads it and retires
-the problem by hand: `corpus.md`, Problems."""
+the problem by hand: `api/problems.md`."""
 
 from datetime import datetime
 

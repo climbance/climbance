@@ -26,7 +26,8 @@ class ExpectedSource(StrEnum):
 
 class TestCase(MachineProvenance):
     """One case of a generated problem's set. The provenance is the proposing
-    call's rather than the problem's — `corpus.md` gives why."""
+    call's rather than the problem's — `cli/generation/test-cases.md` gives
+    why."""
 
     id: str
     problem_id: str = Field(min_length=1)

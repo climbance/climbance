@@ -13,8 +13,8 @@ def test_every_brief_names_the_interpreter_it_runs_under():
 
 
 def test_every_brief_asks_for_the_one_entry_point():
-    """`corpus.md` gives it as an invariant: a stored name lets a statement and
-    a solution disagree about what the runner calls."""
+    """`cli/generation/test-cases.md` gives it as an invariant: a stored name
+    lets a statement and a solution disagree about what the runner calls."""
     for prompt in PROMPTS:
         assert ENTRY in prompt
 

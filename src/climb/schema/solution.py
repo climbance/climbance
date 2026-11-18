@@ -12,7 +12,8 @@ class SolutionRole(StrEnum):
     CANONICAL = "canonical"
     REFERENCE = "reference"
     # the naive solution a speedup is measured against, written as the approach
-    # the form replaces. `corpus.md` gives what it may never do
+    # the form replaces. `cli/generation/solutions.md` gives what it may never
+    # do
     NAIVE = "naive"
 
 

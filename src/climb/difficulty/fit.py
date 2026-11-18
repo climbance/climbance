@@ -1,4 +1,4 @@
-"""The difficulty fit's arithmetic: `corpus.md`, Difficulty fits."""
+"""The difficulty fit's arithmetic: `cli/difficulty/fits.md`."""
 
 import math
 from collections import defaultdict

@@ -31,8 +31,9 @@ def test_get_missing_is_none(database):
 
 
 def test_a_stored_problem_is_not_rewritten(database):
-    """`corpus.md`: a statement that says the wrong thing is retired and a new
-    problem written, so the attempts stay with what they were made against."""
+    """`api/problems.md`: a statement that says the wrong thing is retired and a
+    new problem written, so the attempts stay with what they were made
+    against."""
     store = ProblemStore(database)
     store.put(make_problem(title="Two Sum"))
 

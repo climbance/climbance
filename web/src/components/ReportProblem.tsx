@@ -31,7 +31,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 
-// a request the author reads before retiring the problem by hand: `corpus.md`, Problems
+// a request the author reads before retiring the problem by hand: `api/problems.md`
 export function ReportProblem({ problemId }: { problemId: string }) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState<RetirementReason>('defective')

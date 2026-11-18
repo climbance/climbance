@@ -170,7 +170,7 @@ def _answered(
     cap_ms: int,
     repeats: int = 1,
 ) -> CaseRun:
-    # one case per child: `corpus.md` requires that no case observes another
+    # one case per child: `api/runner.md` requires that no case observes another
     process = _FORKS.Process(
         target=child.case, args=(code, args, cap_ms, repeats, str(result_path))
     )

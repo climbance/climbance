@@ -24,7 +24,7 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     engine -->|"runs the sign-in flow"| identity_providers
     engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays"| model_router
+    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays; sends each call site's prompt; asks each panel member for a solution"| model_router
     engine -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
@@ -147,6 +147,8 @@ flowchart TB
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph cli["Command line"]
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
+        generation["Generation<br/>Writes each problem through its six call sites, and lands it with its cases and its solutions."]
+        difficulty["Difficulty<br/>Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."]
         matcher["Matcher<br/>Reads a canonical beside its statement and names the card templates it displays."]
         exercise_items["Exercise items<br/>Builds the judgement items and the key-line items from the seeded templates and their mutants."]
     end
@@ -155,6 +157,10 @@ flowchart TB
     matcher -->|"asks which templates a solution displays"| model_router
     matcher -->|"appends a machine template match"| database
     exercise_items -->|"reads the templates and appends the items"| database
+    generation -->|"sends each call site's prompt"| model_router
+    generation -->|"revises the drafts and lands each problem"| database
+    difficulty -->|"asks each panel member for a solution"| model_router
+    difficulty -->|"appends the trials, the fits and the ratings"| database
 ```
 
 <!-- end of the generated views -->
@@ -293,7 +299,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Defective**: a retirement reason: the statement asks for something its
   cases do not decide.
 - **Enumeration**: a pass over a landed problem proposing other approaches,
-  each generated as a further canonical. Deferred, as `corpus.md` gives.
+  each generated as a further canonical. Deferred, as
+  `cli/generation/solutions.md` gives.
 - **Calibration corpus**: the platform problems and attempts under
   `data/old/`, kept for one deferred measurement: how often a matcher names a
   form from a statement alone.
@@ -614,7 +621,11 @@ times. Each record class is specified in one of the files beside it.
 | [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique |
 | [`cli/matcher.md`](cli/matcher.md) | Template matches |
 | [`cli/exercise-items.md`](cli/exercise-items.md) | Judgement items and key-line items |
-| [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims, difficulty ratings and fits, trials |
+| [`cli/generation/`](cli/generation/README.md) | Problems, test cases, solutions, verification runs |
+| [`cli/difficulty/`](cli/difficulty/README.md) | Difficulty ratings and fits, trials, the criteria for each label |
+| [`cli/classifier.md`](cli/classifier.md) | Solution claims |
+| [`api/problems.md`](api/problems.md) | Serving and retiring a problem |
+| [`api/runner.md`](api/runner.md) | How a solution is run, and what a stored result means |
 | [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests, run faults and feedback |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
@@ -734,7 +745,7 @@ times. Each record class is specified in one of the files beside it.
     hijacked connection to write a container's standard input, and the Docker
     SDK for Python is untyped.
   - One container holds a whole run, and the entry process forks a child per
-    case inside it. No case observes another, as `corpus.md` requires. A
+    case inside it. No case observes another, as `api/runner.md` requires. A
     container per case would pay a container's start once per case, where a
     fork costs far less.
   - The submission's image carries a Python interpreter and no engine code.

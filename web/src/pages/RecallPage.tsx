@@ -258,7 +258,7 @@ function Trainer({ slug, templateSlug, trigger, signature }: Props) {
 
       <section className="space-y-stack">
         <div className="h-96">
-          {/* the signature, and the file otherwise blank: `corpus.md` gives why
+          {/* the signature, and the file otherwise blank: `cli/generation/test-cases.md` gives why
               the parameter order is stated rather than inferred */}
           <CodeEditor initial={blank} onChange={(typed) => (code.current = typed)} onSubmit={run} />
         </div>
