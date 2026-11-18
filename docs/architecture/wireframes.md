@@ -483,9 +483,11 @@ problem's path reads as its record, as "Every problem" gives.
 - A locked row reads `waits on` and the required cards not yet met, in place
   of the trigger. The row still opens the card, since a locked card is read in
   full.
-- Every row carries the recall state of its templates, one mark each in the
-  card's order: `✓` recalled clean, `◐` passed with hints, `✗` failed, `·`
-  never recalled, and `-` a template no case checks.
+- A row carries the recall state of its templates once one of them was
+  recalled. It reads one mark per template in the card's order: `✓` recalled
+  clean, `◐` passed with hints, `✗` failed, `·` never recalled, and `-` a
+  template no case checks. Before the first recall every mark would read `·`
+  and tell nothing, so the row carries no recall line.
 - A gap reads on the row as `n forms uncovered`, as the card's own page
   reports it.
 - The phone reads the same sections and rows with no gutter. Each row of a

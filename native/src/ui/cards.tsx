@@ -78,7 +78,7 @@ export function CardPanel({
                   {row.trigger}
                 </Text>
               ) : null}
-              <Marks marks={row.recall} />
+              {row.recall.length > 0 ? <Marks marks={row.recall} /> : null}
             </PickRow>
           </Fragment>
         );

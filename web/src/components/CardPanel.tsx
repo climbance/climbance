@@ -83,7 +83,7 @@ function CardRow({ card, heading }: { card: ListedCard; heading: string | null }
       {row.trigger !== null && (
         <p className="mt-1 line-clamp-2 text-meta text-muted-foreground">{row.trigger}</p>
       )}
-      <RecallMarks marks={row.recall} />
+      {row.recall.length > 0 && <RecallMarks marks={row.recall} />}
     </PickRow>
   )
 }

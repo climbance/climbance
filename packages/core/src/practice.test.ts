@@ -340,6 +340,10 @@ describe("a card's row", () => {
       ['✓', 'passed'],
     ]);
   });
+
+  it('reads no marks until one of its forms was recalled', () => {
+    expect(cardRow(card('a', { templates: [template('never')] }), null, NOW).recall).toEqual([]);
+  });
 });
 
 describe("a card's templates", () => {

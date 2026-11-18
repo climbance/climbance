@@ -363,6 +363,7 @@ export interface CardRowView {
   next: string | null;
   trigger: string | null;
   progress: { solved: number; rungs: number } | null;
+  // empty until one of the card's forms was recalled
   recall: RecallMark[];
 }
 
@@ -381,7 +382,8 @@ export function cardRow(card: ListedCard, heading: string | null, now: number): 
     next: cardNextLine(status.next, now),
     trigger: started || locked ? null : plain(card.trigger),
     progress: started ? { solved: status.solved, rungs: status.rungs } : null,
-    recall: recallMarks(card),
+    // marks read only once a form was recalled, as `wireframes.md` gives
+    recall: status.recall.some((one) => one.last_at) ? recallMarks(card) : [],
   };
 }
 
