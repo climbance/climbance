@@ -7,7 +7,7 @@ import {
   CLEAR_FOCUS_BODY,
   CLEAR_FOCUS_KEEP,
   clearFocusTitle,
-  CONTINUE,
+  continueLabel,
   continueCounts,
   continueOffered,
   continueLine,
@@ -78,7 +78,7 @@ function focusPath(f: Focus): string {
 
 export function KnowledgeNext({ controls }: { controls: boolean }) {
   const k = useKnowledge()
-  const { catalog, focus, board, newLimit, newPerDay, certExams, now } = useLearner()
+  const { catalog, focus, board, newLimit, newPerDay, certExams, now, acted } = useLearner()
   const navigate = useNavigate()
   const [empty, setEmpty] = useState<EmptyContinue | null>(null)
 
@@ -233,7 +233,7 @@ export function KnowledgeNext({ controls }: { controls: boolean }) {
           disabled={!continueOffered(counts)}
           onClick={() => continueOffered(counts) && start(counts)}
         >
-          {CONTINUE}
+          {continueLabel(acted)}
         </Button>
         {/* the second way in, at a lower weight, on the knowledge home: `pages.md`, The knowledge pages */}
         {controls && (

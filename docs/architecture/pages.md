@@ -350,6 +350,10 @@ platforms.
 - **The knowledge home asks for one act: Continue.** Continue starts the next
   queue. The line under the press counts the reviews due and the new
   questions left today, in the words the phone shows.
+- **The press reads Start while the user's knowledge log holds no answer and
+  no lesson mark.** A new user meets the press before studying anything, and
+  Continue would name nothing it continues. The press starts the same queue
+  under either label.
 - **The home offers Exam as a second way in, at a lower weight.** A filtered
   queue starts from a module's page instead, where the groups it can serve
   are already drawn.

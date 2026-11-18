@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   Board,
   continueCounts,
+  continueLabel,
   continueOffered,
   continuePlan,
   focusView,
@@ -155,5 +156,12 @@ describe('when Continue is offered', () => {
     expect(continueOffered(undefined)).toBe(false);
     const counts = { reviews: 0, learning: 0, newLeft: 0, outside: 0, empty: true, blocked: false };
     expect(continueOffered(counts)).toBe(true);
+  });
+});
+
+describe("Continue's label", () => {
+  it('reads Start until the log holds an answer or a lesson mark', () => {
+    expect(continueLabel(false)).toBe('Start');
+    expect(continueLabel(true)).toBe('Continue');
   });
 });

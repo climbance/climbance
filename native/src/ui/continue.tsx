@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Button, Snackbar, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import {
-  CONTINUE,
+  continueLabel,
   continueOffered,
   continueCounts,
   continueLine,
@@ -66,7 +66,7 @@ export function useContinue() {
     setNotice('');
     setAction(null);
   };
-  return { cont, counts, focus, start, reviewOutside, notice, action, clear, ready: continueOffered(counts) };
+  return { cont, counts, focus, start, reviewOutside, notice, action, clear, ready: continueOffered(counts), acted: st.acted };
 }
 
 export type Next = ReturnType<typeof useContinue>;
@@ -89,7 +89,7 @@ export function ContinueBar({ next, exam = false }: { next: Next; exam?: boolean
         </Press>
       ) : null}
       <Press icon="play" style={{ flex: 1 }} disabled={!next.ready} onPress={next.start}>
-        {CONTINUE}
+        {continueLabel(next.acted)}
       </Press>
     </BottomBar>
   );
@@ -146,7 +146,7 @@ export function ContinueInPanel({ next, inFocus = false }: { next: Next; inFocus
         disabled={!next.ready}
         onPress={next.start}
       >
-        {CONTINUE}
+        {continueLabel(next.acted)}
       </Button>
       <CountsLine next={next} bare={inFocus} start />
     </View>
