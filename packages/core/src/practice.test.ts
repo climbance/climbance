@@ -108,7 +108,6 @@ describe("a technique's row", () => {
   it('reads the judgement rates once an item of each kind was answered', () => {
     const judged = { flaws_found: 3, flawed: 4, false_alarms: 1, clean: 0 };
     expect(techniqueStats({ attempt_count: 0, solved_count: 0, judged }, NOW)).toEqual([
-      { label: 'attempted', value: 'never' },
       { label: 'flaws found', value: '3/4' },
     ]);
   });
@@ -563,16 +562,13 @@ describe("a technique's knowledge reading", () => {
     expect(techniqueKnowledge(learner([]), { technique: 'greedy', narrower: [] })).toBeNull();
   });
 
-  it('follows the counts with the questions passed', () => {
+  it('reads a row practised through its questions alone without never', () => {
     const stats = techniqueStats({ attempt_count: 0, solved_count: 0, last_attempt_at: null }, NOW, {
       passed: 1,
       answered: 2,
       total: 3,
     });
-    expect(stats).toEqual([
-      { label: 'attempted', value: 'never' },
-      { label: 'known', value: '1/3' },
-    ]);
+    expect(stats).toEqual([{ label: 'known', value: '1/3' }]);
   });
 });
 

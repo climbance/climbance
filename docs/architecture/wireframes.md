@@ -114,6 +114,9 @@ Every page under a section carries the same two rows above its body.
 - A practised technique is a row: the attempts, the share solved, when it was
   last practised, and the questions passed of every subtopic naming it. A
   technique no subtopic names reads no knowledge, as `monotonic-stack` here.
+- A technique practised only through its questions or judgements reads those
+  counts alone. A row reading `never attempted` would contradict the section's
+  heading, Techniques practised.
 - The line under the two groups counts the attempts no row holds: the attempts
   no technique resolved, and the attempts on a retired problem.
 - The scheduler's pick is served above the cards and the techniques, and every

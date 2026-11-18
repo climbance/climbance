@@ -92,8 +92,10 @@ export function techniqueKnowledge(
 }
 
 /**
- * A technique's counts, each beside its word. An untouched row reads as
- * `never`, and the knowledge reading follows where a subtopic holds questions.
+ * A technique's counts, each beside its word. A row with no attempt reads as
+ * `never` only while nothing else reads, since a row practised through its
+ * questions or judgements is listed as practised. The knowledge reading
+ * follows where a subtopic holds questions.
  */
 export function techniqueStats(
   row: Pick<TechniqueRow, 'attempt_count' | 'solved_count' | 'last_attempt_at'> &
@@ -105,7 +107,7 @@ export function techniqueStats(
     ...(knowledge ? [{ label: 'known', value: `${knowledge.passed}/${knowledge.total}` }] : []),
     ...judgedStats(row.judged ?? null),
   ];
-  if (row.attempt_count === 0) return [{ label: 'attempted', value: 'never' }, ...known];
+  if (row.attempt_count === 0) return known.length > 0 ? known : [{ label: 'attempted', value: 'never' }];
   return [
     { label: row.attempt_count === 1 ? 'attempt' : 'attempts', value: row.attempt_count },
     { label: 'solved', value: share(row.solved_count, row.attempt_count) },
