@@ -545,6 +545,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Section**: one of the four destinations both clients' navigation names:
   Practice, Problems, Cards and Knowledge. Every page sits under one of them
   or under neither.
+- **Guide**: the page saying what each kind of practice trains and where a
+  new user starts, linked from the board while the user's log holds no act.
 - **Gallery**: the page showing every design token and every component the
   pages use, built in development alone.
 

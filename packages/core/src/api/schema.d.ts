@@ -878,6 +878,8 @@ export interface components {
       ungrouped: number;
       /** Excluded */
       excluded: number;
+      /** Acted */
+      acted: boolean;
     };
     /**
      * BoardPick

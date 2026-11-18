@@ -371,3 +371,17 @@ def test_another_user_s_sitting_is_not_found(client, database):
     other = browsing(database, "u-b71e03")
 
     assert other.get(f"/api/sittings/{sitting_id}").status_code == 404
+
+
+def test_the_board_says_the_user_has_not_acted_on_an_empty_log(client, database):
+    """The board's panel linking the guide shows on this alone."""
+    attempted(database, "a1", user_id="u-b71e03")
+
+    assert client.get("/api/board").json()["acted"] is False
+
+
+def test_a_sitting_with_no_submission_is_an_act(client):
+    """A started clock is the user's first step, and the guide's panel goes."""
+    client.post("/api/problems/p-sorting/sittings")
+
+    assert client.get("/api/board").json()["acted"] is True

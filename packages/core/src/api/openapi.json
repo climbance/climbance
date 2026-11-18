@@ -2042,13 +2042,18 @@
           "excluded": {
             "type": "integer",
             "title": "Excluded"
+          },
+          "acted": {
+            "type": "boolean",
+            "title": "Acted"
           }
         },
         "type": "object",
         "required": [
           "rows",
           "ungrouped",
-          "excluded"
+          "excluded",
+          "acted"
         ],
         "title": "Board"
       },

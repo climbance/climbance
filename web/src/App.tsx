@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
 import { FillPage } from '@/pages/FillPage'
+import { GuidePage } from '@/pages/GuidePage'
 import { JudgePage } from '@/pages/JudgePage'
 import { KnowledgePage } from '@/pages/KnowledgePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -88,6 +89,7 @@ function App() {
               <Route path="knowledge/lessons/:module/:lesson" element={<LessonPage />} />
               <Route path="knowledge/certifications" element={<CertificationsPage />} />
               <Route path="knowledge/exam" element={<ExamPage />} />
+              <Route path="start" element={<GuidePage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />

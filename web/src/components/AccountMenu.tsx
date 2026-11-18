@@ -1,8 +1,9 @@
-import { LogOut, Menu, Settings, Smartphone } from 'lucide-react'
+import { BookOpen, LogOut, Menu, Settings, Smartphone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
 import {
+  GUIDE_LINK,
   meLine,
   named,
   SETTINGS,
@@ -25,7 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
-// who the session signs in as, the settings, the apps signed in as it, and
+// who the session signs in as, the guide, the settings, the apps signed in as it, and
 // the sign-out.
 // The menu holds them rather than the navigation, which names where a page is
 export function AccountMenu() {
@@ -55,6 +56,12 @@ export function AccountMenu() {
                 </p>
               </div>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/start">
+                  <BookOpen />
+                  {GUIDE_LINK}
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/settings">
                   <Settings />

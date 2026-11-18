@@ -3,7 +3,16 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Appbar, Divider, Menu, Text, useTheme } from 'react-native-paper';
 
-import { type components, meLine, named, SETTINGS, SIGN_OUT, SIGNED_IN_DEVICES, YOUR_ACCOUNT } from '@climb/core';
+import {
+  type components,
+  GUIDE_LINK,
+  meLine,
+  named,
+  SETTINGS,
+  SIGN_OUT,
+  SIGNED_IN_DEVICES,
+  YOUR_ACCOUNT,
+} from '@climb/core';
 import { engine } from '@/lib/engine';
 import { getToken } from '@/lib/settings';
 import { useStore } from '@/lib/store';
@@ -62,6 +71,14 @@ export function AccountMenu() {
           </Text>
         </View>
         <Divider />
+        <Menu.Item
+          leadingIcon="book-open-outline"
+          title={GUIDE_LINK}
+          onPress={() => {
+            setOpen(false);
+            router.push('/guide');
+          }}
+        />
         <Menu.Item
           leadingIcon="cog-outline"
           title={SETTINGS}

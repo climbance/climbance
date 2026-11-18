@@ -150,7 +150,7 @@ export interface BoardView {
  * whose solutions the user judged, is practised, though no sitting reached it.
  */
 export function boardView(
-  board: BoardReading,
+  board: Pick<BoardReading, 'rows' | 'ungrouped' | 'excluded'>,
   knowledge: (row: TechniqueRow) => Knowledge | null = () => null,
 ): BoardView {
   const foot = [

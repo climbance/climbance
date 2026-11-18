@@ -38,6 +38,7 @@ from climb.ladder import (
 from climb.log import (
     AttemptLog,
     CardRunLog,
+    FillLog,
     JudgementLog,
     RecallLog,
     SittingStore,
@@ -70,6 +71,8 @@ class Board(BaseModel):
     rows: list[TechniqueRow]
     ungrouped: int
     excluded: int
+    # any act in the engine's log, before the device's answers: `pages.md`
+    acted: bool
 
 
 class Candidate(BaseModel):
@@ -158,10 +161,10 @@ def board(root: Root, user_id: UserId) -> Board:
     problems = {problem.id: problem for problem in load_problems(root)}
     claims = standing_attempt_claims(log.claims(user_id))
     rows = per_technique(attempts, problems, claims, latest_by_attempt(log.self_labels(user_id)))
-    rates = judgement_rates(
-        JudgementLog(root).for_user(user_id), ItemStore(root).all(), CardStore(root).all()
-    )
+    judgements = JudgementLog(root).for_user(user_id)
+    rates = judgement_rates(judgements, ItemStore(root).all(), CardStore(root).all())
     return Board(
+        acted=bool(attempts or judgements) or _acted(root, user_id),
         rows=[
             row.model_copy(update={"judged": rates.get(row.technique)})
             for row in stalest_first(rows, problems.values())
@@ -169,6 +172,16 @@ def board(root: Root, user_id: UserId) -> Board:
         ungrouped=len(ungrouped(attempts, problems, claims)),
         excluded=len(excluded(attempts, problems)),
     )
+
+
+def _acted(root: Database, user_id: str) -> bool:
+    reads = (
+        SittingStore(root).all,
+        RecallLog(root).all,
+        CardRunLog(root).all,
+        FillLog(root).for_user,
+    )
+    return any(read(user_id) for read in reads)
 
 
 class CardStatus(BaseModel):

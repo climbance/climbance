@@ -68,6 +68,7 @@ export type Session = QueueSession | ExamSession;
 
 interface Store {
   ready: boolean;
+  acted: boolean; // an answer or a lesson mark on the device: `pages.md`, Sections
   catalog: Catalog | null; // archived courses removed
   archived: Course[];
   attempts: AttemptRecord[];
@@ -406,6 +407,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<Store>(
     () => ({
       ready,
+      acted: learner.acted,
       catalog,
       attempts,
       sessions,

@@ -31,6 +31,8 @@ export interface Learner {
   limitAt: (now: number) => number;
   order: string[];
   certExams: CertRecord[];
+  /** Whether the device's copy holds an answer or a lesson mark: `pages.md`, Sections. */
+  acted: boolean;
 }
 
 const KINDS: Record<string, keyof LearnerLog> = {
@@ -84,5 +86,6 @@ export function learnerView(raw: Catalog | null, log: LearnerLog): Learner {
     limitAt: (now) => todayLimit(log.settings, log.raises, now),
     order: moduleOrder(log.orders),
     certExams: log.certs,
+    acted: log.attempts.length > 0 || log.lessons.length > 0,
   };
 }

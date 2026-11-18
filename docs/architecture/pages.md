@@ -59,6 +59,22 @@ those steps at low fidelity.
 - **A signed-in user lands on the board, on both clients.** Every sitting
   starts from a technique the user picks there, Continue starts the next
   queue there, and the scheduler's pick is served on the same page.
+- **The guide says what each kind of practice trains and where to start.**
+  It is a page of its own, `/start` on the web and Guide on the phone, under
+  no section. It names the sitting, the recall, judging a solution, filling a
+  key line and a question, each with what it trains and where it is reached.
+  It then names two starts: the board's pick for the algorithms, and a
+  module's first lesson for the knowledge. A user who is not the author
+  otherwise meets five kinds of practice with nothing saying how they differ.
+- **The board opens with a panel linking the guide while the user's log
+  holds no act**, on both clients. An act is an attempt, a sitting, a recall
+  attempt, a card run, a judgement, a fill, an answer or a lesson marked
+  read. The panel is derived from the log, and nothing stores a dismissal.
+  The first act therefore removes the panel on every client the act's record
+  reaches.
+- **The account menu links the guide**, on both clients, so a user can
+  reread it once the board's panel is gone. The guide's way back names the
+  board, since the guide's two starts both begin there.
 - **The board serves the pick above its lists, on both clients.** The pick
   is one row under its own heading, naming the form, the problem or the card,
   and the act it opens. `flows.md` `## The pick` gives what it offers. A user
@@ -496,7 +512,7 @@ Knowledge     the home
                 a queue, an exam
                 the lessons, a lesson
                 the certifications, a certification's conditions
-Account       the settings, the signed-in devices, the sign-out
+Account       the guide, the settings, the signed-in devices, the sign-out
 ```
 
 - **The four sections are the destinations both clients name.** The web
@@ -505,8 +521,8 @@ Account       the settings, the signed-in devices, the sign-out
   the tree rather than a tree of its own.
 - **Account sits apart from the sections on both clients.** The web opens it
   from the account menu, and the phone from its top bar. Account holds the
-  settings, the signed-in devices and the sign-out, since none of the three is
-  a place to practise.
+  guide, the settings, the signed-in devices and the sign-out, since none of
+  the four is a place to practise.
 - **A section's root is the only page the navigation reaches.** Every other
   page is a step down with one way back, as `## Sections` gives. A shortcut
   from the navigation to a page deeper in the tree would give that page two
@@ -587,6 +603,7 @@ what it offers. The inventory is the list both clients build to.
 | A lesson | `/knowledge/lessons/:module/:lesson` | Lesson | same |
 | The certifications | `/knowledge/certifications` | Certifications | same |
 | A certification's conditions | a dialog on the certifications and the map | a sheet on Certifications and Map | same |
+| The guide | `/start` | Guide | same |
 | The settings | `/settings` | Settings | same |
 | The signed-in devices | a dialog from the account menu | a screen from the account menu | same |
 | The login | `/login` | Login | same |

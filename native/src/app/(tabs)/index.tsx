@@ -5,6 +5,10 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
+  showsGuidePanel,
+  GUIDE_LINK,
+  GUIDE_PANEL_NOTE,
+  GUIDE_PANEL_TITLE,
   boardView,
   inProgress,
   techniqueKnowledge,
@@ -83,6 +87,14 @@ export default function PracticeScreen() {
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
           {BOARD_NOTE}
         </Text>
+        {showsGuidePanel(board.data, st) ? (
+          <>
+            <Heading title={GUIDE_PANEL_TITLE} />
+            <PickPanel>
+              <PickRow title={GUIDE_LINK} note={GUIDE_PANEL_NOTE} stats={[]} onPress={() => router.push('/guide')} />
+            </PickPanel>
+          </>
+        ) : null}
         {/* the knowledge study first, from the device's copy, so it reads
             before and without the engine's answer: `pages.md`, Sections */}
         {next.focus && next.cont ? (

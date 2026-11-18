@@ -22,6 +22,10 @@ import {
   techniqueKnowledge,
   pickView,
   takePick,
+  showsGuidePanel,
+  GUIDE_LINK,
+  GUIDE_PANEL_NOTE,
+  GUIDE_PANEL_TITLE,
   type PickTarget,
 } from '@climb/core'
 import { Link } from 'react-router'
@@ -48,7 +52,7 @@ export function BoardPage() {
   const pick = useLoaded((signal) => api.GET('/api/pick', { signal }), 'pick')
   const studying = inProgress(cards.data ?? [])
   const next = nextCards(cards.data ?? [])
-  const { catalog, board: learnerBoard, order, now } = useLearner()
+  const { catalog, board: learnerBoard, order, now, acted, ready } = useLearner()
   const all = useMemo(() => (catalog ? learnerBoard(null) : null), [catalog, learnerBoard])
   const modules = useMemo(() => (all ? orderedModuleRows(all, order, now) : []), [all, order, now])
   // the knowledge reading, from the device's copy: `log.md`, Mastery
@@ -57,6 +61,14 @@ export function BoardPage() {
   return (
     <section className="space-y-section">
       <PageHeader title={BOARD_TITLE} note={BOARD_NOTE} />
+      {showsGuidePanel(board.data, { ready, acted }) && (
+        <section className="space-y-stack">
+          <SectionHeading title={GUIDE_PANEL_TITLE} />
+          <PickPanel>
+            <PickRow to="/start" title={GUIDE_LINK} note={GUIDE_PANEL_NOTE} stats={[]} />
+          </PickPanel>
+        </section>
+      )}
       {/* the knowledge study first, from the device's copy, so it reads before
           and without the engine's answer: `pages.md`, Sections */}
       <KnowledgeNext controls={false} />
