@@ -47,7 +47,7 @@ export const COPY = 'Copy';
 
 // the board
 export const BOARD_TITLE = 'Practice';
-export const BOARD_NOTE = 'Continue a card or a module, or pick a technique, stalest first.';
+export const BOARD_NOTE = 'Start or continue a card or a module, or pick a technique.';
 export const BOARD_NONE = 'No served problem carries a technique yet.';
 export const BOARD_STUDYING = 'Cards in progress';
 export const EXECUTION = 'execution';

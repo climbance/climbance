@@ -54,7 +54,7 @@ Every page under a section carries the same two rows above its body.
 | Climbance    [ Practice ]  Problems  Cards  Knowledge           ☀  ≡   |
 +------------------------------------------------------------------------+
 | Practice                                                               |
-| Continue a card or a module, or pick a technique, stalest first.       |
+| Start or continue a card or a module, or pick a technique.             |
 |                                                                        |
 | Focus: Python . core                 [ Continue ]  12 due, 5 new       |
 |                                                                        |
@@ -130,7 +130,7 @@ Every page under a section carries the same two rows above its body.
 | Climbance    [ Practice ]  Problems  Cards  Knowledge           ☀  ≡   |
 +------------------------------------------------------------------------+
 | Practice                                                               |
-| Continue a card or a module, or pick a technique, stalest first.       |
+| Start or continue a card or a module, or pick a technique.             |
 |                                                                        |
 | New here?                                                              |
 | +--------------------------------------------------------+             |
