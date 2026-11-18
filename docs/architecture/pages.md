@@ -299,11 +299,15 @@ The first short exercise, served at a phone's width on both clients. `log.md`
 gives the exercise and `content.md` the items.
 
 - **The page opens from the board and from a card.** The board's press serves
-  items from every card. A card's press adds `?card=`, and the page serves that
-  card's forms alone.
+  the forms of the cards the user started first, as `log.md` gives. A card's
+  press adds `?card=`, and the page serves that card's forms alone.
 - **The item reads as its template's title, one of its cases and the code.**
+  The header names the card under the title. A template's title names the
+  form in words, since a new user reads it before the card.
   The case is the spec: `solve([3, 9, 4])` returns `9`. A statement would be a
   second text to read for a question the case already asks.
+- **The item shows no depth.** A card's depth in the card graph orders the
+  cards list, and beside one form it tells a new user nothing.
 - **Each line of the code is numbered, and the whole line is the tap
   target.** A tap on a wrapped line lands on the line it wraps from.
 - **The answer is two presses, Clean or Flawed.** Flawed then asks for the
@@ -313,7 +317,7 @@ gives the exercise and `content.md` the items.
   result reads as right, located, spotted on the wrong line, missed, or a
   false alarm. The flawed line is marked, and the separating case shows its
   arguments, the expected value and what the flawed code gave.
-- **Next serves the following item**, unseen first, then the stalest.
+- **Next serves the following item**, drawn as `log.md` gives.
 
 ### Filling a key line
 
@@ -322,15 +326,16 @@ gives the exercise and `content.md` the items.
 
 - **The page opens from the board and from a card**, as judging does. A card's
   press adds `?card=`.
-- **The item reads as its template's title, one of its cases and the code**,
-  with the blanked statement marked in place over every line it spans.
+- **The item reads as judging's does**, its template's title, its card, one of
+  its cases and the code, with the blanked statement marked in place over every
+  line it spans.
 - **The choices are presses below the code, shuffled on every serve.** A
   position then carries no answer. One press sends the fill, since a choice is
   one statement and needs no second step.
 - **The engine decides the fill, and the page shows the decision.** The result
   reads as right or wrong, and fills the blank with the form's statement. A
   wrong choice shows its separating case.
-- **Next serves the following item**, unseen first, then the stalest.
+- **Next serves the following item**, drawn as judging draws it.
 
 ## The knowledge pages
 

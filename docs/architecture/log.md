@@ -777,8 +777,16 @@ then taps the line that is wrong. `content.md` gives the items.
 - **Two rates per technique are derived for the board**: the flawed items
   spotted, and the clean items called flawed. A user calling everything flawed
   would score every flaw found, and the second rate exposes that.
-- **The next item is picked unseen first, then by staleness**, until the
-  scheduler picks it.
+- **The next item is drawn from the cards the user started first**, unseen
+  before stale. A user practises the forms of the cards being studied, and a
+  form from a card never opened tests what nobody taught. On a new account the
+  first item came from `backtracking`, a card locked behind another.
+- **With no item left on a started card, the next item comes from the cards
+  not started**, unseen before stale, the shallowest card first, then by slug.
+  The pick offers a new card in that order, as `flows.md` `## The pick`
+  gives. A page asking for one card's items draws from that card alone.
+- **The scheduler picking the next item is deferred** until the pick serves
+  short exercises.
 
 ### Filling a key line
 
@@ -792,8 +800,8 @@ statement that belongs there. `content.md` gives the items.
 - **After the fill, the item shows the form's line and, for a wrong choice,
   its separating case**: the arguments, the expected value and what the code
   with that line returned.
-- **The next item is picked unseen first, then by staleness**, as judging
-  picks its items.
+- **The next item is drawn as judging draws its items**: from the cards the
+  user started first, unseen before stale.
 - **A rate per technique on the board is deferred** until enough fills exist
   to show whether the fill rate differs from the judgement rates.
 

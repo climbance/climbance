@@ -1,10 +1,11 @@
 """An answer decided, and the next item picked: `log.md`, Judging a solution."""
 
-from collections.abc import Collection, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from enum import StrEnum
 from typing import Protocol
 
-from climb.schema import Fill, ItemStatus, Judgement, JudgementItem, KeyLineItem
+from climb.cards.graph import depths
+from climb.schema import Card, Fill, ItemStatus, Judgement, JudgementItem, KeyLineItem
 
 
 class Verdict(StrEnum):
@@ -41,14 +42,30 @@ def filled(item: KeyLineItem, answer: Fill) -> bool:
     return answer.choice < len(item.choices) and item.choices[answer.choice].correct
 
 
+type Place = tuple[bool, int, str]  # card not started, its depth, its slug
+
+
+def places(cards: Iterable[Card], started: Collection[str]) -> dict[str, Place]:
+    """Each template's card's place in the draw, by template id. `started`
+    holds the ids of the cards the user started."""
+    deep = depths(cards := list(cards))
+    return {
+        one.id: (card.id not in started, deep[card.slug], card.slug)
+        for card in cards
+        for one in card.templates
+    }
+
+
 def next_item[T: Served](
     items: Sequence[T],
     answers: Sequence[Answered],
+    places: Mapping[str, Place],
     *,
     templates: Collection[str] | None = None,
 ) -> T | None:
-    """Unseen first, then the item answered longest ago; `templates` narrows
-    the pick to one card's forms."""
+    """A started card's item first, unseen before the one answered longest
+    ago: `log.md`, Judging a solution. `templates` narrows the draw to one
+    card's forms."""
     last: dict[str, int] = {}
     for order, one in enumerate(answers):
         last[one.item_id] = order
@@ -59,4 +76,9 @@ def next_item[T: Served](
     ]
     if not open_:
         return None
-    return min(open_, key=lambda one: (one.id in last, last.get(one.id, -1), one.id))
+
+    def key(one: T) -> tuple[bool, bool, int, int, str, str]:
+        later, depth, slug = places[one.template_id]
+        return (later, one.id in last, last.get(one.id, -1), depth, slug, one.id)
+
+    return min(open_, key=key)

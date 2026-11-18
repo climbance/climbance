@@ -9,11 +9,10 @@ from pydantic import BaseModel
 
 from climb.api.context import Root, UserId
 from climb.cards import CardStore
-from climb.cards.graph import depths
 from climb.ids import new_id
 from climb.judgements import ItemStore
-from climb.judging import Verdict, next_item, verdict
-from climb.log import JudgementLog
+from climb.judging import Place, Verdict, next_item, places, verdict
+from climb.log import CardRunLog, JudgementLog
 from climb.schema import Card, CaseOutcome, Judgement, Template
 
 router = APIRouter(prefix="/judging")
@@ -32,8 +31,6 @@ class JudgedItem(BaseModel):
     item_id: str
     card_slug: str
     card_title: str
-    # the card's place in the card graph, the one difficulty a form has
-    depth: int
     template_title: str
     # what the form answers: its trigger's first sentence
     asks: str
@@ -71,7 +68,10 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> JudgedItem:
             raise HTTPException(status_code=404, detail=f"no card {card}")
         templates = {one.id for one in chosen[0].templates}
     item = next_item(
-        ItemStore(root).served(), JudgementLog(root).for_user(user_id), templates=templates
+        ItemStore(root).served(),
+        JudgementLog(root).for_user(user_id),
+        drawn(root, user_id, cards),
+        templates=templates,
     )
     if item is None:
         raise HTTPException(status_code=404, detail="no item to judge")
@@ -81,7 +81,6 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> JudgedItem:
         item_id=item.id,
         card_slug=owner.slug,
         card_title=owner.title,
-        depth=depths(cards)[owner.slug],
         template_title=template.title,
         asks=first_sentence(template.trigger),
         example=JudgeExample(args=first.args, expected=first.expected),
@@ -141,6 +140,10 @@ def first_sentence(text: str) -> str:
     plain = text.replace("**", "").replace("*", "").replace("`", "")
     head, dot, _ = plain.partition(". ")
     return head + "." if dot else plain
+
+
+def drawn(root: Root, user_id: str, cards: list[Card]) -> dict[str, Place]:
+    return places(cards, {one.card_id for one in CardRunLog(root).all(user_id)})
 
 
 def owners(cards: list[Card]) -> dict[str, tuple[Card, Template]]:

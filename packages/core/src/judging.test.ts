@@ -1,15 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { judgeCorrection, judgeDepth, judgeExample, separatingLines, VERDICTS, verdictPassed } from './index';
+import { judgeCorrection, judgeExample, separatingLines, VERDICTS, verdictPassed } from './index';
 import type { components } from './api/schema';
 
 type Decided = components['schemas']['JudgeDecided'];
 
 describe('a served item', () => {
-  it("reads its card's depth as its difficulty", () => {
-    expect([judgeDepth(0), judgeDepth(2)]).toEqual(['Root card', 'Depth 2']);
-  });
-
   it('states its question by one case, as JSON', () => {
     expect(judgeExample({ args: [[3, 9, 4], 'ab'], expected: 9 })).toBe('solve([3,9,4], "ab") returns 9');
   });

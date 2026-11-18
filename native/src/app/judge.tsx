@@ -15,7 +15,6 @@ import {
   VERDICTS,
   type components,
   judge,
-  judgeDepth,
   judgeCorrection,
   judgeExample,
   nextJudged,
@@ -78,7 +77,7 @@ export default function JudgeScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <ScreenHeader
         title={item ? item.template_title : JUDGE_TITLE}
-        note={[item ? `${item.card_title} · ${judgeDepth(item.depth)}` : null]}
+        note={[item ? item.card_title : null]}
       />
       <ScrollView contentContainerStyle={[styles.page, { paddingBottom: insets.bottom + 160 }]}>
         {refused ? <ErrorLine>{refused}</ErrorLine> : null}

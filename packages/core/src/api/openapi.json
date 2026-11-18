@@ -3302,10 +3302,6 @@
             "type": "string",
             "title": "Card Title"
           },
-          "depth": {
-            "type": "integer",
-            "title": "Depth"
-          },
           "template_title": {
             "type": "string",
             "title": "Template Title"
@@ -3345,7 +3341,6 @@
           "item_id",
           "card_slug",
           "card_title",
-          "depth",
           "template_title",
           "asks",
           "example",
@@ -3619,10 +3614,6 @@
             "type": "string",
             "title": "Card Title"
           },
-          "depth": {
-            "type": "integer",
-            "title": "Depth"
-          },
           "template_title": {
             "type": "string",
             "title": "Template Title"
@@ -3647,7 +3638,6 @@
           "item_id",
           "card_slug",
           "card_title",
-          "depth",
           "template_title",
           "asks",
           "example",

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from matching import card as card_record
@@ -5,7 +6,7 @@ from matching import seeded
 from matching import template as template_record
 
 from climb.judgements import ItemStore
-from climb.judging import build, digest, items, shown
+from climb.judging import build, digest, items, next_item, shown
 from climb.judging.build import WIDTH
 from climb.schema import Card, CaseOutcome, ItemStatus, Selector, Template, TemplateCase
 
@@ -176,3 +177,40 @@ def test_a_flawed_item_keeps_the_author_s_formatting():
             if line != base
         ]
         assert len(changed) == 1
+
+
+@dataclass(frozen=True)
+class Held:
+    id: str
+    template_id: str
+    status: ItemStatus = ItemStatus.SERVED
+
+
+@dataclass(frozen=True)
+class Given:
+    item_id: str
+
+
+DRAWN = {"t-new": (True, 0, "alpha"), "t-deep": (True, 1, "aaa"), "t-run": (False, 1, "zeta")}
+
+
+def test_a_started_card_is_drawn_before_an_unseen_card_not_started():
+    """A user practises the forms of the cards being studied: a stale item on
+    a started card comes before an unseen one elsewhere."""
+    held = [Held("i-1", "t-new"), Held("i-2", "t-run")]
+
+    assert next_item(held, [Given("i-2")], DRAWN) == held[1]
+
+
+def test_with_no_card_started_the_shallowest_card_is_drawn_first():
+    """The order the pick offers a new card in: depth, then slug."""
+    held = [Held("i-1", "t-deep"), Held("i-2", "t-new")]
+
+    assert next_item(held, [], DRAWN) == held[1]
+
+
+def test_among_cards_not_started_an_unseen_item_comes_before_a_stale_one():
+    """Depth orders the unseen items, and never puts a seen item first."""
+    held = [Held("i-1", "t-deep"), Held("i-2", "t-new")]
+
+    assert next_item(held, [Given("i-2")], DRAWN) == held[0]

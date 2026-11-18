@@ -9,7 +9,6 @@ import {
   fill,
   filledLine,
   inBlank,
-  judgeDepth,
   judgeExample,
   nextFilled,
   separatingLines,
@@ -23,7 +22,6 @@ import { ErrorLine } from '@/components/ErrorLine'
 import { PageHeader } from '@/components/PageHeader'
 import { Panel } from '@/components/Panel'
 import { WrappedText } from '@/components/PythonCode'
-import { Tag } from '@/components/Tag'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { exerciseBack } from '@/lib/paths'
@@ -80,9 +78,6 @@ export function FillPage() {
       {item === null && <p className="text-meta text-muted-foreground">{FILL_NONE}</p>}
       {item && (
         <div className="space-y-stack">
-          <div className="flex items-center gap-2">
-            <Tag>{judgeDepth(item.depth)}</Tag>
-          </div>
           <p className="text-meta text-muted-foreground">{item.asks}</p>
           <p className="font-mono text-meta">{judgeExample(item.example)}</p>
           <Panel className="overflow-hidden p-0">

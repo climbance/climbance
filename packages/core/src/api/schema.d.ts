@@ -1309,8 +1309,6 @@ export interface components {
       card_slug: string;
       /** Card Title */
       card_title: string;
-      /** Depth */
-      depth: number;
       /** Template Title */
       template_title: string;
       /** Asks */
@@ -1434,8 +1432,6 @@ export interface components {
       card_slug: string;
       /** Card Title */
       card_title: string;
-      /** Depth */
-      depth: number;
       /** Template Title */
       template_title: string;
       /** Asks */

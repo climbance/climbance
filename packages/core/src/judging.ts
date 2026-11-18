@@ -15,8 +15,6 @@ export const JUDGE_SUBMIT = 'Submit';
 export const JUDGE_NEXT = 'Next';
 export const JUDGE_NONE = 'No solution is left to judge here.';
 export const judgeFrom = (cardTitle: string) => `Judge ${cardTitle}`;
-/** A form's difficulty, as its card's depth in the card graph: a root teaches the basic forms. */
-export const judgeDepth = (depth: number) => (depth === 0 ? 'Root card' : `Depth ${depth}`);
 
 /** A value as the page prints it: JSON, which is what a case holds. */
 const shown = (value: unknown) => JSON.stringify(value);

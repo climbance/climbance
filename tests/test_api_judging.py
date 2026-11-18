@@ -4,9 +4,12 @@ import pytest
 from helpers import browsing
 from matching import card, seeded, template
 
+from climb.cards import CardStore
+from climb.ids import new_id
 from climb.judgements import ItemStore
 from climb.judging import build
-from climb.log import JudgementLog
+from climb.log import CardRunLog, JudgementLog
+from climb.schema import CardRun
 
 USER = "u-4f9c2a"
 FORM = (
@@ -43,14 +46,12 @@ def test_an_item_is_served_without_its_answer(client):
         "item_id",
         "card_slug",
         "card_title",
-        "depth",
         "template_title",
         "asks",
         "example",
         "lines",
     }
     assert served["example"] == {"args": [[3, 9, 4]], "expected": 9}
-    assert served["depth"] == 0
     assert served["lines"][0] == "def solve(xs):"
 
 
@@ -104,3 +105,21 @@ def test_the_next_item_is_one_not_yet_answered(client, database):
 def test_a_card_narrows_the_items_and_an_unknown_card_is_not_found(client):
     assert client.get("/api/judging/next?card=largest").status_code == 200
     assert client.get("/api/judging/next?card=nope").status_code == 404
+
+
+def test_the_card_the_user_started_is_drawn_first(client, database):
+    """Unstarted, the cards draw by slug, so `another` comes first; once
+    `largest` is started, its forms do."""
+    (other,) = seeded(
+        database, card(slug="another", templates=[template("biggest", code=FORM, cases=CASES)])
+    )
+    added, _ = build([other], [], now=datetime(2026, 11, 14, tzinfo=UTC))
+    ItemStore(database).add(added)
+    assert client.get("/api/judging/next").json()["card_slug"] == "another"
+
+    largest = CardStore(database).by_slug("largest")
+    CardRunLog(database).append(
+        CardRun(id=new_id(), user_id=USER, card_id=largest.id, started_at=datetime.now(UTC))
+    )
+
+    assert client.get("/api/judging/next").json()["card_slug"] == "largest"

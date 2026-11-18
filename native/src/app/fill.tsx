@@ -15,7 +15,6 @@ import {
   fill,
   filledLine,
   inBlank,
-  judgeDepth,
   judgeExample,
   nextFilled,
   separatingLines,
@@ -75,7 +74,7 @@ export default function FillScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <ScreenHeader
         title={item ? item.template_title : FILL_TITLE}
-        note={[item ? `${item.card_title} · ${judgeDepth(item.depth)}` : null]}
+        note={[item ? item.card_title : null]}
       />
       <ScrollView contentContainerStyle={[styles.page, { paddingBottom: insets.bottom + 160 }]}>
         {refused ? <ErrorLine>{refused}</ErrorLine> : null}

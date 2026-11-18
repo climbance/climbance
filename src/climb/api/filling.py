@@ -8,9 +8,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from climb.api.context import Root, UserId
-from climb.api.judging import JudgeExample, SeparatingCase, first_sentence, owners
+from climb.api.judging import JudgeExample, SeparatingCase, drawn, first_sentence, owners
 from climb.cards import CardStore
-from climb.cards.graph import depths
 from climb.ids import new_id
 from climb.judging import blank, filled, next_item
 from climb.keylines import KeyLineStore
@@ -31,7 +30,6 @@ class FilledItem(BaseModel):
     item_id: str
     card_slug: str
     card_title: str
-    depth: int
     template_title: str
     asks: str
     example: JudgeExample
@@ -61,7 +59,10 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> FilledItem:
             raise HTTPException(status_code=404, detail=f"no card {card}")
         templates = {one.id for one in chosen[0].templates}
     item = next_item(
-        KeyLineStore(root).served(), FillLog(root).for_user(user_id), templates=templates
+        KeyLineStore(root).served(),
+        FillLog(root).for_user(user_id),
+        drawn(root, user_id, cards),
+        templates=templates,
     )
     if item is None:
         raise HTTPException(status_code=404, detail="no item to fill")
@@ -77,7 +78,6 @@ def served(root: Root, user_id: UserId, card: str | None = None) -> FilledItem:
         item_id=item.id,
         card_slug=owner.slug,
         card_title=owner.title,
-        depth=depths(cards)[owner.slug],
         template_title=template.title,
         asks=first_sentence(template.trigger),
         example=JudgeExample(args=first.args, expected=first.expected),
