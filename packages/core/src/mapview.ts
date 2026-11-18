@@ -181,7 +181,7 @@ export function lessonView(b: Board, c: Course, slug: string): LessonView | null
     state,
     teaches: `Teaches: ${x.teaches.map(([s, l]) => `${s} · ${levelName(b.rules, l)}`).join(', ')}`,
     needs: needs.length ? `Needs: ${needs.join(', ')}` : null,
-    pretest: state === 'done' ? null : `Pretest: ${Math.min(b.tried(c, x), x.pretest)}/${x.pretest} questions tried`,
+    pretest: state === 'done' || b.pretestByTest(c, x) ? null : `Pretest: ${Math.min(b.tried(c, x), x.pretest)}/${x.pretest} questions tried`,
   };
 }
 

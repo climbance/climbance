@@ -166,3 +166,34 @@ describe('the graph order', () => {
     expect(inGraphOrder(both, both.graph!.lessons).map((x) => x.slug)).toEqual(['beta', 'alpha']);
   });
 });
+
+describe("a lesson's pretest", () => {
+  const pretested = loadSnapshot({
+    format: 6,
+    courses: [
+      {
+        slug: 'm',
+        definition: {
+          title: 'M',
+          pass_ratio: 1,
+          kinds: ['concept'],
+          topic: [{ slug: 't', tier: 1, title: 'T', subs: ['a'] }],
+        },
+        questions: [mk('q1', 'a', 0), mk('q2', 'a', 0), mk('q3', 'a', 0)],
+        graph: { format: 2, needs: {}, lesson: { first: lesson('first', ['a@0'], [], 2) } },
+        lesson_bodies: { first: 'text' },
+      },
+    ],
+  } as never);
+  const [m] = pretested.courses;
+  const first = m.graph!.lesson('first')!;
+
+  it('is spent by a baseline test taken on its topic, so the lesson comes first', () => {
+    const b = Board.build(pretested, [{ t: T, course: 'm', id: 'q1', ok: false, measure: 'baseline' }]);
+    expect(b.lessonReady(m, first)).toBe(true);
+  });
+
+  it('is not spent by a skipped test, which answered nothing', () => {
+    expect(Board.build(pretested, []).lessonReady(m, first)).toBe(false);
+  });
+});

@@ -33,6 +33,21 @@ export function buildHistory(records: AttemptRecord[]): History {
   return hist;
 }
 
+/** The `course:topic` of each baseline test answered, a skipped test answering nothing. */
+export function testedTopics(catalog: Catalog, records: AttemptRecord[]): Set<string> {
+  const out = new Set<string>();
+  const baseline = records.filter((r) => r.measure === 'baseline');
+  if (!baseline.length) return out;
+  const subs = new Map(catalog.questions.map((q) => [qkey(q), q.sub]));
+  for (const r of baseline) {
+    const c = catalog.courses.find((one) => one.slug === r.course);
+    const sub = subs.get(qkey(r));
+    const topic = c && sub ? topicOf(c, sub) : null;
+    if (topic) out.add(`${r.course}:${topic}`);
+  }
+  return out;
+}
+
 export const isPass = (a: Attempt) => a.rating === GOOD;
 
 export function status(
@@ -76,9 +91,18 @@ export class Board {
   readonly hist: History;
   readonly explicit: boolean; // one course was selected by the learner
   readonly include: string | null; // served even if paused: the focus course
+  readonly tested: ReadonlySet<string>; // `course:topic` of each baseline test taken
 
-  constructor(catalog: Catalog, courses: Course[], hist: History, explicit = false, include: string | null = null) {
+  constructor(
+    catalog: Catalog,
+    courses: Course[],
+    hist: History,
+    explicit = false,
+    include: string | null = null,
+    tested: ReadonlySet<string> = new Set(),
+  ) {
     this.catalog = catalog;
+    this.tested = tested;
     this.courses = courses;
     this.hist = hist;
     this.explicit = explicit;
@@ -95,7 +119,7 @@ export class Board {
 
   static build(catalog: Catalog, records: AttemptRecord[], only?: string | null, include: string | null = null): Board {
     const courses = only ? catalog.courses.filter((c) => c.slug === only) : catalog.courses;
-    return new Board(catalog, courses, buildHistory(records), !!only, include);
+    return new Board(catalog, courses, buildHistory(records), !!only, include, testedTopics(catalog, records));
   }
 
   /** Courses served by `next` and `exam`: paused ones only when selected explicitly. */
@@ -293,12 +317,21 @@ export class Board {
     return this.members(c, x).filter((q) => this.attempts(q).length).length;
   }
 
+  /** A taken baseline test of a topic the lesson teaches spends its pretest: `knowledge.md`, Lessons. */
+  pretestByTest(c: Course, x: Lesson): boolean {
+    return x.teaches.some(([sub]) => this.tested.has(`${c.slug}:${topicOf(c, sub)}`));
+  }
+
+  pretestSpent(c: Course, x: Lesson): boolean {
+    return this.tried(c, x) >= x.pretest || this.pretestByTest(c, x);
+  }
+
   /** Unlocked, not-done lessons of `q` whose pretest is used: they hold `q` while unseen. */
   holders(q: Question): Lesson[] {
     const c = this.course(q.course);
     if (!c) return [];
     return this.lessonsOf(c, q).filter(
-      (x) => !this.lessonDone(c, x) && this.lessonUnlocked(c, x) && this.tried(c, x) >= x.pretest,
+      (x) => !this.lessonDone(c, x) && this.lessonUnlocked(c, x) && this.pretestSpent(c, x),
     );
   }
 
@@ -315,7 +348,7 @@ export class Board {
 
   /** Due to be read: some unseen question in an open group is held by this lesson alone. */
   lessonReady(c: Course, x: Lesson): boolean {
-    if (this.lessonDone(c, x) || !this.lessonUnlocked(c, x) || this.tried(c, x) < x.pretest) return false;
+    if (this.lessonDone(c, x) || !this.lessonUnlocked(c, x) || !this.pretestSpent(c, x)) return false;
     return this.members(c, x).some((q) => {
       if (this.attempts(q).length || !this.unlocked(q) || this.done(q)) return false;
       const h = this.holders(q);
