@@ -16,7 +16,7 @@ export const LESSON_STOP_KICKER = 'New lesson';
 export const LESSON_STOP_READ = 'Read';
 export const LESSON_STOP_LATER = 'Later';
 
-// the baseline test a queue stops on: `knowledge.md`, Baseline and delayed tests
+// the baseline test a queue stops on: `core-package/knowledge/baseline-tests.md`
 export const BASELINE_KICKER = 'Before you start';
 export const BASELINE_NAME = 'Baseline test';
 export const BASELINE_TAKE = 'Take the test';

@@ -23,7 +23,7 @@ LEVEL = "BETWEEN 0 AND 3"
 
 
 # content: refreshed by the seed, matched by slug, retired rather than deleted
-# once the log references a row: `knowledge.md`, Seeding
+# once the log references a row: `cli/seed.md`
 
 modules = Table(
     "modules",
@@ -115,7 +115,7 @@ lessons = Table(
 
 
 # a drawing per Mermaid source, redrawn when the tool's version moves; no log
-# record references one: `knowledge.md`, Diagrams
+# record references one: `content-repo/modules.md`
 diagrams = Table(
     "diagrams",
     metadata,
@@ -129,7 +129,7 @@ diagrams = Table(
 
 
 # the knowledge log: append-only, each record minted by the client too, so a
-# retried upload writes nothing twice: `knowledge.md`, The records
+# retried upload writes nothing twice: `api/knowledge-log.md`
 def _logged(name: str, *columns: Column[Any] | CheckConstraint) -> Table:
     return Table(
         name,

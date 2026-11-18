@@ -83,7 +83,7 @@ hooks:
 seed source="content/cards":
     uv run climb seed cards {{ source }}
 
-# Install the tool the seed draws Mermaid diagrams with: `knowledge.md`,
+# Install the tool the seed draws Mermaid diagrams with: `content-repo/modules.md`,
 # Diagrams. It sits outside the npm workspace, so the engine's own install
 # downloads no browser. puppeteer's install script stays denied, and the
 # browser is installed here by name instead.

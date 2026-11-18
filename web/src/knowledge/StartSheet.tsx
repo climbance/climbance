@@ -36,7 +36,7 @@ import { useLearner } from '@/knowledge/learner'
 export type Scope = StartScope
 
 // the sheet's choices narrow this one queue, and starting it moves no focus:
-// `knowledge.md`, Queues
+// `core-package/knowledge/queues.md`
 export function StartSheet({ scope, onClose }: { scope: Scope | null; onClose: () => void }) {
   return (
     <Dialog open={scope !== null} onOpenChange={(open) => !open && onClose()}>

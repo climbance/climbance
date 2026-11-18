@@ -20,7 +20,7 @@ export interface Knowledge {
   outbox: number
   sync: SyncState
   resync: () => Promise<void>
-  /** Keeps a record the user made, and sends it as `knowledge.md` times it. */
+  /** Keeps a record the user made, and sends it as `core-package/knowledge/store.md` times it. */
   add: (kind: string, line: object) => Promise<void>
   /** Sends the outbox, then deletes the copy; the number left unsent where `force` is false. */
   leave: (force: boolean) => Promise<number>

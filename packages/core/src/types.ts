@@ -166,7 +166,7 @@ export interface AttemptRecord {
   measure?: Measure; // a test's answer, which the schedule skips
 }
 
-/** The test an answer was given in: `knowledge.md`, Baseline and delayed tests. */
+/** The test an answer was given in: `core-package/knowledge/baseline-tests.md`. */
 export type Measure = 'baseline' | 'delayed';
 
 export type CourseStatus = 'active' | 'paused' | 'archived';

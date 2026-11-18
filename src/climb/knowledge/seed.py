@@ -1,4 +1,4 @@
-"""Seeding a module: `knowledge.md`, Seeding."""
+"""Seeding a module: `cli/seed.md`."""
 
 from collections.abc import Callable, Iterable
 from datetime import UTC, datetime

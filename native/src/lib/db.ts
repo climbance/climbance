@@ -56,7 +56,7 @@ export function db(): Promise<SQLite.SQLiteDatabase> {
   return opened;
 }
 
-// the signed-in user, whose rows alone are read, written and sent: `knowledge.md`, A client's store
+// the signed-in user, whose rows alone are read, written and sent: `core-package/knowledge/store.md`
 let owner: string | null = null;
 
 export function setOwner(user: string | null) {

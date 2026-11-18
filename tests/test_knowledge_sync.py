@@ -35,7 +35,7 @@ def test_an_answer_is_stored_and_returned_as_it_was_sent(database, tmp_path):
 
 
 def test_a_record_sent_twice_is_stored_once(database, tmp_path):
-    """A retried upload writes nothing twice: `knowledge.md`, The records."""
+    """A retried upload writes nothing twice: `api/knowledge-log.md`."""
     synced(database, tmp_path, [attempt("c1")])
 
     again = synced(database, tmp_path / "again", [attempt("c1")])

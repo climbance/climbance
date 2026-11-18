@@ -155,7 +155,7 @@ function LessonStop({ item, bottom, onNext }: { item: LessonItem; bottom: number
   );
 }
 
-/** A baseline or delayed test a queue stops on: `knowledge.md`, Baseline and delayed tests. */
+/** A baseline or delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`. */
 function TestStop(props: {
   stop: { kicker: string; title: string; note: string };
   bottom: number;

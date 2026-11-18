@@ -10,7 +10,7 @@ import { CodeBlock } from '@/ui/common';
 
 /**
  * A Mermaid source as the seed drew it, in the app's scheme, scaled to the
- * reading width and never wider than drawn: `knowledge.md`, Diagrams. A
+ * reading width and never wider than drawn: `content-repo/modules.md`. A
  * source with no drawing reads as its text.
  */
 export function Diagram({ source }: { source: string }) {

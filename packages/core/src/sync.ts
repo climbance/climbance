@@ -7,8 +7,8 @@ import type { SettingName, SettingRecord } from './settings';
 import { syncedLine, type SyncedLine } from './synced';
 import type { CourseStatus, LessonRecord, RaiseRecord, SessionRecord, StatusRecord } from './types';
 
-// a client's sync with the engine, for every platform: `knowledge.md`, A
-// client's store. Each client keeps the copy its own way and implements
+// a client's sync with the engine, for every platform: `core-package/knowledge/store.md`.
+// Each client keeps the copy its own way and implements
 // `SyncStore`; the order of the steps and every decision live here
 
 export type Cursor = Record<string, number>;

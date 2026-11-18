@@ -74,7 +74,8 @@ def test_the_code_and_the_verifier_exchange_for_a_token(database, monkeypatch):
 
 
 def test_the_token_names_its_user(database, monkeypatch):
-    """The app keys its copy of the log to the user: `knowledge.md`."""
+    """The app keys its copy of the log to the user:
+    `core-package/knowledge/store.md`."""
     client, response = returned(database, monkeypatch)
 
     issued = exchanged(client, code_in(response)).json()

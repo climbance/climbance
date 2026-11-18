@@ -29,7 +29,7 @@ how an account signing in is linked to a user.
   made about the user's code.
 - **The knowledge log is part of it**: the user's answers, stints, module status
   changes, focuses, lesson marks, certification exams, setting changes,
-  limit raises and module orders, as `knowledge.md`
+  limit raises and module orders, as `api/knowledge-log.md`
   gives them. An erasure removes them with the rest, and the user's
   signed-in devices stay as the sign-in does.
 - **A reader given a user reads that user's records in its query.** No command
@@ -676,8 +676,8 @@ reviews. One curve then decides when a template's spaced check opens, when the
 check is owed, and when a graduated template is due again.
 
 - **A template's state is replayed from its reviews in time order**, as a
-  question's is from its answers in `knowledge.md`. The state is derived on
-  every read and never stored.
+  question's is from its answers in `core-package/knowledge/schedule.md`. The
+  state is derived on every read and never stored.
 - **A review is a recall attempt of the template, or a sitting on a problem
   whose `target_template_id` names the template.** `flows.md` `## A
   template's reviews` lists which sittings count.
@@ -724,8 +724,8 @@ check is owed, and when a graduated template is due again.
   alone, so changing it ships no snapshot and regenerates no fixture.
 - **The settings start equal to the questions'**: the FSRS-6 default
   parameters, desired retention 0.9, learning steps of 1 and 10 minutes, a
-  relearning step of 10 minutes, and fuzzing off. `knowledge.md` `## The
-  schedule` gives the reason for each.
+  relearning step of 10 minutes, and fuzzing off.
+  `core-package/knowledge/schedule.md` gives the reason for each.
 
 Deferred, since only use answers each:
 
@@ -821,13 +821,13 @@ model of mastery.
   recognition drills. A user who sees it and cannot write it needs the card's
   ladder and the recall trainer. A user who cannot state its facts needs the
   questions. A single score would hide which of the three the user needs.
-- **Knowledge is counted from answers** to the questions the technique
-  carries. `knowledge.md` gives the answer and the question state it is
-  replayed into.
-- **A question carries the techniques its subtopic names**, as `knowledge.md`
-  `## Modules` gives. An answer counts toward each technique's parents as well,
-  as a claim does, so an answer in `knapsack` counts toward
-  `dynamic-programming`.
+- **Knowledge is counted from answers** to the questions the technique carries.
+  `core-package/knowledge/schedule.md` gives the answer and the question state
+  it is replayed into.
+- **A question carries the techniques its subtopic names**, as
+  `content-repo/modules.md` `## Modules` gives. An answer counts toward each
+  technique's parents as well, as a claim does, so an answer in `knapsack`
+  counts toward `dynamic-programming`.
 - **Knowledge never stands in for recognition.** An answer recalls a fact the
   question named, and recognition is spotting a technique nobody named. A
   question answered correctly therefore raises no recognition reading.

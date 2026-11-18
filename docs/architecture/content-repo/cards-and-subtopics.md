@@ -7,7 +7,7 @@ The subtopic says why the forms are correct and what they cost.
 ## The pairing
 
 - **A card and a subtopic are paired by technique code alone.** A card names
-  one code, and a subtopic names any number, as `../knowledge.md` `## Modules`
+  one code, and a subtopic names any number, as `modules.md` `## Techniques`
   gives. A card is paired with every subtopic naming its code. The board's
   three readings key on the same code, so a pairing needs no field of its own.
 - **A card names its primary module, in `module`.** The primary module's

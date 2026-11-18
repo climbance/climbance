@@ -1,5 +1,4 @@
-"""The content as one snapshot, at snapshot format 6: `knowledge.md`, The
-wire."""
+"""The content as one snapshot, at snapshot format 6: `api/snapshot.md`."""
 
 from typing import Any
 

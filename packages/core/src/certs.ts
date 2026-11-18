@@ -1,4 +1,4 @@
-/** Certifications (`docs/architecture/knowledge.md`, Certifications). Mirrors the CLI; same error wording. */
+/** Certifications (`docs/architecture/core-package/knowledge/certifications.md`). Mirrors the CLI; same error wording. */
 import type { Graph } from './graph';
 import type { Board } from './schedule';
 import type { Course, Question } from './types';

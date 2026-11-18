@@ -1,7 +1,7 @@
 import { optimize } from 'svgo';
 
 // What react-native-svg, the phone's drawer, cannot read in Mermaid's own
-// SVG, and the seed fixes: `knowledge.md`, Diagrams.
+// SVG, and the seed fixes: `content-repo/modules.md`.
 
 const svgo = (prefix) => ({
   multipass: true,

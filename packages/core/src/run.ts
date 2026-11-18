@@ -123,8 +123,8 @@ export class QueueRun {
     this.done = true;
   }
 
-  // a topic's first new question waits for its baseline test: `knowledge.md`,
-  // Baseline and delayed tests. Once per topic in a run, whatever the answer
+  // a topic's first new question waits for its baseline test: `core-package/knowledge/baseline-tests.md`.
+  // Once per topic in a run, whatever the answer
   private testsOffered = new Set<string>();
 
   private baselineBefore(b: Board, q: Question, src: QueueSource): BaselineItem | null {
@@ -138,7 +138,7 @@ export class QueueRun {
   private testPlan: ExamPlan | null = null;
 
   // a stop at the start of the run, offered again each run until taken:
-  // `knowledge.md`, Baseline and delayed tests
+  // `core-package/knowledge/baseline-tests.md`
   private delayedFirst(src: QueueSource, now: number): DelayedItem | null {
     if (this.shown > 0 || !src.catalog) return null;
     if (this.queue.kind !== 'mix' && this.queue.kind !== 'focus') return null;
@@ -336,7 +336,7 @@ export class ExamRun {
   }
 }
 
-/** A test's stint names its topic and level: `knowledge.md`, Baseline and delayed tests. */
+/** A test's stint names its topic and level: `core-package/knowledge/baseline-tests.md`. */
 function testStint(s: SessionRecord, plan: ExamPlan): SessionRecord {
   if (!plan.test) return s;
   const { course, topic, level } = plan.test;

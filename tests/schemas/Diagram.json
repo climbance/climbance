@@ -1,5 +1,5 @@
 {
-  "description": "One Mermaid source drawn to SVG in both schemes, by the drawing tool's\nversion: `knowledge.md`, Diagrams.",
+  "description": "One Mermaid source drawn to SVG in both schemes, by the drawing tool's\nversion: `content-repo/modules.md`.",
   "properties": {
     "dark": {
       "minLength": 1,

@@ -10,3 +10,6 @@ them from there. The bullets on ingesting cards from files are still in
 | [`cards.md`](cards.md) | What a card is, its ladder, its templates' speedup claims and cases |
 | [`card-graph.md`](card-graph.md) | The requirements between cards, roots and depth |
 | [`cards-and-subtopics.md`](cards-and-subtopics.md) | How a card and a subtopic of a module share a technique, and the algorithms module |
+| [`modules.md`](modules.md) | A module's topics, subtopics and levels, where its authoring rules live, its diagrams |
+| [`questions.md`](questions.md) | A question's formats, its key and its grading |
+| [`lessons.md`](lessons.md) | Lessons and their pretests |

@@ -5,6 +5,8 @@ paths:
   - "content/modules/**"
 ---
 
-Read `docs/architecture/knowledge.md` before changing this code. It gives
-modules, questions, the schedule, gating, lessons, queues, settings, certifications, projections and the sync,
-and it wins over the code on any difference.
+Read `docs/architecture/core-package/knowledge/README.md` before changing this
+code, and the file it names for the rule at hand. `docs/architecture/content-repo/`
+gives modules, questions and lessons, and `docs/architecture/cli/seed.md` the
+seed. `docs/architecture/api/` gives the knowledge log, the snapshot and the
+sync. They win over the code on any difference.

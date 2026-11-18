@@ -5,7 +5,7 @@ import { shuffle, type Rng } from './select';
 import type { AttemptRecord, Course, SessionRecord } from './types';
 import { DELAYED_KICKER, delayedNote } from './words/queue';
 
-// `knowledge.md`, Baseline and delayed tests
+// `core-package/knowledge/baseline-tests.md`
 export const DELAYED_AFTER_DAYS = 28;
 const DAY = 86_400_000;
 

@@ -1,6 +1,6 @@
-"""The format check over questions and lessons. The graph and the
-certification settings are stored as authored: a client ignores
-a graph that fails its own check, as `knowledge.md` gives."""
+"""The format check over questions and lessons. The graph and the certification
+settings are stored as authored: a client ignores a graph that fails its own
+check, as `core-package/knowledge/gating.md` gives."""
 
 import re
 from collections.abc import Mapping

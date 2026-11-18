@@ -5,7 +5,7 @@ import { shuffle, type Rng } from './select';
 import type { Course, Question, SessionRecord } from './types';
 import { BASELINE_KICKER, baselineNote } from './words/queue';
 
-// `knowledge.md`, Baseline and delayed tests
+// `core-package/knowledge/baseline-tests.md`
 export const BASELINE_PER_SUB = 2;
 export const BASELINE_MOST = 20;
 

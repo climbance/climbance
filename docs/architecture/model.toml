@@ -288,9 +288,7 @@ kind = "component"
 container = "api"
 name = "Snapshot"
 role = "Serves the seeded content to both clients as one document, revalidated by its ETag."
-doc = "knowledge.md"
-section = "The wire"
-bullet = "The content reaches a client as one snapshot"
+doc = "api/snapshot.md"
 
 [[element]]
 id = "knowledge-sync"
@@ -298,9 +296,7 @@ kind = "component"
 container = "api"
 name = "Knowledge sync"
 role = "Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."
-doc = "knowledge.md"
-section = "The wire"
-bullet = "A client syncs sync lines"
+doc = "api/knowledge-sync.md"
 
 [[element]]
 id = "knowledge-log"
@@ -308,8 +304,7 @@ kind = "component"
 container = "api"
 name = "Knowledge log"
 role = "The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."
-doc = "knowledge.md"
-section = "The records"
+doc = "api/knowledge-log.md"
 
 [[element]]
 id = "problems"
@@ -346,6 +341,14 @@ container = "cli"
 name = "Difficulty"
 role = "Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."
 doc = "cli/difficulty/README.md"
+
+[[element]]
+id = "seed"
+kind = "component"
+container = "cli"
+name = "Seed"
+role = "Reads the authored cards and modules from `content/`, and refreshes the content tables from them."
+doc = "cli/seed.md"
 
 [[element]]
 id = "matcher"
@@ -461,9 +464,14 @@ label = "writes the corpus and the by-hand records"
 technology = "SSH tunnel to the server's loopback"
 
 [[relation]]
-from = "cli"
+from = "seed"
 to = "content-repo"
 label = "seeds cards and modules from `content/`"
+
+[[relation]]
+from = "seed"
+to = "database"
+label = "refreshes the content tables"
 
 [[relation]]
 from = "image-registry"

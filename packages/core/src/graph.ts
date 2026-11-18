@@ -1,4 +1,4 @@
-/** Prerequisite graph over subtopics (`docs/architecture/knowledge.md`, Gating). Mirrors the CLI. */
+/** Prerequisite graph over subtopics (`docs/architecture/core-package/knowledge/gating.md`). Mirrors the CLI. */
 
 const MAX_LEVEL = 3;
 

@@ -16,7 +16,7 @@ def snapshot(database, tmp_path, **files) -> dict:
 
 
 def test_the_snapshot_is_at_format_6(database, tmp_path):
-    """Format 6, so the app's loader stays as it is: `knowledge.md`."""
+    """Format 6, so the app's loader stays as it is: `api/snapshot.md`."""
     served = snapshot(database, tmp_path)
 
     assert served["format"] == 6

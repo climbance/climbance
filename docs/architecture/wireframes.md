@@ -767,8 +767,8 @@ problem's path reads as its record, as "Every problem" gives.
 
 - The key is withheld until the user presses Reveal, and this drawing is the
   page after that press.
-- Submit grades the ticks as `knowledge.md` gives, and the page then reads as
-  an answered question does.
+- Submit grades the ticks as `content-repo/questions.md` gives, and the page
+  then reads as an answered question does.
 
 ## A stopped queue
 

@@ -1213,7 +1213,7 @@
     "/api/knowledge/snapshot": {
       "get": {
         "summary": "Content",
-        "description": "Every live module, at snapshot format 6: `knowledge.md`. The\napp syncs often and the content moves only at a seed, so an unchanged\nsnapshot answers 304.",
+        "description": "Every live module, at snapshot format 6: `api/snapshot.md`. The\napp syncs often and the content moves only at a seed, so an unchanged\nsnapshot answers 304.",
         "operationId": "content_api_knowledge_snapshot_get",
         "responses": {
           "200": {
@@ -4024,7 +4024,7 @@
           "delayed"
         ],
         "title": "Measure",
-        "description": "The test an answer was given in: `knowledge.md`, Baseline tests."
+        "description": "The test an answer was given in:\n`core-package/knowledge/baseline-tests.md`."
       },
       "ModuleOrder": {
         "properties": {
@@ -4248,7 +4248,7 @@
           "n"
         ],
         "title": "OpenGrade",
-        "description": "An open question's grade, from the points ticked: `knowledge.md`."
+        "description": "An open question's grade, from the points ticked:\n`content-repo/questions.md`."
       },
       "Pause": {
         "properties": {

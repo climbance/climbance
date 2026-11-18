@@ -15,7 +15,7 @@ export interface DayLoad {
 
 /**
  * Reviews per learning day over the next `days`, from the questions already seen in served
- * modules. Each review is assumed to pass: `knowledge.md`, Projections.
+ * modules. Each review is assumed to pass: `core-package/knowledge/projections.md`.
  */
 export function reviewForecast(b: Board, now: number, days = FORECAST_DAYS, offsetMinutes?: number): DayLoad[] {
   const first = dayStart(now, offsetMinutes);

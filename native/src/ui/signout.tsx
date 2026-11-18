@@ -8,7 +8,7 @@ import { Sheet } from '@/ui/sheet';
 
 /**
  * Signing out sends the outbox first, and names the records it could not send
- * before deleting them: `knowledge.md`, A client's store.
+ * before deleting them: `core-package/knowledge/store.md`.
  */
 export function useSignOut(): { start: () => void; signing: boolean; dialog: ReactNode } {
   const st = useStore();

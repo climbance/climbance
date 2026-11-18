@@ -1,4 +1,5 @@
-"""The knowledge module's content and the knowledge log: `knowledge.md`."""
+"""The knowledge module's content and the knowledge log:
+`content-repo/modules.md` and `api/knowledge-log.md`."""
 
 from datetime import datetime
 from enum import StrEnum
@@ -36,14 +37,16 @@ class QuestionFormat(StrEnum):
 
 
 class Measure(StrEnum):
-    """The test an answer was given in: `knowledge.md`, Baseline tests."""
+    """The test an answer was given in:
+    `core-package/knowledge/baseline-tests.md`."""
 
     BASELINE = "baseline"
     DELAYED = "delayed"
 
 
 class OpenGrade(StrEnum):
-    """An open question's grade, from the points ticked: `knowledge.md`."""
+    """An open question's grade, from the points ticked:
+    `content-repo/questions.md`."""
 
     KNOWN = "k"
     PARTIAL = "p"
@@ -64,7 +67,7 @@ class SettingName(StrEnum):
     EXAM_SIZE = "exam_size"
 
 
-# the values each setting admits: `knowledge.md`, Settings
+# the values each setting admits: `core-package/knowledge/queues.md`
 SETTING_RANGE: dict[SettingName, tuple[int, int]] = {
     SettingName.NEW_PER_DAY: (0, 200),
     SettingName.EXAM_SIZE: (1, 500),
@@ -93,7 +96,7 @@ class Module(Seeded):
     kinds: list[str]
     code_kinds: list[str] = Field(default_factory=list[str])
     code_lang: str | None = None
-    # content edited without a migration: `knowledge.md`, Gating
+    # content edited without a migration: `core-package/knowledge/gating.md`
     graph: GraphSettings | None = None
     certifications: CertificationSettings | None = None
 
@@ -169,7 +172,7 @@ class Lesson(Seeded):
 
 class Diagram(BaseModel):
     """One Mermaid source drawn to SVG in both schemes, by the drawing tool's
-    version: `knowledge.md`, Diagrams."""
+    version: `content-repo/modules.md`."""
 
     source_hash: str = Field(min_length=1)
     source: str = Field(min_length=1)
@@ -180,8 +183,8 @@ class Diagram(BaseModel):
 
 
 class KnowledgeRecord(BaseModel):
-    """What every record of the knowledge log carries: `knowledge.md`, The
-    records."""
+    """What every record of the knowledge log carries:
+    `api/knowledge-log.md`."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -222,7 +225,7 @@ class Stint(KnowledgeRecord):
     level: int | None = Field(default=None, ge=0, le=3)  # an exam's alone
     score: int = Field(ge=0)  # the answers that were correct
     answered: int = Field(ge=0)
-    # a certification's exam, by its wire id: `knowledge.md`, The wire
+    # a certification's exam, by its wire id: `api/knowledge-sync.md`
     certification: str | None = Field(default=None, min_length=1)
     # a baseline or delayed test's topic, with its level above
     module_id: str | None = None

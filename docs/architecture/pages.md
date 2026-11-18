@@ -12,11 +12,11 @@ those steps at low fidelity.
 
 - **The navigation names four sections: Practice, Problems, Cards and
   Knowledge.** `## The structure` gives the tree both clients hold. Practice
-  holds the board, a technique's candidates, a picked problem and the
-  sitting. Problems holds the listing of every problem. Cards holds the card
-  list, one card, and the recall trainer.
-  Knowledge holds the knowledge modules of `knowledge.md`: their queues, their
-  lessons and their certifications.
+  holds the board, a technique's candidates, a picked problem and the sitting.
+  Problems holds the listing of every problem. Cards holds the card list, one
+  card, and the recall trainer. Knowledge holds the knowledge modules of
+  `core-package/knowledge/`: their queues, their lessons and their
+  certifications.
 - **The scheme switch and the account menu sit at the right of the
   navigation**, apart from the sections, since neither names a page.
 - **At phone width the wordmark reads as its flame dot alone, and the
@@ -49,8 +49,8 @@ those steps at low fidelity.
   The screen says the error was reported, and offers Reload and Send
   feedback. Without it a throw in one screen leaves a blank page, and the user
   cannot tell a fault from a page still loading.
-- **A study setting is a record of the user's log**, so a change on one
-  client stands on the other. `knowledge.md` gives the records. The device
+- **A study setting is a record of the user's log**, so a change on one client
+  stands on the other. `api/knowledge-log.md` gives the records. The device
   name and the reminder hour are about one phone, and stay on the phone's
   screen alone.
 - **Problems is marked on the listing alone.** A picked problem is a step down
@@ -127,10 +127,11 @@ those steps at low fidelity.
 - **A row's progress reads as one bar, the same on a card and a module.** A
   card's bar counts the rungs solved, and a module's counts the questions
   passed. A reader then compares two studies by one shape.
-- **The listing filters by two things a problem carries: its techniques and
-  its difficulty.** The tags it offers are the techniques the listing itself
-  holds, and the difficulties are the three a problem can carry: easy, medium
-  and hard. A question's level is a different field, as `knowledge.md` gives.
+- **The listing filters by two things a problem carries: its techniques and its
+  difficulty.** The tags it offers are the techniques the listing itself holds,
+  and the difficulties are the three a problem can carry: easy, medium and
+  hard. A question's level is a different field, as `content-repo/modules.md`
+  gives.
 - **A second pick inside one filter widens the list, and the two filters
   narrow each other.** A problem is shown where it carries any tag the user
   picked and sits at any difficulty they asked for. Two techniques ask for
@@ -289,8 +290,8 @@ those steps at low fidelity.
   submitted is that user's own, and the next account to sign in must not open
   it. The phone keys its copy the same way.
 - **The knowledge module keeps a copy of its content and of the user's log in
-  the browser too**, in IndexedDB. `knowledge.md` gives why the native app
-  and the web app keep the same copy.
+  the browser too**, in IndexedDB. `core-package/knowledge/store.md` gives why
+  the native app and the web app keep the same copy.
 - **The recall's path names the template by its authored slug**, and the drawn
   path sends the browser to it. A reload then asks for the same form, and a
   user who means to practise one form reaches it by name. `flows.md` gives why
@@ -342,8 +343,9 @@ gives the exercise and `cli/exercise-items.md` the items.
 
 ## The knowledge pages
 
-The pages of the Knowledge section. `knowledge.md` gives the rules each page
-applies, and `packages/core` computes every label and count the pages show.
+The pages of the Knowledge section. `core-package/knowledge/` gives the rules
+each page applies, and `packages/core` computes every label and count the pages
+show.
 The native app serves the same acts, as `README.md` requires of the two
 platforms.
 
@@ -377,22 +379,23 @@ platforms.
 - **The modules read below as rows, one per module not archived.** A row names
   the group next up with its passed share, and the reviews due, and opens the
   module's page. A paused module says so on its row.
-- **The home reads the reviews ahead below the modules**: a column per
-  learning day for fourteen days, `knowledge.md` giving what each counts. The
-  count is printed on today and on the busiest day alone. Hover on the web, or
-  a press on the phone, names any other day.
+- **The home reads the reviews ahead below the modules**: a column per learning
+  day for fourteen days, `core-package/knowledge/projections.md` giving what
+  each counts. The count is printed on today and on the busiest day alone.
+  Hover on the web, or a press on the phone, names any other day.
 - **The forecast reads neutral, with today in ink.** A load owed is not
   progress, so it carries no flame. The forecast asks for no act, so it sits
   below the rows the home's act and its modules need.
 - **The focus panel names when the focus is reached**, at the daily limit and
-  at the user's own pace, on both clients. `knowledge.md` gives how each date
-  is projected. The line is gone once the focus is reached.
+  at the user's own pace, on both clients.
+  `core-package/knowledge/projections.md` gives how each date is projected. The
+  line is gone once the focus is reached.
 - **The home raises today's limit and never sets the daily limit.** A raise
   answers today's practice, so the home offers it beside the focus. The daily
   limit is a standing choice, set on the settings page.
-- **The home lists the modules in the user's order, and a row moves up or
-  down on a press.** The phone drags a row instead. `knowledge.md` gives why
-  one order holds on every device.
+- **The home lists the modules in the user's order, and a row moves up or down
+  on a press.** The phone drags a row instead.
+  `core-package/knowledge/queues.md` gives why one order holds on every device.
 - **A module's page reads each topic as a panel of subtopics by level.** Each
   group reads as covered, open, locked or holding no questions.
 - **The start sheet opens on four scopes, on both clients**: a group's cell,
@@ -417,9 +420,9 @@ platforms.
   Starting a queue from the sheet moves no focus, so one drill does not
   retarget Continue. The status is active, paused or archived. A status
   press asks before it archives, since an archived module leaves the home.
-- **Exam opens on the focus**, on either client, as `knowledge.md` gives. The
-  focus is a record of the log, so a focus aimed on the phone opens the same
-  exam on the web.
+- **Exam opens on the focus**, on either client, as
+  `core-package/knowledge/queues.md` gives. The focus is a record of the log,
+  so a focus aimed on the phone opens the same exam on the web.
 - **The queue's path is `/knowledge/queue`, and `?mode=` names the queue**:
   next, review or filtered. A filtered queue's URL carries the sheet's
   choices too: `?module=`, `&topic=`, `&sub=`, `&level=`, `&kind=` and
@@ -467,7 +470,7 @@ platforms.
   loses a running queue to a link.
 - **An open question reveals its key on a press.** The user then ticks the
   points recalled, the traps fallen into, and whether they said anything else
-  wrong. `knowledge.md` gives the grade the ticks make.
+  wrong. `content-repo/questions.md` gives the grade the ticks make.
 - **A keyboard answers the queue.** A digit picks an option, and Enter submits
   or moves to the next question. A reader at a keyboard answers faster than by
   pointer.
@@ -951,9 +954,9 @@ difference it found. No row is marked `to fix` today.
   instead, so its long lines wrap as code does.
 - **A Mermaid diagram reads as the drawing the seed made, in the page's
   scheme**, scaled to the reading width and never wider than drawn.
-  `knowledge.md` `## Diagrams` gives how it is drawn. A source with no drawing
-  reads as its text, which a diagram drawn on the device would replace only
-  after a second or more.
+  `content-repo/modules.md` `## Diagrams` gives how it is drawn. A source with
+  no drawing reads as its text, which a diagram drawn on the device would
+  replace only after a second or more.
 - **A detail's diagram that is one markdown table alone reads as a table**,
   as a table in a lesson does. A table drawn in characters scrolls sideways on
   a phone, and the reader sees a third of its columns at a time.

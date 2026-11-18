@@ -2,8 +2,8 @@
 
 The engine's client on a phone: the knowledge modules' queues, scheduled
 offline. It came from learn, a personal study app, and runs the rules
-`docs/architecture/knowledge.md` gives. Fixtures the Python side generates hold
-it to that file.
+`docs/architecture/core-package/knowledge/README.md` gives. Fixtures the
+Python side generates hold it to that file.
 
 Expo (React Native) and TypeScript, built locally and installed over USB. No
 Play Store and no EAS.

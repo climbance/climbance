@@ -1,5 +1,5 @@
 // Draws Mermaid sources to SVG, once in the light scheme and once in the dark:
-// `knowledge.md`, Diagrams. Reads a JSON list of sources on stdin, and writes
+// `content-repo/modules.md`. Reads a JSON list of sources on stdin, and writes
 // {"tool": version, "drawings": [{"light", "dark"}, ...]} in the same order.
 // `--version` prints the version alone, which the seed keys its drawings by.
 import { createHash } from 'node:crypto';

@@ -51,7 +51,7 @@ import {
   type Snapshot,
 } from './index';
 
-// Generated from the Python side, which the engine port checks too: `docs/architecture/knowledge.md`.
+// Generated from the Python side, which the engine port checks too: `docs/architecture/core-package/knowledge/README.md`.
 const FIXTURE = resolve(__dirname, '../../../tests/fixtures/knowledge/scheduling.json');
 const data = JSON.parse(readFileSync(FIXTURE, 'utf8'));
 

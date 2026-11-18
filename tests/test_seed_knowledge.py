@@ -172,7 +172,7 @@ def test_a_reworded_question_keeps_its_slug_and_its_id(database, tmp_path):
 
 
 def test_a_question_gone_from_the_files_is_retired_and_kept(database, tmp_path):
-    """`knowledge.md`, Seeding: a deleted row would leave its answers pointing
+    """`cli/seed.md`: a deleted row would leave its answers pointing
     at nothing."""
     seed_module(read_module(authored(tmp_path)), root=database)
 
@@ -368,7 +368,7 @@ def test_one_technique_may_be_named_by_several_subtopics(database, tmp_path):
 
 
 def test_a_retired_module_keeps_every_row_and_leaves_the_snapshot(database, tmp_path):
-    """`knowledge.md`, Seeding: a module whose files are gone is retired,
+    """`cli/seed.md`: a module whose files are gone is retired,
     never deleted, so its answers keep pointing at its questions."""
     seed_module(read_module(authored(tmp_path)), root=database)
 

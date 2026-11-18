@@ -60,7 +60,7 @@ export function continuePlan(
   return b ? { b, queue: nextQueue(b, limit), course: only, include: null } : null;
 }
 
-// a plain review queue serves the weak and due questions alone: `knowledge.md`, Queues
+// a plain review queue serves the weak and due questions alone: `core-package/knowledge/queues.md`
 export const REVIEW_WANT: Status[] = ['weak', 'due'];
 
 export type QueueMode = 'next' | 'review' | 'drill';

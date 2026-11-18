@@ -551,7 +551,7 @@ export interface paths {
     };
     /**
      * Content
-     * @description Every live module, at snapshot format 6: `knowledge.md`. The
+     * @description Every live module, at snapshot format 6: `api/snapshot.md`. The
      *     app syncs often and the content moves only at a seed, so an unchanged
      *     snapshot answers 304.
      */
@@ -1608,7 +1608,8 @@ export interface components {
     };
     /**
      * Measure
-     * @description The test an answer was given in: `knowledge.md`, Baseline tests.
+     * @description The test an answer was given in:
+     *     `core-package/knowledge/baseline-tests.md`.
      * @enum {string}
      */
     Measure: 'baseline' | 'delayed';
@@ -1714,7 +1715,8 @@ export interface components {
     };
     /**
      * OpenGrade
-     * @description An open question's grade, from the points ticked: `knowledge.md`.
+     * @description An open question's grade, from the points ticked:
+     *     `content-repo/questions.md`.
      * @enum {string}
      */
     OpenGrade: 'k' | 'p' | 'n';

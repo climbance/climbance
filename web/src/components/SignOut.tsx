@@ -17,7 +17,7 @@ import { useKnowledge } from '@/knowledge/context'
 
 // signing out sends the outbox, then deletes the copy. An outbox that cannot
 // be sent is named first, so the user decides whether those records are lost:
-// `knowledge.md`, A client's store
+// `core-package/knowledge/store.md`
 export function SignOut({ children }: { children: (start: () => void) => ReactNode }) {
   const { leave } = useKnowledge()
   const [unsent, setUnsent] = useState(0)

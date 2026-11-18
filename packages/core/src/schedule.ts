@@ -23,7 +23,7 @@ export function buildHistory(records: AttemptRecord[]): History {
   const sorted = [...records].sort((a, b) => (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
   const hist: History = new Map();
   for (const r of sorted) {
-    // a test's answer is no review: `knowledge.md`, Baseline and delayed tests
+    // a test's answer is no review: `core-package/knowledge/baseline-tests.md`
     if (r.measure) continue;
     const k = qkey(r);
     let list = hist.get(k);
@@ -317,7 +317,7 @@ export class Board {
     return this.members(c, x).filter((q) => this.attempts(q).length).length;
   }
 
-  /** A taken baseline test of a topic the lesson teaches spends its pretest: `knowledge.md`, Lessons. */
+  /** A taken baseline test of a topic the lesson teaches spends its pretest: `content-repo/lessons.md`. */
   pretestByTest(c: Course, x: Lesson): boolean {
     return x.teaches.some(([sub]) => this.tested.has(`${c.slug}:${topicOf(c, sub)}`));
   }

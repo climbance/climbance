@@ -1,10 +1,11 @@
 # Authoring a module
 
-How a knowledge module's files are written. `docs/architecture/knowledge.md`
-gives the records the seed builds from the files and the rules the engine
-applies to them. `rules.md` beside this file gives the numbered rules every
-bank and lesson holds, and this file does not repeat them. `concepts.md`
-gives what changes for a module written from its concepts.
+How a knowledge module's files are written.
+`docs/architecture/content-repo/modules.md` gives the records the seed builds
+from the files and the rules the engine applies to them. `rules.md` beside
+this file gives the numbered rules every bank and lesson holds, and this file
+does not repeat them. `concepts.md` gives what changes for a module written
+from its concepts.
 
 A module lives in the content repository as `modules/<slug>/course.toml`
 beside `banks/<topic>/<subtopic>.toml`. A module's own `CLAUDE.md` there adds
@@ -76,9 +77,10 @@ precedence over this file.
   hierarchy, an MRO or a lookup order, a state machine, a request or data
   flow, a timeline of who runs when.
 - **A structure is a Mermaid diagram**: a ` ```mermaid ` fence in a lesson, or
-  a question's `diagram` that is one such fence alone. The seed draws it to
-  the screen's width, and a drawing made of characters scrolls sideways on a
-  phone. `docs/architecture/knowledge.md` `## Diagrams` gives how it is drawn.
+  a question's `diagram` that is one such fence alone. The seed draws it to the
+  screen's width, and a drawing made of characters scrolls sideways on a phone.
+  `docs/architecture/content-repo/modules.md` `## Diagrams` gives how it is
+  drawn.
 - **A Mermaid diagram is laid out top to bottom, as `flowchart TB`, with at
   most three nodes side by side.** A wider one shrinks to fit a phone, and its
   labels shrink below reading size. A long or wide structure is split into

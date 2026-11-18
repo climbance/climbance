@@ -1,5 +1,5 @@
-"""A question's memory, replayed from its answers: `knowledge.md`, The
-schedule."""
+"""A question's memory, replayed from its answers:
+`core-package/knowledge/schedule.md`."""
 
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
@@ -88,7 +88,8 @@ def history(answers: Iterable[Answer]) -> dict[str, list[Review]]:
     """Each question's reviews, in the order the user gave them."""
     reviews: dict[str, list[Review]] = defaultdict(list)
     for a in sorted(answers, key=lambda a: a.at):
-        # a test's answer is no review: `knowledge.md`, Baseline tests
+        # a test's answer is no review:
+        # `core-package/knowledge/baseline-tests.md`
         if a.measure is None:
             reviews[a.question_id].append(Review(a.at, rating(a)))
     return dict(reviews)

@@ -14,7 +14,7 @@ function asImage(svg: string): string {
 }
 
 // a Mermaid source as the seed drew it, in the page's scheme, never wider
-// than drawn: `knowledge.md`, Diagrams. An image runs no script the SVG holds.
+// than drawn: `content-repo/modules.md`. An image runs no script the SVG holds.
 export function Diagram({ source }: { source: string }) {
   const snapshot = useContext(KnowledgeContext)?.snapshot as Snapshot | undefined
   const drawn = snapshot?.diagrams?.[source]

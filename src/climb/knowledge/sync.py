@@ -1,5 +1,5 @@
 """The app's sync: its records appended by `client_id`, and the user's records
-since a cursor read back. `knowledge.md`, The records."""
+since a cursor read back. `api/knowledge-log.md`."""
 
 from datetime import UTC, datetime
 from typing import Any, cast
@@ -55,7 +55,7 @@ KINDS: dict[str, tuple[Table, type[KnowledgeRecord]]] = {
     "focus": (focuses, Focus),
     "lesson": (lesson_marks, LessonMark),
     "cert": (certification_exams, CertificationExam),
-    # the engine's own three kinds: `knowledge.md`, The wire
+    # the engine's own three kinds: `api/knowledge-sync.md`
     "setting": (setting_changes, SettingChange),
     "raise": (limit_raises, LimitRaise),
     "order": (module_orders, ModuleOrder),
@@ -209,8 +209,8 @@ def _slugs(value: object) -> list[str]:
 
 def _focus(names: _Names, line: dict[str, Any]) -> dict[str, Any]:
     """Refuses a topic or a subtopic the store does not hold, as an unknown
-    module is: the degrade `knowledge.md` gives is a client's reading of a
-    stored focus, never a rewrite of the line."""
+    module is: the degrade `core-package/knowledge/queues.md` gives is a
+    client's reading of a stored focus, never a rewrite of the line."""
     if line.get("course") is None:
         return {"strict": bool(line.get("strict"))}
     module_id = names.module(line["course"])

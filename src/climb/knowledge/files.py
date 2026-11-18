@@ -1,4 +1,4 @@
-"""A module's authored files, read as they are: `knowledge.md`, Modules."""
+"""A module's authored files, read as they are: `content-repo/modules.md`."""
 
 import tomllib
 from pathlib import Path

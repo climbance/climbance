@@ -8,7 +8,7 @@ from climb.schema.authored import LEVEL_NAMES
 
 # a certification whose scope is the whole module, in a sync line's id
 WHOLE = "all"
-# the wire's queue modes against the store's: `knowledge.md`, The wire
+# the wire's queue modes against the store's: `api/knowledge-sync.md`
 WIRE_MODES = {"drill": "filtered"}
 STORE_MODES = {ours: theirs for theirs, ours in WIRE_MODES.items()}
 EXAM = "exam-L"

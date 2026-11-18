@@ -1,4 +1,4 @@
-"""Mermaid sources drawn to SVG at the seed: `knowledge.md`, Diagrams."""
+"""Mermaid sources drawn to SVG at the seed: `content-repo/modules.md`."""
 
 import hashlib
 import json

@@ -28,7 +28,7 @@ QUESTION_FORMAT = postgresql.ENUM(
 OPEN_GRADE = postgresql.ENUM("k", "p", "n", name="open_grade", create_type=False)
 ENUMS = (MODULE_STATUS, STINT_MODE, QUESTION_FORMAT, OPEN_GRADE)
 
-# the user's knowledge log: `knowledge.md`, The records
+# the user's knowledge log: `api/knowledge-log.md`
 APPEND_ONLY = (
     "answers",
     "stints",

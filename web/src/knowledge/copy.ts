@@ -8,8 +8,7 @@ import {
 } from '@climb/core'
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from 'idb'
 
-// the browser's copy of the content and of one user's log: `knowledge.md`,
-// A client's store
+// the browser's copy of the content and of one user's log: `core-package/knowledge/store.md`
 
 // a browser carries no stable device name
 export const DEVICE = 'web'

@@ -62,7 +62,7 @@ export const isLessonItem = (x: unknown): x is LessonItem =>
 export type QueueKind = 'mix' | 'focus' | 'review' | 'drill';
 
 /**
- * Picks the next question on demand from what is ready now (`knowledge.md`, Queues). The board
+ * Picks the next question on demand from what is ready now (`core-package/knowledge/queues.md`). The board
  * is passed on every pick, so answers recorded since the last pick are taken into account.
  */
 export class Queue {
@@ -203,7 +203,7 @@ export class Queue {
   pick(b: Board, now: number, rng: Rng = Math.random): Question | LessonItem | null {
     const reviews = ranked(this.reviews(b, now), b, now, rng);
     // a stop right after a stop breaks the queue's flow, so a question comes
-    // between two lessons wherever one is left: `knowledge.md`, Lessons
+    // between two lessons wherever one is left: `content-repo/lessons.md`
     const lesson = () => {
       const item = this.lessonItem(b, now);
       if (item) this.offered.add(`${item.course.slug}:${item.lesson.slug}`);

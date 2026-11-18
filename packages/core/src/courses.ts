@@ -218,7 +218,7 @@ export function subsByDepth(c: Course, t: Topic): string[] {
 /** "unlocks generators, decorators" for a subtopic others list as a prerequisite, else "". */
 export function unlocksLabel(c: Course, sub: string): string {
   const next = c.graph?.unlocks(sub) ?? [];
-  // titles, as every subtopic reads: `knowledge.md`, Modules
+  // titles, as every subtopic reads: `content-repo/modules.md`
   return next.length ? `unlocks ${next.map((one) => subTitle(c, one)).join(', ')}` : '';
 }
 

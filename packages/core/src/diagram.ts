@@ -1,4 +1,4 @@
-/** One Mermaid source as the seed drew it, in each scheme: `knowledge.md`, Diagrams. */
+/** One Mermaid source as the seed drew it, in each scheme: `content-repo/modules.md`. */
 export interface Drawing {
   light: string;
   dark: string;

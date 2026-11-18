@@ -47,7 +47,8 @@ class Exchange(BaseModel):
 
 class Issued(BaseModel):
     token: str
-    # the user the app keys its copy of the log to: `knowledge.md`
+    # the user the app keys its copy of the log to:
+    # `core-package/knowledge/store.md`
     user_id: str
 
 

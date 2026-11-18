@@ -33,7 +33,7 @@ export function useStartSheet(): { open: (s: Scope) => void; sheet: ReactNode } 
   return { open: setScope, sheet };
 }
 
-// the choices narrow this one queue, and starting it moves no focus: `knowledge.md`, Queues
+// the choices narrow this one queue, and starting it moves no focus: `core-package/knowledge/queues.md`
 function StartSheet({ scope, onClose }: { scope: Scope; onClose: () => void }) {
   const st = useStore();
   const [level, setLevel] = useState(scope.level);

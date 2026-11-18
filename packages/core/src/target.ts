@@ -14,7 +14,7 @@ export const PACE_DAYS = 14;
 const HORIZON_DAYS = 3 * 365;
 const EARNED = ['earned', 'needs_refresh', 'empty'];
 
-/** Whether the focus is reached, as the route and the projection read it: `knowledge.md`, Projections. */
+/** Whether the focus is reached, as the route and the projection read it: `core-package/knowledge/projections.md`. */
 export function targetReached(b: Board, f: Focus, exams: CertRecord[]): boolean {
   const c = b.course(f.course);
   if (!c) return false;

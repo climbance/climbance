@@ -1,7 +1,7 @@
 {
   "$defs": {
     "Measure": {
-      "description": "The test an answer was given in: `knowledge.md`, Baseline and delayed tests.",
+      "description": "The test an answer was given in:\n`core-package/knowledge/baseline-tests.md`.",
       "enum": [
         "baseline",
         "delayed"
@@ -10,7 +10,7 @@
       "type": "string"
     },
     "OpenGrade": {
-      "description": "An open question's grade, from the points ticked: `knowledge.md`.",
+      "description": "An open question's grade, from the points ticked:\n`content-repo/questions.md`.",
       "enum": [
         "k",
         "p",

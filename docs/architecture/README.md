@@ -144,14 +144,18 @@ The Command line's components, and what each reads and writes.
 ```mermaid
 flowchart TB
     model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph cli["Command line"]
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
         generation["Generation<br/>Writes each problem through its six call sites, and lands it with its cases and its solutions."]
         difficulty["Difficulty<br/>Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."]
+        seed["Seed<br/>Reads the authored cards and modules from content/, and refreshes the content tables from them."]
         matcher["Matcher<br/>Reads a canonical beside its statement and names the card templates it displays."]
         exercise_items["Exercise items<br/>Builds the judgement items and the key-line items from the seeded templates and their mutants."]
     end
+    seed -->|"seeds cards and modules from content/"| content_repo
+    seed -->|"refreshes the content tables"| database
     classifier -->|"asks which techniques the code used"| model_router
     classifier -->|"appends a machine attempt claim"| database
     matcher -->|"asks which templates a solution displays"| model_router
@@ -618,7 +622,7 @@ times. Each record class is specified in one of the files beside it.
 | File | Holds |
 |---|---|
 | [`concepts/techniques.md`](concepts/techniques.md) | The technique vocabulary and how a technique is claimed |
-| [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique |
+| [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique, modules, questions, lessons |
 | [`cli/matcher.md`](cli/matcher.md) | Template matches |
 | [`cli/exercise-items.md`](cli/exercise-items.md) | Judgement items and key-line items |
 | [`cli/generation/`](cli/generation/README.md) | Problems, test cases, solutions, verification runs |
@@ -631,7 +635,10 @@ times. Each record class is specified in one of the files beside it.
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
 | [`wireframes.md`](wireframes.md) | Each page drawn at low fidelity |
-| [`knowledge.md`](knowledge.md) | Modules, where their authoring rules live, questions, lessons, the schedule, the queues, certifications, the baseline and delayed tests, and the user's knowledge log |
+| [`core-package/knowledge/`](core-package/knowledge/README.md) | The schedule, gating, the queues, certifications, the baseline and delayed tests, projections, a client's store |
+| [`cli/seed.md`](cli/seed.md) | Seeding cards and modules, and retiring what the files no longer hold |
+| [`api/knowledge-log.md`](api/knowledge-log.md) | The user's knowledge log |
+| [`api/snapshot.md`](api/snapshot.md), [`api/knowledge-sync.md`](api/knowledge-sync.md) | The snapshot, and the sync lines both clients write |
 | [`model.toml`](model.toml) | The engine's context and containers as one model: each element's stable ID, its role, the doc section that specifies it, and its relations |
 
 ## Data classes
@@ -926,8 +933,8 @@ times. Each record class is specified in one of the files beside it.
     and the question states. A rule only TypeScript holds, such as gating or
     a queue, keeps the cases generated before the merge until a server
     feature reads that rule.
-  - A rule changes in `knowledge.md` first, then in both copies. The doc is
-    the contract the fixtures are generated against.
+  - A rule changes in `core-package/knowledge/` first, then in both copies.
+    The doc is the contract the fixtures are generated against.
   - The app served the knowledge modules first, and the rest of the engine
     followed feature by feature. The phone now holds every page but the
     gallery, and `pages.md` lists what each client holds.
@@ -1129,7 +1136,7 @@ Properties the system holds at all times.
 - The knowledge module's domain in TypeScript lives in `packages/core`, the
   one copy of domain logic outside Python, imported by the web and the native
   app alike. Fixtures generated from the Python side hold the two copies to
-  `knowledge.md`.
+  `core-package/knowledge/`.
 - No third-party problem statements or test cases in git, in any repo.
 
 ## Repo constraints

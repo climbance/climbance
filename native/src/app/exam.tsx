@@ -97,7 +97,7 @@ function Choices({ catalog }: { catalog: Catalog }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const courses = catalog.courses;
-  // opens on the focus, which the phone and the web share: `knowledge.md`, Queues
+  // opens on the focus, which the phone and the web share: `core-package/knowledge/queues.md`
   const [opening] = useState(() => examOpening(st.focus));
   const [course, setCourse] = useState<string | null>(opening.course);
   const [level, setLevel] = useState(opening.level);

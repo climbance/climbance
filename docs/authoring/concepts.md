@@ -91,8 +91,9 @@ the coverage map for a module written by concept.
 ## Levels
 
 A concept's level says how far into Python a learner is before the concept
-matters to them. `docs/architecture/knowledge.md` names the four levels. This
-section gives the test the stage 1 writer applies and the reviewer checks.
+matters to them. `docs/architecture/content-repo/modules.md` names the four
+levels. This section gives the test the stage 1 writer applies and the reviewer
+checks.
 
 | Level | Name | The learner it serves | A concept at it |
 |---|---|---|---|
@@ -452,7 +453,7 @@ with its section.
   replaces `python`.** The log names a module by its slug, so a slug is
   permanent, and a title can change at any time.
 - **`python` stays seeded beside `py`.** A user pauses either module, as
-  `knowledge.md` `## Module status` gives.
+  `core-package/knowledge/queues.md` `## Module status` gives.
 - **`python` receives fixes to false statements alone** while `py` is
   written. Any other change there would be rewritten by `py`.
 - **A question of `python` may supply an idea to `py`**, a misconception or
@@ -462,7 +463,7 @@ with its section.
   level 0.** `core` is released at level 0 already, so `py` then holds level 0
   of its first three topics.
 - **At the replacement, `python` is removed from `content/`, and the seed
-  retires it**, as `knowledge.md` `## Seeding` gives. A `python` question is
+  retires it**, as `cli/seed.md` gives. A `python` question is
   then never served or counted, and its answers stay readable.
 - **`py`'s title becomes "Python" at the replacement, and its slug stays
   `py`.** The log names a module by its slug.

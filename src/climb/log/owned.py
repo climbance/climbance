@@ -117,7 +117,7 @@ class UserLog(BaseModel):
     feedback: list[Feedback]
     run_faults: list[RunFault]
     calls: list[Call]
-    # the knowledge log: `knowledge.md`, The records
+    # the knowledge log: `api/knowledge-log.md`
     answers: list[Answer]
     stints: list[Stint]
     module_status_changes: list[ModuleStatusChange]

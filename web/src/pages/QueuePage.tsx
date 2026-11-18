@@ -313,7 +313,7 @@ function LessonStop(props: {
   )
 }
 
-// a baseline or delayed test a queue stops on: `knowledge.md`, Baseline and delayed tests
+// a baseline or delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`
 function TestStop(props: {
   stop: { kicker: string; title: string; note: string }
   onTake: () => void
