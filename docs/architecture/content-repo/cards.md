@@ -58,6 +58,11 @@ from the template matches and the card's selector, and stores none of it.
   alone, `dp-1d-linear` filled eight rungs with medium problems while its easy
   problems waited. A learner starting the card then met no problem that
   applies the form unchanged.
+- **The ladder opens on its first easy rung**, whether that rung covers a
+  template or fills, and the other rungs keep their order behind it. The easy
+  rung is offered first even where it is optional and a required rung is
+  medium. Binary search opened on a required medium rung, and its easy rungs
+  came last, so a new user met the hardest problems first.
 - **Requiredness is derived from the templates a rung covers**, never stored.
   A rung covering a core template is required. A rung covering only the
   optional template is optional. A rung covering both is required, and the

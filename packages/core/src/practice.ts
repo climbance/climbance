@@ -544,16 +544,20 @@ export interface CardProgress {
   recallable: boolean;
 }
 
-// the engine's `next_rung`: required, then optional, then a skipped rung, each in the ladder's order
-function nextOf(rungs: Studied['rungs']): { problemId: string; title: string } | null {
+// the engine's `next_rung`: the opening easy rung, required, then optional, then
+// a skipped rung, each in the ladder's order. `opening` is read from the whole ladder
+function nextOf(rungs: Studied['rungs'], opening = openingOf(rungs)): { problemId: string; title: string } | null {
   const open = rungs.filter((one) => !one.solved);
   const next =
-    open.find((one) => !one.skipped && one.required) ??
+    open.find((one) => !one.skipped && (one.required || one.problem.id === opening)) ??
     open.find((one) => !one.skipped) ??
     open.find((one) => one.required) ??
     open[0];
   return next ? { problemId: next.problem.id, title: next.problem.title } : null;
 }
+
+const openingOf = (rungs: Studied['rungs']): string | null =>
+  rungs[0]?.problem.difficulty === 'easy' ? rungs[0].problem.id : null;
 
 export function cardProgress(studied: Studied): CardProgress {
   const open = studied.rungs.filter((one) => !one.solved);
@@ -571,7 +575,10 @@ export function cardProgress(studied: Studied): CardProgress {
 /** The rung an ended sitting offers beside the way back: the card's next, never the problem just sat. */
 export function rungAfter(studied: Studied, problemId: string): { problemId: string; title: string } | null {
   if (!studied.run) return null;
-  return nextOf(studied.rungs.filter((one) => one.problem.id !== problemId));
+  return nextOf(
+    studied.rungs.filter((one) => one.problem.id !== problemId),
+    openingOf(studied.rungs),
+  );
 }
 
 /** Reads the card again once a sitting from it ends, so the solve just made counts. */

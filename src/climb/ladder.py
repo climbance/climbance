@@ -238,6 +238,9 @@ def ladder(
         for one in fill[:room]
     ]
     rungs = [one.model_copy(update={"skipped": one.problem.id in skipped}) for one in rungs]
+    # `content-repo/cards.md`: the ladder opens on its first easy rung
+    easy = next((one for one in rungs if one.problem.difficulty == ProblemDifficulty.EASY), None)
+    rungs.sort(key=lambda one: one is not easy)
     # served after the rungs not skipped, each part in the ladder's order
     rungs.sort(key=lambda one: one.skipped)
     return Ladder(card_slug=card.slug, rungs=rungs, gaps=gaps)
@@ -245,8 +248,16 @@ def ladder(
 
 def next_rung(rungs: Sequence[Rung]) -> Rung | None:
     """The rung a card offers next: `flows.md`, The pick."""
+    opening = _opening(rungs)
     open_ = [one for one in rungs if not one.solved]
-    return min(open_, key=lambda one: (one.skipped, not one.required), default=None)
+    return min(
+        open_, key=lambda one: (one.skipped, one is not opening and not one.required), default=None
+    )
+
+
+def _opening(rungs: Sequence[Rung]) -> Rung | None:
+    """The ladder's first rung where it is easy: offered before the required."""
+    return rungs[0] if rungs and rungs[0].problem.difficulty == ProblemDifficulty.EASY else None
 
 
 def _solved(attempts: Iterable[Attempt], since: datetime | None) -> set[str]:

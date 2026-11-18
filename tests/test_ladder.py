@@ -672,4 +672,37 @@ def test_the_easy_rung_holds_past_a_size_the_covering_rungs_fill(database):
 
     resolved = ladder(held, problems, solutions, matches, [])
 
-    assert [one.problem.id for one in resolved.rungs] == ["p-1", "p-2", "p-easy"]
+    assert [one.problem.id for one in resolved.rungs] == ["p-easy", "p-1", "p-2"]
+
+
+def test_the_next_rung_is_the_opening_easy_one_before_the_required(database):
+    """A new user meets the form unchanged first, optional as the rung is."""
+    held = a_card(database, size=2)
+    first, second = held.templates
+    problems = [
+        problem(f"p-{one}", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "medium"})
+        for one in (1, 2)
+    ] + [problem("p-easy", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "easy"})]
+    solutions = [canonical("p-1"), canonical("p-2")]
+    matches = [generator_match(first.id, "s-p-1"), generator_match(second.id, "s-p-2")]
+
+    resolved = ladder(held, problems, solutions, matches, [])
+
+    assert not resolved.rungs[0].required
+    assert next_rung(resolved.rungs).problem.id == "p-easy"
+
+
+def test_a_covering_easy_rung_opens_the_ladder(database):
+    """The easy rung leads wherever it sits in the template order."""
+    held = a_card(database, size=2)
+    first, second = held.templates
+    problems = [
+        problem("p-1", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "medium"}),
+        problem("p-2", techniques=[TECHNIQUE]).model_copy(update={"difficulty": "easy"}),
+    ]
+    solutions = [canonical("p-1"), canonical("p-2")]
+    matches = [generator_match(first.id, "s-p-1"), generator_match(second.id, "s-p-2")]
+
+    resolved = ladder(held, problems, solutions, matches, [])
+
+    assert [one.problem.id for one in resolved.rungs] == ["p-2", "p-1"]

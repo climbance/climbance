@@ -788,7 +788,8 @@ to the card it came from.
   templates in the order it teaches them, and a rung covering the first template
   comes before a rung covering the third. The rungs the selector fills the
   ladder out with follow, least recently attempted first, as a technique's
-  candidates are ordered.
+  candidates are ordered. The ladder's first easy rung comes before all of
+  them, as `content-repo/cards.md` gives.
 - **A rung names the templates it covers**, so the user reads why this problem
   is on this ladder. The templates also decide whether the rung is required,
   which `content-repo/cards.md` derives rather than stores.
@@ -1030,6 +1031,8 @@ user's cards hold.
   waits, and a ladder picks up where it stopped.
 - **An acquiring card offers its first unsolved rung**, required rungs before
   optional ones, in the ladder's order, a skipped rung after the rest. The
+  ladder's opening easy rung counts as required in that order alone, so it is
+  offered first while unsolved, and the card state still ignores it. The
   ladder follows the card's template order. `## Solving a rung` gives both.
 - **A consolidating card with no probe solved offers its next unattempted
   probe**, ranked with the rungs. Graduation needs a solved probe, and a

@@ -430,6 +430,16 @@ describe("a card's ladder", () => {
     expect(cardProgress({ ...base, rungs } as typeof base).next?.problemId).toBe('p3');
   });
 
+  it('offers the opening easy rung before a required one, as the engine does', () => {
+    const base = studied(true);
+    const medium = (id: string) => ({ ...rung(id, ['t1'], true), problem: { id, title: id, difficulty: 'medium' } });
+    const rungs = [rung('p-easy', [], false), medium('p-a'), medium('p-b')];
+    const ladder = { ...base, rungs } as typeof base;
+    expect(cardProgress(ladder).next?.problemId).toBe('p-easy');
+    // once the easy rung is sat, the next is required, and no later rung opens the ladder
+    expect(rungAfter(ladder, 'p-easy')?.problemId).toBe('p-a');
+  });
+
   it('offers after a sitting the next rung other than the problem just sat', () => {
     expect(rungAfter(studied(true), 'p1')?.problemId).toBe('p2');
     // a failed sitting on the rung next offers the one after it, here none
