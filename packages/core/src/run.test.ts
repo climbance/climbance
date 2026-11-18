@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   answerResult,
+  baselineStop,
   Board,
+  examOutcome,
   canSubmit,
   ExamRun,
   flipped,
@@ -185,6 +187,15 @@ describe('a baseline test in a queue run', () => {
     expect(plan.questions).toHaveLength(2);
     expect(plan.questions.every((x) => x.format !== 'card')).toBe(true);
     expect(plan.test).toMatchObject({ measure: 'baseline', topic: 't' });
+  });
+
+  it('names the module beside the topic, on its stop and its summary', () => {
+    const r = run();
+    const item = r.current && 'baseline' in r.current ? r.current.baseline : null;
+    expect(baselineStop(item!, 2).title).toBe('C · T');
+    const plan = r.baselinePlan!;
+    const results = plan.questions.map((q) => ({ q, correct: true }) as Result);
+    expect(examOutcome(plan, results, '', catalog.courses).byTopic.map((t) => t.title)).toEqual(['C · T']);
   });
 
   it('is skipped once, as a stint naming the topic, and the question follows', () => {

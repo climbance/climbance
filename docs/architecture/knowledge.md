@@ -422,6 +422,10 @@ A lesson's pretest is a different thing, as `## Lessons` gives.
 - **The test samples two questions per subtopic, at most twenty.** Only
   `choice` and `short` questions are sampled, since an open question's grade
   is the user's own report, as an exam excludes it too.
+- **The test's stop and its summary name the module beside the topic**, as
+  `Algorithms · Procedures`. The stop interrupts a queue that may span
+  several modules, and a topic's title alone does not say which module it
+  belongs to.
 - **The test gives no feedback until the end**, as an exam does. A shown key
   would teach the next question's answer.
 - **The user may skip the baseline test once.** A skip stores a baseline

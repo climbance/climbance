@@ -249,3 +249,9 @@ export function subTitle(c: Course | undefined, sub: string): string {
 export function topicTitle(c: Course | undefined, topic: string): string {
   return c?.topics.find((t) => t.slug === topic)?.title ?? topic;
 }
+
+/** A topic named with its module, where nothing around it names the module. */
+export function moduleTopicTitle(c: Course | undefined, topic: string): string {
+  const title = topicTitle(c, topic);
+  return c ? `${c.title} · ${title}` : title;
+}

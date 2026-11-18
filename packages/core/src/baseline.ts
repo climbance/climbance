@@ -1,3 +1,4 @@
+import { moduleTopicTitle } from './courses';
 import type { ExamPlan } from './exam';
 import type { Board } from './schedule';
 import { shuffle, type Rng } from './select';
@@ -64,6 +65,5 @@ export function skipBaseline(item: BaselineItem, t: string): SessionRecord {
 
 /** The stop a queue shows for the test: the topic, and what the test asks and stores. */
 export function baselineStop(item: BaselineItem, size: number): { kicker: string; title: string; note: string } {
-  const title = item.course.topics.find((t) => t.slug === item.topic)?.title ?? item.topic;
-  return { kicker: BASELINE_KICKER, title, note: baselineNote(size) };
+  return { kicker: BASELINE_KICKER, title: moduleTopicTitle(item.course, item.topic), note: baselineNote(size) };
 }

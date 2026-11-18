@@ -1,5 +1,5 @@
 import { certQuestions, type Cert, type CertRecord } from './certs';
-import { levelName, topicTitle, type Catalog } from './courses';
+import { levelName, moduleTopicTitle, topicTitle, type Catalog } from './courses';
 import { examPool } from './modes';
 import { makeAttempt } from './records';
 import { validSetting } from './settings';
@@ -107,7 +107,9 @@ export function examOutcome(plan: ExamPlan, results: Result[], t: string, course
   for (const r of results) {
     const key = `${r.q.course}/${r.q.topic}`;
     const c = courses.find((x) => x.slug === r.q.course);
-    const e = topics.get(key) ?? { topic: key, title: topicTitle(c, r.q.topic), score: 0, n: 0 };
+    // a test's summary names the module too, as its stop does
+    const title = plan.test ? moduleTopicTitle(c, r.q.topic) : topicTitle(c, r.q.topic);
+    const e = topics.get(key) ?? { topic: key, title, score: 0, n: 0 };
     e.score += r.correct ? 1 : 0;
     e.n += 1;
     topics.set(key, e);
