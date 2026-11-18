@@ -50,7 +50,7 @@ flowchart TB
         broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
         sandbox["Sandbox<br/>One container per run under gVisor, no network, read-only root; its entry process forks a child per case."]
         database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
-        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits."]
+        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."]
     end
     learner -->|"practises in a browser"| web_app
     learner -->|"practises on a phone"| native_app
@@ -61,6 +61,7 @@ flowchart TB
     web_app -->|"sends JSON with the session cookie"| proxy
     native_app -->|"syncs knowledge records and runs sittings, with an app token"| proxy
     proxy -->|"passes every request"| api
+    api -->|"serves the built files"| web_app
     api -->|"runs the sign-in flow"| identity_providers
     api -->|"reads and writes the store"| database
     api -->|"asks for one run: code, arguments, cap"| broker
@@ -119,6 +120,8 @@ flowchart TB
     attempt_log -->|"appends to the user's log"| database
     sitting -->|"revises the sitting in place"| database
     predictions -->|"appends each prediction"| database
+    attempt_claims -->|"appends each claim"| database
+    self_labels -->|"appends each label"| database
 ```
 
 <!-- end of the generated views -->
