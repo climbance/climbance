@@ -1078,8 +1078,9 @@ problem's path reads as its record, as "Every problem" gives.
 | binary-search                                                          |
 |                                                                        |
 | +--------------------------------------------------------+             |
-| | The ladder is measured from the start, so a problem     |            |
-| | solved before it counts toward nothing.                 |            |
+| | Starting gives you this card's ladder to solve, and a   |            |
+| | few probes testing the form on problems it was not      |            |
+| | studied on. Solves count from the moment you start.     |            |
 | |                        [ Start studying this card ]     |            |
 | +--------------------------------------------------------+             |
 |                                                                        |

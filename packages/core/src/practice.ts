@@ -513,10 +513,9 @@ export const PROBES_TITLE = 'Probes';
 export const PROBES_ASIDE = 'drawn at the start, never from the ladder';
 export const probeState = (attempted: boolean) => (attempted ? 'attempted' : 'not attempted');
 
-// the press opening a card's run: the ladder counts from it, so a problem
-// solved before it counts toward nothing
+// says what starting gives before the rule that solves count from it
 export const RUN_START_NOTE =
-  'The ladder is measured from the start, so a problem solved before it counts toward nothing.';
+  'Starting gives you this card\'s ladder to solve, and a few probes testing the form on problems it was not studied on. Solves count from the moment you start.';
 export const runStartLabel = (starting: boolean, locked = false) =>
   locked ? 'Locked' : starting ? 'Starting…' : 'Start studying this card';
 
