@@ -130,7 +130,11 @@ def diagnose_mutants(
 ) -> Result:
     """Each labelled mutant whose template is still seeded, but those already
     read at this configuration and prompt."""
-    reading = [one for one in mutants if one.template_id in tasks.templates]
+    reading = (
+        [one for one in mutants if one.template_id in tasks.templates]
+        if tasks.reads_mutants
+        else []
+    )
     read = log.all()
 
     def key(one: LabelledMutant) -> tuple[str, str, str]:

@@ -1,10 +1,11 @@
 import json
+from dataclasses import replace
 
 from helpers import T0, FakeTransport, Verdict, make_problem
 from matching import card, seeded, template
 
 from climb.calls import CallLog
-from climb.diagnoser import DEFAULT
+from climb.diagnoser import DEFAULT, Tool
 from climb.diagnosing import Tasks, diagnose_attempts, diagnose_mutants, sample
 from climb.judging.labelled import LabelledMutant
 from climb.log import AttemptLog
@@ -107,6 +108,19 @@ def test_a_mutant_verdict_is_a_record_of_its_own_and_read_once(database):
     (one,) = stored.all()
     assert (one.template_id, one.cause) == (template_id, Cause.FORM)
     assert (first.diagnosed, again.diagnosed, again.skipped) == (1, 0, 1)
+
+
+def test_the_form_code_tool_sends_no_mutant(database):
+    _, tasks = setup(database)
+    (template_id,) = tasks.templates
+    tooled = replace(tasks, tools=frozenset({Tool.FORM_CODE}))
+    stored = MutantDiagnosisLog(database)
+
+    result = diagnose_mutants(
+        replying(), stored, CallLog(database), [mutant(template_id, Operator.BOUNDARY)], tooled
+    )
+
+    assert (result.diagnosed, stored.all()) == (0, [])
 
 
 def test_the_sample_takes_the_first_of_each_operator():

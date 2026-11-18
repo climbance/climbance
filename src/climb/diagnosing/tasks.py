@@ -66,7 +66,13 @@ class Tasks:
             statement=problem.statement,
             form=named(template) if template else None,
             failed=self._first_failed(attempt) if Tool.DIVERGENCE in self.tools else None,
+            form_code=template.code if template and Tool.FORM_CODE in self.tools else None,
         )
+
+    @property
+    def reads_mutants(self) -> bool:
+        """Beside a mutant the form's code gives the fault away."""
+        return Tool.FORM_CODE not in self.tools
 
     def mutant(self, mutant: LabelledMutant) -> Task:
         template = self.templates[mutant.template_id]

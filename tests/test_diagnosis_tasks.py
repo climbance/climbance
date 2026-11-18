@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from helpers import T0, make_problem
 
 from climb.diagnoser import Tool
@@ -111,3 +113,17 @@ def test_a_mutant_shows_the_case_it_fails_under_the_tool():
     assert (
         tasks(Tool.DIVERGENCE).mutant(one).failed == "arguments: [[2, 5]]\nexpected: 5\nreturned: 2"
     )
+
+
+def test_the_form_code_tool_shows_the_target_form_on_an_attempt():
+    problem = PROBLEM.model_copy(update={"target_template_id": "t1"})
+    shown = replace(tasks(Tool.FORM_CODE), problems={"p1": problem})
+
+    assert shown.attempt(ATTEMPT).form_code == TEMPLATE.code
+    assert replace(shown, tools=frozenset()).attempt(ATTEMPT).form_code is None
+
+
+def test_the_form_code_tool_reads_no_mutant():
+    """Beside a mutant the clean form shows the call where the fault is."""
+    assert tasks().reads_mutants
+    assert not tasks(Tool.FORM_CODE).reads_mutants

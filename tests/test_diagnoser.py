@@ -58,3 +58,10 @@ def test_the_request_hash_moves_with_the_code():
     """Staleness keys on it, so two codes sharing a hash would share a
     verdict."""
     assert request_hash(TASK, CODE) != request_hash(TASK, CODE + "\n# again\n")
+
+
+def test_the_form_code_tool_shows_the_form_beside_the_solution():
+    sent = prompt(Task(statement="Return the largest value.", form_code="return max(xs)"), CODE)
+
+    assert "<form_code>\nreturn max(xs)\n</form_code>" in sent
+    assert "<form_code>" not in prompt(TASK, CODE)

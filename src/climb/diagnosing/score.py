@@ -74,7 +74,8 @@ def scored(
     read = [
         (one, verdicts[key])
         for one in mutants
-        if one.template_id in tasks.templates
+        if tasks.reads_mutants
+        and one.template_id in tasks.templates
         and (key := (*_key(one), request_hash(tasks.mutant(one), one.code))) in verdicts
     ]
     implied = IMPLIED[FailureMode.RUST]

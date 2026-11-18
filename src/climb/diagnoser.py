@@ -53,6 +53,7 @@ class Tool(StrEnum):
     Diagnoses."""
 
     DIVERGENCE = "divergence"  # the first case the solution failed
+    FORM_CODE = "form-code"  # the target form's code, on attempts alone
 
 
 @dataclass(frozen=True)
@@ -63,6 +64,7 @@ class Task:
     statement: str  # a problem's statement, or a template's title on a mutant
     form: str | None = None  # the target template's title and trigger, never its code
     failed: str | None = None  # the divergence tool's case, rendered
+    form_code: str | None = None
 
 
 @dataclass(frozen=True)
@@ -73,6 +75,7 @@ class Reading:
 
 def prompt(task: Task, code: str) -> str:
     form = ["<form>", task.form, "</form>", ""] if task.form else []
+    code_of = ["<form_code>", task.form_code, "</form_code>", ""] if task.form_code else []
     failed = ["", "<failed_case>", task.failed, "</failed_case>"] if task.failed else []
     return "\n".join(
         [
@@ -81,6 +84,7 @@ def prompt(task: Task, code: str) -> str:
             "</task>",
             "",
             *form,
+            *code_of,
             "<solution>",
             code,
             "</solution>",

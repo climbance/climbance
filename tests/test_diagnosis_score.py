@@ -142,3 +142,13 @@ def test_the_mutants_are_a_row_apart_and_split_by_operator():
     assert (found["constant"].read, found["constant"].matched) == (3, 3)
     assert (found["boundary"].read, found["boundary"].matched) == (1, 0)
     assert found["syntax"].read == 0
+
+
+def test_the_form_code_column_reads_no_mutant():
+    """A verdict written beside the clean form would score a leaked answer."""
+    tooled = replace(TASKS, tools=frozenset({Tool.FORM_CODE}))
+    one = mutant(1, Operator.BOUNDARY)
+
+    found = rows(AT, [], [], [one], [verdict(one, Cause.FORM, tooled)], tasks=tooled)
+
+    assert found["mutants"].read == 0

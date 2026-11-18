@@ -436,6 +436,10 @@ re-diagnosed and compared.
   baseline is the call with none.** The divergence tool shows the first case
   the solution failed: its arguments, the expected return, and the value
   returned, the timeout, or the error a crash raised.
+- **The form-code tool shows the target template's code beside an attempt, and
+  reads no labelled mutant.** A mutant is that code with one change, so the
+  call would find the fault by comparing the two. Its column's mutant rows
+  read `unread`, and its share is read from the self-labels alone.
 - **A score column is a configuration plus a tool set.** Each verdict is
   matched on the prompt hash its item would be sent under that tool set, so a
   tool's verdicts never stand in the baseline's column. The prompt hash
