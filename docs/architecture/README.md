@@ -3,6 +3,126 @@
 Target state, across this file and the ones beside it. The code lags these
 files. On any difference, the doc wins.
 
+<!-- generated from model.toml by `just model-views`, never edited -->
+
+## Views
+
+The engine's context: who uses it and what it reaches outside itself.
+
+```mermaid
+flowchart TB
+    engine["Climbance<br/>Serves generated problems, judges each submission against the problem's own cases, and schedules what to practise next."]
+    learner["Learner<br/>Solves problems, recalls templates and answers questions, on the web or the phone."]
+    author["Author<br/>Generates and reviews the corpus, authors the content, invites users and deploys the engine."]
+    identity_providers["Google and GitHub<br/>Hold each identity and its login; the engine stores no password."]
+    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
+    image_registry["Image registry<br/>Holds the engine's image, built on each push to main and pulled by digest."]
+    offsite_dumps["Off-server dump storage<br/>Keeps the scheduled database dumps away from the storage the database lives on."]
+    learner -->|"practises in a browser; practises on a phone"| engine
+    author -->|"generates, reviews, seeds and invites"| engine
+    author -->|"authors cards and modules"| content_repo
+    engine -->|"runs the sign-in flow"| identity_providers
+    engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
+    engine -->|"sends every model call"| model_router
+    engine -->|"seeds cards and modules from content/"| content_repo
+    image_registry -->|"supplies the image the server deploys"| engine
+    engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
+```
+
+The engine's containers: what runs on its own, and what each talks to.
+
+```mermaid
+flowchart TB
+    learner["Learner<br/>Solves problems, recalls templates and answers questions, on the web or the phone."]
+    author["Author<br/>Generates and reviews the corpus, authors the content, invites users and deploys the engine."]
+    identity_providers["Google and GitHub<br/>Hold each identity and its login; the engine stores no password."]
+    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
+    image_registry["Image registry<br/>Holds the engine's image, built on each push to main and pulled by digest."]
+    offsite_dumps["Off-server dump storage<br/>Keeps the scheduled database dumps away from the storage the database lives on."]
+    subgraph engine["Climbance"]
+        web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
+        native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
+        core_package["Shared core<br/>packages/core: the knowledge module's rules and each screen's labels and acts, imported by both clients."]
+        proxy["Caddy<br/>Terminates TLS, keeps the certificates on a volume, and passes every request to the API."]
+        api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
+        broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
+        sandbox["Sandbox<br/>One container per run under gVisor, no network, read-only root; its entry process forks a child per case."]
+        database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
+        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits."]
+    end
+    learner -->|"practises in a browser"| web_app
+    learner -->|"practises on a phone"| native_app
+    author -->|"generates, reviews, seeds and invites"| cli
+    author -->|"authors cards and modules"| content_repo
+    web_app -->|"imports the rules and screens"| core_package
+    native_app -->|"imports the rules and screens"| core_package
+    web_app -->|"sends JSON with the session cookie"| proxy
+    native_app -->|"syncs knowledge records and runs sittings, with an app token"| proxy
+    proxy -->|"passes every request"| api
+    api -->|"runs the sign-in flow"| identity_providers
+    api -->|"reads and writes the store"| database
+    api -->|"asks for one run: code, arguments, cap"| broker
+    broker -->|"starts one container per run, the run on standard input"| sandbox
+    broker -->|"pulls the submission image by digest, through the host's daemon"| image_registry
+    cli -->|"sends every model call"| model_router
+    cli -->|"writes the corpus and the by-hand records"| database
+    cli -->|"seeds cards and modules from content/"| content_repo
+    image_registry -->|"supplies the image the server deploys"| api
+    database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
+    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item"| api
+```
+
+The API's components, and what each reads and writes.
+
+```mermaid
+flowchart TB
+    web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
+    broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
+    database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
+    subgraph api["API"]
+        sitting["Sitting<br/>Times one session on one problem, minted at the first clock press or submission, and ended where next read."]
+        submission["Submission<br/>Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."]
+        runner["Runner<br/>Runs code against a problem's cases, through the broker or the local subprocess, and reads each case's outcome."]
+        run_faults["Run faults<br/>Stores a run the sandbox answered no result for, so the run caps count it."]
+        attempt_log["Attempt log<br/>Appends each attempt and its attempt verification; private to the user."]
+        attempt_claims["Attempt claims<br/>Stores which techniques an attempt's code used, the user's claim standing over the classifier's."]
+        self_labels["Self-labels<br/>Stores the user's verdict on why an attempt went the way it did, as a failure mode."]
+        template_schedule["Template schedule<br/>Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."]
+        card_states["Card states<br/>Derives each card's state, from not started to graduated or lapsed, from the log on every read."]
+        mastery["Mastery<br/>Computes each technique's recognition, execution and knowledge from the log on every read."]
+        pick["Pick<br/>Names the next item: a template and the act that reviews it, read from the three folds."]
+        predictions["Predictions<br/>Stores what each pick expected, from FSRS and from mastery, before the user acts on it."]
+    end
+    web_app -->|"starts, pauses and ends the clock"| sitting
+    web_app -->|"submits code for the problem"| submission
+    submission -->|"mints the sitting where no clock started"| sitting
+    submission -->|"runs the code against the problem's cases"| runner
+    runner -->|"asks for one run: code, arguments, cap"| broker
+    runner -->|"records a run that answered nothing"| run_faults
+    submission -->|"counts recent runs against the caps"| run_faults
+    submission -->|"appends the attempt and its verification"| attempt_log
+    web_app -->|"names the techniques the code used"| attempt_claims
+    web_app -->|"says why the attempt went as it did"| self_labels
+    template_schedule -->|"replays each sitting's verdict as a review"| attempt_log
+    card_states -->|"reads which rungs are solved"| attempt_log
+    card_states -->|"reads the recall probability of a spaced check"| template_schedule
+    mastery -->|"scores execution per sitting"| attempt_log
+    mastery -->|"credits the techniques an attempt used"| attempt_claims
+    mastery -->|"reads the failure mode"| self_labels
+    web_app -->|"asks for the next item"| pick
+    pick -->|"reads each template's FSRS state"| template_schedule
+    pick -->|"reads each card's state and next check"| card_states
+    pick -->|"reads each technique's mastery"| mastery
+    pick -->|"stores what the pick expected"| predictions
+    attempt_log -->|"appends to the user's log"| database
+    sitting -->|"revises the sitting in place"| database
+    predictions -->|"appends each prediction"| database
+```
+
+<!-- end of the generated views -->
+
 ## Shape
 
 The engine is public and the content is private. Everything the practice loop
@@ -443,6 +563,7 @@ times. Each record class is specified in one of the files beside it.
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
 | [`wireframes.md`](wireframes.md) | Each page drawn at low fidelity |
 | [`knowledge.md`](knowledge.md) | Modules, where their authoring rules live, questions, lessons, the schedule, the queues, certifications, and the user's knowledge log |
+| [`model.toml`](model.toml) | The engine's context and containers as one model: each element's stable ID, its role, the doc section that specifies it, and its relations |
 
 ## Data classes
 

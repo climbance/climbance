@@ -1,0 +1,509 @@
+# The engine's context and containers, as one model.
+#
+# Each element has an `id` that stays fixed when its name changes, a one-line
+# `role`, and the place in `docs/architecture/` that specifies it: `doc` names
+# the file, `section` its heading, and `bullet` the bold opening of the bullet
+# where a section holds several elements, matched with the doc's line breaks
+# read as spaces. The Mermaid views are generated from this file and never
+# edited by hand.
+#
+# `kind` is one of: person; system, outside the engine; container, inside the
+# engine and deployed or run on its own; library, inside the engine and built
+# into the containers that import it; component, a part of one container,
+# named by its `container`. A relation runs from the element that acts to the
+# element it acts on.
+
+[engine]
+id = "engine"
+name = "Climbance"
+role = "Serves generated problems, judges each submission against the problem's own cases, and schedules what to practise next."
+doc = "README.md"
+section = "Shape"
+
+# People
+
+[[element]]
+id = "learner"
+kind = "person"
+name = "Learner"
+role = "Solves problems, recalls templates and answers questions, on the web or the phone."
+doc = "README.md"
+section = "Shape"
+bullet = "The engine is a learning platform, not a competitive one."
+
+[[element]]
+id = "author"
+kind = "person"
+name = "Author"
+role = "Generates and reviews the corpus, authors the content, invites users and deploys the engine."
+doc = "README.md"
+section = "Boundaries"
+bullet = "Content generation is a command of the engine"
+
+# Systems outside the engine
+
+[[element]]
+id = "identity-providers"
+kind = "system"
+name = "Google and GitHub"
+role = "Hold each identity and its login; the engine stores no password."
+doc = "README.md"
+section = "Boundaries"
+bullet = "Google and GitHub hold each identity and its login."
+
+[[element]]
+id = "model-router"
+kind = "system"
+name = "Model router"
+role = "Reaches every model as chat completions, each request pinned to one endpoint."
+doc = "machine.md"
+section = "Calls"
+bullet = "One transport, one shape."
+
+[[element]]
+id = "content-repo"
+kind = "system"
+name = "Content repository"
+role = "The private repository of authored cards and modules under `content/`, seeded into the store."
+doc = "README.md"
+section = "Boundaries"
+bullet = "Cards are ingested from files."
+
+[[element]]
+id = "image-registry"
+kind = "system"
+name = "Image registry"
+role = "Holds the engine's image, built on each push to main and pulled by digest."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The engine runs on one virtual server, and Docker Compose starts its containers."
+
+[[element]]
+id = "offsite-dumps"
+kind = "system"
+name = "Off-server dump storage"
+role = "Keeps the scheduled database dumps away from the storage the database lives on."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The engine runs on one virtual server, and Docker Compose starts its containers."
+
+# Containers of the engine
+
+[[element]]
+id = "web-app"
+kind = "container"
+name = "Web app"
+role = "Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."
+doc = "pages.md"
+section = "Sections"
+
+[[element]]
+id = "native-app"
+kind = "container"
+name = "Native app"
+role = "The phone client for Android and iOS; schedules the knowledge queues offline and syncs."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The native app schedules the knowledge queues offline."
+
+[[element]]
+id = "core-package"
+kind = "library"
+name = "Shared core"
+role = "`packages/core`: the knowledge module's rules and each screen's labels and acts, imported by both clients."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The web and the native app import one TypeScript package"
+
+[[element]]
+id = "proxy"
+kind = "container"
+name = "Caddy"
+role = "Terminates TLS, keeps the certificates on a volume, and passes every request to the API."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The web app is served from one origin."
+
+[[element]]
+id = "api"
+kind = "container"
+name = "API"
+role = "Python and FastAPI: answers JSON under `/api`, serves the web app's files, signs users in and records the log."
+doc = "README.md"
+section = "Boundaries"
+bullet = "The web app is served from one origin."
+
+[[element]]
+id = "broker"
+kind = "container"
+name = "Broker"
+role = "Holds the container runtime's socket, admits one submission at a time and starts its sandbox."
+doc = "README.md"
+section = "Boundaries"
+bullet = "A submission runs in a container the broker starts, and the API reaches no container runtime."
+
+[[element]]
+id = "sandbox"
+kind = "container"
+name = "Sandbox"
+role = "One container per run under gVisor, no network, read-only root; its entry process forks a child per case."
+doc = "README.md"
+section = "Terminology"
+bullet = "Sandbox"
+
+[[element]]
+id = "database"
+kind = "container"
+name = "Postgres"
+role = "The one store: the corpus, the content, every user's log and the call log."
+doc = "README.md"
+section = "Boundaries"
+bullet = "Storage is one Postgres database"
+
+[[element]]
+id = "cli"
+kind = "container"
+name = "Command line"
+role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits."
+doc = "README.md"
+section = "Boundaries"
+bullet = "Content generation is a command of the engine"
+
+# Components of the API: the core loop, from an attempt arriving to the next
+# item scheduled
+
+[[element]]
+id = "sitting"
+kind = "component"
+container = "api"
+name = "Sitting"
+role = "Times one session on one problem, minted at the first clock press or submission, and ended where next read."
+doc = "log.md"
+section = "Sittings"
+
+[[element]]
+id = "submission"
+kind = "component"
+container = "api"
+name = "Submission"
+role = "Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."
+doc = "flows.md"
+section = "Drill loop"
+
+[[element]]
+id = "runner"
+kind = "component"
+container = "api"
+name = "Runner"
+role = "Runs code against a problem's cases, through the broker or the local subprocess, and reads each case's outcome."
+doc = "corpus.md"
+section = "Execution"
+
+[[element]]
+id = "run-faults"
+kind = "component"
+container = "api"
+name = "Run faults"
+role = "Stores a run the sandbox answered no result for, so the run caps count it."
+doc = "log.md"
+section = "Run faults"
+
+[[element]]
+id = "attempt-log"
+kind = "component"
+container = "api"
+name = "Attempt log"
+role = "Appends each attempt and its attempt verification; private to the user."
+doc = "log.md"
+section = "Attempts"
+
+[[element]]
+id = "attempt-claims"
+kind = "component"
+container = "api"
+name = "Attempt claims"
+role = "Stores which techniques an attempt's code used, the user's claim standing over the classifier's."
+doc = "log.md"
+section = "Attempt claims"
+
+[[element]]
+id = "self-labels"
+kind = "component"
+container = "api"
+name = "Self-labels"
+role = "Stores the user's verdict on why an attempt went the way it did, as a failure mode."
+doc = "log.md"
+section = "Self-labels"
+
+[[element]]
+id = "template-schedule"
+kind = "component"
+container = "api"
+name = "Template schedule"
+role = "Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."
+doc = "log.md"
+section = "The template schedule"
+
+[[element]]
+id = "card-states"
+kind = "component"
+container = "api"
+name = "Card states"
+role = "Derives each card's state, from not started to graduated or lapsed, from the log on every read."
+doc = "log.md"
+section = "Card states"
+
+[[element]]
+id = "mastery"
+kind = "component"
+container = "api"
+name = "Mastery"
+role = "Computes each technique's recognition, execution and knowledge from the log on every read."
+doc = "log.md"
+section = "Mastery"
+
+[[element]]
+id = "pick"
+kind = "component"
+container = "api"
+name = "Pick"
+role = "Names the next item: a template and the act that reviews it, read from the three folds."
+doc = "flows.md"
+section = "The pick"
+
+[[element]]
+id = "predictions"
+kind = "component"
+container = "api"
+name = "Predictions"
+role = "Stores what each pick expected, from FSRS and from mastery, before the user acts on it."
+doc = "log.md"
+section = "Predictions"
+
+# Relations
+
+[[relation]]
+from = "learner"
+to = "web-app"
+label = "practises in a browser"
+
+[[relation]]
+from = "learner"
+to = "native-app"
+label = "practises on a phone"
+
+[[relation]]
+from = "author"
+to = "cli"
+label = "generates, reviews, seeds and invites"
+
+[[relation]]
+from = "author"
+to = "content-repo"
+label = "authors cards and modules"
+
+[[relation]]
+from = "web-app"
+to = "core-package"
+label = "imports the rules and screens"
+
+[[relation]]
+from = "native-app"
+to = "core-package"
+label = "imports the rules and screens"
+
+[[relation]]
+from = "web-app"
+to = "proxy"
+label = "sends JSON with the session cookie"
+technology = "HTTPS"
+
+[[relation]]
+from = "native-app"
+to = "proxy"
+label = "syncs knowledge records and runs sittings, with an app token"
+technology = "HTTPS"
+
+[[relation]]
+from = "proxy"
+to = "api"
+label = "passes every request"
+technology = "HTTP"
+
+[[relation]]
+from = "api"
+to = "identity-providers"
+label = "runs the sign-in flow"
+technology = "OpenID Connect, OAuth"
+
+[[relation]]
+from = "api"
+to = "database"
+label = "reads and writes the store"
+technology = "SQLAlchemy Core"
+
+[[relation]]
+from = "api"
+to = "broker"
+label = "asks for one run: code, arguments, cap"
+technology = "HTTP, on a network only the two join"
+
+[[relation]]
+from = "broker"
+to = "sandbox"
+label = "starts one container per run, the run on standard input"
+technology = "docker run -i"
+
+[[relation]]
+from = "broker"
+to = "image-registry"
+label = "pulls the submission image by digest, through the host's daemon"
+
+[[relation]]
+from = "cli"
+to = "model-router"
+label = "sends every model call"
+technology = "chat completions"
+
+[[relation]]
+from = "cli"
+to = "database"
+label = "writes the corpus and the by-hand records"
+technology = "SSH tunnel to the server's loopback"
+
+[[relation]]
+from = "cli"
+to = "content-repo"
+label = "seeds cards and modules from `content/`"
+
+[[relation]]
+from = "image-registry"
+to = "api"
+label = "supplies the image the server deploys"
+
+[[relation]]
+from = "database"
+to = "offsite-dumps"
+label = "is dumped on a schedule and copied off the server"
+
+# The core loop, inside the API
+
+[[relation]]
+from = "web-app"
+to = "sitting"
+label = "starts, pauses and ends the clock"
+
+[[relation]]
+from = "web-app"
+to = "submission"
+label = "submits code for the problem"
+
+[[relation]]
+from = "submission"
+to = "sitting"
+label = "mints the sitting where no clock started"
+
+[[relation]]
+from = "submission"
+to = "runner"
+label = "runs the code against the problem's cases"
+
+[[relation]]
+from = "runner"
+to = "broker"
+label = "asks for one run: code, arguments, cap"
+
+[[relation]]
+from = "runner"
+to = "run-faults"
+label = "records a run that answered nothing"
+
+[[relation]]
+from = "submission"
+to = "run-faults"
+label = "counts recent runs against the caps"
+
+[[relation]]
+from = "submission"
+to = "attempt-log"
+label = "appends the attempt and its verification"
+
+[[relation]]
+from = "web-app"
+to = "attempt-claims"
+label = "names the techniques the code used"
+
+[[relation]]
+from = "web-app"
+to = "self-labels"
+label = "says why the attempt went as it did"
+
+[[relation]]
+from = "template-schedule"
+to = "attempt-log"
+label = "replays each sitting's verdict as a review"
+
+[[relation]]
+from = "card-states"
+to = "attempt-log"
+label = "reads which rungs are solved"
+
+[[relation]]
+from = "card-states"
+to = "template-schedule"
+label = "reads the recall probability of a spaced check"
+
+[[relation]]
+from = "mastery"
+to = "attempt-log"
+label = "scores execution per sitting"
+
+[[relation]]
+from = "mastery"
+to = "attempt-claims"
+label = "credits the techniques an attempt used"
+
+[[relation]]
+from = "mastery"
+to = "self-labels"
+label = "reads the failure mode"
+
+[[relation]]
+from = "web-app"
+to = "pick"
+label = "asks for the next item"
+
+[[relation]]
+from = "pick"
+to = "template-schedule"
+label = "reads each template's FSRS state"
+
+[[relation]]
+from = "pick"
+to = "card-states"
+label = "reads each card's state and next check"
+
+[[relation]]
+from = "pick"
+to = "mastery"
+label = "reads each technique's mastery"
+
+[[relation]]
+from = "pick"
+to = "predictions"
+label = "stores what the pick expected"
+
+[[relation]]
+from = "attempt-log"
+to = "database"
+label = "appends to the user's log"
+
+[[relation]]
+from = "sitting"
+to = "database"
+label = "revises the sitting in place"
+
+[[relation]]
+from = "predictions"
+to = "database"
+label = "appends each prediction"

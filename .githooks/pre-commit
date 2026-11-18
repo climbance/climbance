@@ -55,4 +55,10 @@ if echo "$FILES" | grep -qE '^web/'; then
     fi
     (cd web && npm run --silent typecheck && npm run --silent lint && npm run --silent test) || exit 1
 fi
+# The model views in `docs/architecture/README.md`, where the staging touches
+# the docs or their generator: stale views or a citation naming a section that
+# moved fails the commit.
+if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$'; then
+    python3 tools/model_views.py check || exit 1
+fi
 exit 0

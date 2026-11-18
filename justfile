@@ -45,6 +45,11 @@ web-check:
 schemas:
     SCHEMA_SNAPSHOT=write uv run pytest -q -n 0 tests/test_schema_additive.py
 
+# Generate the context and container views in `docs/architecture/README.md`
+# from `model.toml`; pre-commit fails on stale views.
+model-views:
+    python3 tools/model_views.py write
+
 # Regenerate the shared fixture's scheduling cases from the Python replay.
 fixtures:
     uv run python tests/scheduling_fixture.py
