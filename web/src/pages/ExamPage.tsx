@@ -74,7 +74,7 @@ export function ExamPage() {
 
   const catalog = learner.catalog
   if (plan && catalog)
-    return <Running plan={plan} catalog={catalog} back={cert ? CERTIFICATIONS : KNOWLEDGE} />
+    return <ExamRunning plan={plan} catalog={catalog} back={cert ? CERTIFICATIONS : KNOWLEDGE} />
   const certified = certById(catalog, cert)?.x
   return (
     <section className="space-y-section">
@@ -222,7 +222,16 @@ function CertChoice({
   )
 }
 
-function Running({ plan, catalog, back }: { plan: ExamPlan; catalog: Catalog; back: string }) {
+// a queue's baseline test runs here too, and its Done returns to the queue
+export function ExamRunning({
+  plan,
+  catalog,
+  back,
+}: {
+  plan: ExamPlan
+  catalog: Catalog
+  back: string | (() => void)
+}) {
   const k = useKnowledge()
   const [run] = useState(() => new ExamRun(plan, catalog.courses))
   const [, rerender] = useState(0)
@@ -303,9 +312,13 @@ function Running({ plan, catalog, back }: { plan: ExamPlan; catalog: Catalog; ba
                 {examReviewMissed(out.missed.length)}
               </Button>
             )}
-            <Button asChild>
-              <Link to={back}>{EXAM_DONE}</Link>
-            </Button>
+            {typeof back === 'string' ? (
+              <Button asChild>
+                <Link to={back}>{EXAM_DONE}</Link>
+              </Button>
+            ) : (
+              <Button onClick={back}>{EXAM_DONE}</Button>
+            )}
           </div>
         </Panel>
       )}

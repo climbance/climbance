@@ -1,4 +1,4 @@
-import type { AttemptRecord, Grade, SessionRecord } from './types';
+import type { AttemptRecord, Grade, Measure, SessionRecord } from './types';
 
 /** ISO-8601 UTC with seconds, as Python's datetime.now(UTC).isoformat(timespec="seconds"). */
 export function isoNow(ms: number = Date.now()): string {
@@ -78,6 +78,7 @@ export function makeAttempt(
   guess: boolean,
   grade?: Grade,
   card?: CardFields,
+  measure?: Measure,
 ): AttemptRecord {
   const rec: AttemptRecord = { t, course, id, ok };
   if (guess) rec.guess = true;
@@ -85,6 +86,7 @@ export function makeAttempt(
   if (card?.missed) rec.missed = card.missed;
   if (card?.traps) rec.traps = card.traps;
   if (card?.wrong) rec.wrong = true;
+  if (measure) rec.measure = measure;
   return rec;
 }
 

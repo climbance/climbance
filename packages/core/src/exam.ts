@@ -6,13 +6,15 @@ import { validSetting } from './settings';
 import type { Result } from './result';
 import type { Board } from './schedule';
 import { shuffle, type Rng } from './select';
-import type { AttemptRecord, Course, Question, Rules } from './types';
+import type { AttemptRecord, Course, Measure, Question, Rules } from './types';
 
 /** An exam as both clients run it: a fixed sample, and for a certification's exam its bar. */
 export interface ExamPlan {
   mode: string; // `exam-L<level>`, or `cert-<id>`: the stint's mode
   questions: Question[];
   cert?: { course: string; id: string; passShare: number };
+  // a baseline or delayed test: its answers carry the measure, its stint the topic
+  test?: { measure: Measure; course: string; topic: string; level: number };
 }
 
 /** A level exam: a uniform sample of every open group at the level, open questions left out. */
@@ -81,8 +83,9 @@ export function examTitle(
   total: number,
   reviewAt: number,
   missed: number,
+  name = 'Exam',
 ): string {
-  if (phase === 'ask') return `Exam · ${index + 1} / ${total}`;
+  if (phase === 'ask') return `${name} · ${index + 1} / ${total}`;
   if (phase === 'review') return `Missed ${reviewAt + 1} / ${missed}`;
   return 'Done';
 }
@@ -128,7 +131,9 @@ export function examOutcome(plan: ExamPlan, results: Result[], t: string, course
     byTopic: [...topics.values()],
     missed: results.filter((r) => !r.correct),
     // an exam stores its answers together at its end, at one moment
-    attempts: results.map((r) => makeAttempt(t, r.q.course, r.q.id, r.correct, r.guess)),
+    attempts: results.map((r) =>
+      makeAttempt(t, r.q.course, r.q.id, r.correct, r.guess, undefined, undefined, plan.test?.measure),
+    ),
     cert,
   };
 }

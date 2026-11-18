@@ -58,6 +58,7 @@ export * from './sitting';
 export * from './sittingrun';
 export * from './claim';
 export * from './guide';
+export * from './baseline';
 export * from './privacy';
 export * from './filling';
 export * from './judging';

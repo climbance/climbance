@@ -16,6 +16,7 @@ import {
   type AttemptRecord,
   type Question,
   type Result,
+  type SessionRecord,
 } from './index';
 
 const mk = (id: string, format = 'choice') => ({
@@ -96,7 +97,11 @@ describe('one answer', () => {
 });
 
 describe('a queue run', () => {
-  const held = (attempts: AttemptRecord[] = []) => ({ catalog, attempts });
+  // the topic's baseline test already taken, so these runs serve questions
+  const tested = [
+    { t: '2026-11-01T12:00:00+00:00', mode: 'baseline', score: 0, n: 0, course: 'c', topic: 't', level: 0 },
+  ];
+  const held = (attempts: AttemptRecord[] = []) => ({ catalog, attempts, sessions: tested });
   const run = (limit: number) => new QueueRun(nextQueue(Board.build(catalog, []), limit), 'next', null, null, held());
 
   it('picks a question at the start, fresh where it was never answered', () => {
@@ -163,6 +168,62 @@ describe('a queue run', () => {
     r.stop();
     r.raise(held());
     expect(r.done).toBe(true);
+  });
+});
+
+describe('a baseline test in a queue run', () => {
+  const fresh = (sessions: SessionRecord[] = []) => ({ catalog, attempts: [] as AttemptRecord[], sessions });
+  const run = () => new QueueRun(nextQueue(Board.build(catalog, []), 10), 'next', null, null, fresh());
+
+  it('comes before the first new question of a topic nobody answered in', () => {
+    const r = run();
+    expect(r.current && 'baseline' in r.current && r.current.baseline).toMatchObject({ topic: 't', level: 0 });
+  });
+
+  it('samples two choice or short questions per subtopic, open ones left out', () => {
+    const plan = run().baselinePlan!;
+    expect(plan.questions).toHaveLength(2);
+    expect(plan.questions.every((x) => x.format !== 'card')).toBe(true);
+    expect(plan.test).toMatchObject({ measure: 'baseline', topic: 't' });
+  });
+
+  it('is skipped once, as a stint naming the topic, and the question follows', () => {
+    const r = run();
+    const skip = r.skipBaseline()!;
+    expect(skip).toMatchObject({ mode: 'baseline', n: 0, course: 'c', topic: 't', level: 0 });
+    r.next(fresh([skip]));
+    expect(r.current && 'q' in r.current).toBe(true);
+  });
+
+  it('is not offered on a topic already answered in', () => {
+    const old = [{ t: '2026-11-01T12:00:00+00:00', course: 'c', id: 'a', ok: true }];
+    const r = new QueueRun(nextQueue(Board.build(catalog, old), 10), 'next', null, null, { catalog, attempts: old });
+    expect(r.current && 'q' in r.current).toBe(true);
+  });
+});
+
+describe('a baseline test run', () => {
+  it('stores answers carrying the measure, and a stint naming the topic', () => {
+    const plan = {
+      mode: 'baseline',
+      questions: [q('a'), q('b')],
+      test: { measure: 'baseline' as const, course: 'c', topic: 't', level: 0 },
+    };
+    const r = new ExamRun(plan, catalog.courses);
+    r.answer(result(q('a'), false));
+    r.next();
+    r.answer(result(q('b'), true));
+    const out = r.next()!;
+    expect(out.attempts.every((a) => a.measure === 'baseline')).toBe(true);
+    expect(out.session).toMatchObject({ mode: 'baseline', score: 1, n: 2, course: 'c', topic: 't', level: 0 });
+  });
+
+  it('leaves the schedule as it was: the topic stays unseen', () => {
+    const answered = [
+      { t: '2026-11-01T12:00:00+00:00', course: 'c', id: 'a', ok: false, measure: 'baseline' as const },
+    ];
+    const b = Board.build(catalog, answered);
+    expect(b.attempts(q('a'))).toHaveLength(0);
   });
 });
 

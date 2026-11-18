@@ -16,6 +16,15 @@ export const LESSON_STOP_KICKER = 'New lesson';
 export const LESSON_STOP_READ = 'Read';
 export const LESSON_STOP_LATER = 'Later';
 
+// the baseline test a queue stops on: `knowledge.md`, Baseline and delayed tests
+export const BASELINE_KICKER = 'Before you start';
+export const BASELINE_NAME = 'Baseline test';
+export const BASELINE_TAKE = 'Take the test';
+export const BASELINE_SKIP = 'Skip';
+export const baselineNote = (n: number) =>
+  `${n} ${n === 1 ? 'question' : 'questions'} on what you know already, with the answers shown at the end. ` +
+  'They do not count toward your reviews. In four weeks the same questions show what you gained.';
+
 // one question
 export const ASK_NEXT = 'Next';
 export const ASK_SUBMIT = 'Submit';

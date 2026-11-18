@@ -1,3 +1,4 @@
+import { baselineBefore, baselinePlan, baselineTopics, skipBaseline, topicKey, type BaselineItem } from './baseline';
 import type { CertRecord } from './certs';
 import type { Catalog } from './courses';
 import { examOutcome, examTitle, type ExamOutcome, type ExamPlan } from './exam';
@@ -7,14 +8,17 @@ import type { Result } from './result';
 import { Board } from './schedule';
 import { offersRaise, queueLine, type QueueCounts } from './screens';
 import { newRecord } from './sync';
+import { BASELINE_NAME } from './words/queue';
 import type { AttemptRecord, Course, Question, RaiseRecord, SessionRecord, Status } from './types';
 
-export type QueueItem = { q: Question; tag: Status; fresh: boolean; early: boolean } | { lesson: LessonItem };
+export type QueueItem =
+  { q: Question; tag: Status; fresh: boolean; early: boolean } | { lesson: LessonItem } | { baseline: BaselineItem };
 
 /** What a client's copy holds when the run reads it: the catalog and every attempt stored so far. */
 export interface QueueSource {
   catalog: Catalog | null;
   attempts: AttemptRecord[];
+  sessions?: SessionRecord[]; // the stints, which name each topic's baseline test
 }
 
 const attemptKey = (a: AttemptRecord) => `${a.t}|${a.course}|${a.id}`;
@@ -74,6 +78,12 @@ export class QueueRun {
     this.shown++;
     if (!picked || !b) return null;
     if (isLessonItem(picked)) return { lesson: picked };
+    const test = this.baselineBefore(b, picked, src);
+    if (test) {
+      // sampled at the offer, so the stop counts the questions the test asks
+      this.testPlan = baselinePlan(b, test);
+      return { baseline: test };
+    }
     return {
       q: picked,
       tag: b.status(picked, now),
@@ -99,6 +109,31 @@ export class QueueRun {
 
   stop(): void {
     this.done = true;
+  }
+
+  // a topic's first new question waits for its baseline test: `knowledge.md`,
+  // Baseline and delayed tests. Once per topic in a run, whatever the answer
+  private testsOffered = new Set<string>();
+
+  private baselineBefore(b: Board, q: Question, src: QueueSource): BaselineItem | null {
+    if (this.queue.kind !== 'mix' && this.queue.kind !== 'focus') return null;
+    if (b.attempts(q).length || this.testsOffered.has(topicKey(q.course, q.topic))) return null;
+    const item = baselineBefore(b, q, baselineTopics(src.sessions ?? []));
+    if (item) this.testsOffered.add(topicKey(q.course, q.topic));
+    return item;
+  }
+
+  private testPlan: ExamPlan | null = null;
+
+  /** The current stop's baseline test. */
+  get baselinePlan(): ExamPlan | null {
+    return this.current && 'baseline' in this.current ? this.testPlan : null;
+  }
+
+  /** Skips the current stop's baseline test. Returns the stint to store, before `next`. */
+  skipBaseline(): SessionRecord | null {
+    if (!this.current || !('baseline' in this.current)) return null;
+    return skipBaseline(this.current.baseline, isoNow());
   }
 
   /** The stint to store once the queue is done or left: once, and none where nothing was answered. */
@@ -229,7 +264,7 @@ export class ExamRun {
     const out = examOutcome(this.plan, this.results, isoNow(), this.courses);
     return {
       attempts: out.attempts,
-      session: newRecord.session(this.plan.mode, out.score, out.n),
+      session: testStint(newRecord.session(this.plan.mode, out.score, out.n), this.plan),
       cert: out.cert ? newRecord.cert(out.cert) : null,
     };
   }
@@ -264,6 +299,14 @@ export class ExamRun {
   }
 
   get title(): string {
-    return examTitle(this.phase, this.index, this.total, this.reviewAt, this.outcome.missed.length);
+    const name = this.plan.test ? BASELINE_NAME : undefined;
+    return examTitle(this.phase, this.index, this.total, this.reviewAt, this.outcome.missed.length, name);
   }
+}
+
+/** A test's stint names its topic and level: `knowledge.md`, Baseline and delayed tests. */
+function testStint(s: SessionRecord, plan: ExamPlan): SessionRecord {
+  if (!plan.test) return s;
+  const { course, topic, level } = plan.test;
+  return { ...s, course, topic, level };
 }

@@ -7,6 +7,10 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
+  baselineStop,
+  type BaselineItem,
+  BASELINE_SKIP,
+  BASELINE_TAKE,
   type AnswerRow,
   block,
   plain,
@@ -150,13 +154,48 @@ function LessonStop({ item, bottom, onNext }: { item: LessonItem; bottom: number
   );
 }
 
+/** The baseline test a queue offers before a topic's first new question: `knowledge.md`. */
+function BaselineStop(props: {
+  item: BaselineItem;
+  size: number;
+  bottom: number;
+  onTake: () => void;
+  onSkip: () => void;
+}) {
+  const theme = useTheme();
+  const stop = baselineStop(props.item, props.size);
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={[styles.page, { flex: 1, justifyContent: 'center' }]}>
+        <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+          {stop.kicker}
+        </Text>
+        <Text variant="headlineSmall">{stop.title}</Text>
+        <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+          {stop.note}
+        </Text>
+      </View>
+      <BottomBar bottom={props.bottom} row>
+        <Press mode="text" onPress={props.onSkip}>
+          {BASELINE_SKIP}
+        </Press>
+        <Press icon="clipboard-check-outline" style={{ flex: 1 }} onPress={props.onTake}>
+          {BASELINE_TAKE}
+        </Press>
+      </BottomBar>
+    </View>
+  );
+}
+
 /** A continuous queue: each question is picked when it is needed, from what is ready then. */
 function QueueQuiz({ s }: { s: QueueSession }) {
   const st = useStore();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const held = (): QueueSource => ({ catalog: st.catalog, attempts: st.attempts });
+  const held = (): QueueSource => ({ catalog: st.catalog, attempts: st.attempts, sessions: st.sessions });
   const [run] = useState(() => new QueueRun(s.queue, s.mode, s.course, s.include ?? null, held()));
+  // the baseline test taken at a stop, run through the exam's screen
+  const [testing, setTesting] = useState<ExamSession | null>(null);
   const [, rerender] = useState(0);
   const changed = () => rerender((x) => x + 1);
   const done = run.done;
@@ -192,11 +231,30 @@ function QueueQuiz({ s }: { s: QueueSession }) {
     changed();
     if (run.done) void end();
   };
+  const skipTest = async () => {
+    const skip = run.skipBaseline();
+    if (!skip) return;
+    await st.finishSession(skip);
+    // the skip is read before the store holds it, so the stop is not offered again
+    run.next({ ...held(), sessions: [...st.sessions, skip] });
+    changed();
+  };
   const moreNew = () => {
     // today's limit, so Home and the next queue count the raise too
     void st.raiseNew(run.raise(held()));
     changed();
   };
+
+  if (testing)
+    return (
+      <ExamQuiz
+        s={testing}
+        onDone={() => {
+          setTesting(null);
+          next();
+        }}
+      />
+    );
 
   const reading = run.reading(held(), Date.now());
   const { left } = reading;
@@ -222,7 +280,15 @@ function QueueQuiz({ s }: { s: QueueSession }) {
           </Button>
         ) : null}
       </View>
-      {!done && current && 'lesson' in current ? (
+      {!done && current && 'baseline' in current ? (
+        <BaselineStop
+          item={current.baseline}
+          size={run.baselinePlan?.questions.length ?? 0}
+          bottom={insets.bottom}
+          onTake={() => setTesting(run.baselinePlan)}
+          onSkip={() => void skipTest()}
+        />
+      ) : !done && current && 'lesson' in current ? (
         <LessonStop item={current.lesson} bottom={insets.bottom} onNext={next} />
       ) : !done && current && 'q' in current ? (
         <Ask
@@ -258,7 +324,8 @@ function QueueQuiz({ s }: { s: QueueSession }) {
   );
 }
 
-function ExamQuiz({ s }: { s: ExamSession }) {
+// a queue's baseline test runs here too, and its Done returns to the queue
+function ExamQuiz({ s, onDone }: { s: ExamSession; onDone?: () => void }) {
   const st = useStore();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -289,8 +356,9 @@ function ExamQuiz({ s }: { s: ExamSession }) {
       changed();
       return store(records);
     }
-    router.back();
-  }, [run, phase, store]);
+    if (onDone) onDone();
+    else router.back();
+  }, [run, phase, store, onDone]);
 
   useFocusEffect(
     useCallback(() => {
@@ -373,7 +441,7 @@ function ExamQuiz({ s }: { s: ExamSession }) {
               {examReviewMissed(missed.length)}
             </Press>
           ) : null}
-          <Press style={{ flex: 1 }} onPress={() => router.back()}>
+          <Press style={{ flex: 1 }} onPress={onDone ?? (() => router.back())}>
             {EXAM_DONE}
           </Press>
         </BottomBar>
@@ -472,7 +540,10 @@ function Ask(props: {
     // Edge-to-edge Android no longer resizes the window for the keyboard; this keeps the input and bottom bar above it.
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={[styles.page, { paddingBottom: bottom + 96 + (padOpen ? PAD_HEIGHT + 8 + space[4] : 0) }]}
+        contentContainerStyle={[
+          styles.page,
+          { paddingBottom: bottom + 96 + (padOpen ? PAD_HEIGHT + 8 + space[4] : 0) },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         <Head q={q} tag={tag} early={early} />
@@ -540,7 +611,10 @@ function Ask(props: {
         {result ? <DetailsToggle r={result} open={details} onToggle={() => setDetails(!details)} /> : null}
       </ScrollView>
 
-      <BottomBar bottom={bottom} row above={
+      <BottomBar
+        bottom={bottom}
+        row
+        above={
           padOpen ? (
             // a rule and a gap keep the space bar's thumb off Submit, the wide press under it
             <View style={{ gap: space[2], paddingBottom: space[1] }}>

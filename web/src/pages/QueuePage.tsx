@@ -3,6 +3,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router'
 
 import {
+  baselineStop,
+  type BaselineItem,
+  type ExamPlan,
+  type SessionRecord,
+  BASELINE_SKIP,
+  BASELINE_TAKE,
   lessonStopNote,
   queueLine,
   queueSummary,
@@ -39,6 +45,7 @@ import { linesOf, loadedFrom, useKnowledge } from '@/knowledge/context'
 import { filteredScope } from '@/knowledge/filtered'
 import { useLearner } from '@/knowledge/learner'
 import { LessonOver, type Reading } from '@/knowledge/LessonOver'
+import { ExamRunning } from '@/pages/ExamPage'
 
 // the wire's names, which a stint stores: the filtered queue is `drill` on the wire
 
@@ -90,6 +97,7 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
   const held = (): QueueSource => ({
     catalog,
     attempts: linesOf<AttemptRecord>(k.records, 'attempt'),
+    sessions: linesOf<SessionRecord>(k.records, 'session'),
   })
   // fixed when the queue starts: a raise moves its limit, and the picks read the log as it grows
   const [run] = useState(() => {
@@ -99,6 +107,8 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
   const [, rerender] = useState(0)
   // a lesson read over the queue: the stop's and an answer's lesson links open it
   const [lessonOpen, setLessonOpen] = useState<Reading>(null)
+  // the baseline test taken at a stop, run through the exam's screen
+  const [testing, setTesting] = useState<ExamPlan | null>(null)
   const changed = () => rerender((n) => n + 1)
 
   // leaving through the navigation stores the stint too. The cleanup reads
@@ -138,6 +148,20 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
     changed()
   }
 
+  function skipTest() {
+    const skip = run?.skipBaseline()
+    if (!skip || !run) return
+    void k.add('session', skip)
+    // the skip is read before the copy holds it, so the stop is not offered again
+    run.next({ ...held(), sessions: [...held().sessions!, skip] })
+    changed()
+  }
+
+  function testDone() {
+    setTesting(null)
+    next()
+  }
+
   function moreNew() {
     if (!run) return
     // today's limit, so the home and the next queue count the raise too
@@ -153,6 +177,8 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
   const score = run?.score ?? 0
   const course =
     current && 'q' in current ? catalog.courses.find((c) => c.slug === current.q.course) : undefined
+
+  if (testing) return <ExamRunning plan={testing} catalog={catalog} back={testDone} />
 
   return (
     <section className="space-y-section">
@@ -183,7 +209,14 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
         )}
       </div>
 
-      {!done && current && 'lesson' in current ? (
+      {!done && current && 'baseline' in current ? (
+        <BaselineStop
+          item={current.baseline}
+          size={run?.baselinePlan?.questions.length ?? 0}
+          onTake={() => setTesting(run?.baselinePlan ?? null)}
+          onSkip={skipTest}
+        />
+      ) : !done && current && 'lesson' in current ? (
         <LessonStop
           item={current.lesson}
           read={lessonRead(catalog, current.lesson.course.slug, current.lesson.lesson.slug)}
@@ -267,6 +300,30 @@ function LessonStop(props: {
             </Button>
           </>
         )}
+      </div>
+    </Panel>
+  )
+}
+
+// the baseline test a queue offers before a topic's first new question:
+// `knowledge.md`, Baseline and delayed tests
+function BaselineStop(props: {
+  item: BaselineItem
+  size: number
+  onTake: () => void
+  onSkip: () => void
+}) {
+  const stop = baselineStop(props.item, props.size)
+  return (
+    <Panel>
+      <p className="text-meta font-medium text-muted-foreground">{stop.kicker}</p>
+      <p className="text-heading font-medium">{stop.title}</p>
+      <p className="text-meta text-muted-foreground">{stop.note}</p>
+      <div className="flex gap-stack">
+        <Button onClick={props.onTake}>{BASELINE_TAKE}</Button>
+        <Button variant="ghost" onClick={props.onSkip}>
+          {BASELINE_SKIP}
+        </Button>
       </div>
     </Panel>
   )
