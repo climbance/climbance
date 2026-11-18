@@ -122,6 +122,69 @@ Every page under a section carries the same two rows above its body.
 - The two short exercises, judging and filling, follow the cards in progress.
   The unlocked cards not yet started follow them, five at most.
 
+## The board, before the first act
+
+```
++- / --------------------------------------------------------------------+
+| Climbance    [ Practice ]  Problems  Cards  Knowledge           ☀  ≡   |
++------------------------------------------------------------------------+
+| Practice                                                               |
+| Continue a card or a module, or pick a technique, stalest first.       |
+|                                                                        |
+| New here?                                                              |
+| +--------------------------------------------------------+             |
+| | How practice works                                     |             |
+| | Read what each kind of practice trains, and where to   |             |
+| | start.                                                 |             |
+| +--------------------------------------------------------+             |
+|                                                                        |
+| [ Continue ]  0 reviews . 10 new left today                            |
+|                                                                        |
+| Modules  2                                                             |
+| ...                                                                    |
+|                                                                        |
+| Next                                                                   |
+| +--------------------------------------------------------+             |
+| | Binary search                                          |             |
+| | Start this card                                        |             |
+| +--------------------------------------------------------+             |
+| ...                                                                    |
++------------------------------------------------------------------------+
+```
+
+- The panel opens the board while the user's log holds no act, and the first
+  act removes it. The rest of the board reads as above.
+- The panel's row opens the guide. On a new account the pick names a root
+  card, the first start the guide names.
+
+## The guide
+
+```
++- /start ---------------------------------------------------------------+
+| Climbance     Practice  Problems  Cards  Knowledge              ☀  ≡   |
++------------------------------------------------------------------------+
+| < Board                                                                |
+| How practice works                                                     |
+|                                                                        |
+| one paragraph on the kinds of practice                                 |
+|                                                                        |
+| The kinds of practice                                                  |
+| A sitting ...            what it trains, and where it is reached       |
+| A recall ...                                                           |
+| Judging a solution ...                                                 |
+| Filling a key line ...                                                 |
+| A question ...                                                         |
+|                                                                        |
+| Where to start                                                         |
+| For the algorithms ...   the board's pick                              |
+| For the knowledge ...    Continue on the board                         |
++------------------------------------------------------------------------+
+```
+
+- The guide sits under no section, so the navigation marks none. The account
+  menu links it, as it links the settings.
+- The way back names the board, since both starts begin there.
+
 ## Every problem
 
 ```
