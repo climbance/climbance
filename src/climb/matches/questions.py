@@ -68,7 +68,7 @@ def outstanding(
     solution. A question stands while any of its pairs carries no record at
     that text, so a settled pair is re-answered by the call the unsettled one
     beside it needs. A pair the user matched by hand is settled at every
-    configuration: `content.md`, Template matches."""
+    configuration: `cli/matcher.md`."""
     card_of = {
         template.id: question.card.id
         for question in asking

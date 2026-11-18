@@ -1,7 +1,8 @@
 """That a card was started, and the probes the start gave it.
 
 Studying a card is an explicit act, and the ladder is measured from the start:
-`content.md` gives why a problem solved before it counts toward nothing.
+`content-repo/cards.md` gives why a problem solved before it counts toward
+nothing.
 """
 
 from datetime import datetime

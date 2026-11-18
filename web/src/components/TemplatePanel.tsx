@@ -13,7 +13,7 @@ import { useLearner } from '@/knowledge/learner'
 import { subtopicPath } from '@/knowledge/paths'
 import { templateView } from '@/lib/format'
 
-// the form stays hidden until it is asked for: `content.md` gives why a form
+// the form stays hidden until it is asked for: `content-repo/cards.md` gives why a form
 // is worth deriving before it is read. The trigger reads either way, since it
 // says when to reach for the form rather than how the form is written
 export function TemplatePanel({
@@ -46,7 +46,7 @@ export function TemplatePanel({
       <div className="space-y-stack px-4 py-3">
         <Markdown>{template.trigger}</Markdown>
 
-        {/* the subtopics of another module the form's code rests on: `content.md` */}
+        {/* the subtopics of another module the form's code rests on: `content-repo/cards-and-subtopics.md` */}
         {cited.length > 0 && (
           <p className="flex flex-wrap gap-x-4 text-meta">
             <span className="text-muted-foreground">{TEMPLATE_CITES}</span>

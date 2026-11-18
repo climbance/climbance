@@ -64,7 +64,7 @@ def docs(engine: Path, role: str, stage: int) -> list[tuple[str, str]]:
 
 def notes(module: Path, sub: str) -> list[Path]:
     """The notes moved from the briefs of the cards the subtopic pairs with:
-    `content.md`, Cards and subtopics."""
+    `content-repo/cards-and-subtopics.md`."""
     course = tomllib.loads((module / "course.toml").read_text())
     named = [
         code

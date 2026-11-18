@@ -68,8 +68,8 @@ def test_a_template_s_cases_round_trip_in_the_authored_order(database):
 
 
 def test_a_template_carries_no_case_until_one_is_authored(database):
-    """`content.md`: a template with no cases is read and never recalled, so a
-    card authored before the field keeps working."""
+    """`content-repo/cards.md`: a template with no cases is read and never
+    recalled, so a card authored before the field keeps working."""
     store = CardStore(database)
     store.put(card("basic"))
 

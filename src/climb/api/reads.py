@@ -142,7 +142,7 @@ class Waiting(BaseModel):
 
 class Studied(BaseModel):
     """A card as its page reads it. The ladder, the progress and the recall
-    state are folds, and `content.md` gives why none of them is stored."""
+    state are folds, and `content-repo/cards.md` gives why none is stored."""
 
     card: Card
     run: CardRun | None  # absent until the card is started
@@ -206,7 +206,7 @@ class CardStatus(BaseModel):
 class ListedCard(Card):
     family: str  # the technique the cards list groups this card under
     status: CardStatus
-    depth: int  # the longest chain of requirements below it: `content.md`
+    depth: int  # the longest chain of requirements below it: `content-repo/card-graph.md`
     met: bool  # the cards requiring it may start: `log.md`, Locked cards
     waiting: list[Waiting]  # the required cards not yet met
 

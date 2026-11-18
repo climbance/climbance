@@ -299,7 +299,7 @@ those steps at low fidelity.
 ### Judging a solution
 
 The first short exercise, served at a phone's width on both clients. `log.md`
-gives the exercise and `content.md` the items.
+gives the exercise and `cli/exercise-items.md` the items.
 
 - **The page opens from the board and from a card.** The board's press serves
   the forms of the cards the user started first, as `log.md` gives. A card's
@@ -325,7 +325,7 @@ gives the exercise and `content.md` the items.
 ### Filling a key line
 
 The second short exercise, served at a phone's width on both clients. `log.md`
-gives the exercise and `content.md` the items.
+gives the exercise and `cli/exercise-items.md` the items.
 
 - **The page opens from the board and from a card**, as judging does. A card's
   press adds `?card=`.
@@ -1008,7 +1008,8 @@ difference it found. No row is marked `to fix` today.
 
 - A candidate is offered without its statement, since opening the problem
   serves it (`flows.md`).
-- A template's code is hidden until the user reveals it (`content.md`).
+- A template's code is hidden until the user reveals it
+  (`content-repo/cards.md`).
 - The editor proposes no name from the standard library or from the code already
   typed (`flows.md`).
 - A failing submission shows its first failing case whole, at whatever size

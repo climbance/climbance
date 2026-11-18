@@ -12,7 +12,7 @@ def hand_match(
     log: MatchLog, question: Question, picked: Iterable[str], *, informed_by: Sequence[str] = ()
 ) -> int:
     """One record per candidate template, the picked ones positive and the
-    rest negative, as `content.md` gives. Returns how many were written."""
+    rest negative, as `cli/matcher.md` gives. Returns how many were written."""
     chosen = set(picked)
     forms = candidates(question.card)
     for form in forms:

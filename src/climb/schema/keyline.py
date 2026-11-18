@@ -1,5 +1,6 @@
 """A key-line item: a template's form with one line blanked, and its choices.
-`content.md` gives the items, and `log.md` the exercise they serve."""
+`cli/exercise-items.md` gives the items, and `log.md` the exercise they
+serve."""
 
 from datetime import datetime
 from typing import Any

@@ -606,7 +606,8 @@ lapsed.
   required rung joining after it is left out of the card state.
 - **A card state is not mastery.** Mastery is per technique and counts
   sittings and drills, as `## Mastery` gives. A graduated card raises no
-  technique's reading, since `content.md` keeps cards and mastery apart.
+  technique's reading, since `content-repo/cards.md` keeps cards and mastery
+  apart.
 
 Deferred, since only use answers each:
 
@@ -623,7 +624,7 @@ Deferred, since only use answers each:
 ## Locked cards
 
 A card is locked for a user until every card it requires is met by that
-user. `content.md` gives the card graph the rule reads.
+user. `content-repo/card-graph.md` gives the card graph the rule reads.
 
 - **A required card is met when its ladder was solved, or a probe of its run
   was solved since the run began.** The ladder shows the form was reached with
@@ -760,7 +761,7 @@ where a sitting's typing is slow.
 
 The user reads one solution to a template's own question and says whether it
 is correct. A flawed solution carries one mutant of the form, and the user
-then taps the line that is wrong. `content.md` gives the items.
+then taps the line that is wrong. `cli/exercise-items.md` gives the items.
 
 - **A `Judgement` stores one answer**: its `id`, `user_id`, `item_id`,
   `created_at`, whether the user called the solution clean, and the tapped
@@ -791,7 +792,7 @@ then taps the line that is wrong. `content.md` gives the items.
 ### Filling a key line
 
 The user reads a template's form with one statement blanked and picks the
-statement that belongs there. `content.md` gives the items.
+statement that belongs there. `cli/exercise-items.md` gives the items.
 
 - **A `Fill` stores one answer**: its `id`, `user_id`, `item_id`,
   `created_at`, and the choice the user picked, by its position in the item.

@@ -1,5 +1,6 @@
 """The problems a card has the user solve, derived from the template matches
-and the card's selector. A view, never stored: `content.md` gives why.
+and the card's selector. A view, never stored: `content-repo/cards.md` gives
+why.
 
 Starting a card is here too, since the start draws the probes the ladder is
 not allowed to hold.
@@ -173,7 +174,7 @@ def ladder(
     done = _solved(attempts, since)
     skipped = _skipped(sittings, attempts, since, now or datetime.now(UTC)) - done
     answers = {solution.id: solution.problem_id for solution in solutions}
-    # ranked as at the start: `content.md`, a rung keeps its problem
+    # ranked as at the start: `content-repo/cards.md`, a rung keeps its problem
     ranking = attempts if since is None else [one for one in attempts if one.finished_at < since]
     offered = _offered(card, problems, ranking)
     rank = {problem.id: place for place, problem in enumerate(offered)}
@@ -227,8 +228,8 @@ def ladder(
     # empty admits the whole range, easy included
     admits = not card.selector.difficulty or ProblemDifficulty.EASY in card.selector.difficulty
     if admits and not any(rung.problem.difficulty == ProblemDifficulty.EASY for rung in rungs):
-        # `content.md`: a ladder whose selector admits easy holds an easy rung,
-        # past `size` where the covering rungs already fill it
+        # `content-repo/cards.md`: a ladder whose selector admits easy holds an
+        # easy rung, past `size` where the covering rungs already fill it
         easy = [one for one in fill if one.difficulty == ProblemDifficulty.EASY]
         fill = easy[:1] + [one for one in fill if one not in easy[:1]]
         room = max(room, len(easy[:1]))

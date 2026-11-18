@@ -375,7 +375,7 @@ The load-bearing invariants:
 If you read one section, read **[technique
 claims](docs/architecture/log.md#technique-claims)**: what a reading is, why
 it is stored even when it can never stand, and what identifies one. Then
-**[template matches](docs/architecture/content.md#template-matches)**, which
+**[template matches](docs/architecture/cli/matcher.md)**, which
 makes the same argument for a corpus that grows.
 
 ## Commands

@@ -1,5 +1,6 @@
 """An authored card checked before it is seeded: what the author cannot see by
-reading the file. `content.md` gives what a template's cases are for."""
+reading the file. `content-repo/cards.md` gives what a template's cases are
+for."""
 
 import ast
 import json

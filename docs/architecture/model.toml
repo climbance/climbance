@@ -7,6 +7,9 @@
 # read as spaces. The Mermaid views are generated from this file and never
 # edited by hand.
 #
+# `section` and `bullet` are left out where the file documents one element
+# alone.
+#
 # `kind` is one of: person; system, outside the engine; container, inside the
 # engine and deployed or run on its own; library, inside the engine and built
 # into the containers that import it; component, a part of one container,
@@ -330,6 +333,22 @@ doc = "log.md"
 section = "Attempt claims"
 bullet = "The classifier is prompted, not trained."
 
+[[element]]
+id = "matcher"
+kind = "component"
+container = "cli"
+name = "Matcher"
+role = "Reads a canonical beside its statement and names the card templates it displays."
+doc = "cli/matcher.md"
+
+[[element]]
+id = "exercise-items"
+kind = "component"
+container = "cli"
+name = "Exercise items"
+role = "Builds the judgement items and the key-line items from the seeded templates and their mutants."
+doc = "cli/exercise-items.md"
+
 # Relations
 
 [[relation]]
@@ -630,3 +649,18 @@ label = "asks which techniques the code used"
 from = "classifier"
 to = "database"
 label = "appends a machine attempt claim"
+
+[[relation]]
+from = "matcher"
+to = "model-router"
+label = "asks which templates a solution displays"
+
+[[relation]]
+from = "matcher"
+to = "database"
+label = "appends a machine template match"
+
+[[relation]]
+from = "exercise-items"
+to = "database"
+label = "reads the templates and appends the items"

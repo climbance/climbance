@@ -24,7 +24,7 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     engine -->|"runs the sign-in flow"| identity_providers
     engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call; asks which techniques the code used"| model_router
+    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays"| model_router
     engine -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
@@ -147,9 +147,14 @@ flowchart TB
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph cli["Command line"]
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
+        matcher["Matcher<br/>Reads a canonical beside its statement and names the card templates it displays."]
+        exercise_items["Exercise items<br/>Builds the judgement items and the key-line items from the seeded templates and their mutants."]
     end
     classifier -->|"asks which techniques the code used"| model_router
     classifier -->|"appends a machine attempt claim"| database
+    matcher -->|"asks which templates a solution displays"| model_router
+    matcher -->|"appends a machine template match"| database
+    exercise_items -->|"reads the templates and appends the items"| database
 ```
 
 <!-- end of the generated views -->
@@ -605,7 +610,10 @@ times. Each record class is specified in one of the files beside it.
 
 | File | Holds |
 |---|---|
-| [`content.md`](content.md) | Techniques, cards, how a card and a subtopic share a technique, template matches |
+| [`concepts/techniques.md`](concepts/techniques.md) | The technique vocabulary and how a technique is claimed |
+| [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique |
+| [`cli/matcher.md`](cli/matcher.md) | Template matches |
+| [`cli/exercise-items.md`](cli/exercise-items.md) | Judgement items and key-line items |
 | [`corpus.md`](corpus.md) | Problems, test cases, solutions, solution claims, difficulty ratings and fits, trials |
 | [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests, run faults and feedback |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |

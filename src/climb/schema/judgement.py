@@ -1,5 +1,6 @@
 """A judgement item: a template's form, clean or carrying one mutant.
-`content.md` gives the items, and `log.md` the exercise they serve."""
+`cli/exercise-items.md` gives the items, and `log.md` the exercise they
+serve."""
 
 from datetime import datetime
 from enum import StrEnum

@@ -6,7 +6,7 @@ import { groupCell } from './module';
 import type { Board } from './schedule';
 import type { Course } from './types';
 
-// a card and a subtopic are paired by technique code alone: `content.md`,
+// a card and a subtopic are paired by technique code alone: `content-repo/cards-and-subtopics.md`,
 // Cards and subtopics
 
 type ListedCard = components['schemas']['ListedCard'];

@@ -1,5 +1,5 @@
-"""Judgement items built from the seeded templates: `content.md`, Judgement
-items."""
+"""Judgement items built from the seeded templates: `cli/exercise-items.md`,
+Judgement items."""
 
 import ast
 import hashlib

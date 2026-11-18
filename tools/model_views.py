@@ -42,6 +42,8 @@ def problems(model: dict) -> list[str]:
             found.append(f"`{e['id']}` cites `{e['doc']}`, which does not exist")
             continue
         text = path.read_text()
+        if "section" not in e:  # the file documents this element alone
+            continue
         if not re.search(rf"^#{{2,3}} {re.escape(e['section'])}$", text, re.M):
             found.append(f"`{e['id']}` cites a section `{e['doc']}` lacks: {e['section']}")
         elif "bullet" in e and f"**{e['bullet']}" not in re.sub(r"\s+", " ", text):

@@ -1958,7 +1958,8 @@ export interface components {
     };
     /**
      * Requirement
-     * @description One edge of the card graph: `content.md` gives what it asserts.
+     * @description One edge of the card graph: `content-repo/card-graph.md` gives what it
+     *     asserts.
      */
     Requirement: {
       /** Card */
@@ -2245,7 +2246,7 @@ export interface components {
     /**
      * Studied
      * @description A card as its page reads it. The ladder, the progress and the recall
-     *     state are folds, and `content.md` gives why none of them is stored.
+     *     state are folds, and `content-repo/cards.md` gives why none is stored.
      */
     Studied: {
       card: components['schemas']['Card'];

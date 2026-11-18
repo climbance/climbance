@@ -397,7 +397,7 @@ export function recallLine(one: Recalled | undefined, now: number): string {
 
 /** How a card shows one template, on both clients, before the form is revealed. */
 export interface TemplateView {
-  recallable: boolean; // a template no case checks is read and never recalled: `content.md`
+  recallable: boolean; // a template no case checks is read and never recalled: `content-repo/cards.md`
   badges: string[];
   status: string; // how its recall has gone, or why it has none
   unchecked: string | null; // said where the recall press would sit
@@ -483,7 +483,7 @@ export interface LadderView {
   // how many are solved, where a run is open
   aside: string | null;
   rows: RungRow[];
-  // a core template no problem covers yet: `content.md`, Cards
+  // a core template no problem covers yet: `content-repo/cards.md`
   gaps: string[];
 }
 

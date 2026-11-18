@@ -1,5 +1,5 @@
-"""Key-line items built from the seeded templates: `content.md`, Key-line
-items."""
+"""Key-line items built from the seeded templates: `cli/exercise-items.md`,
+Key-line items."""
 
 import io
 import tokenize

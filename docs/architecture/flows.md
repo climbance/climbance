@@ -728,9 +728,9 @@ start, and the probes are drawn at it.
   starting the run names the required cards not yet met. `log.md` gives when a
   card is locked and how a user who holds the forms meets a required card.
 - **A card with a gap still starts.** A core template no solution displays is
-  reported on the card, as `content.md` requires, and the rungs the ladder does
-  hold are still worth solving. Refusing the start would leave the user waiting
-  on a problem nobody has written yet.
+  reported on the card, as `content-repo/cards.md` requires, and the rungs
+  the ladder does hold are still worth solving. Refusing the start would
+  leave the user waiting on a problem nobody has written yet.
 - **The probes are drawn at the start, and never at import.** A problem unseen
   at import need not still be unseen when the user starts the card, and a probe
   the user has already solved tests no recognition.
@@ -786,7 +786,7 @@ to the card it came from.
   candidates are ordered.
 - **A rung names the templates it covers**, so the user reads why this problem
   is on this ladder. The templates also decide whether the rung is required,
-  which `content.md` derives rather than stores.
+  which `content-repo/cards.md` derives rather than stores.
 - **A rung carries no statement**, as a candidate carries none. Opening the
   rung serves the statement, so the ladder stays a list of picks.
 - **The problem's page is the one a technique's candidates open.** A rung is a
@@ -821,8 +821,8 @@ to the card it came from.
   no submission, and FSRS rates no review from it, as `## A template's
   reviews` gives.
 - **A retired problem fills no rung**, and the ladder is re-derived.
-  `content.md` gives both, and the attempts on the retired problem stay in the
-  log.
+  `content-repo/cards.md` gives both, and the attempts on the retired problem
+  stay in the log.
 
 Deferred, since only use answers each:
 
@@ -869,8 +869,8 @@ trainer never prints the form until the user asks for it as a hint.
   user reads is the row that opens the recall.
 - **The trainer names every template of the card and switches between them.**
   A user practising one form reaches the next without returning to the card. A
-  template no case checks is named and never opened, as `content.md` has it
-  read rather than recalled.
+  template no case checks is named and never opened, as
+  `content-repo/cards.md` has it read rather than recalled.
 - **The signature is shown.** The cases call the form with a parameter order,
   and that order has to be stated somewhere, as `corpus.md` says of a
   statement. A signature the user infers wrongly fails every case for a form

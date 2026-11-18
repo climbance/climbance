@@ -31,7 +31,7 @@ A module is one subject: Python first, then algorithms and system design.
 - **A question carries its subtopic's techniques.** A knowledge reading counts
   the answers to every subtopic naming the technique. A question naming
   techniques of its own is deferred until a subtopic mixing two techniques
-  needs it. `content.md` `## Cards and subtopics` gives what a subtopic
+  needs it. `content-repo/cards-and-subtopics.md` gives what a subtopic
   teaches beside a card.
 - **Titles are in sentence case**, as lesson and topic titles are: the first
   word and proper nouns alone are capitalized.

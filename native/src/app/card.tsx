@@ -57,7 +57,7 @@ type Recalled = components['schemas']['Recalled'];
 
 /**
  * A card's trigger, brief, ladder, probes and templates, each form hidden
- * until revealed: `content.md`, Cards. A rung and a probe open the Problem
+ * until revealed: `content-repo/cards.md`. A rung and a probe open the Problem
  * screen, where the sitting stays on the web, and a template opens its recall.
  */
 export default function CardScreen() {
@@ -172,7 +172,7 @@ function TemplateCard({
         {view.status}
       </Text>
       <Markdown>{template.trigger}</Markdown>
-      {/* the subtopics of another module the form's code rests on: `content.md` */}
+      {/* the subtopics of another module the form's code rests on: `content-repo/cards-and-subtopics.md` */}
       {cited.length ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 12, rowGap: 4 }}>
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
@@ -379,7 +379,7 @@ function RunStart({
   );
 }
 
-// the subtopics holding the facts the card's forms rest on: `content.md`,
+// the subtopics holding the facts the card's forms rest on: `content-repo/cards-and-subtopics.md`,
 // Cards and subtopics
 function Subtopics({
   card,

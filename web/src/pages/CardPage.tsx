@@ -246,7 +246,7 @@ function Start({
   )
 }
 
-// the rungs, their progress and the forms nothing covers. `content.md`: a gap
+// the rungs, their progress and the forms nothing covers. `content-repo/cards.md`: a gap
 // is reported rather than filled with another problem
 function LadderView({
   studied,
@@ -354,7 +354,7 @@ function ProbesView({
   )
 }
 
-// the subtopics holding the facts the card's forms rest on: `content.md`,
+// the subtopics holding the facts the card's forms rest on: `content-repo/cards-and-subtopics.md`,
 // Cards and subtopics
 function Subtopics({
   card,

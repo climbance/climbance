@@ -102,8 +102,8 @@ def outcome(ran: CaseRun, case: TemplateCase, *, unordered: bool) -> CaseOutcome
 
 def settled(value: Json, unordered: bool) -> Json:
     """A set answer's top level sorted, so the order two correct reproductions
-    emit it in is not a difference. `content.md` gives why the sort stops
-    there."""
+    emit it in is not a difference. `content-repo/cards.md` gives why the sort
+    stops there."""
     if not unordered or not isinstance(value, list):
         return value
     return sorted(value, key=as_json)

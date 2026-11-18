@@ -3,7 +3,7 @@ import pytest
 from climb.schema import Card, CardSeed, Template, TemplateSeed
 
 MINTED = frozenset({"id"})
-# read by `card check` alone, and dropped by the seed: `content.md`
+# read by `card check` alone, and dropped by the seed: `content-repo/cards.md`
 AUTHORING = frozenset({"equivalent"})
 
 # A card is authored once and seeded anywhere: only its id is per engine.

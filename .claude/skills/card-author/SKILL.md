@@ -37,8 +37,8 @@ file in place.
    what the classifier and the reader are both held to, so what the card teaches
    *as the technique* must sit inside them. Name the card's primary module in
    `module`: `algo` for an algorithms card. That module's subtopics hold
-   the facts the card leaves out, as `content.md` `## Cards and subtopics`
-   gives.
+   the facts the card leaves out, as
+   `docs/architecture/content-repo/cards-and-subtopics.md` gives.
 
    ```bash
    uv run python -c "from climb.techniques import codes; print(sorted(codes()))"
@@ -279,7 +279,7 @@ file in place.
 
 7. **Write `requires`** — the cards this one builds on, each as
    `{"card": <slug>, "template": <its core template>, "used_by": <this card's
-   template>}`. `docs/architecture/content.md` gives the card graph. An edge
+   template>}`. `docs/architecture/content-repo/card-graph.md` gives the card graph. An edge
    says this card's template uses that template's form: Kruskal's template
    uses the disjoint set, so it names `dsu-core` on the union-find card. "Is
    usually taught first" is no edge, and a kind-of relation is a technique's

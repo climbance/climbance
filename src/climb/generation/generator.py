@@ -118,9 +118,9 @@ Both are written as JSON inside a string, so a string keeps its quotes and an
 absent value is `null`."""
 
 
-# shown where the template claims a speedup. `content.md` gives what the claim
-# requires of the statement, and why the statement is not bent to help the
-# search
+# shown where the template claims a speedup. `content-repo/cards.md` gives what
+# the claim requires of the statement, and why the statement is not bent to
+# help the search
 SPEEDUP = """
 This form is faster than the naive approach it replaces, and the problem is
 stored with an input that shows it: the naive approach runs over a time limit

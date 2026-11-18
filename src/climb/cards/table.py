@@ -82,9 +82,10 @@ template_cases = Table(
 )
 
 
-# the card graph's edges, each on the requiring card: `content.md`. Slugs, as
-# the record names them. That the required template exists and is core spans
-# two cards, and stays the seed's check
+# the card graph's edges, each on the requiring card:
+# `content-repo/card-graph.md`. Slugs, as the record names them. That the
+# required template exists and is core spans two cards, and stays the seed's
+# check
 card_requirements = Table(
     "card_requirements",
     metadata,

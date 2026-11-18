@@ -1,6 +1,6 @@
 """The cards read beside a module: the two graphs together, over techniques,
 and the cards the module is primary for that no subtopic supports.
-`content.md`, Cards and subtopics."""
+`content-repo/cards-and-subtopics.md`."""
 
 import json
 import tomllib

@@ -78,8 +78,8 @@ def test_a_hint_out_of_order_is_refused(client):
 
 
 def test_a_template_with_no_case_is_never_drawn(client):
-    """`content.md`: such a template is read on the card, since nothing can
-    check a reproduction of it."""
+    """`content-repo/cards.md`: such a template is read on the card, since
+    nothing can check a reproduction of it."""
     drawn = client.get(PROMPT).json()
 
     assert drawn["template_slug"] == "longest-valid-window"

@@ -6,7 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from climb.schema.problem import ProblemDifficulty
 
 Slug = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*$")]
-# a subtopic of another module, as `<module>/<topic>/<subtopic>`: `content.md`
+# a subtopic of another module, as `<module>/<topic>/<subtopic>`:
+# `content-repo/cards-and-subtopics.md`
 Citation = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]*(/[a-z0-9][a-z0-9-]*){2}$")]
 
 
@@ -44,7 +45,8 @@ def unique_slugs(slugs: list[str]) -> None:
 
 
 class Requirement(BaseModel):
-    """One edge of the card graph: `content.md` gives what it asserts."""
+    """One edge of the card graph: `content-repo/card-graph.md` gives what it
+    asserts."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -94,10 +96,10 @@ class Template(BaseModel):
     # the order two correct reproductions emit it in is not a difference
     unordered: bool = False
     # what a recall is checked against; a template carrying none is read and
-    # never recalled, as `content.md` gives it
+    # never recalled, as `content-repo/cards.md` gives it
     cases: list[TemplateCase] = Field(default_factory=list[TemplateCase])
     # the top-level definitions turning JSON into nodes and back, which a
-    # judgement item neither shows nor mutates: `content.md`
+    # judgement item neither shows nor mutates: `cli/exercise-items.md`
     harness: list[str] = Field(default_factory=list[str])
     # the subtopics of another module the form's code rests on, such as the
     # `py` subtopic teaching `heapq`. A citation gates nothing

@@ -1,4 +1,4 @@
-"""The card graph's checks across cards: `content.md`, The card graph."""
+"""The card graph's checks across cards: `content-repo/card-graph.md`."""
 
 from collections.abc import Iterable, Mapping
 

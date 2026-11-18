@@ -10,7 +10,7 @@
       "type": "string"
     }
   },
-  "description": "Whether one solution displays one of a card's templates. One record per\npair \u2014 `content.md` gives why not a set.",
+  "description": "Whether one solution displays one of a card's templates. One record per\npair \u2014 `cli/matcher.md` gives why not a set.",
   "properties": {
     "call_id": {
       "anyOf": [
