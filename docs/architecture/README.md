@@ -24,7 +24,7 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     engine -->|"runs the sign-in flow"| identity_providers
     engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call"| model_router
+    engine -->|"sends every model call; asks which techniques the code used"| model_router
     engine -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
@@ -44,7 +44,7 @@ flowchart TB
     subgraph engine["Climbance"]
         web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
         native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
-        core_package["Shared core<br/>packages/core: the knowledge module's rules and each screen's labels and acts, imported by both clients."]
+        core_package["Shared core<br/>packages/core: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."]
         proxy["Caddy<br/>Terminates TLS, keeps the certificates on a volume, and passes every request to the API."]
         api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
         broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
@@ -72,7 +72,8 @@ flowchart TB
     cli -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| api
     database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
-    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item"| api
+    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions"| api
+    native_app -->|"loads the content; syncs answers and sessions"| api
 ```
 
 The API's components, and what each reads and writes.
@@ -80,6 +81,7 @@ The API's components, and what each reads and writes.
 ```mermaid
 flowchart TB
     web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
+    native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
     broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph api["API"]
@@ -92,9 +94,13 @@ flowchart TB
         self_labels["Self-labels<br/>Stores the user's verdict on why an attempt went the way it did, as a failure mode."]
         template_schedule["Template schedule<br/>Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."]
         card_states["Card states<br/>Derives each card's state, from not started to graduated or lapsed, from the log on every read."]
-        mastery["Mastery<br/>Computes each technique's recognition, execution and knowledge from the log on every read."]
+        mastery["Mastery<br/>Computes each technique's recognition and execution from the log on every read."]
         pick["Pick<br/>Names the next item: a template and the act that reviews it, read from the three folds."]
         predictions["Predictions<br/>Stores what each pick expected, from FSRS and from mastery, before the user acts on it."]
+        snapshot["Snapshot<br/>Serves the seeded content to both clients as one document, revalidated by its ETag."]
+        knowledge_sync["Knowledge sync<br/>Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."]
+        knowledge_log["Knowledge log<br/>The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."]
+        problems["Problems<br/>Reads a problem from the corpus: its statement, its templates and its test cases."]
     end
     web_app -->|"starts, pauses and ends the clock"| sitting
     web_app -->|"submits code for the problem"| submission
@@ -122,6 +128,28 @@ flowchart TB
     predictions -->|"appends each prediction"| database
     attempt_claims -->|"appends each claim"| database
     self_labels -->|"appends each label"| database
+    web_app -->|"loads the content"| snapshot
+    native_app -->|"loads the content"| snapshot
+    web_app -->|"syncs answers and sessions"| knowledge_sync
+    native_app -->|"syncs answers and sessions"| knowledge_sync
+    knowledge_sync -->|"appends each line"| knowledge_log
+    knowledge_log -->|"appends to the user's knowledge log"| database
+    snapshot -->|"reads the seeded content"| database
+    runner -->|"reads the problem's cases"| problems
+    problems -->|"reads the corpus"| database
+```
+
+The Command line's components, and what each reads and writes.
+
+```mermaid
+flowchart TB
+    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
+    subgraph cli["Command line"]
+        classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
+    end
+    classifier -->|"asks which techniques the code used"| model_router
+    classifier -->|"appends a machine attempt claim"| database
 ```
 
 <!-- end of the generated views -->

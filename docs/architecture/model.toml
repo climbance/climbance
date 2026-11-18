@@ -110,7 +110,7 @@ bullet = "The native app schedules the knowledge queues offline."
 id = "core-package"
 kind = "library"
 name = "Shared core"
-role = "`packages/core`: the knowledge module's rules and each screen's labels and acts, imported by both clients."
+role = "`packages/core`: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."
 doc = "README.md"
 section = "Boundaries"
 bullet = "The web and the native app import one TypeScript package"
@@ -258,7 +258,7 @@ id = "mastery"
 kind = "component"
 container = "api"
 name = "Mastery"
-role = "Computes each technique's recognition, execution and knowledge from the log on every read."
+role = "Computes each technique's recognition and execution from the log on every read."
 doc = "log.md"
 section = "Mastery"
 
@@ -279,6 +279,56 @@ name = "Predictions"
 role = "Stores what each pick expected, from FSRS and from mastery, before the user acts on it."
 doc = "log.md"
 section = "Predictions"
+
+[[element]]
+id = "snapshot"
+kind = "component"
+container = "api"
+name = "Snapshot"
+role = "Serves the seeded content to both clients as one document, revalidated by its ETag."
+doc = "knowledge.md"
+section = "The wire"
+bullet = "The content reaches a client as one snapshot"
+
+[[element]]
+id = "knowledge-sync"
+kind = "component"
+container = "api"
+name = "Knowledge sync"
+role = "Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."
+doc = "knowledge.md"
+section = "The wire"
+bullet = "A client syncs sync lines"
+
+[[element]]
+id = "knowledge-log"
+kind = "component"
+container = "api"
+name = "Knowledge log"
+role = "The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."
+doc = "knowledge.md"
+section = "The records"
+
+[[element]]
+id = "problems"
+kind = "component"
+container = "api"
+name = "Problems"
+role = "Reads a problem from the corpus: its statement, its templates and its test cases."
+doc = "corpus.md"
+section = "Problems"
+
+# Components of the command line
+
+[[element]]
+id = "classifier"
+kind = "component"
+container = "cli"
+name = "Classifier"
+role = "Reads an attempt's code and claims the techniques it used, filling what no user claimed."
+doc = "log.md"
+section = "Attempt claims"
+bullet = "The classifier is prompted, not trained."
 
 # Relations
 
@@ -523,3 +573,60 @@ label = "appends each claim"
 from = "self-labels"
 to = "database"
 label = "appends each label"
+
+# The knowledge side, the corpus and the classifier
+
+[[relation]]
+from = "web-app"
+to = "snapshot"
+label = "loads the content"
+
+[[relation]]
+from = "native-app"
+to = "snapshot"
+label = "loads the content"
+
+[[relation]]
+from = "web-app"
+to = "knowledge-sync"
+label = "syncs answers and sessions"
+
+[[relation]]
+from = "native-app"
+to = "knowledge-sync"
+label = "syncs answers and sessions"
+
+[[relation]]
+from = "knowledge-sync"
+to = "knowledge-log"
+label = "appends each line"
+
+[[relation]]
+from = "knowledge-log"
+to = "database"
+label = "appends to the user's knowledge log"
+
+[[relation]]
+from = "snapshot"
+to = "database"
+label = "reads the seeded content"
+
+[[relation]]
+from = "runner"
+to = "problems"
+label = "reads the problem's cases"
+
+[[relation]]
+from = "problems"
+to = "database"
+label = "reads the corpus"
+
+[[relation]]
+from = "classifier"
+to = "model-router"
+label = "asks which techniques the code used"
+
+[[relation]]
+from = "classifier"
+to = "database"
+label = "appends a machine attempt claim"
