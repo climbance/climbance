@@ -30,7 +30,7 @@ holds the answer. Work in a scratchpad folder of the run's own, `<out>`.
    ```
 
    It writes `questions.json` (prompt, code and choices, shuffled), `form.json`
-   (the choices alone) and `key.json`, which no agent reads. A card is
+   (the choices, and in `choose` how many letters to pick) and `key.json`, which no agent reads. A card is
    skipped, since its key is the points a learner recalls.
    `questions.json` holds the `principle` and `pattern` questions alone: the
    module check proves an `output` or `debug` key by running its code. Pass
@@ -39,7 +39,7 @@ holds the answer. Work in a scratchpad folder of the run's own, `<out>`.
 
 2. **Solve.** Spawn one agent with this brief and `<out>/questions.json`:
    - Answer every question as a learner of the module's subject would. For a
-     choice, pick as many letters as `pick` says. For a `short` question, write
+     choice, pick as many letters as `choose` says. For a `short` question, write
      the reply exactly as it would be typed.
    - Do not run an `output` question's code, since running it reads the answer
      off. Any other kind may be run, from the engine repo root, with
@@ -50,10 +50,11 @@ holds the answer. Work in a scratchpad folder of the run's own, `<out>`.
      `{"n", "reply"}`, each with `"confidence"` and `"reason"`.
 
 3. **Read the form.** Spawn a second agent with `<out>/form.json` alone. Its
-   brief: for each item, pick the choice most likely keyed from its wording
-   alone, with a confidence and the cue it used, such as the longest choice,
-   the only hedged one, or the one echoing the others. An item's `pick` is
-   how many letters to choose, not the key. Write
+   brief: for each item, pick as many letters as `choose` says, the choices
+   most likely keyed from their wording alone, with a confidence and the cue
+   it used, such as the longest choice, the only hedged one, or the one
+   echoing the others. An item's `choose` is how many letters to choose,
+   not the key. Write
    `<out>/form-replies.json` in the same shape.
 
 4. **Score.**

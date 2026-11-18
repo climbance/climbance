@@ -39,10 +39,11 @@ def extract(module: Path, out: Path, subs: list[str], every: bool) -> None:
                 order = list(range(len(q["choices"])))
                 rng.shuffle(order)
                 item["choices"] = {LETTERS[i]: q["choices"][j] for i, j in enumerate(order)}
-                item["pick"] = len(q["answer"])
+                # a count, named apart from the reply's "pick" of letters
+                item["choose"] = len(q["answer"])
                 entry["key"] = sorted(LETTERS[order.index(ord(a) - 65)] for a in q["answer"])
                 # the form pass sees the choices alone, under its own numbering
-                form.append({"n": n, "choices": item["choices"], "pick": item["pick"]})
+                form.append({"n": n, "choices": item["choices"], "choose": item["choose"]})
             else:
                 entry["accept"] = q["accept"]
             if every or q["kind"] not in PROVEN:
