@@ -4,7 +4,8 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router'
 
 import {
   baselineStop,
-  type BaselineItem,
+  delayedStop,
+  DELAYED_LATER,
   type ExamPlan,
   type SessionRecord,
   BASELINE_SKIP,
@@ -209,12 +210,19 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
         )}
       </div>
 
-      {!done && current && 'baseline' in current ? (
-        <BaselineStop
-          item={current.baseline}
-          size={run?.baselinePlan?.questions.length ?? 0}
+      {!done && current && 'delayed' in current ? (
+        <TestStop
+          stop={delayedStop(current.delayed, run?.delayedPlan?.questions.length ?? 0)}
+          onTake={() => setTesting(run?.delayedPlan ?? null)}
+          other={DELAYED_LATER}
+          onOther={next}
+        />
+      ) : !done && current && 'baseline' in current ? (
+        <TestStop
+          stop={baselineStop(current.baseline, run?.baselinePlan?.questions.length ?? 0)}
           onTake={() => setTesting(run?.baselinePlan ?? null)}
-          onSkip={skipTest}
+          other={BASELINE_SKIP}
+          onOther={skipTest}
         />
       ) : !done && current && 'lesson' in current ? (
         <LessonStop
@@ -305,15 +313,14 @@ function LessonStop(props: {
   )
 }
 
-// the baseline test a queue offers before a topic's first new question:
-// `knowledge.md`, Baseline and delayed tests
-function BaselineStop(props: {
-  item: BaselineItem
-  size: number
+// a baseline or delayed test a queue stops on: `knowledge.md`, Baseline and delayed tests
+function TestStop(props: {
+  stop: { kicker: string; title: string; note: string }
   onTake: () => void
-  onSkip: () => void
+  other: string
+  onOther: () => void
 }) {
-  const stop = baselineStop(props.item, props.size)
+  const { stop } = props
   return (
     <Panel>
       <p className="text-meta font-medium text-muted-foreground">{stop.kicker}</p>
@@ -321,8 +328,8 @@ function BaselineStop(props: {
       <p className="text-meta text-muted-foreground">{stop.note}</p>
       <div className="flex gap-stack">
         <Button onClick={props.onTake}>{BASELINE_TAKE}</Button>
-        <Button variant="ghost" onClick={props.onSkip}>
-          {BASELINE_SKIP}
+        <Button variant="ghost" onClick={props.onOther}>
+          {props.other}
         </Button>
       </div>
     </Panel>

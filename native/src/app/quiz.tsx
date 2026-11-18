@@ -8,7 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   baselineStop,
-  type BaselineItem,
+  delayedStop,
+  DELAYED_LATER,
   BASELINE_SKIP,
   BASELINE_TAKE,
   type AnswerRow,
@@ -154,16 +155,16 @@ function LessonStop({ item, bottom, onNext }: { item: LessonItem; bottom: number
   );
 }
 
-/** The baseline test a queue offers before a topic's first new question: `knowledge.md`. */
-function BaselineStop(props: {
-  item: BaselineItem;
-  size: number;
+/** A baseline or delayed test a queue stops on: `knowledge.md`, Baseline and delayed tests. */
+function TestStop(props: {
+  stop: { kicker: string; title: string; note: string };
   bottom: number;
   onTake: () => void;
-  onSkip: () => void;
+  other: string;
+  onOther: () => void;
 }) {
   const theme = useTheme();
-  const stop = baselineStop(props.item, props.size);
+  const { stop } = props;
   return (
     <View style={{ flex: 1 }}>
       <View style={[styles.page, { flex: 1, justifyContent: 'center' }]}>
@@ -176,8 +177,8 @@ function BaselineStop(props: {
         </Text>
       </View>
       <BottomBar bottom={props.bottom} row>
-        <Press mode="text" onPress={props.onSkip}>
-          {BASELINE_SKIP}
+        <Press mode="text" onPress={props.onOther}>
+          {props.other}
         </Press>
         <Press icon="clipboard-check-outline" style={{ flex: 1 }} onPress={props.onTake}>
           {BASELINE_TAKE}
@@ -280,13 +281,21 @@ function QueueQuiz({ s }: { s: QueueSession }) {
           </Button>
         ) : null}
       </View>
-      {!done && current && 'baseline' in current ? (
-        <BaselineStop
-          item={current.baseline}
-          size={run.baselinePlan?.questions.length ?? 0}
+      {!done && current && 'delayed' in current ? (
+        <TestStop
+          stop={delayedStop(current.delayed, run.delayedPlan?.questions.length ?? 0)}
+          bottom={insets.bottom}
+          onTake={() => setTesting(run.delayedPlan)}
+          other={DELAYED_LATER}
+          onOther={next}
+        />
+      ) : !done && current && 'baseline' in current ? (
+        <TestStop
+          stop={baselineStop(current.baseline, run.baselinePlan?.questions.length ?? 0)}
           bottom={insets.bottom}
           onTake={() => setTesting(run.baselinePlan)}
-          onSkip={() => void skipTest()}
+          other={BASELINE_SKIP}
+          onOther={() => void skipTest()}
         />
       ) : !done && current && 'lesson' in current ? (
         <LessonStop item={current.lesson} bottom={insets.bottom} onNext={next} />

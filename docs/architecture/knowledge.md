@@ -453,6 +453,9 @@ A lesson's pretest is a different thing, as `## Lessons` gives.
   is a stop at the start of the next queue, like a lesson offered there, and
   stays offered until it is taken. Four weeks is the delay the strategy's
   claim names.
+- **Later passes the delayed test's stop for the run alone.** The test stores
+  nothing until it is taken, so the next run offers it again. A skip would
+  lose the topic's gain for good, so the delayed test has none.
 - **The baseline's questions are read from its answers**, never stored as a
   list. A topic has one baseline test, so the answers measuring `baseline` on
   that topic's questions are the test.

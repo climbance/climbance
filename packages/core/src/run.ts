@@ -1,5 +1,6 @@
 import { baselineBefore, baselinePlan, baselineTopics, skipBaseline, type BaselineItem } from './baseline';
 import type { CertRecord } from './certs';
+import { delayedDue, delayedPlan, type DelayedItem } from './delayed';
 import { topicKey, type Catalog } from './courses';
 import { examOutcome, examTitle, type ExamOutcome, type ExamPlan } from './exam';
 import { isLessonItem, NEW_STEP, type LessonItem, type Queue } from './queue';
@@ -8,11 +9,14 @@ import type { Result } from './result';
 import { Board } from './schedule';
 import { offersRaise, queueLine, type QueueCounts } from './screens';
 import { newRecord } from './sync';
-import { BASELINE_NAME } from './words/queue';
+import { BASELINE_NAME, DELAYED_NAME } from './words/queue';
 import type { AttemptRecord, Course, Question, RaiseRecord, SessionRecord, Status } from './types';
 
 export type QueueItem =
-  { q: Question; tag: Status; fresh: boolean; early: boolean } | { lesson: LessonItem } | { baseline: BaselineItem };
+  | { q: Question; tag: Status; fresh: boolean; early: boolean }
+  | { lesson: LessonItem }
+  | { baseline: BaselineItem }
+  | { delayed: DelayedItem };
 
 /** What a client's copy holds when the run reads it: the catalog and every attempt stored so far. */
 export interface QueueSource {
@@ -73,6 +77,8 @@ export class QueueRun {
   }
 
   private pick(src: QueueSource, now = Date.now()): QueueItem | null {
+    const delayed = this.delayedFirst(src, now);
+    if (delayed) return { delayed };
     const b = this.board(src);
     const picked = b ? this.queue.pick(b, now) : null;
     this.shown++;
@@ -130,6 +136,25 @@ export class QueueRun {
   }
 
   private testPlan: ExamPlan | null = null;
+
+  // a stop at the start of the run, offered again each run until taken:
+  // `knowledge.md`, Baseline and delayed tests
+  private delayedFirst(src: QueueSource, now: number): DelayedItem | null {
+    if (this.shown > 0 || !src.catalog) return null;
+    if (this.queue.kind !== 'mix' && this.queue.kind !== 'focus') return null;
+    const item = delayedDue(src.catalog, src.sessions ?? [], now);
+    if (!item) return null;
+    const plan = delayedPlan(src.catalog, item, src.attempts);
+    if (!plan.questions.length) return null;
+    this.testPlan = plan;
+    this.shown++;
+    return item;
+  }
+
+  /** The current stop's delayed test. */
+  get delayedPlan(): ExamPlan | null {
+    return this.current && 'delayed' in this.current ? this.testPlan : null;
+  }
 
   /** The current stop's baseline test. */
   get baselinePlan(): ExamPlan | null {
@@ -305,7 +330,8 @@ export class ExamRun {
   }
 
   get title(): string {
-    const name = this.plan.test ? BASELINE_NAME : undefined;
+    const measure = this.plan.test?.measure;
+    const name = measure === 'baseline' ? BASELINE_NAME : measure === 'delayed' ? DELAYED_NAME : undefined;
     return examTitle(this.phase, this.index, this.total, this.reviewAt, this.outcome.missed.length, name);
   }
 }

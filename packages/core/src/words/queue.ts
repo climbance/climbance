@@ -25,6 +25,14 @@ export const baselineNote = (n: number) =>
   `${n} ${n === 1 ? 'question' : 'questions'} on what you know already, with the answers shown at the end. ` +
   'They do not count toward your reviews. In four weeks the same questions show what you gained.';
 
+// the delayed test a queue stops on at its start
+export const DELAYED_KICKER = 'Four weeks on';
+export const DELAYED_NAME = 'Delayed test';
+export const DELAYED_LATER = 'Later';
+export const delayedNote = (n: number, since: string) =>
+  `The ${n} ${n === 1 ? 'question' : 'questions'} of your baseline test on ${since}, asked again. ` +
+  'The difference in score is what you gained. They do not count toward your reviews.';
+
 // one question
 export const ASK_NEXT = 'Next';
 export const ASK_SUBMIT = 'Submit';
