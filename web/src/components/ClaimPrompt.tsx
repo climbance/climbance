@@ -2,6 +2,7 @@ import {
   attemptCode,
   attemptLine,
   CLAIM_CONFIDENCE,
+  CLAIM_CONFIDENCE_NOTE,
   CLAIM_DECLINE,
   CLAIM_QUESTION,
   claimDefault,
@@ -171,6 +172,7 @@ function ClaimForm({ attempt, modes, position, code, techniques, drilled, onClai
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
+        <p className="text-meta text-muted-foreground">{CLAIM_CONFIDENCE_NOTE}</p>
       </div>
 
       {modes.length > 0 && (

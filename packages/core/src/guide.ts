@@ -11,6 +11,11 @@ one trains a different part of the skill.
 problem's own cases. It trains writing a correct solution once you know the
 technique. The clock is yours to start, pause or leave off.
 
+At each solve, and when you end the sitting, **the claim** asks which
+techniques each attempt's code used and how sure you are. Your answer is what
+the board counts for each technique. It then asks, optionally, why the attempt
+went the way it did.
+
 **A recall** asks you to write one form of a technique from memory, and runs
 it against a few cases. It trains holding the form, so you can reach for it in
 a sitting. A hint is there when you are stuck, and a pass after a hint counts

@@ -6,6 +6,7 @@ import {
   attemptCode,
   attemptLine,
   CLAIM_CONFIDENCE,
+  CLAIM_CONFIDENCE_NOTE,
   CLAIM_DECLINE,
   CLAIM_NOTE,
   CLAIM_QUESTION,
@@ -165,6 +166,9 @@ function ClaimForm({
           </Toggle>
         ))}
       </Toggles>
+      <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+        {CLAIM_CONFIDENCE_NOTE}
+      </Text>
       {asked.modes.length > 0 ? (
         <>
           <Heading sub title={LABEL_QUESTION} />

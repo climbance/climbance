@@ -279,7 +279,9 @@ export const submitLabel = (running: boolean) => (running ? 'Running…' : 'Subm
 export const RESTORE_SOLVE = 'Restore my last solve';
 export const sittingRefused = (why: string) => `Refused: ${why}`;
 export const CLAIM_TITLE = 'The claim';
-export const CLAIM_NOTE = 'Asked of each attempt now, while the code is minutes old.';
+// a first-time user meets the claim with nothing else saying what it is for
+export const CLAIM_NOTE =
+  'Your answer decides which techniques this attempt counts toward on your board. Each attempt of the sitting is asked in turn.';
 export const FAILURE_ARGS = 'Arguments';
 export const FAILURE_EXPECTED = 'Expected';
 export const FAILURE_RETURNED = 'Returned';

@@ -387,7 +387,8 @@ problem's path reads as its record, as "Every problem" gives.
 ```
 +- the claim and the label, over the sitting ----------------------------+
 | The claim                                                              |
-| Asked of each attempt now, while the code is minutes old.              |
+| Your answer decides which techniques this attempt counts toward on     |
+| your board. Each attempt of the sitting is asked in turn.              |
 |                                                                        |
 | Attempt 2 of 3 . not solved . 12:04                                    |
 |                                                                        |
@@ -396,7 +397,9 @@ problem's path reads as its record, as "Every problem" gives.
 |   [ ] two-pointers                                                     |
 |   [ ] None of these                                                    |
 |                                                                        |
-| Confidence   ( guess | leaning | sure )                                |
+| How sure are you?   ( guess | leaning | sure )                         |
+| A guess is a fine answer. The level is kept with the claim, so a       |
+| guess is never read as sure.                                           |
 |                                                                        |
 | Why did it go that way?                                                |
 |   ( ) gap      I did not hold the form                                 |

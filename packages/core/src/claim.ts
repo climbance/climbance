@@ -54,6 +54,8 @@ export const attemptCode = (index: number, count: number, attempt: Attempt): str
 export const CLAIM_QUESTION = 'Which techniques did this code use?';
 export const CLAIM_DECLINE = 'None of these';
 export const CLAIM_CONFIDENCE = 'How sure are you?';
+// Save waits on the level, so the line says a guess is an answer
+export const CLAIM_CONFIDENCE_NOTE = 'A guess is a fine answer. The level is kept with the claim, so a guess is never read as sure.';
 export const LABEL_QUESTION = 'Why did it go that way?';
 export const LABEL_OPTIONAL = 'This question is optional, and skipping it leaves the attempt unlabelled.';
 export const CLAIM_NEEDS_TECHNIQUE = 'Tick a technique, or None of these, to save.';
