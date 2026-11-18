@@ -4,7 +4,6 @@ import argparse
 import os
 from collections.abc import Callable
 from pathlib import Path
-from typing import TypedDict
 
 from dotenv import find_dotenv, load_dotenv
 
@@ -19,6 +18,14 @@ from climb.cli.diagnose import diagnose
 from climb.cli.difficulty import difficulty
 from climb.cli.feedback import feedback_listed
 from climb.cli.fill import fill
+from climb.cli.flags import (
+    Defaults,
+    command,
+    configuration_arguments,
+    rows,
+    run_arguments,
+    user_argument,
+)
 from climb.cli.gaps import gaps
 from climb.cli.generate import generate
 from climb.cli.hand_match import hand_match
@@ -29,7 +36,6 @@ from climb.cli.module import module, retired
 from climb.cli.movement import moved
 from climb.cli.problem import problem
 from climb.cli.retime import retime
-from climb.cli.rows import Rows
 from climb.cli.score import score
 from climb.cli.seed import BadLine, seed
 from climb.cli.user_log import user_log
@@ -37,96 +43,13 @@ from climb.diagnoser import DEFAULT as DIAGNOSER
 from climb.diagnoser import Tool
 from climb.diagnosing import SAMPLE
 from climb.difficulty import TRIES
-from climb.runs import CONCURRENCY
 from climb.schema import CallSite, ProblemDifficulty, RetirementReason
 from climb.storage import Database
 
 # What a shell reports for a command its user stopped: 128 plus the signal.
 INTERRUPTED = 130
 
-# a parser or one of its groups: both take `add_argument`
-Flags = argparse._ActionsContainer  # pyright: ignore[reportPrivateUsage]
-
 __all__ = ["INTERRUPTED", "BadLine", "main"]
-
-
-class _Defaults(argparse.ArgumentDefaultsHelpFormatter):
-    """`None` and `False` are the absence of a flag, so no default is shown for
-    them."""
-
-    def _get_help_string(self, action: argparse.Action) -> str | None:
-        if action.default is None or action.default is False:
-            return action.help
-        return super()._get_help_string(action)
-
-
-def _command(
-    sub: argparse._SubParsersAction[argparse.ArgumentParser],  # pyright: ignore[reportPrivateUsage]
-    name: str,
-    help: str,
-) -> argparse.ArgumentParser:
-    return sub.add_parser(name, help=help, formatter_class=_Defaults)
-
-
-def _user_argument(parser: Flags) -> None:
-    parser.add_argument(
-        "--user",
-        # the user the dev login signs in as, so the terminal and the local
-        # pages read one log
-        default=os.environ.get("CLIMB_DEV_LOGIN", "local"),
-        help="whose attempts to read",
-    )
-
-
-def _run_arguments(parser: Flags, *, record: str, question: str = "prompt", per: str = "") -> None:
-    """The flags every run over a backlog takes."""
-    parser.add_argument(
-        "--concurrency",
-        type=int,
-        default=CONCURRENCY,
-        help=f"calls in flight at once{per}; one at a time otherwise",
-    )
-    parser.add_argument(
-        "--fresh",
-        action="store_true",
-        help=f"ask again even where a stored {record} answers the same {question}",
-    )
-
-
-SETTINGS = ("--model", "--effort", "--provider", "--temperature")
-
-
-class RowKeywords(TypedDict):
-    dest: str
-    action: type[argparse.Action]
-    opener: str
-    fills: list[str]
-    opens_by_default: str | None
-
-
-def _rows(dest: str, opener: str, *, opens_by_default: str | None = None) -> RowKeywords:
-    """The `add_argument` keywords that put a flag into the rows `opener`
-    begins. One destination for all of them, so which setting followed which
-    opener survives."""
-    fills = [flag for flag in SETTINGS if flag != opener]
-    return RowKeywords(
-        dest=dest, action=Rows, opener=opener, fills=fills, opens_by_default=opens_by_default
-    )
-
-
-def _configuration_arguments(parser: Flags, rows: RowKeywords, opener: str, **help: str) -> None:
-    """`--model`, `--effort`, `--provider` and `--temperature`, each filling the
-    row the `opener` before it began. `help` overrides the wording of one flag,
-    keyed by its name."""
-    wording = {
-        "model": f"the model writing the {opener} before it",
-        "effort": f"the effort of the {opener} before it",
-        "provider": f"the backend to pin the {opener} before it to",
-        "temperature": f"what the {opener} before it samples at; 'default' for the provider's own",
-    } | help
-    for flag in SETTINGS:
-        name = flag[2:]
-        parser.add_argument(flag, metavar=name.upper(), help=wording[name], **rows)
 
 
 def main() -> None:
@@ -138,26 +61,26 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="climb")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    seed_parser = _command(sub, "seed", "seed authored content into the store")
+    seed_parser = command(sub, "seed", "seed authored content into the store")
     seed_parser.add_argument("kind", choices=["cards", "knowledge"])
     seed_parser.add_argument(
         "source",
         help="cards: a JSON file or a directory of them; knowledge: a module's directory",
     )
 
-    board_parser = _command(sub, "board", "per-technique progress, derived from the log")
+    board_parser = command(sub, "board", "per-technique progress, derived from the log")
     board_parser.add_argument("--json", action="store_true", help="emit rows instead of a table")
     board_parser.add_argument(
         "--stale", action="store_true", help="order by recency, least recently practised first"
     )
-    _user_argument(board_parser)
+    user_argument(board_parser)
 
-    claim_parser = _command(sub, "claim", "name the techniques a piece of code used")
+    claim_parser = command(sub, "claim", "name the techniques a piece of code used")
     subject = claim_parser.add_subparsers(dest="subject", required=True)
     attempts_parser = subject.add_parser(
         "attempts",
         help="the user's attempts: the classifier, or the user with --by-hand",
-        formatter_class=_Defaults,
+        formatter_class=Defaults,
     )
     attempts_parser.add_argument(
         "--by-hand",
@@ -167,7 +90,7 @@ def main() -> None:
     attempts_parser.add_argument(
         "--technique", help="only attempts whose problem carries it; every technique otherwise"
     )
-    _user_argument(attempts_parser)
+    user_argument(attempts_parser)
     by_hand = attempts_parser.add_argument_group("with --by-hand")
     by_hand.add_argument("--count", type=int, default=10, help="how many to ask about")
     by_hand.add_argument("--lines", type=int, default=120, help="lines of code to show")
@@ -175,9 +98,9 @@ def main() -> None:
     by_hand.add_argument(
         "--revise", action="store_true", help="ask again about attempts already claimed"
     )
-    _configuration_arguments(
+    configuration_arguments(
         by_hand,
-        _rows("named", "--model", opens_by_default=DEFAULT.model),
+        rows("named", "--model", opens_by_default=DEFAULT.model),
         "--model",
         model="a classifier whose claim to show beside the user's; repeatable",
         provider="the endpoint the --model before it read from",
@@ -200,17 +123,17 @@ def main() -> None:
         action="store_true",
         help="also re-derive claims an older model or prompt version made",
     )
-    _run_arguments(classifier, record="claim")
+    run_arguments(classifier, record="claim")
 
     solutions_parser = subject.add_parser(
-        "solutions", help="the stored canonicals, by the classifier", formatter_class=_Defaults
+        "solutions", help="the stored canonicals, by the classifier", formatter_class=Defaults
     )
     solutions_parser.add_argument(
         "--limit", type=int, help="how many canonicals to claim; every unclaimed one otherwise"
     )
-    _run_arguments(solutions_parser, record="claim")
+    run_arguments(solutions_parser, record="claim")
 
-    match_parser = _command(sub, "match", "which problems exercise a card's templates")
+    match_parser = command(sub, "match", "which problems exercise a card's templates")
     match_parser.add_argument(
         "--by-hand",
         action="store_true",
@@ -227,9 +150,9 @@ def main() -> None:
     matcher.add_argument(
         "--limit", type=int, help="how many pairs to read; every outstanding one otherwise"
     )
-    _run_arguments(matcher, record="record", question="question")
+    run_arguments(matcher, record="record", question="question")
 
-    generate_parser = _command(sub, "generate", "write problems for one of a card's templates")
+    generate_parser = command(sub, "generate", "write problems for one of a card's templates")
     generate_parser.add_argument("--card", help="the card, by slug; narrows --gaps to it")
     generate_parser.add_argument("--template", help="its template, by slug")
     generate_parser.add_argument(
@@ -289,7 +212,7 @@ def main() -> None:
         action="store_true",
         help="replay a pair even where a record answers the same prompt",
     )
-    sited = _rows("sites", "--site")
+    sited = rows("sites", "--site")
     generate_parser.add_argument(
         "--site",
         metavar="SITE",
@@ -297,9 +220,9 @@ def main() -> None:
         help=f"the call site the settings after it configure: {', '.join(SITES)}; repeatable",
         **sited,
     )
-    _configuration_arguments(generate_parser, sited, "--site")
+    configuration_arguments(generate_parser, sited, "--site")
 
-    problem_parser = _command(sub, "problem", "read one stored problem, or list the corpus")
+    problem_parser = command(sub, "problem", "read one stored problem, or list the corpus")
     problem_parser.add_argument(
         "id", nargs="?", help="the problem, by id or a prefix of one; every one otherwise"
     )
@@ -327,12 +250,12 @@ def main() -> None:
         help="score the problem the id names by hand, on the contest scale; its band is the label",
     )
 
-    difficulty_parser = _command(sub, "difficulty", "the panel's trials, and a difficulty fit")
+    difficulty_parser = command(sub, "difficulty", "the panel's trials, and a difficulty fit")
     difficulty_action = difficulty_parser.add_subparsers(dest="action", required=True)
     trials_parser = difficulty_action.add_parser(
         "trials",
         help="every panel member's tries on every served problem",
-        formatter_class=_Defaults,
+        formatter_class=Defaults,
     )
     trials_parser.add_argument(
         "--tries", type=int, default=TRIES, help="tries per member per problem"
@@ -344,7 +267,7 @@ def main() -> None:
     fit_parser = difficulty_action.add_parser(
         "fit",
         help="fit the stored trials with the anchors', linked to the contest scale",
-        formatter_class=_Defaults,
+        formatter_class=Defaults,
     )
     fit_parser.add_argument("--anchors", type=Path, required=True, help="CSV: id, rating, split")
     fit_parser.add_argument(
@@ -355,24 +278,24 @@ def main() -> None:
     )
     fit_parser.add_argument("--write", action="store_true", help="store the fit and its ratings")
 
-    gaps_parser = _command(sub, "gaps", "core templates no stored solution displays")
+    gaps_parser = command(sub, "gaps", "core templates no stored solution displays")
     gaps_parser.add_argument(
         "--all", action="store_true", help="every core template; only the gaps otherwise"
     )
 
-    _command(
+    command(
         sub, "retime", "every served canonical at the drill cap, and its cases past a tenth of it"
     )
 
-    score_parser = _command(sub, "score", "the classifier against the user's own claims")
+    score_parser = command(sub, "score", "the classifier against the user's own claims")
     score_parser.add_argument(
         "--limit",
         type=int,
         help="how many attempts to read per classifier; every unread one otherwise",
     )
-    _configuration_arguments(
+    configuration_arguments(
         score_parser,
-        _rows("named", "--model", opens_by_default=DEFAULT.model),
+        rows("named", "--model", opens_by_default=DEFAULT.model),
         "--model",
         model="a classifier to score; repeatable",
     )
@@ -386,23 +309,23 @@ def main() -> None:
         action="store_true",
         help="print the per-technique table and every attempt read differently; counted otherwise",
     )
-    _run_arguments(score_parser, record="claim", per=" per model and endpoint")
-    _user_argument(score_parser)
+    run_arguments(score_parser, record="claim", per=" per model and endpoint")
+    user_argument(score_parser)
 
-    movement_parser = _command(
+    movement_parser = command(
         sub, "movement", "how far the classifier's claims move the board off the fallback"
     )
-    _user_argument(movement_parser)
+    user_argument(movement_parser)
 
-    invite_parser = _command(sub, "invite", "the emails allowed to sign in")
+    invite_parser = command(sub, "invite", "the emails allowed to sign in")
     invite_action = invite_parser.add_subparsers(dest="action", required=True)
     for name, help in (("add", "let the email sign in"), ("remove", "stop the email signing in")):
         invite_action.add_parser(name, help=help).add_argument("email")
     invite_action.add_parser("list", help="every email invited")
 
-    _command(sub, "feedback", "every user's feedback, newest first")
+    command(sub, "feedback", "every user's feedback, newest first")
 
-    diagnose_parser = _command(sub, "diagnose", "where a failed solution's fault lies")
+    diagnose_parser = command(sub, "diagnose", "where a failed solution's fault lies")
     diagnosed = diagnose_parser.add_subparsers(dest="subject", required=True)
     on_attempts = diagnosed.add_parser("attempts", help="the failed attempts with code")
     on_mutants = diagnosed.add_parser("mutants", help="the labelled mutants, sampled per operator")
@@ -412,7 +335,7 @@ def main() -> None:
     on_score.add_argument("--stored", action="store_true", help="score what is stored, no call")
     on_attempts.set_defaults(per_operator=SAMPLE, all=False)
     for one in (on_attempts, on_score):
-        _user_argument(one)
+        user_argument(one)
     for one in (on_mutants, on_score):
         one.add_argument("--per-operator", type=int, default=SAMPLE, help="mutants per operator")
         one.add_argument("--all", action="store_true", help="every labelled mutant")
@@ -424,27 +347,27 @@ def main() -> None:
             choices=[tool.value for tool in Tool],
             help="evidence beyond the baseline; repeatable",
         )
-        _configuration_arguments(
+        configuration_arguments(
             one,
-            _rows("named", "--model", opens_by_default=DIAGNOSER.model),
+            rows("named", "--model", opens_by_default=DIAGNOSER.model),
             "--model",
             model="a diagnosis configuration; repeatable",
         )
-        _run_arguments(one, record="diagnosis", per=" per model and endpoint")
+        run_arguments(one, record="diagnosis", per=" per model and endpoint")
 
-    judge_parser = _command(sub, "judge", "the judging exercise's items")
+    judge_parser = command(sub, "judge", "the judging exercise's items")
     judge_action = judge_parser.add_subparsers(dest="action", required=True)
     judge_action.add_parser(
         "build", help="build items for every template not yet served at its current code"
     )
 
-    fill_parser = _command(sub, "fill", "the key-line exercise's items")
+    fill_parser = command(sub, "fill", "the key-line exercise's items")
     fill_action = fill_parser.add_subparsers(dest="action", required=True)
     fill_action.add_parser(
         "build", help="build items for every template not yet served at its current code"
     )
 
-    card_parser = _command(sub, "card", "an authored card's file, before it is seeded")
+    card_parser = command(sub, "card", "an authored card's file, before it is seeded")
     card_action = card_parser.add_subparsers(dest="action", required=True)
     card_check = card_action.add_parser(
         "check", help="the schema, the graph, the cases and the mutants they leave standing"
@@ -455,7 +378,7 @@ def main() -> None:
     )
     card_check.add_argument("--json", action="store_true", help="emit the findings as JSON")
 
-    module_parser = _command(sub, "module", "a knowledge module's authored files")
+    module_parser = command(sub, "module", "a knowledge module's authored files")
     module_action = module_parser.add_subparsers(dest="action", required=True)
     check_parser = module_action.add_parser(
         "check", help="hold a module to the rules docs/authoring/rules.md tags check"
@@ -499,10 +422,10 @@ def main() -> None:
     )
     retire_parser.add_argument("slug", help="the module's slug in the store")
 
-    log_parser = _command(sub, "log", "one user's whole log, read out or erased")
+    log_parser = command(sub, "log", "one user's whole log, read out or erased")
     action = log_parser.add_subparsers(dest="action", required=True)
     export_parser = action.add_parser("export", help="print every record of the log as JSON")
-    _user_argument(export_parser)
+    user_argument(export_parser)
     erase_parser = action.add_parser("erase", help="delete every record of the log")
     # named every time: a default would erase the author's own log
     erase_parser.add_argument("--user", required=True, help="whose log to erase")
