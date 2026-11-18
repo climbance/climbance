@@ -1,4 +1,4 @@
-"""A user's remark on the engine, read by the author: `log.md`, Feedback."""
+"""A user's remark on the engine, read by the author: `api/feedback.md`."""
 
 from datetime import datetime
 

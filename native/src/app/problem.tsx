@@ -69,7 +69,7 @@ type Moved = { sitting: Sitting | null; elapsedSec: number | null; at: number };
  * A problem's record and its statement, and the sitting on it: the statement
  * and the editor as two tabs, under one bar holding the clock. Reading the
  * statement mints nothing, and the first clock press or submission mints the
- * sitting, as `log.md` gives.
+ * sitting, as `api/sitting.md` gives.
  */
 // the platform's monotonic clock, which a reading's arrival is stamped with
 const now = () => performance.now();
@@ -251,7 +251,7 @@ function SittingOn({
   const clock = clockState(current);
   const controls = sittingControls(clock, sittingId);
   const solvedNow = (submitted ?? statement?.last ?? null)?.attempt.solved === true;
-  // a solve leaves the sitting running: `log.md`
+  // a solve leaves the sitting running: `api/sitting.md`
   const settled = clock.ended || solvedNow;
   const ask = claimAsk(clock.ended, solvedNow, submissions);
   const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null);

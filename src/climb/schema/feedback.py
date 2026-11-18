@@ -12,7 +12,7 @@ class Client(StrEnum):
 
 
 class Feedback(BaseModel):
-    """One user's feedback on the engine: `log.md`, Feedback."""
+    """One user's feedback on the engine: `api/feedback.md`."""
 
     model_config = ConfigDict(frozen=True)
 

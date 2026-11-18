@@ -589,9 +589,9 @@ The page layout is not designed here, and using the loop decides it.
 - **No press stands between the pick and the statement.** A press that started
   the clock before the statement was shown made opening a problem a commitment,
   and the author avoided opening problems because of it.
-- **Opening a problem records nothing.** `log.md` gives why the sitting waits
-  for the first clock press or the first submission. A user can then read any
-  number of statements before choosing one to solve.
+- **Opening a problem records nothing.** `api/sitting.md` gives why the sitting
+  waits for the first clock press or the first submission. A user can then read
+  any number of statements before choosing one to solve.
 - **The clock is shown, and the user starts it.** The clock does not run until
   the user presses start. A sitting whose clock never ran is untimed, and that
   is a legitimate way to practise.
@@ -605,9 +605,9 @@ The page layout is not designed here, and using the loop decides it.
 - **The card is offered, and no sitting requires it.** A user who holds the
   form solves straight away, and a user who does not reads the card first.
   Recognising a form with no card in view is a probe's test.
-- **A sitting ends at the End press or at the idle bound `log.md` gives.** A
-  user who started a clock and left the page has nothing to close, and mastery
-  reads nothing from a sitting with no submission.
+- **A sitting ends at the End press or at the idle bound `api/sitting.md`
+  gives.** A user who started a clock and left the page has nothing to close,
+  and mastery reads nothing from a sitting with no submission.
 - **A solved sitting takes further submissions.** A user who solved by brute
   force submits the better form in the same sitting. Ending the sitting at the
   solve split one session on one problem into two sittings. The second was
@@ -620,9 +620,9 @@ The page layout is not designed here, and using the loop decides it.
 - **An attempt nobody timed stays untimed**, rather than carrying a duration
   reconstructed after the fact.
 - **A running clock is paused and resumed**, and the elapsed time the attempt
-  carries excludes every pause. `log.md` gives what the record holds. A pause
-  and a stop are one press: a paused clock stays paused until the user resumes
-  it.
+  carries excludes every pause. `api/sitting.md` gives what the record holds. A
+  pause and a stop are one press: a paused clock stays paused until the user
+  resumes it.
 - **A paused clock leaves the page usable, and a submission is still taken.**
   A pause stops the timing, not the practice. The attempt carries the time the
   clock ran before the pause.
@@ -653,7 +653,8 @@ The page layout is not designed here, and using the loop decides it.
   turns a re-solve into reading it, and nothing is then retrieved.
 - **Code from before a card run is never carried into that run's problems.** A
   problem opened from a card with a run open carries only code written after
-  the run began. The run measures solving from its start, as `log.md` gives.
+  the run began. The run measures solving from its start, as `api/card-runs.md`
+  gives.
 - **A press restores the user's last solve into the editor.** The press is
   offered where the user has solved the problem before and the editor did not
   carry that code. The editor's undo takes the restore back.
@@ -689,14 +690,15 @@ The page layout is not designed here, and using the loop decides it.
   a press each would have the solver confirm the same attempt twice.
   `wireframes.md` draws the overlay the two are asked in.
 - **A skipped label stops nothing.** The loop moves to the next attempt of the
-  sitting, and the attempt stays unlabelled. `log.md` gives what a skip leaves.
+  sitting, and the attempt stays unlabelled. `api/self-labels.md` gives what a
+  skip leaves.
 - **The loop does not retire a problem.** A statement that asks for something
   its cases do not decide is retired by hand, in the terminal, and
   `api/problems.md` gives who retires one. A sitting can send a retirement
   request from under the statement, and the request retires nothing until the
-  author acts on it, as `log.md` gives. A self-label written before the
-  retirement stays, and the board's read-time exclusion keeps that attempt out
-  of mastery.
+  author acts on it, as `api/retirement-requests.md` gives. A self-label
+  written before the retirement stays, and the board's read-time exclusion
+  keeps that attempt out of mastery.
 - **Selection never schedules.** Ordering is a view. The user chooses what to
   drill until the scheduler lands.
 
@@ -726,8 +728,9 @@ start, and the probes are drawn at it.
   studying this card will have the user solve, and the user decides the start on
   that list. Progress against the ladder is shown once a run measures it.
 - **A locked card does not start.** The card reads in full, and the press
-  starting the run names the required cards not yet met. `log.md` gives when a
-  card is locked and how a user who holds the forms meets a required card.
+  starting the run names the required cards not yet met. `api/card-states.md`
+  gives when a card is locked and how a user who holds the forms meets a
+  required card.
 - **A card with a gap still starts.** A core template no solution displays is
   reported on the card, as `content-repo/cards.md` requires, and the rungs
   the ladder does hold are still worth solving. Refusing the start would
@@ -754,9 +757,9 @@ start, and the probes are drawn at it.
   from. "Solving a rung" gives that page.
 - **The run holds no verdict.** Ladder progress, the recall state of each
   template, and the card state are folds over the attempts, the recall attempts
-  and the corpus. `log.md` gives why none of the three is stored.
-- **A card is done once it graduates.** `log.md` gives the five card states and
-  what each one reads.
+  and the corpus. `api/card-states.md` gives why none of the three is stored.
+- **A card is done once it graduates.** `api/card-states.md` gives the five
+  card states and what each one reads.
 
 Deferred, since only use answers each:
 
@@ -890,15 +893,15 @@ trainer never prints the form until the user asks for it as a hint.
   cases and the hints taken read beside the title, and the form is revealed on
   a press rather than printed. A user who failed to recall a form learns which
   form it was, and decides whether to read it.
-- **A hinted pass is recorded as a pass with its hints**, which `log.md`
+- **A hinted pass is recorded as a pass with its hints**, which `api/recall.md`
   requires. Reading the form and typing it back is the last hint rather than a
   separate outcome, and the record says which hints were taken.
 - **The trainer runs the file rather than comparing it with the stored form.**
   A comparison would fail a reproduction that renamed a variable, and pass one
   that copied the form with its loop condition inverted.
 - **A recall attempt needs no open card run.** The record is keyed to a card
-  and a template, as `log.md` gives it, and the run measures the ladder rather
-  than the recall.
+  and a template, as `api/recall.md` gives it, and the run measures the ladder
+  rather than the recall.
 - **The trainer draws by staleness, and the pick schedules.** A recall the
   user starts from the card draws never recalled first, then least recently
   recalled, which is the ordering the board uses for a technique. A recall
@@ -916,9 +919,9 @@ Deferred, since only use answers each:
 
 ## A template's reviews
 
-A template's FSRS state is replayed from its reviews, as `log.md` `## The
-template schedule` gives. A review is a recall attempt of the template, or a
-sitting on a problem written for the template. This section names which
+A template's FSRS state is replayed from its reviews, as
+`api/template-schedule.md` gives. A review is a recall attempt of the template,
+or a sitting on a problem written for the template. This section names which
 sittings count.
 
 - **A sitting reviews the template its problem's `target_template_id` names,
@@ -946,7 +949,8 @@ sittings count.
 - **A sitting is one review, at the moment of its first submission.** The first
   submission is the moment the form was retrieved, and later submissions debug
   it. An attempt after the first solve does not move the rating. The rating
-  reads the sitting's attempts as they stand, as `log.md` gives.
+  reads the sitting's attempts as they stand, as `api/template-schedule.md`
+  gives.
 - **A short exercise drawn from a template is no review of it.** Judging a
   solution or filling its key line picks among lines shown on the screen, and
   a recall types the form from a blank file. FSRS raises a template's stability
@@ -980,8 +984,8 @@ user may take it or pick anything else the board offers.
 - **A pick names a template and the act that reviews it.** The act is a
   recall of the template, or a sitting on a problem written for it.
 - **A spaced check is served as a recall.** Graduation reads a recall rated
-  Good, as `log.md` gives, so a check served as a sitting could never
-  graduate the card.
+  Good, as `api/card-states.md` gives, so a check served as a sitting could
+  never graduate the card.
 - **A graduated template's due review is served as a sitting**, on a problem
   written for the template that the user has not solved. A sitting reviews the
   form in use on a statement the user has not seen, where a recall reviews
@@ -993,7 +997,7 @@ user may take it or pick anything else the board offers.
   passes.
 - **A failed sitting labelled `syntax` or `speed` aims nothing.** Each label
   says the solver held the form. The Again still enters FSRS, since the
-  rating reads the attempts alone, as `log.md` gives.
+  rating reads the attempts alone, as `api/template-schedule.md` gives.
 - **Ties break on the lowest recall probability, then the shallowest card,
   then the lowest execution reading, then the slug.** Recall probability ranks
   the form closest to being lost. Depth then serves a form other forms build
@@ -1020,7 +1024,7 @@ user's cards hold.
   second.
 - **A lapsed card is offered again through its checks.** Each template rated
   Again since graduation waits for its own check, and the card graduates
-  again on those recalls alone, as `log.md` gives.
+  again on those recalls alone, as `api/card-states.md` gives.
 - **A due review comes before a rung.** A graduated form decays while it
   waits, and a ladder picks up where it stopped.
 - **An acquiring card offers its first unsolved rung**, required rungs before

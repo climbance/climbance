@@ -419,12 +419,12 @@ problem's path reads as its record, as "Every problem" gives.
   place. An unsolved attempt is offered `gap`, `rust` and `syntax`, and a solved
   one is offered `speed` and `none`.
 - An attempt that crashed on every case is offered no mode, and the overlay
-  then asks for its claim alone. `log.md` gives why the record answers that
-  attempt already.
+  then asks for its claim alone. `api/self-labels.md` gives why the record
+  answers that attempt already.
 - One press stores both records. The claim and the label answer two questions
   about one attempt, and a press each would ask the solver to confirm twice.
-- A press with no mode selected stores no label, and `log.md` gives why a skip
-  writes no record. Closing leaves the attempts to the problem's own
+- A press with no mode selected stores no label, and `api/self-labels.md` gives
+  why a skip writes no record. Closing leaves the attempts to the problem's own
   techniques, and leaves them unlabelled.
 
 ## The cards
@@ -479,7 +479,7 @@ problem's path reads as its record, as "Every problem" gives.
   progress first.
 - A row names its card state at the right: `met`, `locked`, `not started`,
   or when a started card was last active. A met card lets the cards requiring
-  it start, as `log.md` gives.
+  it start, as `api/card-states.md` gives.
 - A locked row reads `waits on` and the required cards not yet met, in place
   of the trigger. The row still opens the card, since a locked card is read in
   full.

@@ -32,7 +32,8 @@ class Attempt(BaseModel):
     # Absent on an attempt written before the field, which restored nothing
     restored: bool | None = None
 
-    # what mastery counts as a solve: `log.md`. The verdict in `solved` stands
+    # what mastery counts as a solve: `api/mastery.md`. The verdict in `solved`
+    # stands
     @property
     def solved_unaided(self) -> bool:
         return self.solved and not self.restored

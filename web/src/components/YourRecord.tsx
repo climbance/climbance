@@ -33,7 +33,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useKnowledge } from '@/knowledge/context'
 
-// the record exported as a file, and the account deleted with it: `log.md`, Users
+// the record exported as a file, and the account deleted with it: `concepts/log-records.md`
 export function YourRecord({ me }: { me: Me | undefined }) {
   const { leave } = useKnowledge()
   const [failed, setFailed] = useState<string | null>(null)

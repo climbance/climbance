@@ -10,7 +10,7 @@ class RunKind(StrEnum):
 
 
 class RunFault(BaseModel):
-    """A user's run the sandbox answered no result for: `log.md`, Run faults."""
+    """A user's run the sandbox answered no result for: `api/run-faults.md`."""
 
     model_config = ConfigDict(frozen=True)
 

@@ -1,5 +1,5 @@
-"""Each technique's execution reading, folded from its sittings: `log.md`,
-Mastery."""
+"""Each technique's execution reading, folded from its sittings:
+`api/mastery.md`."""
 
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
@@ -8,7 +8,8 @@ from climb.attempt_claims import resolve_techniques
 from climb.ids import settings_hash
 from climb.schema import Attempt, AttemptClaim, FailureMode, Problem, SelfLabel
 
-# the starting values `log.md` gives, each moved only on what the log measures
+# the starting values `api/mastery.md` gives, each moved only on what the log
+# measures
 FIRST_SOLVE = 1.0
 LATER_SOLVE = 0.5
 SYNTAX_FAILURE = 0.25

@@ -29,7 +29,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
-// a note the author reads with `climb feedback`: `log.md`, Feedback
+// a note the author reads with `climb feedback`: `api/feedback.md`
 export function SendFeedback() {
   const page = useLocation().pathname
   const [open, setOpen] = useState(false)

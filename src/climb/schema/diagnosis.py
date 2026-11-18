@@ -9,7 +9,7 @@ from climb.schema.record import AttemptRecord
 
 
 class Cause(StrEnum):
-    """The two-way verdict a diagnosis names: `log.md`, Diagnoses."""
+    """The two-way verdict a diagnosis names: `cli/diagnoser.md`."""
 
     SLIP = "slip"  # the form held, the fault outside it
     FORM = "form"  # the fault in the form: `gap` or `rust`, which the code cannot split
@@ -38,8 +38,8 @@ class Diagnosis(AttemptRecord, MachineProvenance):
 
 
 class MutantDiagnosis(MachineProvenance):
-    """A diagnosis of a labelled mutant, which is no attempt: `log.md`,
-    Labelled mutants."""
+    """A diagnosis of a labelled mutant, which is no attempt:
+    `cli/diagnoser.md`."""
 
     id: str
     created_at: datetime

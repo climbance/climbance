@@ -182,9 +182,9 @@ those steps at low fidelity.
   solved or ended sitting stays on the page after the claim, and its press is
   the page's next act.
 - **The claim is asked at each solve and at the end of the sitting**, of each
-  attempt not yet asked. A solve leaves the sitting running, as `log.md` gives,
-  and asking only at the end would ask about the solving attempt after the
-  next form was typed over it.
+  attempt not yet asked. A solve leaves the sitting running, as
+  `api/sitting.md` gives, and asking only at the end would ask about the
+  solving attempt after the next form was typed over it.
 - **A solved or ended sitting opened from a card offers the card's next rung
   beside the way back.** The card is read again once the sitting is solved, so
   the solve just made counts. The rung offered is never the problem just sat.
@@ -257,8 +257,8 @@ those steps at low fidelity.
   reached from two places would otherwise load a different list at each of
   them.
 - **The problem's page holds the statement and the sitting.** The path serves
-  the statement and stays, since serving mints nothing, as `log.md` gives. A
-  retired problem's path reads as its record and serves nothing.
+  the statement and stays, since serving mints nothing, as `api/sitting.md`
+  gives. A retired problem's path reads as its record and serves nothing.
 - **A sitting has no path of its own, and `?sitting=` names it on the
   problem's path.** Before the first clock press or submission no sitting
   exists, so the page's address cannot name one from its first load. The
@@ -299,12 +299,14 @@ those steps at low fidelity.
 
 ### Judging a solution
 
-The first short exercise, served at a phone's width on both clients. `log.md`
-gives the exercise and `cli/exercise-items.md` the items.
+The first short exercise, served at a phone's width on both clients.
+`api/short-exercises.md` gives the exercise and `cli/exercise-items.md` the
+items.
 
 - **The page opens from the board and from a card.** The board's press serves
-  the forms of the cards the user started first, as `log.md` gives. A card's
-  press adds `?card=`, and the page serves that card's forms alone.
+  the forms of the cards the user started first, as `api/short-exercises.md`
+  gives. A card's press adds `?card=`, and the page serves that card's forms
+  alone.
 - **The item reads as its template's title, one of its cases and the code.**
   The header names the card under the title. A template's title names the
   form in words, since a new user reads it before the card.
@@ -321,12 +323,13 @@ gives the exercise and `cli/exercise-items.md` the items.
   result reads as right, located, spotted on the wrong line, missed, or a
   false alarm. The flawed line is marked, and the separating case shows its
   arguments, the expected value and what the flawed code gave.
-- **Next serves the following item**, drawn as `log.md` gives.
+- **Next serves the following item**, drawn as `api/short-exercises.md` gives.
 
 ### Filling a key line
 
-The second short exercise, served at a phone's width on both clients. `log.md`
-gives the exercise and `cli/exercise-items.md` the items.
+The second short exercise, served at a phone's width on both clients.
+`api/short-exercises.md` gives the exercise and `cli/exercise-items.md` the
+items.
 
 - **The page opens from the board and from a card**, as judging does. A card's
   press adds `?card=`.

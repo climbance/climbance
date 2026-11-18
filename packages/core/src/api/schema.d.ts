@@ -847,7 +847,8 @@ export interface components {
     };
     /**
      * AttemptVerification
-     * @description Private to the user, where a solution's run is product data: `log.md`.
+     * @description Private to the user, where a solution's run is product data:
+     *     `api/attempt-log.md`.
      */
     AttemptVerification: {
       /** Cap Ms */
@@ -1017,7 +1018,7 @@ export interface components {
     /**
      * CardState
      * @description How far one user's study of one card has gone, derived on every read:
-     *     `log.md`, Card states.
+     *     `api/card-states.md`.
      * @enum {string}
      */
     CardState: 'not_started' | 'acquiring' | 'consolidating' | 'graduated' | 'lapsed';
@@ -1085,7 +1086,7 @@ export interface components {
     };
     /**
      * Cause
-     * @description The two-way verdict a diagnosis names: `log.md`, Diagnoses.
+     * @description The two-way verdict a diagnosis names: `cli/diagnoser.md`.
      * @enum {string}
      */
     Cause: 'slip' | 'form';
@@ -1241,7 +1242,7 @@ export interface components {
     FailureMode: 'speed' | 'rust' | 'gap' | 'syntax' | 'none';
     /**
      * Feedback
-     * @description One user's feedback on the engine: `log.md`, Feedback.
+     * @description One user's feedback on the engine: `api/feedback.md`.
      */
     Feedback: {
       /** Id */
@@ -1261,7 +1262,7 @@ export interface components {
     };
     /**
      * Fill
-     * @description One user's answer to one key-line item: `log.md`, Filling a key line.
+     * @description One user's answer to one key-line item: `api/short-exercises.md`.
      */
     Fill: {
       /** Id */
@@ -1442,7 +1443,7 @@ export interface components {
     };
     /**
      * Judgement
-     * @description One user's answer to one item: `log.md`, Judging a solution.
+     * @description One user's answer to one item: `api/short-exercises.md`.
      */
     Judgement: {
       /** Id */
@@ -1978,8 +1979,8 @@ export interface components {
     RetirementReason: 'defective' | 'copied';
     /**
      * RetirementRequest
-     * @description One user's request that a problem be retired: `log.md`, Retirement
-     *     requests.
+     * @description One user's request that a problem be retired:
+     *     `api/retirement-requests.md`.
      */
     RetirementRequest: {
       /** Id */
@@ -2005,7 +2006,7 @@ export interface components {
     };
     /**
      * RunFault
-     * @description A user's run the sandbox answered no result for: `log.md`, Run faults.
+     * @description A user's run the sandbox answered no result for: `api/run-faults.md`.
      */
     RunFault: {
       /** Id */

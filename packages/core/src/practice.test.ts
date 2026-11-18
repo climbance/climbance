@@ -554,7 +554,7 @@ describe("a technique's knowledge reading", () => {
   const at = (id: string, ok: boolean): AttemptRecord => ({ t: '2026-11-10T08:00:00.000Z', course: 'algo', id, ok });
 
   it("counts a narrower code's questions toward its parent", () => {
-    /** a knapsack answer counts toward dynamic-programming, as `log.md` gives */
+    /** a knapsack answer counts toward dynamic-programming, as `api/mastery.md` gives */
     const reading = techniqueKnowledge(learner([at('k1', true), at('d1', false)]), {
       technique: 'dynamic-programming',
       narrower: ['knapsack'],

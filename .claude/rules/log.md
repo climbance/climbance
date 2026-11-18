@@ -9,6 +9,9 @@ paths:
   - "src/climb/standing.py"
 ---
 
-Read `docs/architecture/log.md` before changing this code. It gives
-users, sittings, attempts, claims, self-labels, diagnoses, card runs, card states, recall attempts and mastery,
-and it wins over the code on any difference.
+Read the file in `docs/architecture/api/` for the component this code serves,
+such as `sitting.md`, `attempt-claims.md`, `card-states.md` or `mastery.md`,
+before changing it. `docs/architecture/concepts/log-records.md` gives what
+every log record follows, and `docs/architecture/cli/diagnoser.md` and
+`cli/classifier.md` the machine's verdicts. They win over the code on any
+difference.

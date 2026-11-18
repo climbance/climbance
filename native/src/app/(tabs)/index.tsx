@@ -175,7 +175,7 @@ function BoardBody({
 }) {
   const theme = useTheme();
   const [now] = useState(() => Date.now());
-  // the knowledge reading, from the device's copy: `log.md`, Mastery
+  // the knowledge reading, from the device's copy: `api/mastery.md`
   const known = (row: Board['rows'][number]) => (learner ? techniqueKnowledge(learner, row) : null);
   const { untouched, practised, foot } = boardView(board, known);
   // each list closes from its own heading, as the web's board does: `pages.md`
@@ -202,7 +202,7 @@ function BoardBody({
               note={view.note}
               stats={[]}
               onPress={() => {
-                // the prediction is stored as the act opens: `log.md`, Predictions
+                // the prediction is stored as the act opens: `api/predictions.md`
                 if (pick) void getToken().then((token) => takePick(engine(origin, token), pick));
                 openPick(view.target);
               }}

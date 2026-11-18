@@ -62,7 +62,7 @@ def test_a_file_that_defines_no_solve_crashes_every_case(client):
 
 
 def test_the_hints_taken_are_part_of_the_record(client, database):
-    """`log.md`: which hints were taken before succeeding is what keeps a
+    """`api/recall.md`: which hints were taken before succeeding is what keeps a
     decaying form from scoring like a fluent one."""
     recall = client.post(recalls(client), json={"code": LOWER, "hints": ["notes"]}).json()
 

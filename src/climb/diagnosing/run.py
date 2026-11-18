@@ -1,5 +1,5 @@
-"""The diagnosis call over failed attempts and over labelled mutants: `log.md`,
-Diagnoses."""
+"""The diagnosis call over failed attempts and over labelled mutants:
+`cli/diagnoser.md`."""
 
 import hashlib
 from collections.abc import Callable, Sequence

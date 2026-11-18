@@ -55,7 +55,7 @@ export function BoardPage() {
   const { catalog, board: learnerBoard, order, now, acted, ready } = useLearner()
   const all = useMemo(() => (catalog ? learnerBoard(null) : null), [catalog, learnerBoard])
   const modules = useMemo(() => (all ? orderedModuleRows(all, order, now) : []), [all, order, now])
-  // the knowledge reading, from the device's copy: `log.md`, Mastery
+  // the knowledge reading, from the device's copy: `api/mastery.md`
   const known = (row: TechniqueRow) => (all ? techniqueKnowledge(all, row) : null)
 
   return (
@@ -208,7 +208,7 @@ function BoardPick({ pick }: { pick: Parameters<typeof pickView>[0] }) {
   return (
     <section className="space-y-stack">
       <SectionHeading title={view.heading} />
-      {/* the prediction is stored as the link opens the act: `log.md`, Predictions */}
+      {/* the prediction is stored as the link opens the act: `api/predictions.md` */}
       <div onClickCapture={() => void takePick(api, pick)}>
         <PickPanel>
           <PickRow to={pickPath(view.target)} title={view.title} note={view.note} stats={[]} />

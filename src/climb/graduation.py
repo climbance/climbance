@@ -1,5 +1,5 @@
 """A started card's state past its ladder, and the next spaced check or recall
-it waits for: `log.md`, Card states and The template schedule."""
+it waits for: `api/card-states.md` and The template schedule."""
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
@@ -44,7 +44,7 @@ def reading(
         past, waits, _ = _past_ladder(card, run, rungs, attempts, problems, recalls)
         return past, waits
     # a graduated card no longer reads the ladder, so the rungs a later problem
-    # added are left out: `log.md`, Card states
+    # added are left out: `api/card-states.md`
     unsolved = [rung for rung in rungs if rung.required and not rung.solved]
     held = [rung for rung in rungs if rung not in unsolved]
     if not any(rung.required for rung in held):

@@ -9,7 +9,7 @@
       "type": "string"
     }
   },
-  "description": "One user's feedback on the engine: `log.md`, Feedback.",
+  "description": "One user's feedback on the engine: `api/feedback.md`.",
   "properties": {
     "client": {
       "$ref": "#/$defs/Client"

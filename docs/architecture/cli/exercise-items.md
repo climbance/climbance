@@ -2,7 +2,8 @@
 
 The judgement items and the key-line items, built by `climb judge` and `climb
 fill` from the seeded templates and their mutants. Both are product data, which
-the short exercises serve. `../log.md` gives the exercises and their answers.
+the short exercises serve. `../api/short-exercises.md` gives the exercises and
+their answers.
 
 ## Judgement items
 

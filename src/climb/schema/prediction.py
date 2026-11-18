@@ -1,4 +1,4 @@
-"""What a pick predicted, stored as the user takes it: `log.md`, Predictions."""
+"""What a pick predicted, stored as the user takes it: `api/predictions.md`."""
 
 from datetime import datetime
 from enum import IntEnum, StrEnum

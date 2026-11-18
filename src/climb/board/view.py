@@ -23,13 +23,13 @@ class TechniqueRow(BaseModel):
     # counts toward the row and toward no mode.
     self_labels: dict[FailureMode, int] = {}
     # the codes that are a kind of this one, whose questions count toward its
-    # knowledge reading on the client: `log.md`, Mastery
+    # knowledge reading on the client: `api/mastery.md`
     narrower: list[str] = []
     # the sittings execution counts, and its reading once enough of them stand;
-    # recognition has no evidence yet and reads unknown: `log.md`, Mastery
+    # recognition has no evidence yet and reads unknown: `api/mastery.md`
     sittings: int = 0
     execution: float | None = None
-    # shown beside mastery and counted in none of its parts: `log.md`, Mastery
+    # shown beside mastery and counted in none of its parts: `api/mastery.md`
     judged: JudgementRates | None = None
 
     @property

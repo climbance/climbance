@@ -69,7 +69,7 @@ export interface Knowledge {
 
 /**
  * The questions of every subtopic naming the technique or a code narrower than
- * it, in every module the learner holds: `log.md`, Mastery. Null where no such
+ * it, in every module the learner holds: `api/mastery.md`. Null where no such
  * subtopic holds a question.
  */
 export function techniqueKnowledge(
@@ -119,7 +119,7 @@ export function techniqueStats(
 
 /**
  * The judgement rates, beside mastery and counted in none of its parts:
- * `log.md`, Judging a solution. Each reads only once an item of its kind was answered.
+ * `api/short-exercises.md`. Each reads only once an item of its kind was answered.
  */
 export function judgedStats(judged: TechniqueRow['judged'] | null): Stat[] {
   if (!judged) return [];
@@ -130,7 +130,7 @@ export function judgedStats(judged: TechniqueRow['judged'] | null): Stat[] {
 }
 
 /**
- * Execution beside recognition, kept apart: `log.md`, Mastery. Recognition has
+ * Execution beside recognition, kept apart: `api/mastery.md`. Recognition has
  * no evidence until the recognition drill is built, so it reads unknown.
  */
 export function masteryStats(execution: number | null): Stat[] {
@@ -675,7 +675,7 @@ export function pickView(pick: BoardPick): PickView {
 
 /**
  * Stores what the pick predicts as the user takes it, before any outcome:
- * `log.md`, Predictions. The board opens the act whatever this answers, since
+ * `api/predictions.md`. The board opens the act whatever this answers, since
  * a lost prediction costs one data point and a blocked pick costs the session.
  */
 export async function takePick(client: EngineClient, pick: BoardPick): Promise<void> {

@@ -24,7 +24,7 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     engine -->|"runs the sign-in flow"| identity_providers
     engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays; sends each call site's prompt; asks each panel member for a solution"| model_router
+    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays; sends each call site's prompt; asks each panel member for a solution; asks why an attempt failed"| model_router
     engine -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
@@ -72,7 +72,7 @@ flowchart TB
     cli -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| api
     database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
-    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions"| api
+    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions; starts a card; types a template from memory; judges a solution; fills a key line; asks for a problem's retirement; sends a note to the author"| api
     native_app -->|"loads the content; syncs answers and sessions"| api
 ```
 
@@ -101,6 +101,11 @@ flowchart TB
         knowledge_sync["Knowledge sync<br/>Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."]
         knowledge_log["Knowledge log<br/>The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."]
         problems["Problems<br/>Reads a problem from the corpus: its statement, its templates and its test cases."]
+        card_runs["Card runs<br/>Stores that a card was started, and the probes the start gave it."]
+        recall["Recall<br/>Runs a template typed from memory against the template's cases, and stores the recall attempt."]
+        short_exercises["Short exercises<br/>Serves the judgement and key-line items, and stores each judgement and fill."]
+        retirement_requests["Retirement requests<br/>Stores a user's request that a problem be retired, for the author to read."]
+        feedback["Feedback<br/>Stores a user's note to the author, naming the client and the page."]
     end
     web_app -->|"starts, pauses and ends the clock"| sitting
     web_app -->|"submits code for the problem"| submission
@@ -137,6 +142,19 @@ flowchart TB
     snapshot -->|"reads the seeded content"| database
     runner -->|"reads the problem's cases"| problems
     problems -->|"reads the corpus"| database
+    web_app -->|"starts a card"| card_runs
+    card_runs -->|"appends each card run"| database
+    card_states -->|"reads when each run began and its probes"| card_runs
+    web_app -->|"types a template from memory"| recall
+    recall -->|"runs the typed form against the template's cases"| runner
+    recall -->|"appends each recall attempt"| database
+    template_schedule -->|"replays each recall attempt as a review"| recall
+    web_app -->|"judges a solution; fills a key line"| short_exercises
+    short_exercises -->|"appends each judgement and fill"| database
+    web_app -->|"asks for a problem's retirement"| retirement_requests
+    retirement_requests -->|"appends each request"| database
+    web_app -->|"sends a note to the author"| feedback
+    feedback -->|"appends each note"| database
 ```
 
 The Command line's components, and what each reads and writes.
@@ -151,6 +169,7 @@ flowchart TB
         generation["Generation<br/>Writes each problem through its six call sites, and lands it with its cases and its solutions."]
         difficulty["Difficulty<br/>Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."]
         seed["Seed<br/>Reads the authored cards and modules from content/, and refreshes the content tables from them."]
+        diagnoser["Diagnoser<br/>Reads a failed attempt or a labelled mutant and names the cause, scored against the self-labels."]
         matcher["Matcher<br/>Reads a canonical beside its statement and names the card templates it displays."]
         exercise_items["Exercise items<br/>Builds the judgement items and the key-line items from the seeded templates and their mutants."]
     end
@@ -165,6 +184,8 @@ flowchart TB
     generation -->|"revises the drafts and lands each problem"| database
     difficulty -->|"asks each panel member for a solution"| model_router
     difficulty -->|"appends the trials, the fits and the ratings"| database
+    diagnoser -->|"asks why an attempt failed"| model_router
+    diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
 ```
 
 <!-- end of the generated views -->
@@ -503,7 +524,8 @@ without redefining them. Grouped by the file that specifies the record.
 - **Recall probability**: FSRS's retrievability of one template for one user
   at a moment, read from the replay of its reviews.
 - **Spaced check**: the recall a consolidating card's template waits for. It
-  opens and falls owed at two recall probabilities, as `log.md` gives.
+  opens and falls owed at two recall probabilities, as
+  `api/template-schedule.md` gives.
 - **Short exercise**: a question about code answered in seconds with no
   typing, such as judging a solution. Each kind is a record kind of its own.
 - **Judgement item**: a template's form, clean or carrying one mutant that
@@ -630,7 +652,9 @@ times. Each record class is specified in one of the files beside it.
 | [`cli/classifier.md`](cli/classifier.md) | Solution claims |
 | [`api/problems.md`](api/problems.md) | Serving and retiring a problem |
 | [`api/runner.md`](api/runner.md) | How a solution is run, and what a stored result means |
-| [`log.md`](log.md) | Sittings, attempts, attempt verifications, claims, self-labels, diagnoses, card runs, recall attempts, the mastery derived from them, the predictions each pick stores, retirement requests, run faults and feedback |
+| [`concepts/log-records.md`](concepts/log-records.md) | What every log record carries, one user's log, export and erasure |
+| [`api/`](api/) | Sign-in, sittings, attempts, attempt claims, self-labels, card runs, card states, recall attempts, the template schedule, short exercises, mastery, predictions, retirement requests, run faults and feedback, a file each |
+| [`cli/diagnoser.md`](cli/diagnoser.md) | Diagnoses and labelled mutants |
 | [`machine.md`](machine.md) | What a model-written record carries, what a generation run's call sites leave, and the call log |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
 | [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
@@ -827,7 +851,7 @@ times. Each record class is specified in one of the files beside it.
     its window, and a run past it is refused before any container starts.
   - A run the sandbox answers no result for is stored as a run fault, and
     the caps count it. A solution can end its own container, and the run held
-    the broker as long as a judged one. `log.md` gives the record.
+    the broker as long as a judged one. `api/run-faults.md` gives the record.
   - A user's submissions and recalls are counted apart, each against the
     bounds. A recall runs a template's few cases where a submission runs a
     problem's whole set, and one counter over both would refuse the cheaper run
@@ -1113,7 +1137,7 @@ Properties the system holds at all times.
 
 - Attempts, attempt claims, self-labels and diagnoses are append-only: no
   record is ever revised or removed in place. Erasing one user's whole log is
-  a different act, and `log.md` gives how it is taken.
+  a different act, and `concepts/log-records.md` gives how it is taken.
 - Every record keyed to an attempt carries an engine-minted `id`, its
   `attempt_id` and `created_at`.
 - The user's own record stands over the machine's answer to the same question,

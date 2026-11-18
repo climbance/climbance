@@ -50,7 +50,7 @@ class Rung(BaseModel):
     # its last sitting since the run began ended with no submission: `flows.md`
     skipped: bool = False
     # when the first match placing it was written, so graduation can leave out
-    # a rung a later problem added: `log.md`, Card states. None on a fill rung
+    # a rung a later problem added: `api/card-states.md`. None on a fill rung
     joined: datetime | None = None
 
 
@@ -77,7 +77,7 @@ class Ladder(BaseModel):
 
 class CardState(StrEnum):
     """How far one user's study of one card has gone, derived on every read:
-    `log.md`, Card states."""
+    `api/card-states.md`."""
 
     NOT_STARTED = "not_started"
     ACQUIRING = "acquiring"
@@ -91,15 +91,15 @@ def card_state(started: bool, rungs: Iterable[Rung]) -> CardState:
     if not started:
         return CardState.NOT_STARTED
     required = [rung for rung in rungs if rung.required]
-    # a ladder holding no required rung is deferred in `log.md`, and stays
-    # acquiring rather than claiming a ladder nobody solved
+    # a ladder holding no required rung is deferred in `api/card-states.md`, and
+    # stays acquiring rather than claiming a ladder nobody solved
     if required and all(rung.solved for rung in required):
         return CardState.CONSOLIDATING
     return CardState.ACQUIRING
 
 
 def met(run: CardRun | None, rungs: Iterable[Rung], attempts: Iterable[Attempt]) -> bool:
-    """Whether a required card is met: `log.md`, Locked cards."""
+    """Whether a required card is met: `api/card-states.md`."""
     if run is None:
         return False
     if card_state(True, rungs) is not CardState.ACQUIRING:
@@ -109,7 +109,7 @@ def met(run: CardRun | None, rungs: Iterable[Rung], attempts: Iterable[Attempt])
 
 
 class Locked(Exception):
-    """A start refused: `log.md`, Locked cards."""
+    """A start refused: `api/card-states.md`."""
 
     def __init__(self, waiting: list[Card]) -> None:
         super().__init__(f"locked until met: {', '.join(one.title for one in waiting)}")

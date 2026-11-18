@@ -1,8 +1,8 @@
 """One template reproduced from memory, and how it went.
 
 Keyed to a card and a template rather than to an attempt: a recall answers no
-problem and submits no solution, which `log.md` gives as why it is its own
-record.
+problem and submits no solution, which `api/recall.md` gives as why it is its
+own record.
 """
 
 from datetime import datetime

@@ -255,8 +255,8 @@ def deque_card(database) -> None:
 
 
 def test_a_locked_card_does_not_start(client, database):
-    """`log.md`: a locked card's run does not start, and the refusal names what
-    it waits on."""
+    """`api/card-states.md`: a locked card's run does not start, and the refusal
+    names what it waits on."""
     deque_card(database)
 
     response = client.post("/api/cards/deque-window/runs")

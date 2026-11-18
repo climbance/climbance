@@ -1,7 +1,7 @@
 {
   "$defs": {
     "Cause": {
-      "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses.",
+      "description": "The two-way verdict a diagnosis names: `cli/diagnoser.md`.",
       "enum": [
         "slip",
         "form"

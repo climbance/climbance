@@ -1,4 +1,4 @@
-"""Each technique's judgement rates: `log.md`, Judging a solution."""
+"""Each technique's judgement rates: `api/short-exercises.md`."""
 
 from collections import defaultdict
 from collections.abc import Iterable

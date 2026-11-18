@@ -32,7 +32,7 @@ class Stores:
             Sitting.model_validate(
                 # touched at the last of these clocks: a sitting running for
                 # hours is one the loop kept touching, and an untouched one
-                # ends at the bound `log.md` gives
+                # ends at the bound `api/sitting.md` gives
                 {
                     "id": "s1",
                     "user_id": "u-4f9c2a",

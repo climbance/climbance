@@ -1,4 +1,4 @@
-"""The diagnosis call scored per label mode: `log.md`, Diagnoses."""
+"""The diagnosis call scored per label mode: `cli/diagnoser.md`."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

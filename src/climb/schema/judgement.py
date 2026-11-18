@@ -1,6 +1,6 @@
 """A judgement item: a template's form, clean or carrying one mutant.
-`cli/exercise-items.md` gives the items, and `log.md` the exercise they
-serve."""
+`cli/exercise-items.md` gives the items, and `api/short-exercises.md` the
+exercise they serve."""
 
 from datetime import datetime
 from enum import StrEnum
@@ -48,7 +48,7 @@ class JudgementItem(BaseModel):
 
 
 class Judgement(BaseModel):
-    """One user's answer to one item: `log.md`, Judging a solution."""
+    """One user's answer to one item: `api/short-exercises.md`."""
 
     model_config = ConfigDict(frozen=True)
 

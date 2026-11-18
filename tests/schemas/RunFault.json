@@ -9,7 +9,7 @@
       "type": "string"
     }
   },
-  "description": "A user's run the sandbox answered no result for: `log.md`, Run faults.",
+  "description": "A user's run the sandbox answered no result for: `api/run-faults.md`.",
   "properties": {
     "created_at": {
       "format": "date-time",

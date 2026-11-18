@@ -20,7 +20,7 @@ export interface Moved {
 export type Outcome<T> = { ok: true; value: T } | { ok: false; refused: string };
 
 // a reading touches the sitting, well under the 45 minutes an untouched
-// sitting is ended at: `log.md`, Sittings
+// sitting is ended at: `api/sitting.md`
 export const TOUCH_MS = 10 * 60 * 1000;
 
 /** What the sitting's bar offers: the clock's one press, End, and whether the platform keeps touching it. */

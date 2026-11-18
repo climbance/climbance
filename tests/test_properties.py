@@ -64,7 +64,8 @@ def stamped(source: str) -> st.SearchStrategy[list[Stamped]]:
 
 @given(stamped("machine"))
 def test_the_latest_record_stands_and_append_order_breaks_a_tie(records):
-    """`log.md`: latest first, with append order breaking a tie."""
+    """`concepts/log-records.md`: latest first, with append order breaking a
+    tie."""
     stands = latest_by(records, lambda one: one.key)
     for key, record in stands.items():
         rivals = [one for one in records if one.key == key]

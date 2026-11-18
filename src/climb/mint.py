@@ -223,7 +223,7 @@ def attempt(
         finished_at=finished_at,
         language="python",
         # cumulative and with every pause excluded, none where no clock ran:
-        # `log.md` gives why
+        # `api/attempt-log.md` gives why
         time_to_solve_sec=sitting.elapsed(finished_at),
         solved=solved,
         code=code,

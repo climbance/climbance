@@ -9,7 +9,7 @@
       "type": "string"
     }
   },
-  "description": "One user's request that a problem be retired: `log.md`, Retirement\nrequests.",
+  "description": "One user's request that a problem be retired:\n`api/retirement-requests.md`.",
   "properties": {
     "created_at": {
       "format": "date-time",

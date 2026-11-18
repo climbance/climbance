@@ -1,6 +1,6 @@
 """A key-line item: a template's form with one line blanked, and its choices.
-`cli/exercise-items.md` gives the items, and `log.md` the exercise they
-serve."""
+`cli/exercise-items.md` gives the items, and `api/short-exercises.md` the
+exercise they serve."""
 
 from datetime import datetime
 from typing import Any
@@ -59,7 +59,7 @@ class KeyLineItem(BaseModel):
 
 
 class Fill(BaseModel):
-    """One user's answer to one key-line item: `log.md`, Filling a key line."""
+    """One user's answer to one key-line item: `api/short-exercises.md`."""
 
     model_config = ConfigDict(frozen=True)
 

@@ -1,5 +1,5 @@
 """The board's pick, gathered from the stores as the cards list is, and the
-prediction stored as the user takes it: `log.md`, Predictions."""
+prediction stored as the user takes it: `api/predictions.md`."""
 
 from dataclasses import dataclass
 from datetime import UTC, datetime

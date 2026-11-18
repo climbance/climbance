@@ -1,7 +1,7 @@
 """One session on one problem, timed or not.
 
-Revised while the sitting runs and kept after it ends. `log.md` gives why the
-pauses are intervals rather than a total.
+Revised while the sitting runs and kept after it ends. `api/sitting.md` gives
+why the pauses are intervals rather than a total.
 """
 
 from datetime import datetime

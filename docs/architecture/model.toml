@@ -181,8 +181,7 @@ kind = "component"
 container = "api"
 name = "Sitting"
 role = "Times one session on one problem, minted at the first clock press or submission, and ended where next read."
-doc = "log.md"
-section = "Sittings"
+doc = "api/sitting.md"
 
 [[element]]
 id = "submission"
@@ -207,8 +206,7 @@ kind = "component"
 container = "api"
 name = "Run faults"
 role = "Stores a run the sandbox answered no result for, so the run caps count it."
-doc = "log.md"
-section = "Run faults"
+doc = "api/run-faults.md"
 
 [[element]]
 id = "attempt-log"
@@ -216,8 +214,7 @@ kind = "component"
 container = "api"
 name = "Attempt log"
 role = "Appends each attempt and its attempt verification; private to the user."
-doc = "log.md"
-section = "Attempts"
+doc = "api/attempt-log.md"
 
 [[element]]
 id = "attempt-claims"
@@ -225,8 +222,7 @@ kind = "component"
 container = "api"
 name = "Attempt claims"
 role = "Stores which techniques an attempt's code used, the user's claim standing over the classifier's."
-doc = "log.md"
-section = "Attempt claims"
+doc = "api/attempt-claims.md"
 
 [[element]]
 id = "self-labels"
@@ -234,8 +230,7 @@ kind = "component"
 container = "api"
 name = "Self-labels"
 role = "Stores the user's verdict on why an attempt went the way it did, as a failure mode."
-doc = "log.md"
-section = "Self-labels"
+doc = "api/self-labels.md"
 
 [[element]]
 id = "template-schedule"
@@ -243,8 +238,7 @@ kind = "component"
 container = "api"
 name = "Template schedule"
 role = "Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."
-doc = "log.md"
-section = "The template schedule"
+doc = "api/template-schedule.md"
 
 [[element]]
 id = "card-states"
@@ -252,8 +246,7 @@ kind = "component"
 container = "api"
 name = "Card states"
 role = "Derives each card's state, from not started to graduated or lapsed, from the log on every read."
-doc = "log.md"
-section = "Card states"
+doc = "api/card-states.md"
 
 [[element]]
 id = "mastery"
@@ -261,8 +254,7 @@ kind = "component"
 container = "api"
 name = "Mastery"
 role = "Computes each technique's recognition and execution from the log on every read."
-doc = "log.md"
-section = "Mastery"
+doc = "api/mastery.md"
 
 [[element]]
 id = "pick"
@@ -279,8 +271,7 @@ kind = "component"
 container = "api"
 name = "Predictions"
 role = "Stores what each pick expected, from FSRS and from mastery, before the user acts on it."
-doc = "log.md"
-section = "Predictions"
+doc = "api/predictions.md"
 
 [[element]]
 id = "snapshot"
@@ -314,6 +305,46 @@ name = "Problems"
 role = "Reads a problem from the corpus: its statement, its templates and its test cases."
 doc = "api/problems.md"
 
+[[element]]
+id = "card-runs"
+kind = "component"
+container = "api"
+name = "Card runs"
+role = "Stores that a card was started, and the probes the start gave it."
+doc = "api/card-runs.md"
+
+[[element]]
+id = "recall"
+kind = "component"
+container = "api"
+name = "Recall"
+role = "Runs a template typed from memory against the template's cases, and stores the recall attempt."
+doc = "api/recall.md"
+
+[[element]]
+id = "short-exercises"
+kind = "component"
+container = "api"
+name = "Short exercises"
+role = "Serves the judgement and key-line items, and stores each judgement and fill."
+doc = "api/short-exercises.md"
+
+[[element]]
+id = "retirement-requests"
+kind = "component"
+container = "api"
+name = "Retirement requests"
+role = "Stores a user's request that a problem be retired, for the author to read."
+doc = "api/retirement-requests.md"
+
+[[element]]
+id = "feedback"
+kind = "component"
+container = "api"
+name = "Feedback"
+role = "Stores a user's note to the author, naming the client and the page."
+doc = "api/feedback.md"
+
 # Components of the command line
 
 [[element]]
@@ -322,9 +353,7 @@ kind = "component"
 container = "cli"
 name = "Classifier"
 role = "Reads an attempt's code and claims the techniques it used, filling what no user claimed."
-doc = "log.md"
-section = "Attempt claims"
-bullet = "The classifier is prompted, not trained."
+doc = "cli/classifier.md"
 
 [[element]]
 id = "generation"
@@ -349,6 +378,14 @@ container = "cli"
 name = "Seed"
 role = "Reads the authored cards and modules from `content/`, and refreshes the content tables from them."
 doc = "cli/seed.md"
+
+[[element]]
+id = "diagnoser"
+kind = "component"
+container = "cli"
+name = "Diagnoser"
+role = "Reads a failed attempt or a labelled mutant and names the cause, scored against the self-labels."
+doc = "cli/diagnoser.md"
 
 [[element]]
 id = "matcher"
@@ -706,3 +743,78 @@ label = "asks each panel member for a solution"
 from = "difficulty"
 to = "database"
 label = "appends the trials, the fits and the ratings"
+
+[[relation]]
+from = "web-app"
+to = "card-runs"
+label = "starts a card"
+
+[[relation]]
+from = "card-runs"
+to = "database"
+label = "appends each card run"
+
+[[relation]]
+from = "card-states"
+to = "card-runs"
+label = "reads when each run began and its probes"
+
+[[relation]]
+from = "web-app"
+to = "recall"
+label = "types a template from memory"
+
+[[relation]]
+from = "recall"
+to = "runner"
+label = "runs the typed form against the template's cases"
+
+[[relation]]
+from = "recall"
+to = "database"
+label = "appends each recall attempt"
+
+[[relation]]
+from = "template-schedule"
+to = "recall"
+label = "replays each recall attempt as a review"
+
+[[relation]]
+from = "web-app"
+to = "short-exercises"
+label = "judges a solution; fills a key line"
+
+[[relation]]
+from = "short-exercises"
+to = "database"
+label = "appends each judgement and fill"
+
+[[relation]]
+from = "web-app"
+to = "retirement-requests"
+label = "asks for a problem's retirement"
+
+[[relation]]
+from = "retirement-requests"
+to = "database"
+label = "appends each request"
+
+[[relation]]
+from = "web-app"
+to = "feedback"
+label = "sends a note to the author"
+
+[[relation]]
+from = "feedback"
+to = "database"
+label = "appends each note"
+
+[[relation]]
+from = "diagnoser"
+to = "model-router"
+label = "asks why an attempt failed"
+
+[[relation]]
+from = "diagnoser"
+to = "database"
+label = "appends each diagnosis and mutant diagnosis"

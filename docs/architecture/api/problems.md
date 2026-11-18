@@ -16,8 +16,8 @@ and retiring one hold to.
   a verdict means.
 - **A problem is retired by hand, in the terminal.** A problem is served to
   every user, so one user's reading of a statement may not remove the problem
-  from another user's practice. A user asks for a retirement with a
-  retirement request, which the author reads first. `../log.md` gives the
+  from another user's practice. A user asks for a retirement with a retirement
+  request, which the author reads first. `retirement-requests.md` gives the
   record.
 - **Retirement names its reason.** `defective` is a statement that asked for
   something its cases do not decide. `copied` is a problem the screen site

@@ -327,7 +327,7 @@ recall_attempt_case_results = Table(
 )
 
 
-# one user's answers to the judging exercise: `log.md`, Judging a solution
+# one user's answers to the judging exercise: `api/short-exercises.md`
 judgements = Table(
     "judgements",
     metadata,
@@ -343,7 +343,7 @@ judgements = Table(
 
 
 # one user's request that a problem be retired, read by hand before the
-# retirement: `log.md`, Retirement requests
+# retirement: `api/retirement-requests.md`
 retirement_requests = Table(
     "retirement_requests",
     metadata,
@@ -359,7 +359,7 @@ retirement_requests = Table(
 
 
 # one user's run the sandbox answered no result for, counted by the caps:
-# `log.md`, Run faults
+# `api/run-faults.md`
 run_faults = Table(
     "run_faults",
     metadata,
@@ -373,7 +373,7 @@ run_faults = Table(
 )
 
 
-# one user's remark on the engine, read by the author: `log.md`, Feedback
+# one user's remark on the engine, read by the author: `api/feedback.md`
 feedback = Table(
     "feedback",
     metadata,
@@ -389,7 +389,7 @@ feedback = Table(
 )
 
 
-# one user's answers to the key-line exercise: `log.md`, Filling a key line
+# one user's answers to the key-line exercise: `api/short-exercises.md`
 fills = Table(
     "fills",
     metadata,
@@ -403,7 +403,7 @@ fills = Table(
 )
 
 
-# what each pick predicted as the user took it: `log.md`, Predictions
+# what each pick predicted as the user took it: `api/predictions.md`
 predictions = Table(
     "predictions",
     metadata,

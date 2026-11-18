@@ -56,7 +56,7 @@ def test_the_cases_decide_the_recall():
 
 
 def test_a_hinted_pass_is_not_a_cold_one():
-    """`log.md`: which hints were taken before succeeding is part of the
+    """`api/recall.md`: which hints were taken before succeeding is part of the
     record, or a decaying form scores the same as a fluent one."""
     hinted = recall_attempt(
         USER,

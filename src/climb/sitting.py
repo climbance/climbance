@@ -1,5 +1,5 @@
-"""One session on one problem, timed or not: what the drill loop serves,
-judges and mints. `log.md` gives what the record holds and why a pause is an
+"""One session on one problem, timed or not: what the drill loop serves, judges
+and mints. `api/sitting.md` gives what the record holds and why a pause is an
 interval."""
 
 import json
@@ -38,7 +38,7 @@ from climb.schema import (
 DRILL_CAP_MS = 2_000
 
 # how long a sitting may go untouched before the loop ends it at the moment it
-# was last touched. `log.md` gives why the ending is read-time
+# was last touched. `api/sitting.md` gives why the ending is read-time
 IDLE_MINUTES = 45
 
 
@@ -140,7 +140,8 @@ def serve(
     now: datetime | None = None,
 ) -> Served:
     """The statement, and the sitting running on the problem where one runs.
-    Serving mints nothing: `log.md` waits for the first press or submission."""
+    Serving mints nothing: `api/sitting.md` waits for the first press or
+    submission."""
     problem = _servable(problems, problem_id)
     at = now or _clock()
     one = _live(sittings, user_id, problem_id, at)
@@ -264,7 +265,7 @@ def submit(
     verification = mint.attempt_verification(attempt.id, judged)
     log.append_attempt(attempt)
     log.append_verification(verification)
-    # a solve leaves the sitting running for a better form: `log.md`, Sittings
+    # a solve leaves the sitting running for a better form: `api/sitting.md`
     return Submitted(
         attempt=attempt,
         sitting=one,
@@ -361,10 +362,10 @@ def claim(
 
 
 def modes(attempt: Attempt, run: AttemptVerification | None) -> list[FailureMode]:
-    """The failure modes an attempt's verdict leaves open, which `log.md`
-    splits by whether the attempt solved the problem. An attempt that crashed
-    on every case is asked nothing: the code reached no answer, so no mode is
-    more than a guess."""
+    """The failure modes an attempt's verdict leaves open, which
+    `api/self-labels.md` splits by whether the attempt solved the problem. An
+    attempt that crashed on every case is asked nothing: the code reached no
+    answer, so no mode is more than a guess."""
     if attempt.solved:
         return [FailureMode.SPEED, FailureMode.NONE]
     judged = run.results if run is not None else []

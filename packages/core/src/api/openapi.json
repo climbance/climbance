@@ -2016,7 +2016,7 @@
           "attempt_id"
         ],
         "title": "AttemptVerification",
-        "description": "Private to the user, where a solution's run is product data: `log.md`."
+        "description": "Private to the user, where a solution's run is product data:\n`api/attempt-log.md`."
       },
       "Begin": {
         "properties": {
@@ -2524,7 +2524,7 @@
           "lapsed"
         ],
         "title": "CardState",
-        "description": "How far one user's study of one card has gone, derived on every read:\n`log.md`, Card states."
+        "description": "How far one user's study of one card has gone, derived on every read:\n`api/card-states.md`."
       },
       "CardStatus": {
         "properties": {
@@ -2762,7 +2762,7 @@
           "form"
         ],
         "title": "Cause",
-        "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses."
+        "description": "The two-way verdict a diagnosis names: `cli/diagnoser.md`."
       },
       "CertificationExam": {
         "properties": {
@@ -3188,7 +3188,7 @@
           "note"
         ],
         "title": "Feedback",
-        "description": "One user's feedback on the engine: `log.md`, Feedback."
+        "description": "One user's feedback on the engine: `api/feedback.md`."
       },
       "Fill": {
         "properties": {
@@ -3226,7 +3226,7 @@
           "choice"
         ],
         "title": "Fill",
-        "description": "One user's answer to one key-line item: `log.md`, Filling a key line."
+        "description": "One user's answer to one key-line item: `api/short-exercises.md`."
       },
       "FillAnswer": {
         "properties": {
@@ -3692,7 +3692,7 @@
           "called_clean"
         ],
         "title": "Judgement",
-        "description": "One user's answer to one item: `log.md`, Judging a solution."
+        "description": "One user's answer to one item: `api/short-exercises.md`."
       },
       "JudgementRates": {
         "properties": {
@@ -4971,7 +4971,7 @@
           "note"
         ],
         "title": "RetirementRequest",
-        "description": "One user's request that a problem be retired: `log.md`, Retirement\nrequests."
+        "description": "One user's request that a problem be retired:\n`api/retirement-requests.md`."
       },
       "Retiring": {
         "properties": {
@@ -5027,7 +5027,7 @@
           "detail"
         ],
         "title": "RunFault",
-        "description": "A user's run the sandbox answered no result for: `log.md`, Run faults."
+        "description": "A user's run the sandbox answered no result for: `api/run-faults.md`."
       },
       "RunKind": {
         "type": "string",

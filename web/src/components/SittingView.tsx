@@ -150,7 +150,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   const { paused, ended, unstarted } = clockNow
   const controls = sittingControls(clockNow, sittingId)
   const solvedNow = (submitted ?? loaded.data?.last ?? null)?.attempt.solved === true
-  // a solve leaves the sitting running: `log.md`
+  // a solve leaves the sitting running: `api/sitting.md`
   const settled = ended || solvedNow
   const ask = claimAsk(ended, solvedNow, submissions)
   const [after, setAfter] = useState<{ problemId: string; title: string } | null>(null)

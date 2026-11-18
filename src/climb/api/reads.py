@@ -207,7 +207,7 @@ class ListedCard(Card):
     family: str  # the technique the cards list groups this card under
     status: CardStatus
     depth: int  # the longest chain of requirements below it: `content-repo/card-graph.md`
-    met: bool  # the cards requiring it may start: `log.md`, Locked cards
+    met: bool  # the cards requiring it may start: `api/card-states.md`
     waiting: list[Waiting]  # the required cards not yet met
 
 

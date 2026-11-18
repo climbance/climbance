@@ -61,12 +61,12 @@ Code = Annotated[str, Field(max_length=65_536)]
 
 class Submission(BaseModel):
     code: Code
-    # the page restored an earlier solve in this sitting: `log.md`
+    # the page restored an earlier solve in this sitting: `api/attempt-log.md`
     restored: bool = False
 
 
 class Begin(BaseModel):
-    # the device pressing, as a knowledge record names it: `log.md`
+    # the device pressing, as a knowledge record names it: `api/sitting.md`
     device: str | None = Field(default=None, min_length=1)
 
 

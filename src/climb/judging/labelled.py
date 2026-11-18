@@ -1,5 +1,5 @@
-"""The labelled mutants the diagnosis call is scored against: `log.md`,
-Labelled mutants."""
+"""The labelled mutants the diagnosis call is scored against:
+`cli/diagnoser.md`."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

@@ -1,7 +1,7 @@
 {
   "$defs": {
     "Cause": {
-      "description": "The two-way verdict a diagnosis names: `log.md`, Diagnoses.",
+      "description": "The two-way verdict a diagnosis names: `cli/diagnoser.md`.",
       "enum": [
         "slip",
         "form"
@@ -10,7 +10,7 @@
       "type": "string"
     }
   },
-  "description": "A diagnosis of a labelled mutant, which is no attempt: `log.md`,\nLabelled mutants.",
+  "description": "A diagnosis of a labelled mutant, which is no attempt:\n`cli/diagnoser.md`.",
   "properties": {
     "call_id": {
       "anyOf": [

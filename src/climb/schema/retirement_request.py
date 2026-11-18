@@ -7,8 +7,8 @@ from climb.schema.problem import RetirementReason
 
 
 class RetirementRequest(BaseModel):
-    """One user's request that a problem be retired: `log.md`, Retirement
-    requests."""
+    """One user's request that a problem be retired:
+    `api/retirement-requests.md`."""
 
     model_config = ConfigDict(frozen=True)
 

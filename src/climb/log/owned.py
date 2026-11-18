@@ -1,6 +1,6 @@
 """One user's whole log, read out and erased as one, and the account deleted
-with it: `log.md` gives what each holds, and why no other user's record is
-touched."""
+with it: `concepts/log-records.md` gives what each holds, and why no other
+user's record is touched."""
 
 from typing import Any
 

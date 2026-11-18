@@ -32,4 +32,5 @@ class Verification(Execution):
 
 
 class AttemptVerification(AttemptRecord, Execution):
-    """Private to the user, where a solution's run is product data: `log.md`."""
+    """Private to the user, where a solution's run is product data:
+    `api/attempt-log.md`."""

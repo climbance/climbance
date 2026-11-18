@@ -27,7 +27,7 @@ def a_sitting(**overrides) -> Sitting:
             "started_at": BEGAN,
             "clock_started_at": BEGAN,
             # still running an hour on, so the loop has been touching it: an
-            # untouched sitting ends at the bound `log.md` gives
+            # untouched sitting ends at the bound `api/sitting.md` gives
             "last_active_at": datetime.now(UTC),
         }
         | overrides
@@ -35,8 +35,8 @@ def a_sitting(**overrides) -> Sitting:
 
 
 def test_serving_mints_no_sitting(stores):
-    """Opening a problem records nothing: `log.md` waits for the first clock
-    press or submission."""
+    """Opening a problem records nothing: `api/sitting.md` waits for the first
+    clock press or submission."""
     problems, sittings = stores
 
     served = serve(problems, sittings, "p1", user_id="u-4f9c2a")

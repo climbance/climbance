@@ -48,7 +48,8 @@ def test_a_failed_attempt_gets_a_diagnosis_carrying_its_call(database):
 
 
 def test_the_call_is_told_the_form_by_name_and_never_shown_its_code(database):
-    """Beside a mutant, the clean form's code is the answer: `log.md`."""
+    """Beside a mutant, the clean form's code is the answer:
+    `cli/diagnoser.md`."""
     log, tasks = setup(database)
     client = replying()
 

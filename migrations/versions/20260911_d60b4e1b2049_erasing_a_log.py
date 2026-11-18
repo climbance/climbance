@@ -16,7 +16,8 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     # a delete passes where the transaction set `climb.erasing`, which one
-    # user's whole log being erased does: `log.md`. An update never passes
+    # user's whole log being erased does: `concepts/log-records.md`. An update
+    # never passes
     op.execute(
         """
         CREATE OR REPLACE FUNCTION refuse_rewrite() RETURNS trigger LANGUAGE plpgsql AS $$

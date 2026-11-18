@@ -45,9 +45,9 @@ fixed here rather than by whatever executed it.
   solution's own lines. The runner's frames are left out, since they name no
   line the solver wrote. The solver reads which line raised, and a diagnosis
   reads a compile error the outcome alone would lose.
-- **The error is stored on the case result**, not only shown. `../log.md` has a
-  diagnosis read a compile error months after the attempt, when only the record
-  is left.
+- **The error is stored on the case result**, not only shown.
+  `../cli/diagnoser.md` has a diagnosis read a compile error months after the
+  attempt, when only the record is left.
 - **A wrong case stores the JSON it returned**, up to 64 KiB. A reopened
   sitting reads the failing case back from the record, and no rerun is spent
   on it. A larger return is not kept, since a 1 MiB case answered wrong on

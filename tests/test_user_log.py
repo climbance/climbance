@@ -273,8 +273,8 @@ def test_erasing_names_its_user_every_time(monkeypatch):
 
 
 def test_the_export_carries_the_knowledge_log(practised):
-    """`log.md`: one user's whole log is every record keyed to that user, the
-    app's included."""
+    """`concepts/log-records.md`: one user's whole log is every record keyed to
+    that user, the app's included."""
     exported = whole_log(practised, AUTHOR)
 
     assert [answer.client_id for answer in exported.answers] == ["k1"]

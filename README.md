@@ -363,7 +363,7 @@ The load-bearing invariants:
   reference in an append-only record is one the engine minted, so the log stays
   readable on its own.
 - **[The user's record stands over the
-  machine's](docs/architecture/log.md#technique-claims)** answer to the same
+  machine's](docs/architecture/api/attempt-claims.md)** answer to the same
   question, whichever was written later. The machine's record is kept and
   scored, never deleted and never promoted.
 - **[Aggregates are derived views](docs/architecture/README.md#invariants)**,
@@ -373,7 +373,7 @@ The load-bearing invariants:
   contacts no external platform, and no platform client lives here.
 
 If you read one section, read **[technique
-claims](docs/architecture/log.md#technique-claims)**: what a reading is, why
+claims](docs/architecture/api/attempt-claims.md)**: what a reading is, why
 it is stored even when it can never stand, and what identifies one. Then
 **[template matches](docs/architecture/cli/matcher.md)**, which
 makes the same argument for a corpus that grows.

@@ -1,4 +1,4 @@
-"""Each template's memory for one user: `log.md`, The template schedule."""
+"""Each template's memory for one user: `api/template-schedule.md`."""
 
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence

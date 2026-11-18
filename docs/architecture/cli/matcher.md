@@ -115,8 +115,8 @@ work: an author names no solution, so nothing is authored here either.
   draws the line between displaying a form and merely admitting it. A score
   taken over the pairs that drew that line measures agreement with itself. The
   eval set is matched by hand from the templates alone, and configurations are
-  compared over the pairs both read. The rules `../log.md` gives for scoring an
-  attempt claim apply here unchanged.
+  compared over the pairs both read. The rules `classifier.md` gives for
+  scoring an attempt claim apply here unchanged.
 - **The matcher score is deferred until two matcher configurations are
   compared.** `climb score` scores attempt claims alone today, and no command
   scores a match.

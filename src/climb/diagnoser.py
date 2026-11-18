@@ -1,4 +1,4 @@
-"""Where a failed solution's fault lies: `log.md`, Diagnoses."""
+"""Where a failed solution's fault lies: `cli/diagnoser.md`."""
 
 import json
 from dataclasses import dataclass
@@ -49,8 +49,8 @@ SCHEMA = {
 
 
 class Tool(StrEnum):
-    """A piece of evidence the call can be given beyond the baseline: `log.md`,
-    Diagnoses."""
+    """A piece of evidence the call can be given beyond the baseline:
+    `cli/diagnoser.md`."""
 
     DIVERGENCE = "divergence"  # the first case the solution failed
     FORM_CODE = "form-code"  # the target form's code, on attempts alone

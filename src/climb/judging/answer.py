@@ -1,4 +1,4 @@
-"""An answer decided, and the next item picked: `log.md`, Judging a solution."""
+"""An answer decided, and the next item picked: `api/short-exercises.md`."""
 
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from enum import StrEnum
@@ -64,7 +64,7 @@ def next_item[T: Served](
     templates: Collection[str] | None = None,
 ) -> T | None:
     """A started card's item first, unseen before the one answered longest
-    ago: `log.md`, Judging a solution. `templates` narrows the draw to one
+    ago: `api/short-exercises.md`. `templates` narrows the draw to one
     card's forms."""
     last: dict[str, int] = {}
     for order, one in enumerate(answers):

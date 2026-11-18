@@ -16,7 +16,8 @@ Each question's memory is FSRS-6, replayed from the user's answers.
     parameters of its own, and both clients replay with the one set the
     snapshot publishes.
   - Desired retention 0.9. The default parameters were fitted against it,
-    and the spaced check's band in `../../log.md` is read against it.
+    and the spaced check's band in `../../api/template-schedule.md` is read
+    against it.
   - Learning steps of 1 and 10 minutes, and a relearning step of 10 minutes.
     A failed answer then comes back inside the same session, while the
     answer just read is still fresh.
