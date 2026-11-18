@@ -52,7 +52,8 @@ holds the answer. Work in a scratchpad folder of the run's own, `<out>`.
 3. **Read the form.** Spawn a second agent with `<out>/form.json` alone. Its
    brief: for each item, pick the choice most likely keyed from its wording
    alone, with a confidence and the cue it used, such as the longest choice,
-   the only hedged one, or the one echoing the others. Write
+   the only hedged one, or the one echoing the others. An item's `pick` is
+   how many letters to choose, not the key. Write
    `<out>/form-replies.json` in the same shape.
 
 4. **Score.**
