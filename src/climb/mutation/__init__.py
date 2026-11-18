@@ -7,7 +7,7 @@ from climb.mutation.killing import (
     pace,
     survivors,
 )
-from climb.mutation.mutants import Mutant, Operator, mutants
+from climb.mutation.mutants import Mutant, Operator, mutants, operator_of
 
 __all__ = [
     "FLOOR_MS",
@@ -18,6 +18,7 @@ __all__ = [
     "Operator",
     "kill",
     "mutants",
+    "operator_of",
     "pace",
     "survivors",
 ]

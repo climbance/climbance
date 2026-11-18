@@ -1,6 +1,6 @@
 import ast
 
-from climb.mutation import Operator, mutants
+from climb.mutation import Operator, mutants, operator_of
 
 BINARY = """
 def solve(xs, target):
@@ -138,3 +138,26 @@ def test_a_solution_with_no_site_yields_none():
     code = "def solve(xs):\n    return sorted(xs)\n"
 
     assert mutants(code) == []
+
+
+EVERY = """
+def solve(xs, k):
+    best = 0
+    for x in xs:
+        if not x or x <= k and x != 3:
+            continue
+        if x > 9:
+            break
+        best = max(best, x * 2 + 1)
+    return best
+"""
+
+
+def test_a_change_names_its_operator_back():
+    """A stored item keeps the change and not the operator, so the change has
+    to name the operator alone."""
+    found = mutants(EVERY)
+
+    assert {one.operator for one in found} == set(Operator)
+    for one in found:
+        assert operator_of(one.change) is one.operator, one.change

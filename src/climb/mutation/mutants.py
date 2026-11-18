@@ -225,6 +225,28 @@ class _Walk(ast.NodeTransformer):
         return self._offer(node, Operator.CONTROL, "continue → break", partial(_jump, node)) or node
 
 
+def operator_of(change: str) -> Operator:
+    """The operator a stored `change` was written by, read back off its text."""
+    before, _, after = change.partition(" → ")
+    for operator, table in (
+        (Operator.BOUNDARY, BOUNDARY),
+        (Operator.NEGATION, NEGATED),
+        (Operator.ARITHMETIC, ARITHMETIC),
+        (Operator.CONNECTOR, CONNECTOR),
+    ):
+        if any((SYMBOL[a], SYMBOL[b]) == (before, after) for a, b in table.items()):
+            return operator
+    if change == "not dropped":
+        return Operator.CONDITION
+    if EXTREMUM.get(before) == after:
+        return Operator.EXTREMUM
+    if {before, after} == {"break", "continue"}:
+        return Operator.CONTROL
+    if before.lstrip("-").isdigit() and after.lstrip("-").isdigit():
+        return Operator.CONSTANT
+    raise ValueError(f"no operator writes {change!r}")
+
+
 def _label(op: ast.AST, new: type[ast.AST]) -> str:
     return f"{SYMBOL[type(op)]} → {SYMBOL[new]}"
 
