@@ -1,4 +1,4 @@
-import { courseGroups, groupKey, qkey } from './courses';
+import { courseGroups, groupKey, qkey, topicKey } from './courses';
 import { inFocus, type Focus } from './focus';
 import type { Board } from './schedule';
 import { ranked, type Rng } from './select';
@@ -68,6 +68,8 @@ export type QueueKind = 'mix' | 'focus' | 'review' | 'drill';
 export class Queue {
   asked = new Set<string>();
   offered = new Set<string>(); // lessons served this queue: "course:lesson"
+  // topics whose new questions wait for a later run's baseline test, by `topicKey`
+  withheld = new Set<string>();
   private lastWasLesson = false;
   private lastCourse = -1;
 
@@ -133,6 +135,10 @@ export class Queue {
     return !!m?.learning && m.due > now;
   }
 
+  private withholds(q: Question): boolean {
+    return this.withheld.size > 0 && this.withheld.has(topicKey(q.course, q.topic));
+  }
+
   /** The next unseen question, if today's limit allows one. */
   private fresh(b: Board, now: number, rng: Rng, take: boolean): Question | null {
     if (this.kind === 'review' || this.want || !this.newLeft(b, now)) return null;
@@ -141,7 +147,7 @@ export class Queue {
       const ladder = this.kind === 'focus';
       return (
         (this.newScope ?? this.scope).find(
-          (q) => !b.attempts(q).length && (!ladder || (b.unlocked(q) && !b.held(q))),
+          (q) => !b.attempts(q).length && !this.withholds(q) && (!ladder || (b.unlocked(q) && !b.held(q))),
         ) ?? null
       );
     }
@@ -152,7 +158,10 @@ export class Queue {
       // the same group a module card names as next up: one rule for both
       const g = b.nextNew(cs[k]);
       if (g) {
-        const unseen = (b.byGroup.get(groupKey(g)) ?? []).filter((q) => !b.attempts(q).length && !b.held(q));
+        const unseen = (b.byGroup.get(groupKey(g)) ?? []).filter(
+          (q) => !b.attempts(q).length && !b.held(q) && !this.withholds(q),
+        );
+        if (!unseen.length) continue;
         if (take) this.lastCourse = k;
         return unseen[Math.floor(rng() * unseen.length)];
       }

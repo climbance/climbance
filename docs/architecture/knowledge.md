@@ -416,6 +416,11 @@ A lesson's pretest is a different thing, as `## Lessons` gives.
   is offered only once its pretest is spent, so a test waiting for the first
   lesson would follow practice answers. A taken test then spends that pretest,
   as `## Lessons` gives.
+- **A queue run offers one baseline test.** Once a run has offered one, the
+  new questions of every other untested topic wait for a later run, which
+  offers that topic's test. Two modules' tests in a row asked a new user 28
+  questions before any practice. A withheld topic keeps no answer from this
+  run, so its test is still offered later.
 - **One test per topic, rather than per subtopic or per module.** A test per
   subtopic would interrupt every lesson, and a test per module would ask
   about topics the user may never open.

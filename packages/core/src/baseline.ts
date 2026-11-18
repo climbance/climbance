@@ -1,4 +1,4 @@
-import { moduleTopicTitle } from './courses';
+import { moduleTopicTitle, topicKey } from './courses';
 import type { ExamPlan } from './exam';
 import type { Board } from './schedule';
 import { shuffle, type Rng } from './select';
@@ -16,8 +16,6 @@ export interface BaselineItem {
   topic: string;
   level: number;
 }
-
-export const topicKey = (course: string, topic: string) => `${course}/${topic}`;
 
 /** The topics a baseline test was taken or skipped on, each stored as a stint. */
 export function baselineTopics(sessions: readonly SessionRecord[]): Set<string> {

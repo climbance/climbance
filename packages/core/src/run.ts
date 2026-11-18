@@ -1,6 +1,6 @@
-import { baselineBefore, baselinePlan, baselineTopics, skipBaseline, topicKey, type BaselineItem } from './baseline';
+import { baselineBefore, baselinePlan, baselineTopics, skipBaseline, type BaselineItem } from './baseline';
 import type { CertRecord } from './certs';
-import type { Catalog } from './courses';
+import { topicKey, type Catalog } from './courses';
 import { examOutcome, examTitle, type ExamOutcome, type ExamPlan } from './exam';
 import { isLessonItem, NEW_STEP, type LessonItem, type Queue } from './queue';
 import { isoNow, makeAttempt } from './records';
@@ -79,6 +79,12 @@ export class QueueRun {
     if (!picked || !b) return null;
     if (isLessonItem(picked)) return { lesson: picked };
     const test = this.baselineBefore(b, picked, src);
+    if (test && this.testsOffered.size > 1) {
+      // one test per run: the topic's new questions wait for the next run
+      this.queue.withheld.add(topicKey(test.course.slug, test.topic));
+      this.shown--;
+      return this.pick(src, now);
+    }
     if (test) {
       // sampled at the offer, so the stop counts the questions the test asks
       this.testPlan = baselinePlan(b, test);

@@ -291,3 +291,30 @@ describe('an exam run', () => {
     expect(r.phase).toBe('done');
   });
 });
+
+describe('the baseline tests of two modules', () => {
+  const course = (slug: string) => ({
+    slug,
+    definition: { title: slug, pass_ratio: 1, kinds: ['k'], topic: [{ slug: 't', tier: 1, title: 'T', subs: ['s'] }] },
+    questions: [mk('a'), mk('b')],
+  });
+  const two = loadSnapshot({ format: 6, courses: [course('c'), course('d')] } as never);
+  const src = (sessions: SessionRecord[], attempts: AttemptRecord[] = []) => ({ catalog: two, attempts, sessions });
+
+  it('offers one test per run, holding the other topic for the next run', () => {
+    const r = new QueueRun(nextQueue(Board.build(two, []), 10), 'next', null, null, src([]));
+    const first = r.current && 'baseline' in r.current ? r.current.baseline : null;
+    const skip = r.skipBaseline()!;
+    const served: string[] = [];
+    for (r.next(src([skip])); r.current && !r.done; r.next(src([skip]))) {
+      expect('baseline' in r.current).toBe(false);
+      if ('q' in r.current) served.push(r.current.q.course);
+      if ('q' in r.current) r.answer({ q: r.current.q, correct: true } as Result);
+    }
+    expect(new Set(served)).toEqual(new Set([first!.course.slug]));
+    const later = new QueueRun(nextQueue(Board.build(two, []), 10), 'next', null, null, src([skip]));
+    expect(later.current && 'baseline' in later.current && later.current.baseline.course.slug).not.toBe(
+      first!.course.slug,
+    );
+  });
+});
