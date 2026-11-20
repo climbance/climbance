@@ -160,12 +160,12 @@ def appended_column() -> Column[int]:
 
 
 def call_column(*, nullable: bool) -> Column[Any]:
-    # the call holds the configuration: `machine.md`
+    # the call holds the configuration: `concepts/machine-records.md`
     return Column("call_id", Text, ForeignKey("calls.id"), nullable=nullable)
 
 
 # what a machine record reads from its call, rather than storing a copy:
-# `machine.md`
+# `concepts/machine-records.md`
 CONFIGURATION = ("model", "effort", "prompt_hash", "pin", "provider", "temperature", "cost")
 
 

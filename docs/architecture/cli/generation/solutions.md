@@ -57,8 +57,9 @@ reference or naive.
   solution answers no board row and earns no progress, and a user who reads
   one has not solved the problem.
 - **A canonical is sampled, not greedy, which is the exception
-  `../../machine.md` names.** Generation produces the artifact rather than a
-  verdict about one, so no verdict needs protecting from variance. Variance
+  `../../concepts/machine-records.md` names.** Generation produces the
+  artifact rather than a verdict about one, so no verdict needs protecting
+  from variance. Variance
   stops one model's habits becoming the whole corpus. The cost is a canonical
   that is re-runnable and never reproducible, which is also why nothing
   re-derives it.

@@ -1,5 +1,5 @@
 """What each answering site leaves on one writing, and how a site outcome
-reads it. `machine.md` gives what the records carry."""
+reads it. `cli/generation/site-outcomes.md` gives what the records carry."""
 
 from typing import TypedDict
 

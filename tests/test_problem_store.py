@@ -118,8 +118,8 @@ def test_retiring_an_unknown_problem_is_refused(database):
 
 
 def test_a_problem_copying_another_configuration_than_its_call_s_is_refused(database):
-    """`machine.md`: the table keeps the call alone, so a copy disagreeing with
-    it would be lost on write rather than stored."""
+    """`concepts/machine-records.md`: the table keeps the call alone, so a copy
+    disagreeing with it would be lost on write rather than stored."""
     with pytest.raises(ValueError, match="copies effort"):
         ProblemStore(database).put(make_problem(effort="high"))
 

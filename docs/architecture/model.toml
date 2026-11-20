@@ -59,8 +59,8 @@ id = "model-router"
 kind = "system"
 name = "Model router"
 role = "Reaches every model as chat completions, each request pinned to one endpoint."
-doc = "machine.md"
-section = "Calls"
+doc = "cli/calls.md"
+section = "The transport"
 bullet = "One transport, one shape."
 
 [[element]]
@@ -402,6 +402,14 @@ container = "cli"
 name = "Exercise items"
 role = "Builds the judgement items and the key-line items from the seeded templates and their mutants."
 doc = "cli/exercise-items.md"
+
+[[element]]
+id = "calls"
+kind = "component"
+container = "cli"
+name = "Calls"
+role = "Sends every model call through one transport, each pinned to one endpoint, and appends it to the call log."
+doc = "cli/calls.md"
 
 # Relations
 
@@ -818,3 +826,13 @@ label = "asks why an attempt failed"
 from = "diagnoser"
 to = "database"
 label = "appends each diagnosis and mutant diagnosis"
+
+[[relation]]
+from = "calls"
+to = "model-router"
+label = "sends each request, pinned to one endpoint"
+
+[[relation]]
+from = "calls"
+to = "database"
+label = "appends each call to the call log"

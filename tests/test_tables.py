@@ -311,7 +311,8 @@ def test_every_table_is_declared_on_the_shared_metadata():
 
 
 def test_a_machine_record_holds_its_call_and_none_of_the_configuration():
-    """`machine.md`: the configuration is stored once, on the call."""
+    """`concepts/machine-records.md`: the configuration is stored once, on the
+    call."""
     table = Table("provenance", MetaData(), call_column(nullable=True))
 
     assert mismatches(Stored(MachineProvenance, table, through_call=True)) == []

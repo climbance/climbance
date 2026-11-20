@@ -1,5 +1,5 @@
-"""Which model writes what, per call site. `machine.md`: a configuration is per
-call site, not per run."""
+"""Which model writes what, per call site. `concepts/machine-records.md`: a
+configuration is per call site, not per run."""
 
 from pydantic import BaseModel
 

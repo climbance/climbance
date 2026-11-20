@@ -278,7 +278,8 @@ The order matters because each step can reject what came before.
   landing requires.
 - **Every step's verdict is recorded, not only reported.** A run prints each
   stage and the process then ends, so a rejected draft would leave only the
-  calls it paid for. `machine.md` gives what a site's record carries.
+  calls it paid for. `cli/generation/site-outcomes.md` gives what a site's
+  record carries.
 - **A run ends on what it reached, and prints no statement.** Each problem
   the run stored is a line naming the id, and `climb problem <id>` reads
   one problem whole. Ten statements scroll the result out of the terminal.

@@ -1,7 +1,7 @@
 """One writing, and what its call sites leave behind.
 
-`machine.md` gives what a site outcome carries and why a run's stage lines do
-not suffice.
+`cli/generation/site-outcomes.md` gives what a site outcome carries and why a
+run's stage lines do not suffice.
 """
 
 from dataclasses import dataclass, field

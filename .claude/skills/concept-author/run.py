@@ -51,7 +51,7 @@ def git(*args: str, cwd: Path = CONTENT, check: bool = True) -> str:
 
 
 def models(chosen: dict[str, str]) -> str:
-    """The commit body naming each role's model: architecture/machine.md."""
+    """Each role's model, for the commit body: `machine-records.md`."""
     return "Models: " + ", ".join(f"{role} {model}" for role, model in chosen.items())
 
 
