@@ -69,7 +69,7 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
                     ┌────────────────────────────────────────────────────┐
                     │ run.py --release (code)                            │
                     │  merge py-auto into main, seed locally, seed prod  │
-                    │  through the tunnel, commit STATUS.md              │
+                    │  through the tunnel, commit STATUS.md, push main   │
                     └────────────────────────────────────────────────────┘
 ```
 

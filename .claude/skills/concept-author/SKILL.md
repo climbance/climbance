@@ -223,7 +223,8 @@ nohup uv run python .claude/skills/concept-author/run.py --level 0 \
 - **Releasing.** `run.py --release`, given when the author says, merges
   `py-auto` into the content repository's `main` and seeds the module
   locally, then in prod through the deployment repo's tunnel. It rewrites
-  `modules/py/STATUS.md` from `climb module status py` and commits it.
+  `modules/py/STATUS.md` from `climb module status py`, commits it, and
+  pushes `main` to the content repository's remote.
 - **Order.** A subtopic starts once every subtopic it `needs` is merged, at
   most `--jobs` at a time. One that fails, or a step running past
   `--hours`, stops the subtopics needing it, which the report marks as

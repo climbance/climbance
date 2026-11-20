@@ -456,6 +456,10 @@ def release(args: argparse.Namespace) -> None:
         git("add", str(page.relative_to(CONTENT)))
         git("commit", "-q", "-m", f"chore({args.module}): refresh the status")
         print("STATUS.md refreshed")
+    pushed = subprocess.run(
+        ["git", "push", "-q", "origin", "main"], cwd=CONTENT, capture_output=True, text=True
+    )
+    print("main: pushed" if not pushed.returncode else f"main: not pushed: {pushed.stderr.strip()}")
     seed = ["seed", "knowledge", f"content/modules/{args.module}"]
     for where, argv in [
         ("local", ["just", "seed-module", args.module]),
