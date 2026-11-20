@@ -93,6 +93,17 @@ the coverage map for a module written by concept.
   as today's snapshot only when its text differs from the latest snapshot's.
   The comparison drops a page's build stamp first: docs.python.org is rebuilt
   daily, and a rebuild changes its "Last updated on" line alone.
+- **`climb library refresh [--module <name>]` fetches every source the
+  modules cite again**, as `--refresh` fetches one. Wikipedia is skipped,
+  since no quote may cite it. An unchanged source gets `checked_on` in its
+  latest snapshot's `meta.json`, so the library shows when each page was last
+  compared.
+- **The refresh checks each concept citing a changed source against the
+  latest snapshot of every source it cites.** A concept whose anchors and
+  quote still hold gets its `read_on` moved to the refresh date. A concept
+  that lost one is reported with the old quote or anchor, beside the passage
+  or the anchors of the new snapshot most like it. Its `read_on` stays, so
+  rule 30 keeps passing on the snapshot the concept was read in.
 - **A writer or a reviewer reads a source's text files alone.** The original
   PDF or HTML is kept only for extracting the text again, with another tool or
   another layout. Parsing it while citing would give two sessions two texts of

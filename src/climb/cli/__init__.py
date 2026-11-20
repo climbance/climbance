@@ -31,6 +31,7 @@ from climb.cli.generate import generate
 from climb.cli.hand_match import hand_match
 from climb.cli.invite import invitation
 from climb.cli.judge import judge
+from climb.cli.library import library
 from climb.cli.match import match
 from climb.cli.module import module, retired
 from climb.cli.movement import moved
@@ -422,6 +423,17 @@ def main() -> None:
     )
     retire_parser.add_argument("slug", help="the module's slug in the store")
 
+    library_parser = command(sub, "library", "the sources a module's concepts cite")
+    library_action = library_parser.add_subparsers(dest="action", required=True)
+    refresh_parser = library_action.add_parser(
+        "refresh", help="fetch every cited source again, and report the quotes a change breaks"
+    )
+    refresh_parser.add_argument("--module", help="refresh the sources of this module alone")
+    refresh_parser.add_argument(
+        "--content", default="content", help="the content repository, holding modules/ and library/"
+    )
+    refresh_parser.add_argument("--json", action="store_true", help="emit the refresh as JSON")
+
     log_parser = command(sub, "log", "one user's whole log, read out or erased")
     action = log_parser.add_subparsers(dest="action", required=True)
     export_parser = action.add_parser("export", help="print every record of the log as JSON")
@@ -466,6 +478,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "module": lambda args, parser, root: (
         retired(args, root) if args.action == "retire" else module(args, parser)
     ),
+    "library": lambda args, parser, _root: library(args, parser),
     "invite": invitation,
     "feedback": lambda _args, _parser, root: feedback_listed(root),
     "diagnose": diagnose,
