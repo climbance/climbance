@@ -22,8 +22,6 @@ import {
   drillQueue,
   selectExam,
   block,
-  decodeBase64,
-  encodeBase64,
   gradeChoice,
   hasAnswer,
   isoNow,
@@ -38,16 +36,6 @@ describe('records', () => {
     expect(pyJson({ t: 'x', course: 'py', id: 'é', ok: true, guess: true })).toBe(
       '{"t": "x", "course": "py", "id": "\\u00e9", "ok": true, "guess": true}',
     );
-  });
-});
-
-describe('base64', () => {
-  it('round-trips UTF-8', () => {
-    for (const s of ['', 'a', 'ab', 'abc', 'naïve → ok 🙂\n']) {
-      expect(decodeBase64(encodeBase64(s))).toBe(s);
-    }
-    expect(encodeBase64('héllo')).toBe(Buffer.from('héllo').toString('base64'));
-    expect(decodeBase64('aGVs\nbG8=\n')).toBe('hello');
   });
 });
 

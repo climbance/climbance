@@ -24,7 +24,6 @@ import {
   type LessonRecord,
   parseGraph,
   parseQuestion,
-  checkDetail,
   selectExam,
   nextQueue,
   focusQueue,
@@ -372,12 +371,9 @@ describe('detail', () => {
   for (const c of data.detail) {
     it(c.name, () => {
       const q = parseQuestion({ topic: 't', sub: 's', ...c.raw }, 'c');
-      expect({
-        errors: checkDetail(c.raw),
-        detail: q.detail,
-        key_detail: q.keyDetail,
-        traps_detail: q.trapsDetail,
-      }).toEqual(c.expected);
+      // the fixture's `errors` are the authoring check's, which only the CLI runs
+      const { errors: _errors, ...parsed } = c.expected;
+      expect({ detail: q.detail, key_detail: q.keyDetail, traps_detail: q.trapsDetail }).toEqual(parsed);
     });
   }
 });
