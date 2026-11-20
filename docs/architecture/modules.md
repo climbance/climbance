@@ -14,6 +14,13 @@ and not every import. Every package may import `schema`, `ids`, `storage` and
 `pyproject.toml` forbids them from importing the domain. The check fails on a
 stale graph, and on a package that no container's `code` reaches.
 
+Each container's `runs` in `model.toml` names the packages it runs, by hand.
+The check fails on a package the container's `code` reaches and its `runs`
+omits, and on a package its `runs` names and its `code` does not reach. A new
+import that moves a package into another box then fails the commit. Without
+the declaration the import only redraws the graph, and a reviewer has to
+notice the diff.
+
 A container's `code` is imported by nothing outside its own package. Each
 container talks to another over a process boundary, so an import across that
 boundary would run one container's code inside another. `just module-graph`

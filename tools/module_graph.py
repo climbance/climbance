@@ -1,7 +1,8 @@
 """Generate the engine's package import graph in `docs/architecture/modules.md`,
 grouped by the containers of `docs/architecture/model.toml` whose code reaches
 each package, and the import contracts in `pyproject.toml` that keep each
-container's code imported by its own package alone. Check both.
+container's code imported by its own package alone. Check both, and check
+each container's `runs` against the packages its `code` reaches.
 
     python3 tools/module_graph.py write   # rewrite the graph and the contracts
     python3 tools/module_graph.py check   # fail on a stale graph or contract
@@ -108,6 +109,17 @@ def graph(model: dict) -> tuple[list[str], list[str]]:
     if found:
         return [], found
     reach = {e["id"]: {package(m) for m in reached(deps, e["code"])} for e in holders}
+    reach = {i: r - {"climb"} for i, r in reach.items()}
+    for e in holders:
+        declared = set(e.get("runs", []))
+        found += [
+            f"`{p}` runs in `{e['id']}`, whose `runs` omits it"
+            for p in sorted(reach[e["id"]] - declared)
+        ]
+        found += [
+            f"`{p}` is in `{e['id']}`'s `runs`, which its `code` does not reach"
+            for p in sorted(declared - reach[e["id"]])
+        ]
     packages = sorted({package(m) for m in known} - {"climb"})
     groups: dict[tuple[str, ...], list[str]] = {}
     for p in packages:

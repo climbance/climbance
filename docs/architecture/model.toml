@@ -25,6 +25,10 @@
 # A container's `code` is imported by nothing outside its own package, by an
 # import contract generated into `pyproject.toml`.
 #
+# `runs` on a container names every package its `code` reaches, kept by hand.
+# The module-graph check fails where `runs` and the reach differ, so a new
+# import that brings a package into another container fails the commit.
+#
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
 # that relation's label, as a sequence diagram in that page.
@@ -136,6 +140,16 @@ name = "API"
 role = "Python and FastAPI: answers JSON under `/api`, serves the web app's files, signs users in and records the log."
 doc = "api/README.md"
 code = ["climb.api", "climb.api.__main__"]
+runs = [
+    "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.feedback",
+    "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
+    "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
+    "climb.mint", "climb.mutation", "climb.pick", "climb.problems", "climb.ratings",
+    "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema",
+    "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
+    "climb.storage", "climb.techniques", "climb.template_schedule",
+]
 
 [[element]]
 id = "broker"
@@ -144,6 +158,9 @@ name = "Broker"
 role = "Holds the container runtime's socket, admits one submission at a time and starts its sandbox."
 doc = "broker/README.md"
 code = ["climb.broker", "climb.broker.__main__"]
+runs = [
+    "climb.broker",
+]
 
 [[element]]
 id = "sandbox"
@@ -152,6 +169,9 @@ name = "Sandbox"
 role = "One container per run under gVisor, no network, read-only root; its entry process forks a child per case."
 doc = "sandbox/README.md"
 code = ["climb.runner.child"]
+runs = [
+    "climb.runner",
+]
 
 [[element]]
 id = "database"
@@ -167,6 +187,17 @@ name = "Command line"
 role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."
 doc = "cli/README.md"
 code = ["climb.cli"]
+runs = [
+    "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps", "climb.cards",
+    "climb.cases", "climb.classifier", "climb.cli", "climb.diagnoser",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.generation",
+    "climb.ids", "climb.judgements", "climb.judging", "climb.keylines",
+    "climb.knowledge", "climb.log", "climb.matches", "climb.mint",
+    "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.problems",
+    "climb.ratings", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
+    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
+    "climb.techniques", "climb.trials", "climb.verifications",
+]
 
 # Components of the API: the core loop, from an attempt arriving to the next
 # item scheduled
