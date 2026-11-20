@@ -25,7 +25,7 @@ draw the page's screens at low fidelity.
 
 - **The board serves the pick above its lists, on both clients.** The pick
   is one row under its own heading, naming the form, the problem or the card,
-  and the act it opens. `../../../../flows.md` `## The pick` gives what it
+  and the act it opens. `../../../../api/pick.md` gives what it
   offers. A user who declines it picks from the lists below, which keep their
   order, and a technique with no template keeps the staleness order.
 - **The board names the cards in progress before the techniques.** A card in

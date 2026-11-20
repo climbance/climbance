@@ -10,8 +10,8 @@ check is owed, and when a graduated template is due again.
   question's is from its answers in `../core-package/knowledge/schedule.md`. The
   state is derived on every read and never stored.
 - **A review is a recall attempt of the template, or a sitting on a problem
-  whose `target_template_id` names the template.** `../flows.md` `## A
-  template's reviews` lists which sittings count.
+  whose `target_template_id` names the template.** `## Which sittings review
+  a template` lists which sittings count.
 - **Each recall attempt becomes a rating.** A pass with no hint rates Good, a
   pass after the notes rates Hard, and a failed recall rates Again. A pass
   after the form hint rates Again too, since typing back a form just read
@@ -28,6 +28,45 @@ check is owed, and when a graduated template is due again.
   counts whole days since the last review, as py-fsrs does, so it falls once
   a day.
 
+## Which sittings review a template
+
+- **A sitting reviews the template its problem's `target_template_id` names,
+  and no other.** The generator stores the target on the problem. The matcher
+  is unscored, so a template match adds no review.
+- **A sitting on a problem whose target is a technique reviews no template.**
+  The statement was written for the skill, and no scored record says which
+  form the solution used.
+- **A rung reviews its target alone.** The ladder folds a rung's solve from the
+  templates the rung covers, which `../flows/solving-a-rung.md` gives. A
+  covered template that is not the problem's target gains no review from the
+  solve.
+- **A probe reviews its target alone**, as any sitting does. The canonical may
+  display other templates of the card, and the user's solution may use none of
+  them.
+- **A sitting counts wherever it was served**: from a rung, from a probe or
+  from the board. The review measures the form, and the route to the problem
+  does not change it.
+- **A sitting counts whether or not a card run is open.** The ladder discards
+  an attempt finished before the run began, since the run measures study. A
+  review measures memory, and a form held before the run is still held.
+- **A sitting with no submission is no review.** A clock started and never
+  submitted against tested no form.
+- **A sitting on a defective problem is no review.** The statement asks for
+  something its cases do not decide, so the verdict does not rate the form.
+- **A sitting is one review, at the moment of its first submission.** The first
+  submission is the moment the form was retrieved, and later submissions debug
+  it. An attempt after the first solve does not move the rating. The rating
+  reads the sitting's attempts as they stand, as `## Reviews` gives.
+- **A short exercise drawn from a template is no review of it.** Judging a
+  solution or filling its key line picks among lines shown on the screen, and
+  a recall types the form from a blank file. FSRS raises a template's stability
+  on every pass, so an easy pass counted as a review would space the next
+  recall past the point the form is lost. The exercise stays practice beside
+  the schedule, stored as its own record kind.
+- **An open sitting is read as it stands.** A failed submission rates Again
+  until a later solve in the same sitting rates it Hard. The review is derived,
+  so the change rewrites no record.
+
 ## The spaced check
 
 - **The spaced check opens when a template's recall probability falls to
@@ -40,7 +79,7 @@ check is owed, and when a graduated template is due again.
   still is the day after practice.
 - **A check passed after it was owed still counts.** A pass at lower recall
   probability is stronger evidence that the form was kept. Owed orders the
-  work and freezes new card starts, as `../flows.md` gives the pick.
+  work and freezes new card starts, as `pick.md` gives.
 - **A failed check is a review rated Again.** FSRS relearning shortens the
   stability, and the window is read again from the new state. The card stays
   consolidating.
@@ -75,3 +114,11 @@ Deferred, since only use answers each:
 - How a sitting's elapsed time enters its rating.
 - The check of a recallable template no review has reached when its card
   turns consolidating.
+- Whether a sitting whose last attempt carries the self-label `syntax` rates
+  Good rather than Hard.
+- Whether a short exercise's answers enter the schedule as a signal of their
+  own. The stored predictions can show whether a failed exercise precedes a
+  failed recall.
+- Whether a template match written by the user adds a review. A user record
+  stands over a machine's, so the reason the matcher's matches add none does
+  not reach it.

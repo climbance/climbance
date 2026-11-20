@@ -98,8 +98,8 @@ from the template matches and the card's selector, and stores none of it.
   optimum, so no input separates them from a reference. Generation cannot tell
   such a form from a reference written cleverly by mistake, so the template
   says which of the two holds. A missing separation where a speedup was
-  claimed is a defect in the run, and `../flows.md` names the three things that
-  produce one.
+  claimed is a defect in the run, and `../cli/generation/speedup-search.md`
+  names the three things that produce one.
 - **The claim is asymptotic: the form beats the naive approach by at least a
   factor of log n.** The search separates by wall clock under the sitting's
   cap, on an input the ceiling holds, and that input carries some hundred

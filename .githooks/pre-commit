@@ -64,9 +64,9 @@ if echo "$FILES" | grep -qE '^packages/core/'; then
     fi
     (cd packages/core && npm run --silent typecheck && npm run --silent test) || exit 1
 fi
-# The model views in `docs/architecture/README.md`, where the staging touches
-# the docs or their generator: stale views or a citation naming a section that
-# moved fails the commit.
+# The model views in `docs/architecture/README.md` and each flow's diagram,
+# where the staging touches the docs or their generator: a stale diagram or a
+# citation naming a section that moved fails the commit.
 if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$'; then
     python3 tools/model_views.py check || exit 1
 fi

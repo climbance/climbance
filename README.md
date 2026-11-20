@@ -282,7 +282,7 @@ flowchart LR
   refused which configuration is readable nowhere else.
 
 Each state and every exit is in
-[`docs/architecture/flows.md`](docs/architecture/flows.md#writing-a-problem-as-states).
+[`docs/architecture/cli/generation/states.md`](docs/architecture/cli/generation/states.md).
 
 **Built so far:** the four calls, the gates between them and the draft store,
 and they have written problems end to end. Not yet measured: the rejection rate

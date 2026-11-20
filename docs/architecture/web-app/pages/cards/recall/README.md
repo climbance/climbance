@@ -10,8 +10,8 @@ sends the browser to it.
 - **The recall's path names the template by its authored slug**, and the drawn
   path sends the browser to it. A reload then asks for the same form, and a
   user who means to practise one form reaches it by name.
-  `../../../../flows.md` gives why naming the template costs the recall
-  nothing.
+  `../../../../flows/recalling-a-template.md` gives why naming the template
+  costs the recall nothing.
 - **The phone's Recall screen types the form through the app's keyboard**, into
   the editor `../../../../native-app/README.md` gives. The editor's pad adds
   enter, indent and dedent, a row of the names the file declares, narrowed to
@@ -23,7 +23,8 @@ sends the browser to it.
   canonical's widest line is fifty-five. A press beside Run hides the keyboard,
   and the editor then holds some twenty lines, where a median canonical is
   eighteen. A key carries a keyword or a name the file declares, never a
-  library name or a line of a form, as `../../../../flows.md` gives. The screen
+  library name or a line of a form, as
+  `../../../../flows/recalling-a-template.md` gives. The screen
   opens from a template's press on Card, and a drawn recall opens beside a run,
   as on the web. A menu switches between the card's templates, where the web's
   page holds the same menu.

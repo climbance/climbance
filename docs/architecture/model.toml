@@ -16,9 +16,9 @@
 # named by its `container`. A relation runs from the element that acts to the
 # element it acts on.
 #
-# A flow is a named, ordered list of steps, with the doc section that
-# describes it. Each step names the `from` and the `to` of one relation, and
-# is drawn with that relation's label.
+# A flow is a named, ordered list of steps, with the page that describes it.
+# Each step names the `from` and the `to` of one relation, and is drawn with
+# that relation's label, as a sequence diagram in that page.
 
 [engine]
 id = "engine"
@@ -244,8 +244,7 @@ kind = "component"
 container = "api"
 name = "Pick"
 role = "Names the next item: a template and the act that reviews it, read from the three folds."
-doc = "flows.md"
-section = "The pick"
+doc = "api/pick.md"
 
 [[element]]
 id = "predictions"
@@ -352,6 +351,14 @@ container = "cli"
 name = "Classifier"
 role = "Reads an attempt's code and claims the techniques it used, filling what no user claimed."
 doc = "cli/classifier.md"
+
+[[element]]
+id = "eval-set"
+kind = "component"
+container = "cli"
+name = "Eval set"
+role = "Holds the hand-claimed attempts adjudicated against a frontier model, and scores each classifier configuration against them."
+doc = "cli/eval-set.md"
 
 [[element]]
 id = "generation"
@@ -716,6 +723,16 @@ to = "database"
 label = "appends a machine attempt claim"
 
 [[relation]]
+from = "eval-set"
+to = "classifier"
+label = "scores a configuration's claims against the set"
+
+[[relation]]
+from = "eval-set"
+to = "database"
+label = "reads the blind claims and the frontier's claims"
+
+[[relation]]
 from = "matcher"
 to = "calls"
 label = "asks which templates a solution displays"
@@ -764,6 +781,26 @@ label = "appends each card run"
 from = "card-states"
 to = "card-runs"
 label = "reads when each run began and its probes"
+
+[[relation]]
+from = "card-runs"
+to = "problems"
+label = "draws the probes from the technique's problems"
+
+[[relation]]
+from = "card-runs"
+to = "attempt-log"
+label = "reads which problems the user attempted"
+
+[[relation]]
+from = "web-app"
+to = "card-states"
+label = "reads a card's ladder and its state"
+
+[[relation]]
+from = "card-states"
+to = "sitting"
+label = "reads which rungs a sitting skipped"
 
 [[relation]]
 from = "web-app"
@@ -863,10 +900,9 @@ label = "stores each one-time code and app token"
 # Flows
 
 [[flow]]
-id = "core-loop"
-name = "The core loop, from a submission to the next pick"
-doc = "flows.md"
-section = "Drill loop"
+id = "drill-loop"
+name = "Drill loop"
+doc = "flows/drill-loop.md"
 steps = [
     { from = "learner", to = "web-app" },
     { from = "web-app", to = "submission" },
@@ -895,4 +931,52 @@ steps = [
     { from = "mastery", to = "self-labels" },
     { from = "pick", to = "predictions" },
     { from = "predictions", to = "database" },
+]
+
+[[flow]]
+id = "starting-a-card-run"
+name = "Starting a card run"
+doc = "flows/starting-a-card-run.md"
+steps = [
+    { from = "learner", to = "web-app" },
+    { from = "web-app", to = "card-states" },
+    { from = "web-app", to = "card-runs" },
+    { from = "card-runs", to = "problems" },
+    { from = "problems", to = "database" },
+    { from = "card-runs", to = "attempt-log" },
+    { from = "card-runs", to = "database" },
+    { from = "card-states", to = "card-runs" },
+]
+
+[[flow]]
+id = "solving-a-rung"
+name = "Solving a rung"
+doc = "flows/solving-a-rung.md"
+steps = [
+    { from = "learner", to = "web-app" },
+    { from = "web-app", to = "card-states" },
+    { from = "card-states", to = "attempt-log" },
+    { from = "card-states", to = "sitting" },
+    { from = "web-app", to = "submission" },
+    { from = "submission", to = "sitting" },
+    { from = "submission", to = "runner" },
+    { from = "runner", to = "broker" },
+    { from = "broker", to = "sandbox" },
+    { from = "submission", to = "attempt-log" },
+    { from = "web-app", to = "attempt-claims" },
+    { from = "web-app", to = "self-labels" },
+]
+
+[[flow]]
+id = "recalling-a-template"
+name = "Recalling a template"
+doc = "flows/recalling-a-template.md"
+steps = [
+    { from = "learner", to = "web-app" },
+    { from = "web-app", to = "recall" },
+    { from = "recall", to = "runner" },
+    { from = "runner", to = "broker" },
+    { from = "broker", to = "sandbox" },
+    { from = "recall", to = "database" },
+    { from = "template-schedule", to = "recall" },
 ]

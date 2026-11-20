@@ -13,8 +13,8 @@ lapsed.
   folds already. A stored card state would copy those folds, and the copy
   drifts once the corpus moves under the ladder.
 - **Not started: the user holds no card run for the card.** Reading a card
-  mints nothing, as `../flows.md` gives, so a card read and never started stays
-  not started.
+  mints nothing, as `../flows/starting-a-card-run.md` gives, so a card read and
+  never started stays not started.
 - **Acquiring: a run is open, and some required rung has no solve since the run
   began.** The ladder teaches the form with the card in view, and a solve from
   before the run counts for nothing, as [`card-runs.md`](card-runs.md) gives.
@@ -55,8 +55,8 @@ lapsed.
   recalled.
 - **A lapse asks for no new ladder and no new probe.** The ladder and the
   probe held at graduation, and a lapse shows one form lost, which a recall
-  tests. The run's probes are already seen, and `../flows.md` defers when a run
-  is given a further probe.
+  tests. The run's probes are already seen, and
+  `../flows/starting-a-card-run.md` defers when a run is given a further probe.
 
 ## The ladder under a card state
 

@@ -3,7 +3,8 @@
 The page at `/cards/:slug` and the phone's Card screen: a card's trigger, its
 brief and its templates, its ladder and probes, and the press starting its
 run. `../../../../content-repo/cards.md` gives the card, and
-`../../../../flows.md` the flows a card starts.
+`../../../../flows/starting-a-card-run.md` and
+`../../../../flows/solving-a-rung.md` the flows a card starts.
 
 [`before-a-run.md`](before-a-run.md), [`card.md`](card.md),
 [`run-open.md`](run-open.md) and [`rung.md`](rung.md) draw the page's screens

@@ -1,5 +1,6 @@
-"""Generate the views and the flows in `docs/architecture/README.md` from
-`docs/architecture/model.toml`, and check them.
+"""Generate the views in `docs/architecture/README.md`, and each flow's sequence
+diagram in the page the flow names, from `docs/architecture/model.toml`, and
+check them.
 
     python3 tools/model_views.py write   # rewrite the views
     python3 tools/model_views.py check   # fail on a stale view or broken model
@@ -7,8 +8,8 @@
 
 import re
 import sys
-import textwrap
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 
 DOCS = Path(__file__).resolve().parent.parent / "docs" / "architecture"
@@ -16,6 +17,8 @@ MODEL = DOCS / "model.toml"
 README = DOCS / "README.md"
 BEGIN = "<!-- generated from model.toml by `just model-views`, never edited -->"
 END = "<!-- end of the generated views -->"
+FLOW_BEGIN = "<!-- generated from model.toml by `just model-views`, never edited: the flow -->"
+FLOW_END = "<!-- end of the generated flow -->"
 KINDS = {"person", "system", "container", "library", "component"}
 
 
@@ -180,17 +183,6 @@ def views(model: dict) -> str:
                 *components(model, container),
                 "```",
             ]
-    for flow in model.get("flow", []):
-        block += [
-            "",
-            *textwrap.wrap(
-                f"{flow['name']}, as `{flow['doc']}` `## {flow['section']}` gives it.", 80
-            ),
-            "",
-            "```mermaid",
-            *sequence(model, flow),
-            "```",
-        ]
     block += ["", END]
     return "\n".join(block)
 
@@ -203,6 +195,12 @@ def rendered(text: str, model: dict) -> str:
     return f"{head}\n{views(model)}\n\n## {rest}"
 
 
+def drawn(text: str, model: dict, flow: dict) -> str:
+    head, rest = text.split(FLOW_BEGIN, 1)
+    block = [FLOW_BEGIN, "", "```mermaid", *sequence(model, flow), "```", "", FLOW_END]
+    return head + "\n".join(block) + rest.split(FLOW_END, 1)[1]
+
+
 def main(command: str) -> int:
     model = load()
     found = problems(model)
@@ -210,11 +208,19 @@ def main(command: str) -> int:
         for line in found:
             sys.stderr.write(f"model views: {line}\n")
         return 1
-    text = README.read_text()
-    if command == "write":
-        README.write_text(rendered(text, model))
-    elif rendered(text, model) != text:
-        found.append("the views in README.md are stale: run `just model-views`")
+    pages: dict[Path, Callable[[str], str]] = {README: lambda text: rendered(text, model)}
+    for flow in model.get("flow", []):
+        path = DOCS / flow["doc"]
+        if FLOW_BEGIN not in path.read_text():
+            found.append(f"flow `{flow['id']}`: `{flow['doc']}` has no place marked for it")
+            continue
+        pages[path] = lambda text, flow=flow: drawn(text, model, flow)  # bound per flow
+    for path, draw in pages.items():
+        text = path.read_text()
+        if command == "write":
+            path.write_text(draw(text))
+        elif draw(text) != text:
+            found.append(f"`{path.relative_to(DOCS)}` is stale: run `just model-views`")
     for line in found:
         sys.stderr.write(f"model views: {line}\n")
     return 1 if found else 0

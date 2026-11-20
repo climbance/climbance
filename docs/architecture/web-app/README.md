@@ -5,7 +5,7 @@ between them, and the design system every page is built on. The native app
 holds the same tree of pages, and `../core-package/screens.md` lists every
 screen of both clients.
 
-`../flows.md` gives the steps of a flow and their order. The page files give
+`../flows/` gives the steps of a flow and their order. The page files give
 what the user sees at a step, and which page holds it. Beside each page's
 `README.md`, a file per screen draws that screen at low fidelity, as
 `## Wireframes` gives.
@@ -117,10 +117,11 @@ Account       the guide, the settings, the signed-in devices, the sign-out
 - **A problem's unsent code, the clock preference and the chosen colour scheme
   are the state the browser keeps.** The code is stored under the problem's id
   with the moment it was typed, so a reload restores what the user typed, and
-  the next sitting on the problem can carry it as `../flows.md` gives. The
-  clock preference and the scheme are about how the user practises at this
-  machine, and a store holding them would carry them between machines nobody
-  asked it to join. Every other reading is fetched from the API at each load.
+  the next sitting on the problem can carry it as `../flows/drill-loop.md`
+  gives. The clock preference and the scheme are about how the user practises at
+  this machine, and a store holding them would carry them between machines
+  nobody asked it to join. Every other reading is fetched from the API at each
+  load.
 - **The unsent code is keyed to the signed-in user, and signing out deletes
   it.** A browser can be shared between two accounts. The code a user has not
   submitted is that user's own, and the next account to sign in must not open
@@ -146,12 +147,12 @@ as `pages/problems/problem/paused.md` for the sitting with its clock paused.
 ## Rules a page holds, specified elsewhere
 
 - A candidate is offered without its statement, since opening the problem
-  serves it (`../flows.md`).
+  serves it (`../flows/drill-loop.md`).
 - A template's code is hidden until the user reveals it
   (`../content-repo/cards.md`).
 - The editor proposes no name from the standard library or from the code already
-  typed (`../flows.md`).
+  typed (`../flows/drill-loop.md`).
 - A failing submission shows its first failing case whole, at whatever size
-  (`../flows.md`).
+  (`../flows/drill-loop.md`).
 - A card is offered beside a problem, and no sitting requires reading it
-  (`../flows.md`).
+  (`../flows/drill-loop.md`).

@@ -61,10 +61,10 @@ page's screens at low fidelity.
   does not fit beside the clock.
 - **An ended sitting's code is read-only.** The code reads back as it was
   submitted, and the next sitting on the problem opens on the signature, as
-  `../../../../flows.md` gives. A submission typed over the solve would be a
-  solve read rather than recalled.
-  A solved sitting still running stays editable. A later solve in it moves
-  nothing, since the verdict is read through the first solve.
+  `../../../../flows/drill-loop.md` gives. A submission typed over the solve
+  would be a solve read rather than recalled. A solved sitting still running
+  stays editable. A later solve in it moves nothing, since the verdict is read
+  through the first solve.
 - **A reopened sitting reads back its last submission: the code and the
   verdict.** Reading the sitting returns them from the stored attempt and its
   verification. Kept in page state alone, both were lost to a reload, and an

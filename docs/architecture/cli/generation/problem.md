@@ -54,6 +54,6 @@ engine. This file gives the problem record as generation writes it at landing.
 - **A statement's example and cases are the engine's own.** The generator's
   prompt forbids reusing the example, the values or the wording of a published
   problem. A published question retold in the engine's own words is accepted.
-  The screen site rejects a copy, and `../../flows.md` gives where it runs. The
+  The screen site rejects a copy, and `README.md` gives where it runs. The
   screen answers from the model's memory, since no repo may hold a published
   example to compare against.

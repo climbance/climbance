@@ -46,7 +46,7 @@ The test cases decide whether a solution to a generated problem is correct.
   case the canonical produced passes by construction, and `verified` then
   means only that the solution agrees with itself. A reference that computed
   no case therefore rejects the draft. The generator's declared values are
-  neither a source nor a gate, as `../../flows.md` gives.
+  neither a source nor a gate, as `README.md` gives.
 - **A case records where its expected output came from.** Beyond the largest
   input the reference finishes at generation time, only the canonical can
   compute an expected output, and such a case is evidence about the cap rather
@@ -89,7 +89,7 @@ The test cases decide whether a solution to a generated problem is correct.
 - **Cases are appended, never revised.** An edge case, or a case that forces a
   timeout, is added. An addition leaves behind a canonical needing
   re-verification, and never a record that is now wrong.
-- **The mutation loop that appends cases is in `../../flows.md`**: the fuzz
+- **The mutation loop that appends cases is in `mutation-loop.md`**: the fuzz
   pass, the shrink and the rounds.
 
 ## The separating case
@@ -129,4 +129,4 @@ The test cases decide whether a solution to a generated problem is correct.
 - **A problem whose template claims a speedup lands with the case that
   separates it, or it does not land.** A rung teaches the claimed speedup, and
   a problem the naive solution also solves does not exercise the form.
-  `../../flows.md` gives how a draft without that case is held and leaves.
+  `speedup-search.md` gives how a draft without that case is held and leaves.

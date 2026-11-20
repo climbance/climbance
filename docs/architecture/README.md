@@ -72,7 +72,7 @@ flowchart TB
     cli -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| api
     database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
-    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions; starts a card; types a template from memory; judges a solution; fills a key line; asks for a problem's retirement; sends a note to the author; signs in and out"| api
+    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions; starts a card; reads a card's ladder and its state; types a template from memory; judges a solution; fills a key line; asks for a problem's retirement; sends a note to the author; signs in and out"| api
     native_app -->|"loads the content; syncs answers and sessions; signs in, exchanging a one-time code for a token"| api
 ```
 
@@ -149,6 +149,10 @@ flowchart TB
     web_app -->|"starts a card"| card_runs
     card_runs -->|"appends each card run"| database
     card_states -->|"reads when each run began and its probes"| card_runs
+    card_runs -->|"draws the probes from the technique's problems"| problems
+    card_runs -->|"reads which problems the user attempted"| attempt_log
+    web_app -->|"reads a card's ladder and its state"| card_states
+    card_states -->|"reads which rungs a sitting skipped"| sitting
     web_app -->|"types a template from memory"| recall
     recall -->|"runs the typed form against the template's cases"| runner
     recall -->|"appends each recall attempt"| database
@@ -175,6 +179,7 @@ flowchart TB
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph cli["Command line"]
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
+        eval_set["Eval set<br/>Holds the hand-claimed attempts adjudicated against a frontier model, and scores each classifier configuration against them."]
         generation["Generation<br/>Writes each problem through its six call sites, and lands it with its cases and its solutions."]
         difficulty["Difficulty<br/>Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."]
         seed["Seed<br/>Reads the authored cards and modules from content/, and refreshes the content tables from them."]
@@ -187,6 +192,8 @@ flowchart TB
     seed -->|"refreshes the content tables"| database
     classifier -->|"asks which techniques the code used"| calls
     classifier -->|"appends a machine attempt claim"| database
+    eval_set -->|"scores a configuration's claims against the set"| classifier
+    eval_set -->|"reads the blind claims and the frontier's claims"| database
     matcher -->|"asks which templates a solution displays"| calls
     matcher -->|"appends a machine template match"| database
     exercise_items -->|"reads the templates and appends the items"| database
@@ -198,58 +205,6 @@ flowchart TB
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
     calls -->|"sends each request, pinned to one endpoint"| model_router
     calls -->|"appends each call to the call log"| database
-```
-
-The core loop, from a submission to the next pick, as `flows.md` `## Drill loop`
-gives it.
-
-```mermaid
-sequenceDiagram
-    participant learner as Learner
-    participant web_app as Web app
-    participant submission as Submission
-    participant run_faults as Run faults
-    participant sitting as Sitting
-    participant database as Postgres
-    participant runner as Runner
-    participant problems as Problems
-    participant broker as Broker
-    participant sandbox as Sandbox
-    participant attempt_log as Attempt log
-    participant attempt_claims as Attempt claims
-    participant self_labels as Self-labels
-    participant pick as Pick
-    participant template_schedule as Template schedule
-    participant card_states as Card states
-    participant mastery as Mastery
-    participant predictions as Predictions
-    learner->>web_app: practises in a browser
-    web_app->>submission: submits code for the problem
-    submission->>run_faults: counts recent runs against the caps
-    submission->>sitting: mints the sitting where no clock started
-    sitting->>database: revises the sitting in place
-    submission->>runner: runs the code against the problem's cases
-    runner->>problems: reads the problem's cases
-    problems->>database: reads the corpus
-    runner->>broker: asks for one run: code, arguments, cap
-    broker->>sandbox: starts one container per run, the run on standard input
-    submission->>attempt_log: appends the attempt and its verification
-    attempt_log->>database: appends to the user's log
-    web_app->>attempt_claims: names the techniques the code used
-    attempt_claims->>database: appends each claim
-    web_app->>self_labels: says why the attempt went as it did
-    self_labels->>database: appends each label
-    web_app->>pick: asks for the next item
-    pick->>template_schedule: reads each template's FSRS state
-    template_schedule->>attempt_log: replays each sitting's verdict as a review
-    pick->>card_states: reads each card's state and next check
-    card_states->>attempt_log: reads which rungs are solved
-    pick->>mastery: reads each technique's mastery
-    mastery->>attempt_log: scores execution per sitting
-    mastery->>attempt_claims: credits the techniques an attempt used
-    mastery->>self_labels: reads the failure mode
-    pick->>predictions: stores what the pick expected
-    predictions->>database: appends each prediction
 ```
 
 <!-- end of the generated views -->
@@ -285,7 +240,7 @@ and each component is a file named by its id.
 
 | Path | Holds |
 |---|---|
-| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, its relations, and each flow as an ordered list of them. The views above are generated from it |
+| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, its relations, and each flow as an ordered list of them. The views above, and each flow's diagram in its page, are generated from it |
 | [`concepts/terms/`](concepts/terms/) | Every word this project gives its own meaning, a file per group |
 | [`concepts/invariants.md`](concepts/invariants.md) | The properties the system holds at all times |
 | [`concepts/repo-constraints.md`](concepts/repo-constraints.md) | How this repo is built, the meta-rule, and the calibration corpus |
@@ -293,9 +248,9 @@ and each component is a file named by its id.
 | [`concepts/machine-records.md`](concepts/machine-records.md) | What a model-written record carries, and content a session writes |
 | [`concepts/log-records.md`](concepts/log-records.md) | What every log record carries, one user's log, export and erasure |
 | [`concepts/techniques.md`](concepts/techniques.md) | The technique vocabulary and how a technique is claimed |
-| [`flows.md`](flows.md) | Generating a problem, the drill loop, starting a card run, solving a rung, recalling a template, the pick, adjudicating the eval set |
-| [`api/`](api/README.md) | One origin, JSON writes, client error reports, and a file per component: sign-in, app tokens, the sitting, the submission and its run caps, the runner and the rest |
-| [`cli/`](cli/README.md) | Generation as a command run off the server, and a file or folder per component: generation, difficulty, the classifier, the matcher, the diagnoser, the exercise items, the seed and the calls |
+| [`flows/`](flows/) | The flows crossing containers, a page each with its generated sequence diagram: the drill loop, starting a card run, solving a rung, recalling a template |
+| [`api/`](api/README.md) | One origin, JSON writes, client error reports, and a file per component: sign-in, app tokens, the sitting, the submission and its run caps, the runner, the pick and the rest |
+| [`cli/`](cli/README.md) | Generation as a command run off the server, and a file or folder per component: generation and its states, difficulty, the classifier, the eval set, the matcher, the diagnoser, the exercise items, the seed and the calls |
 | [`broker/`](broker/README.md) | Holding the container runtime's socket, and admitting one run at a time |
 | [`sandbox/`](sandbox/README.md) | The container a run happens in, a child per case, and gVisor |
 | [`database/`](database/README.md) | The one Postgres store, the data-class table as an index of every record, the tables and the migrations |

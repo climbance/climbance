@@ -1,8 +1,8 @@
 # Submission
 
 Takes a user's code for a problem, refuses it past the run caps, and mints the
-attempt carrying the result. `../flows.md` gives the steps of the drill loop
-around it.
+attempt carrying the result. `../flows/drill-loop.md` gives the steps of the
+drill loop around it.
 
 ## The run caps
 

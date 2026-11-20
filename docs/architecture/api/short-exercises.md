@@ -41,10 +41,10 @@ then taps the line that is wrong. `../cli/exercise-items.md` gives the items.
   before stale. A user practises the forms of the cards being studied, and a
   form from a card never opened tests what nobody taught. On a new account the
   first item came from `backtracking`, a card locked behind another.
-- **With no item left on a started card, the next item comes from the cards
-  not started**, unseen before stale, the shallowest card first, then by slug.
-  The pick offers a new card in that order, as `../flows.md` `## The pick`
-  gives. A page asking for one card's items draws from that card alone.
+- **With no item left on a started card, the next item comes from the cards not
+  started**, unseen before stale, the shallowest card first, then by slug. The
+  pick offers a new card in that order, as `pick.md` gives. A page asking for
+  one card's items draws from that card alone.
 - **The scheduler picking the next item is deferred** until the pick serves
   short exercises.
 

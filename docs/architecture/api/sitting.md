@@ -51,10 +51,11 @@ ended, and every pause between.
 
 ## The clock
 
-- **A sitting records when its clock started**, as `clock_started_at`. The
-  clock begins on the user's press, or as the statement is served where the
-  clock preference `../flows.md` gives is on. A sitting the first submission
-  minted carries no clock start. Reading done before the press is not counted.
+- **A sitting records when its clock started**, as `clock_started_at`. The clock
+  begins on the user's press, or as the statement is served where the clock
+  preference `../flows/drill-loop.md` gives is on. A sitting the first
+  submission minted carries no clock start. Reading done before the press is not
+  counted.
 - **A sitting whose clock never started is untimed.** `clock_started_at` stays
   absent, and the sitting's attempts carry no `time_to_solve_sec`. Untimed
   practice is legitimate, and a time reconstructed afterwards would be a guess.
@@ -73,7 +74,8 @@ ended, and every pause between.
 - **A solving submission leaves the sitting running.** A further submission,
   such as the better form after a brute force, joins the sitting and carries its
   id. A user who solved and left the page leaves the sitting to the idle bound,
-  which ends it at the solve's `last_active_at`. `../flows.md` gives why.
+  which ends it at the solve's `last_active_at`. `../flows/drill-loop.md` gives
+  why.
 - **The loop decides what starts and ends a pause**, not the record. A button,
   a hidden tab and an idle timer each leave the same interval.
 
@@ -101,4 +103,5 @@ ended, and every pause between.
   two timestamps say it.
 - **The bound counts idleness, not elapsed time.** A solver thinking for an
   hour with the page open is practising, and the loop keeps that sitting
-  touched. `../flows.md` gives the loop's own steps, a hidden page among them.
+  touched. `../flows/drill-loop.md` gives the loop's own steps, a hidden page
+  among them.
