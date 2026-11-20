@@ -70,4 +70,8 @@ fi
 if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$'; then
     python3 tools/model_views.py check || exit 1
 fi
+# The size limits on each architecture doc, where the staging touches the docs.
+if echo "$FILES" | grep -qE '^docs/architecture/|^tests/test_doc_sizes\.py$'; then
+    uv run pytest -q -n 0 tests/test_doc_sizes.py || exit 1
+fi
 exit 0

@@ -182,6 +182,9 @@ configuration produced it, or which prompt hash it was sent."
   when code is staged: the import contracts in `pyproject.toml`, the module size
   limit, and that a name is imported from where it is defined. The full suite is
   `just test`, by hand.
+- Pre-commit runs `tests/test_doc_sizes.py` when `docs/architecture/` is
+  staged: a doc over 200 lines outside its fenced blocks, or a heading over 12
+  top-level bullets, fails the commit.
 - `tests/schemas/` holds each stored record's JSON schema as last agreed, and
   `tests/test_schema_additive.py` refuses a change that is not additive. An
   intended tightening rewrites the snapshots in the same commit: `just

@@ -13,6 +13,11 @@ Rules on how this repo is built, rather than properties of the running system.
 - `data/` and `content/` are gitignored, and only the schema is public. The
   generated corpus could be published, since the product owns it, and is not:
   the database holding the corpus also holds the private log.
+- An architecture doc holds at most 200 lines, fenced blocks not counted, and
+  at most 12 top-level bullets under one heading. A session reads a whole file
+  to use one bullet of it, so a small file costs less to read. A component
+  over the limit becomes a folder, and a long section is grouped under
+  subsections. `tests/test_doc_sizes.py` holds both limits.
 - Prefer tools and functions over agents. Multi-agent is adopted once a
   pipeline needs it, never as the starting structure.
 
