@@ -78,21 +78,36 @@ def edge(source: str, target: str, text: str) -> str:
     return f'    {key(source)} -->|"{label(text)}"| {key(target)}'
 
 
+def joined(after: dict[str, set[str]], source: str, target: str) -> bool:
+    seen, todo = {source}, [source]
+    while todo:
+        for n in after.get(todo.pop(), ()):
+            if n == target:
+                return True
+            if n not in seen:
+                seen.add(n)
+                todo.append(n)
+    return False
+
+
 def edges(model: dict, shown: set[str], owner: dict[str, str]) -> list[str]:
     # a relation reaching a hidden element is drawn at the element holding it,
-    # unless a relation between two shown elements already joins that pair
+    # unless a path of relations between shown elements already joins that pair
 
     def up(element_id: str) -> str:
         while element_id not in shown:
             element_id = owner[element_id]
         return element_id
 
-    direct = {(r["from"], r["to"]) for r in model["relation"] if {r["from"], r["to"]} <= shown}
+    after: dict[str, set[str]] = {}
+    for r in model["relation"]:
+        if {r["from"], r["to"]} <= shown:
+            after.setdefault(r["from"], set()).add(r["to"])
     labels: dict[tuple[str, str], list[str]] = {}
     for r in model["relation"]:
         pair = (up(r["from"]), up(r["to"]))
         mapped = pair != (r["from"], r["to"])
-        if pair[0] == pair[1] or (mapped and pair in direct):
+        if pair[0] == pair[1] or (mapped and joined(after, *pair)):
             continue
         if r["label"] not in labels.setdefault(pair, []):
             labels[pair].append(r["label"])

@@ -72,8 +72,6 @@ flowchart TB
     cli -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| api
     database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
-    web_app -->|"starts, pauses and ends the clock; submits code for the problem; names the techniques the code used; says why the attempt went as it did; asks for the next item; loads the content; syncs answers and sessions; starts a card; reads a card's ladder and its state; types a template from memory; judges a solution; fills a key line; asks for a problem's retirement; sends a note to the author; signs in and out"| api
-    native_app -->|"loads the content; syncs answers and sessions; signs in, exchanging a one-time code for a token"| api
 ```
 
 The API's components, and what each reads and writes.
