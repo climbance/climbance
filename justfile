@@ -45,7 +45,7 @@ web-check:
 schemas:
     SCHEMA_SNAPSHOT=write uv run pytest -q -n 0 tests/test_schema_additive.py
 
-# Generate the context and container views in `docs/architecture/README.md`
+# Generate the views and the flows in `docs/architecture/README.md`
 # from `model.toml`; pre-commit fails on stale views.
 model-views:
     python3 tools/model_views.py write

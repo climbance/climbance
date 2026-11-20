@@ -200,6 +200,58 @@ flowchart TB
     calls -->|"appends each call to the call log"| database
 ```
 
+The core loop, from a submission to the next pick, as `flows.md` `## Drill loop`
+gives it.
+
+```mermaid
+sequenceDiagram
+    participant learner as Learner
+    participant web_app as Web app
+    participant submission as Submission
+    participant run_faults as Run faults
+    participant sitting as Sitting
+    participant database as Postgres
+    participant runner as Runner
+    participant problems as Problems
+    participant broker as Broker
+    participant sandbox as Sandbox
+    participant attempt_log as Attempt log
+    participant attempt_claims as Attempt claims
+    participant self_labels as Self-labels
+    participant pick as Pick
+    participant template_schedule as Template schedule
+    participant card_states as Card states
+    participant mastery as Mastery
+    participant predictions as Predictions
+    learner->>web_app: practises in a browser
+    web_app->>submission: submits code for the problem
+    submission->>run_faults: counts recent runs against the caps
+    submission->>sitting: mints the sitting where no clock started
+    sitting->>database: revises the sitting in place
+    submission->>runner: runs the code against the problem's cases
+    runner->>problems: reads the problem's cases
+    problems->>database: reads the corpus
+    runner->>broker: asks for one run: code, arguments, cap
+    broker->>sandbox: starts one container per run, the run on standard input
+    submission->>attempt_log: appends the attempt and its verification
+    attempt_log->>database: appends to the user's log
+    web_app->>attempt_claims: names the techniques the code used
+    attempt_claims->>database: appends each claim
+    web_app->>self_labels: says why the attempt went as it did
+    self_labels->>database: appends each label
+    web_app->>pick: asks for the next item
+    pick->>template_schedule: reads each template's FSRS state
+    template_schedule->>attempt_log: replays each sitting's verdict as a review
+    pick->>card_states: reads each card's state and next check
+    card_states->>attempt_log: reads which rungs are solved
+    pick->>mastery: reads each technique's mastery
+    mastery->>attempt_log: scores execution per sitting
+    mastery->>attempt_claims: credits the techniques an attempt used
+    mastery->>self_labels: reads the failure mode
+    pick->>predictions: stores what the pick expected
+    predictions->>database: appends each prediction
+```
+
 <!-- end of the generated views -->
 
 ## Shape
@@ -233,7 +285,7 @@ and each component is a file named by its id.
 
 | Path | Holds |
 |---|---|
-| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, and its relations. The views above are generated from it |
+| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, its relations, and each flow as an ordered list of them. The views above are generated from it |
 | [`concepts/terms/`](concepts/terms/) | Every word this project gives its own meaning, a file per group |
 | [`concepts/invariants.md`](concepts/invariants.md) | The properties the system holds at all times |
 | [`concepts/repo-constraints.md`](concepts/repo-constraints.md) | How this repo is built, the meta-rule, and the calibration corpus |

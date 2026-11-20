@@ -1,12 +1,13 @@
-"""Generate the context and container views in `docs/architecture/README.md`
-from `docs/architecture/model.toml`, and check them.
+"""Generate the views and the flows in `docs/architecture/README.md` from
+`docs/architecture/model.toml`, and check them.
 
     python3 tools/model_views.py write   # rewrite the views
-    python3 tools/model_views.py check   # fail on stale views or dead citations
+    python3 tools/model_views.py check   # fail on a stale view or broken model
 """
 
 import re
 import sys
+import textwrap
 import tomllib
 from pathlib import Path
 
@@ -36,7 +37,14 @@ def problems(model: dict) -> list[str]:
             found.append(f"`{e['id']}` sits in `{e['container']}`, which is not an element")
     for r in model["relation"]:
         found += [f"a relation names `{r[end]}`" for end in ("from", "to") if r[end] not in ids]
-    for e in elements:
+    pairs = {(r["from"], r["to"]) for r in model["relation"]}
+    for f in model.get("flow", []):
+        found += [
+            f"flow `{f['id']}` step {n} has no relation from `{s['from']}` to `{s['to']}`"
+            for n, s in enumerate(f["steps"], 1)
+            if (s["from"], s["to"]) not in pairs
+        ]
+    for e in elements + model.get("flow", []):
         path = DOCS / e["doc"]
         if not path.is_file():
             found.append(f"`{e['id']}` cites `{e['doc']}`, which does not exist")
@@ -130,6 +138,20 @@ def components(model: dict, container: dict) -> list[str]:
     return lines + edges({**model, "relation": touching}, ids | near, owner)
 
 
+def sequence(model: dict, flow: dict) -> list[str]:
+    names = {e["id"]: e["name"] for e in [model["engine"], *model["element"]]}
+    labels = {(r["from"], r["to"]): r["label"] for r in model["relation"]}
+    lines = ["sequenceDiagram"]
+    seen: list[str] = []
+    for s in flow["steps"]:
+        seen += [end for end in (s["from"], s["to"]) if end not in seen]
+    lines += [f"    participant {key(i)} as {label(names[i])}" for i in seen]
+    for s in flow["steps"]:
+        text = label(labels[(s["from"], s["to"])]).replace(";", "#59;")
+        lines.append(f"    {key(s['from'])}->>{key(s['to'])}: {text}")
+    return lines
+
+
 def views(model: dict) -> str:
     block = [
         BEGIN,
@@ -158,6 +180,17 @@ def views(model: dict) -> str:
                 *components(model, container),
                 "```",
             ]
+    for flow in model.get("flow", []):
+        block += [
+            "",
+            *textwrap.wrap(
+                f"{flow['name']}, as `{flow['doc']}` `## {flow['section']}` gives it.", 80
+            ),
+            "",
+            "```mermaid",
+            *sequence(model, flow),
+            "```",
+        ]
     block += ["", END]
     return "\n".join(block)
 
@@ -173,6 +206,10 @@ def rendered(text: str, model: dict) -> str:
 def main(command: str) -> int:
     model = load()
     found = problems(model)
+    if found:  # a view drawn from a broken model would raise or mislead
+        for line in found:
+            sys.stderr.write(f"model views: {line}\n")
+        return 1
     text = README.read_text()
     if command == "write":
         README.write_text(rendered(text, model))

@@ -15,6 +15,10 @@
 # into the containers that import it; component, a part of one container,
 # named by its `container`. A relation runs from the element that acts to the
 # element it acts on.
+#
+# A flow is a named, ordered list of steps, with the doc section that
+# describes it. Each step names the `from` and the `to` of one relation, and
+# is drawn with that relation's label.
 
 [engine]
 id = "engine"
@@ -855,3 +859,40 @@ label = "stores the identities, the invitations and the sessions"
 from = "app-tokens"
 to = "database"
 label = "stores each one-time code and app token"
+
+# Flows
+
+[[flow]]
+id = "core-loop"
+name = "The core loop, from a submission to the next pick"
+doc = "flows.md"
+section = "Drill loop"
+steps = [
+    { from = "learner", to = "web-app" },
+    { from = "web-app", to = "submission" },
+    { from = "submission", to = "run-faults" },
+    { from = "submission", to = "sitting" },
+    { from = "sitting", to = "database" },
+    { from = "submission", to = "runner" },
+    { from = "runner", to = "problems" },
+    { from = "problems", to = "database" },
+    { from = "runner", to = "broker" },
+    { from = "broker", to = "sandbox" },
+    { from = "submission", to = "attempt-log" },
+    { from = "attempt-log", to = "database" },
+    { from = "web-app", to = "attempt-claims" },
+    { from = "attempt-claims", to = "database" },
+    { from = "web-app", to = "self-labels" },
+    { from = "self-labels", to = "database" },
+    { from = "web-app", to = "pick" },
+    { from = "pick", to = "template-schedule" },
+    { from = "template-schedule", to = "attempt-log" },
+    { from = "pick", to = "card-states" },
+    { from = "card-states", to = "attempt-log" },
+    { from = "pick", to = "mastery" },
+    { from = "mastery", to = "attempt-log" },
+    { from = "mastery", to = "attempt-claims" },
+    { from = "mastery", to = "self-labels" },
+    { from = "pick", to = "predictions" },
+    { from = "predictions", to = "database" },
+]
