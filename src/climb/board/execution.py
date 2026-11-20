@@ -39,7 +39,7 @@ def sittings(attempts: Iterable[Attempt]) -> list[list[Attempt]]:
 
 
 def through_first_solve(sitting: Sequence[Attempt]) -> Sequence[Attempt]:
-    """The attempts a sitting's verdict reads: `flows.md`, Drill loop."""
+    """The attempts a sitting's verdict reads: `flows/drill-loop.md`."""
     solve = next((n for n, one in enumerate(sitting) if one.solved_unaided), None)
     return sitting if solve is None else sitting[: solve + 1]
 

@@ -198,7 +198,7 @@
       "type": "object"
     },
     "WritingState": {
-      "description": "How far a problem has been written. One state per step that can fail, in\nthe order `flows.md` gives; `landed` is where `ProblemStatus` starts.",
+      "description": "How far a problem has been written. One state per step that can fail,\nin the order `cli/generation/states.md` gives; `landed` is where\n`ProblemStatus` starts.",
       "enum": [
         "drafted",
         "checked",

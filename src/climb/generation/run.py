@@ -1,5 +1,5 @@
 """Writing several problems for one template, one after another. Sequential
-where the matcher is parallel — `flows.md` gives why."""
+where the matcher is parallel — `cli/generation/README.md` gives why."""
 
 from collections.abc import Callable, Sequence
 

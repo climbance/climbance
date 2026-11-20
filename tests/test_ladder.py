@@ -635,7 +635,7 @@ def test_the_last_sitting_since_the_run_decides(database):
 
 
 def test_the_next_rung_is_required_then_optional_then_skipped():
-    """`flows.md`: the pick offers a skipped rung after the rest."""
+    """`api/pick.md`: the pick offers a skipped rung after the rest."""
     rungs = [
         rung(True, False).model_copy(update={"skipped": True}),
         rung(False, False),

@@ -29,7 +29,7 @@ from climb.schema import (
 from climb.sitting import over
 
 # how many probes a start draws. One until use says otherwise, which
-# `flows.md` names as deferred
+# `flows/starting-a-card-run.md` names as deferred
 PROBES = 1
 
 
@@ -47,7 +47,8 @@ class Rung(BaseModel):
     # folded from the attempts made since the run began, never marked on the
     # rung: a ladder re-derived under a moved corpus keeps what was solved
     solved: bool = False
-    # its last sitting since the run began ended with no submission: `flows.md`
+    # its last sitting since the run began ended with no submission:
+    # `flows/solving-a-rung.md`
     skipped: bool = False
     # when the first match placing it was written, so graduation can leave out
     # a rung a later problem added: `api/card-states.md`. None on a fill rung
@@ -247,7 +248,7 @@ def ladder(
 
 
 def next_rung(rungs: Sequence[Rung]) -> Rung | None:
-    """The rung a card offers next: `flows.md`, The pick."""
+    """The rung a card offers next: `api/pick.md`."""
     opening = _opening(rungs)
     open_ = [one for one in rungs if not one.solved]
     return min(
@@ -313,8 +314,8 @@ def start(
 
     The ladder is measured from the start, so a run reaches the store carrying
     what the start drew. A card already started is returned rather than started
-    again: `flows.md` leaves a second run deferred. A locked card raises
-    `Locked`.
+    again: `flows/starting-a-card-run.md` leaves a second run deferred. A locked
+    card raises `Locked`.
     """
     open_already = runs.started(user_id, card.id)
     if open_already is not None:

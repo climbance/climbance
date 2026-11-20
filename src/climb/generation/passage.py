@@ -1,6 +1,6 @@
 """One draft carried through the steps after the statement, in the order
-`flows.md` gives. Each step is asked again only where its own configuration or
-prompt hash moved."""
+`cli/generation/states.md` gives. Each step is asked again only where its own
+configuration or prompt hash moved."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
@@ -358,7 +358,8 @@ def to_hardened(p: Passage) -> bool:
     return True
 
 
-# in the order `flows.md` gives, each named by the state it reaches
+# in the order `cli/generation/states.md` gives, each named by the state it
+# reaches
 STEPS = (to_agreed, to_built, to_paced, to_searched, to_hardened)
 
 

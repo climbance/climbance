@@ -1049,9 +1049,9 @@ export interface components {
     };
     /**
      * Carry
-     * @description What the editor may open on, which `flows.md` gives: the last attempt's
-     *     code where it is work in progress, and the bounds the page holds its own
-     *     draft to.
+     * @description What the editor may open on, which `flows/drill-loop.md` gives: the last
+     *     attempt's code where it is work in progress, and the bounds the page holds
+     *     its own draft to.
      */
     Carry: {
       /** Code */
@@ -1215,7 +1215,8 @@ export interface components {
     };
     /**
      * Failure
-     * @description The first case a submission failed, shown whole: `flows.md`.
+     * @description The first case a submission failed, shown whole, as `flows/drill-loop.md`
+     *     gives.
      */
     Failure: {
       /** Case Id */
@@ -1890,7 +1891,7 @@ export interface components {
     Provider: 'google' | 'github';
     /**
      * Rank
-     * @description The order the pick offers in: `flows.md`, The pick.
+     * @description The order the pick offers in: `api/pick.md`.
      * @enum {integer}
      */
     Rank: 1 | 2 | 3 | 4 | 5;

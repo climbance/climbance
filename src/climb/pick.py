@@ -1,4 +1,4 @@
-"""The one act the board serves: `flows.md`, The pick."""
+"""The one act the board serves: `api/pick.md`."""
 
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass

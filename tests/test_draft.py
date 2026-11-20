@@ -39,8 +39,8 @@ def make_draft(**overrides) -> Draft:
 
 
 def test_the_states_are_the_steps_that_can_fail():
-    """One per step of `flows.md`'s sequence, plus the terminal rejection. A
-    step with no state of its own could not be resumed from."""
+    """One per step of `cli/generation/states.md`, plus the terminal rejection.
+    A step with no state of its own could not be resumed from."""
     assert [state.value for state in WritingState] == [
         "drafted",
         "checked",

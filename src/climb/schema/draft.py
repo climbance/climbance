@@ -1,7 +1,8 @@
 """One writing, held as it is written.
 
 Working state rather than a log: a draft is revised in place and cleared at
-landing. `flows.md` gives the states and what a resume may not do.
+landing. `cli/generation/states.md` gives the states and what a resume may not
+do.
 """
 
 from enum import StrEnum
@@ -17,8 +18,9 @@ from climb.schema.target import one_target
 
 
 class WritingState(StrEnum):
-    """How far a problem has been written. One state per step that can fail, in
-    the order `flows.md` gives; `landed` is where `ProblemStatus` starts."""
+    """How far a problem has been written. One state per step that can fail,
+    in the order `cli/generation/states.md` gives; `landed` is where
+    `ProblemStatus` starts."""
 
     DRAFTED = "drafted"
     CHECKED = "checked"

@@ -46,8 +46,8 @@ def reviews(
     attempts: Iterable[Attempt],
     problems: Mapping[str, Problem],
 ) -> dict[str, list[Review]]:
-    """Each template's reviews, in time order. `flows.md` gives which sittings
-    count."""
+    """Each template's reviews, in time order. `api/template-schedule.md` gives
+    which sittings count."""
     out: dict[str, list[Review]] = defaultdict(list)
     for recall in recalls:
         out[recall.template_id].append(Review(recall.created_at, recall_rating(recall)))

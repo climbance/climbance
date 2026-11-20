@@ -51,7 +51,8 @@ class Missing(Refused):
 
 
 class Failure(BaseModel):
-    """The first case a submission failed, shown whole: `flows.md`."""
+    """The first case a submission failed, shown whole, as `flows/drill-loop.md`
+    gives."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -104,9 +105,9 @@ class Seated(_Statement):
 
 
 class Carry(BaseModel):
-    """What the editor may open on, which `flows.md` gives: the last attempt's
-    code where it is work in progress, and the bounds the page holds its own
-    draft to."""
+    """What the editor may open on, which `flows/drill-loop.md` gives: the last
+    attempt's code where it is work in progress, and the bounds the page holds
+    its own draft to."""
 
     model_config = ConfigDict(frozen=True)
 

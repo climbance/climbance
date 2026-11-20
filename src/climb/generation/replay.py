@@ -2,7 +2,7 @@
 answering sites over a stored statement, skipping the pairs this configuration
 has answered at the prompt hash it would send now.
 
-Read-only over the corpus, for the reason `flows.md` gives.
+Read-only over the corpus, for the reason `cli/generation/replay.md` gives.
 """
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -121,7 +121,8 @@ def subjects(corpus: Corpus, cards: Iterable[Card]) -> list[Subject]:
     """The problems a site can be re-asked about: served, and carrying both
     roles and the cases that decide them.
 
-    A retired problem is excluded, for the reason `flows.md` gives.
+    A retired problem is excluded, for the reason `cli/generation/replay.md`
+    gives.
     """
     forms = {one.id: Target(card=card, template=one) for card in cards for one in card.templates}
     solutions = corpus.solutions.solutions()

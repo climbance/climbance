@@ -94,8 +94,8 @@ def test_a_wrong_answer_is_unsolved(database):
 
 
 def test_a_failing_submission_shows_the_first_case_it_failed_whole(database):
-    """`flows.md`: an outcome on an input the solver cannot see is debugged by
-    guessing."""
+    """`flows/drill-loop.md`: an outcome on an input the solver cannot see is
+    debugged by guessing."""
     second_wrong = "def solve(n):\n    return 2 if n == 1 else 0\n"
 
     failure = Stores(database).submitted(second_wrong).failure

@@ -19,7 +19,7 @@
       "type": "string"
     },
     "Rank": {
-      "description": "The order the pick offers in: `flows.md`, The pick.",
+      "description": "The order the pick offers in: `api/pick.md`.",
       "enum": [
         1,
         2,

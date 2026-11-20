@@ -1,9 +1,10 @@
 """Running the two solutions, and whether what they answered lets the problem
 land.
 
-Two steps rather than one, in the order `flows.md` gives: the canonical is run
-and read against what its own call declared, and only then is it settled
-against a reference. The reading rejects nothing, since one call wrote both.
+Two steps rather than one, in the order `cli/generation/README.md` gives: the
+canonical is run and read against what its own call declared, and only then
+is it settled against a reference. The reading rejects nothing, since one call
+wrote both.
 
 Stores nothing: the ids a case and a solution need do not exist until it lands.
 """

@@ -31,9 +31,10 @@ SHRINKS = 3
 
 # bumped where the search's behaviour changes, so every held draft is searched
 # again once. A draft records the three bounds above, and a change to the walk
-# itself moves none of them. `flows.md` gives why this is a number a reader
-# bumps rather than a hash of the code: the search is spread over four modules,
-# and a hash of one would fire on a comment there and miss a change elsewhere
+# itself moves none of them. `cli/generation/speedup-search.md` gives why this
+# is a number a reader bumps rather than a hash of the code: the search is
+# spread over four modules, and a hash of one would fire on a comment there and
+# miss a change elsewhere
 SEARCH_REVISION = 2
 
 

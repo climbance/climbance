@@ -1,5 +1,5 @@
 """Shrinking a built input to the smallest that still kills what it killed.
-`flows.md` gives what may shrink and against what."""
+`cli/generation/mutation-loop.md` gives what may shrink and against what."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

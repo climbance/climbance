@@ -2691,7 +2691,7 @@
           "run_started_at"
         ],
         "title": "Carry",
-        "description": "What the editor may open on, which `flows.md` gives: the last attempt's\ncode where it is work in progress, and the bounds the page holds its own\ndraft to."
+        "description": "What the editor may open on, which `flows/drill-loop.md` gives: the last\nattempt's code where it is work in progress, and the bounds the page holds\nits own draft to."
       },
       "CaseOutcome": {
         "type": "string",
@@ -3132,7 +3132,7 @@
           "error"
         ],
         "title": "Failure",
-        "description": "The first case a submission failed, shown whole: `flows.md`."
+        "description": "The first case a submission failed, shown whole, as `flows/drill-loop.md`\ngives."
       },
       "FailureMode": {
         "type": "string",
@@ -4742,7 +4742,7 @@
           5
         ],
         "title": "Rank",
-        "description": "The order the pick offers in: `flows.md`, The pick."
+        "description": "The order the pick offers in: `api/pick.md`."
       },
       "RecallAttempt": {
         "properties": {

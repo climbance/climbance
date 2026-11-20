@@ -1,5 +1,5 @@
 """The call that answers a survivor: the arguments of a case that catches it,
-and never what it returns. `flows.md` gives why."""
+and never what it returns. `cli/generation/mutation-loop.md` gives why."""
 
 import json
 from collections.abc import Sequence

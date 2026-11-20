@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class Rank(IntEnum):
-    """The order the pick offers in: `flows.md`, The pick."""
+    """The order the pick offers in: `api/pick.md`."""
 
     OWED_CHECK = 1
     OPEN_CHECK = 2

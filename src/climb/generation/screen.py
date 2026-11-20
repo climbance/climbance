@@ -1,5 +1,5 @@
-"""The screen: whether a draft copied a published problem. `flows.md` gives
-where it runs and what it rejects."""
+"""The screen: whether a draft copied a published problem.
+`cli/generation/README.md` gives where it runs and what it rejects."""
 
 import json
 from collections.abc import Sequence
