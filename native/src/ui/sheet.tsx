@@ -7,7 +7,7 @@ import { space } from '@/ui/tokens';
 
 /**
  * Every overlay on the phone, as a sheet from the bottom edge: a choice, a
- * confirmation, the claim. The web opens the same as a dialog: `pages.md`,
+ * confirmation, the claim. The web opens the same as a dialog: `web-app/README.md`,
  * The structure. `actions` sit under the scrolled body, the act last.
  */
 export function Sheet(props: {

@@ -36,7 +36,7 @@ export function nodeLength(node: ReactNode, code: number, body: number): number 
   return Children.toArray(props.children).reduce((n: number, x) => n + nodeLength(x, code, body), 0);
 }
 
-/** A markdown table: a grid where its columns fit, a block per row otherwise (`pages.md`). */
+/** A markdown table: a grid where its columns fit, a block per row otherwise (`web-app/design-system.md`). */
 export function ProseTable({ header, rows }: { header: ReactNode[][]; rows: ReactNode[][][] }) {
   const theme = useTheme();
   const [width, setWidth] = useState(0);

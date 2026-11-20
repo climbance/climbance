@@ -35,7 +35,7 @@ import { LessonText } from '@/knowledge/LessonText'
 import { LESSONS, lessonPath } from '@/knowledge/paths'
 import { useSections } from '@/lib/sections'
 
-// a lesson read in one place, on both clients: `pages.md`, The knowledge pages
+// a lesson read in one place, on both clients: `web-app/pages/knowledge/lesson/`
 export function LessonPage() {
   const { module = '', lesson = '' } = useParams()
   const { hash, key } = useLocation()
@@ -95,7 +95,7 @@ export function LessonBody(props: {
   onLesson?: (slug: string, part?: string) => void
   // the cards its subtopics pair with, on the lesson's own page alone
   cards?: { slug: string; title: string }[]
-  // Mark read closes the lesson: `pages.md`, The knowledge pages
+  // Mark read closes the lesson: `web-app/pages/knowledge/lesson/`
   onDone: () => void
   // on the lesson's own page its parts read as sections; over a queue the
   // text reads whole
@@ -187,7 +187,7 @@ export function LessonBody(props: {
 }
 
 // a lesson cut at its `##` headings, each part a section the bar reaches and
-// its heading closes, as a long page reads: `pages.md`, A page's areas
+// its heading closes, as a long page reads: `web-app/areas.md`
 function LessonSections({ module, text }: { module: string; text: string }) {
   const parts = lessonParts(text)
   const titled = parts.filter((part) => part.title !== null)

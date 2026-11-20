@@ -1,5 +1,5 @@
 // a long page's sections, on both clients: nothing is closed until the reader
-// closes it, and a jump opens the section it lands on. `pages.md`, A page's areas
+// closes it, and a jump opens the section it lands on. `web-app/areas.md`
 
 /** The closed sections once the reader presses one section's heading. */
 export function sectionToggled(closed: readonly string[], id: string): string[] {

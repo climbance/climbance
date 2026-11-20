@@ -43,7 +43,7 @@ import { cn } from '@/lib/utils'
 
 type Picked = { course: string; id: string }
 
-// each module as a grid of scopes by level: `pages.md`, The knowledge pages
+// each module as a grid of scopes by level: `web-app/pages/knowledge/certifications/`
 export function CertificationsPage() {
   const k = useKnowledge()
   const { catalog, board, order, certExams } = useLearner()

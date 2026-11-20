@@ -1,5 +1,5 @@
 """The key-line exercise's routes: an item served without its answer, and a
-fill decided. `pages.md`, Filling a key line."""
+fill decided. `web-app/pages/cards/key-line/`."""
 
 import random
 from datetime import UTC, datetime

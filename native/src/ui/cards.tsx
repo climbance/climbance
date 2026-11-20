@@ -18,7 +18,7 @@ import { font } from '@/ui/tokens';
 
 type ListedCard = components['schemas']['ListedCard'];
 
-// one card reads as one row wherever it is listed: `pages.md`, A page's areas
+// one card reads as one row wherever it is listed: `web-app/areas.md`
 
 /**
  * A panel of card rows, headed by the family several of them teach, which the

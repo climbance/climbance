@@ -30,7 +30,7 @@ import { font, radius, space } from '@/ui/tokens';
 type JudgedItem = components['schemas']['JudgedItem'];
 type JudgeDecided = components['schemas']['JudgeDecided'];
 
-/** Judging a solution, as the web's page: `pages.md`, Judging a solution. */
+/** Judging a solution, as the web's page: `web-app/pages/cards/judging/`. */
 export default function JudgeScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();

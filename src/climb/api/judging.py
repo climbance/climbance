@@ -1,5 +1,5 @@
 """The judging exercise's routes: an item served without its answer, and an
-answer decided. `pages.md`, Judging a solution."""
+answer decided. `web-app/pages/cards/judging/`."""
 
 from datetime import UTC, datetime
 from typing import Any

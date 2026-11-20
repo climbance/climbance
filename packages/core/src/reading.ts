@@ -1,7 +1,7 @@
 import { loadingLine, readFailure } from './practice';
 
-// the four readings of a page, decided once for both clients: `pages.md`,
-// A page's areas. A failure needs a message, so an empty one reads as none
+// the four readings of a page, decided once for both clients: `web-app/areas.md`.
+// A failure needs a message, so an empty one reads as none
 
 export type PageReading<T> =
   | { kind: 'failed'; line: string }

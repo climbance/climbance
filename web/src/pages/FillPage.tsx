@@ -30,7 +30,7 @@ type FilledItem = components['schemas']['FilledItem']
 type FillDecided = components['schemas']['FillDecided']
 
 // one item at a time: read the form, pick the blank's line, read the decision
-// and a wrong choice's separating case, then Next. `pages.md`, Filling a key line
+// and a wrong choice's separating case, then Next. `web-app/pages/cards/key-line/`
 export function FillPage() {
   const [params] = useSearchParams()
   const card = params.get('card')
@@ -101,7 +101,7 @@ export function FillPage() {
                     <span className="w-6 shrink-0 text-right text-muted-foreground select-none">
                       {number}
                     </span>
-                    {/* a wrap continues under the line's own indent: `pages.md` */}
+                    {/* a wrap continues under the line's own indent: `web-app/design-system.md` */}
                     <span className="min-w-0 flex-1 whitespace-pre">
                       <WrappedText code={filledLine(item, index, decided) || ' '} />
                     </span>

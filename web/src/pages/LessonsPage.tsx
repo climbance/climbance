@@ -22,8 +22,8 @@ import { useLearner } from '@/knowledge/learner'
 import { KNOWLEDGE, lessonPath } from '@/knowledge/paths'
 import { useSections } from '@/lib/sections'
 
-// every module's lessons, by module and in graph order: `pages.md`, The
-// knowledge pages. A locked lesson opens too, since reading early skips nothing
+// every module's lessons, by module and in graph order: `web-app/pages/knowledge/lessons/`.
+// A locked lesson opens too, since reading early skips nothing
 export function LessonsPage() {
   const k = useKnowledge()
   const { catalog, board, order } = useLearner()

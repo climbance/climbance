@@ -8,7 +8,7 @@ const GUIDE = guide()
 export function GuidePage() {
   return (
     <article className="space-y-section">
-      {/* both starts the guide names begin on the board: `pages.md`, Sections */}
+      {/* both starts the guide names begin on the board: `web-app/pages/practice/guide/` */}
       <PageHeader back={{ to: '/', label: BACK_BOARD }} title={GUIDE.title} />
       <Markdown>{GUIDE.body}</Markdown>
     </article>

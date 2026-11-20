@@ -32,7 +32,7 @@ type JudgedItem = components['schemas']['JudgedItem']
 type JudgeDecided = components['schemas']['JudgeDecided']
 
 // one item at a time: read, answer Correct or tap the wrong line, read the
-// decision and its separating case, then Next. `pages.md`, Judging a solution
+// decision and its separating case, then Next. `web-app/pages/cards/judging/`
 export function JudgePage() {
   const [params] = useSearchParams()
   const card = params.get('card')
@@ -106,7 +106,7 @@ export function JudgePage() {
                       <span className="w-6 shrink-0 text-right text-muted-foreground select-none">
                         {number}
                       </span>
-                      {/* a wrap continues under the line's own indent: `pages.md` */}
+                      {/* a wrap continues under the line's own indent: `web-app/design-system.md` */}
                       <span className="min-w-0 flex-1 whitespace-pre">
                         <WrappedText code={line || ' '} />
                       </span>

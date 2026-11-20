@@ -70,7 +70,7 @@ export function BoardPage() {
         </section>
       )}
       {/* the knowledge study first, from the device's copy, so it reads before
-          and without the engine's answer: `pages.md`, Sections */}
+          and without the engine's answer: `web-app/pages/practice/board/` */}
       <KnowledgeNext controls={false} />
       {modules.length > 0 && (
         <section className="space-y-stack">
@@ -107,7 +107,7 @@ export function BoardPage() {
                 </section>
               )}
 
-              {/* the short exercises, across every card: `pages.md`, Judging, Filling */}
+              {/* the short exercises, across every card: `web-app/pages/cards/judging/` and `web-app/pages/cards/key-line/` */}
               <PickPanel>
                 <PickRow to="/judge" title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} />
                 <PickRow to="/fill" title={FILL_TITLE} note={FILL_NOTE} stats={[]} />

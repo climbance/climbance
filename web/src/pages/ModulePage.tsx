@@ -71,10 +71,10 @@ const CELL_TONE: Record<CellState, string> = {
   empty: 'text-muted-foreground',
 }
 
-// where each group of one module stands: `pages.md`, The knowledge pages
+// where each group of one module stands: `web-app/pages/knowledge/module/`
 export function ModulePage() {
   const { module = '' } = useParams()
-  // a module opened from the board returns there: `pages.md`, Sections
+  // a module opened from the board returns there: `web-app/pages/practice/board/`
   const [params] = useSearchParams()
   const from = params.get('from')
   const k = useKnowledge()
@@ -180,7 +180,7 @@ export function ModulePage() {
 
               <p className="text-meta tabular-nums">{levelCountsLine(b, c)}</p>
 
-              {/* the groups and the map are two tabs of one page: `pages.md`, The structure */}
+              {/* the groups and the map are two tabs of one page: `web-app/README.md`, The structure */}
               <ToggleGroup
                 type="single"
                 variant="outline"

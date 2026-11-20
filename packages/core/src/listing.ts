@@ -1,6 +1,6 @@
 import type { components } from './api/schema';
 
-// the problem listing, for every platform: `pages.md`, Sections. The whole
+// the problem listing, for every platform: `web-app/pages/problems/listing/`. The whole
 // listing is read, since the tags count every problem the corpus carries, and
 // a page is a slice of what the two filters left
 

@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 
 import { useColumns } from '@/lib/columns'
 
-// each wrapped part opens on a mark no copy carries: `pages.md`, The design system
+// each wrapped part opens on a mark no copy carries: `web-app/design-system.md`
 function Rows({ rows, body }: { rows: CodeRow[]; body: (row: CodeRow) => ReactNode }) {
   return (
     <span className="block" onCopy={copyRows}>
@@ -56,7 +56,7 @@ function copyRows(e: React.ClipboardEvent<HTMLElement>) {
 const BLOCK = 'rounded-md bg-muted p-3 font-mono text-code whitespace-pre'
 
 // Python read on a page, coloured by the one mapping the editor uses:
-// `pages.md`, The design system
+// `web-app/design-system.md`
 export function PythonCode({ code }: { code: string }) {
   const { ref, cols } = useColumns()
   const lines = byLine(code)

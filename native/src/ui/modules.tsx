@@ -6,7 +6,7 @@ import { PickRow } from '@/ui/rows';
 
 /**
  * One module reads as one row wherever it is listed, the knowledge home and
- * the Practice tab alike: `pages.md`, A page's areas. A press opens the module.
+ * the Practice tab alike: `web-app/areas.md`. A press opens the module.
  */
 export function ModuleRow({ row, aside, onLongPress }: { row: Row; aside?: ReactNode; onLongPress?: () => void }) {
   return (

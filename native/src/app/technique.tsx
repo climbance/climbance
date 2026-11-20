@@ -21,7 +21,7 @@ import { usePullSync } from '@/ui/pull';
 
 /**
  * A technique's problems and the cards teaching it or a narrower one:
- * `pages.md`, The two clients. A problem's row opens the Problem screen.
+ * `web-app/pages/practice/technique/`. A problem's row opens the Problem screen.
  */
 export default function TechniqueScreen() {
   const theme = useTheme();

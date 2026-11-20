@@ -83,7 +83,7 @@ export function ProblemPage() {
         {(picked) =>
           picked.retired ? (
             // a retired problem reads its facts as a served one does, then why
-            // nothing is served: `pages.md`, Sections
+            // nothing is served: `web-app/pages/problems/problem/`
             <div className="space-y-stack">
               <ProblemFacts problemId={problemId} technique={technique} />
               <p className="text-meta text-muted-foreground">{PROBLEM_RETIRED}</p>

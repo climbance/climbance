@@ -24,8 +24,8 @@ import { loadedFrom, useKnowledge } from '@/knowledge/context'
 import { useLearner } from '@/knowledge/learner'
 import { lessonPath, modulePath } from '@/knowledge/paths'
 
-// a subtopic's levels, its lessons and its cards: `pages.md`, The knowledge
-// pages. Its presses stay on the module's page, so none drifts apart
+// a subtopic's levels, its lessons and its cards: `web-app/pages/knowledge/subtopic/`. Its
+// presses stay on the module's page, so none drifts apart
 export function SubtopicPage() {
   const { module = '', sub = '' } = useParams()
   const k = useKnowledge()

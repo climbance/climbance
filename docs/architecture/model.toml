@@ -97,8 +97,7 @@ id = "web-app"
 kind = "container"
 name = "Web app"
 role = "Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."
-doc = "pages.md"
-section = "Sections"
+doc = "web-app/README.md"
 
 [[element]]
 id = "native-app"

@@ -864,9 +864,10 @@ trainer never prints the form until the user asks for it as a hint.
   form, so the trigger names it alone, and a draw measures mapping the trigger
   to the form. A recall the user asked for by name carries
   the title already, since they typed the name.
-- **The recall is addressed by the template's slug**, as `pages.md` gives the
-  path. A drawn recall that named nothing could not be reloaded, and the user
-  could not ask for the form they mean to practise.
+- **The recall is addressed by the template's slug**, as
+  `web-app/pages/cards/recall/README.md` gives the path. A drawn recall that
+  named nothing could not be reloaded, and the user could not ask for the form
+  they mean to practise.
 - **The user may ask for a template by name.** A card teaches several forms,
   and a rule that draws for them makes the one form a user wants to practise
   reachable only by exhausting the others.
@@ -1006,8 +1007,9 @@ user may take it or pick anything else the board offers.
   on before the forms above it. An unknown execution reading comes before
   every number, since the technique has the least practice behind it.
 - **The board offers everything beside the pick.** The cards in progress, the
-  unlocked cards not started and every technique stay listed, as `pages.md`
-  gives. The pick sits above them, so a user who declines it picks as before.
+  unlocked cards not started and every technique stay listed, as
+  `web-app/pages/practice/board/README.md` gives. The pick sits above them, so a
+  user who declines it picks as before.
 - **A technique with no template keeps the board's staleness order.** No
   template means no FSRS state, so the schedule has nothing to rank it by.
 

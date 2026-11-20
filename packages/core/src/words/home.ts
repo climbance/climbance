@@ -13,7 +13,7 @@ export const NO_MODULES = 'No module is seeded yet.';
 export const LESSONS_LINK = 'Lessons';
 export const CERTIFICATIONS_LINK = 'Certifications';
 export const CONTINUE = 'Continue';
-// a log with no answer and no lesson mark has nothing to continue: `pages.md`
+// a log with no answer and no lesson mark has nothing to continue: `web-app/pages/knowledge/home/`
 export const START = 'Start';
 export const continueLabel = (acted: boolean) => (acted ? CONTINUE : START);
 export const EXAM_LINK = 'Exam';

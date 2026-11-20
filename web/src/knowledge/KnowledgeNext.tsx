@@ -68,7 +68,7 @@ const PART_TONE: Record<FocusPart, string> = {
 // the knowledge study's next step: the focus and how far it has got, then
 // Continue, the press starting the next queue. The knowledge home holds it
 // with the focus's presses, and the board holds it as a reading whose panel
-// opens the home: `pages.md`, Sections
+// opens the home: `web-app/pages/practice/board/`
 // a certification focus opens its conditions, any other its module's map
 function focusPath(f: Focus): string {
   const to = focusOpens(f)
@@ -221,7 +221,7 @@ export function KnowledgeNext({ controls }: { controls: boolean }) {
   )
 
   // the board holds Continue in the focus it serves, and the counts the
-  // focus already reads are left out there: `pages.md`, Sections
+  // focus already reads are left out there: `web-app/pages/practice/board/`
   const inFocus = !controls && !!reading
   const go = (
     <div className="space-y-1">
@@ -235,7 +235,7 @@ export function KnowledgeNext({ controls }: { controls: boolean }) {
         >
           {continueLabel(acted)}
         </Button>
-        {/* the second way in, at a lower weight, on the knowledge home: `pages.md`, The knowledge pages */}
+        {/* the second way in, at a lower weight, on the knowledge home: `web-app/pages/knowledge/home/` */}
         {controls && (
           <Button variant="outline" asChild>
             <Link to={EXAM}>{EXAM_LINK}</Link>

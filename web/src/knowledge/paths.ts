@@ -1,4 +1,4 @@
-// the knowledge pages' paths, as `pages.md` gives them
+// the knowledge pages' paths, as `web-app/README.md` gives them
 
 export const KNOWLEDGE = '/knowledge'
 export const LESSONS = '/knowledge/lessons'

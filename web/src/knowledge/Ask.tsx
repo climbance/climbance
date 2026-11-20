@@ -61,7 +61,7 @@ type Props = {
 }
 
 // one question, one act at a time: the answer, then the verdict and Next.
-// `pages.md`, The knowledge pages
+// `web-app/pages/knowledge/queue/`
 export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Props) {
   // shuffled on each display, so a position carries no answer
   const order = useMemo(() => choiceOrder(q.choices.length), [q])

@@ -102,7 +102,7 @@ export function CertSheet(props: {
   const x = c.certs?.get(id);
   const v = certConditions(b, c, id, states, st.focus);
   if (!x || !status || !v) return null;
-  // the rule reads first, as on the web: `pages.md`, The knowledge pages
+  // the rule reads first, as on the web: `web-app/pages/knowledge/certifications/`
   const take = () => {
     onClose();
     router.push({ pathname: '/exam', params: { cert: id } });

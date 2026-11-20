@@ -131,8 +131,9 @@ def test_every_card_is_listed_by_technique_then_slug(client, database):
 
 
 def test_the_cards_are_listed_by_depth_then_slug(client, database):
-    """`pages.md`: the cards list reads the card graph by depth, the roots
-    first. Each card still names the family its technique belongs to."""
+    """`web-app/pages/cards/cards/`: the cards list reads the card graph by
+    depth, the roots first. Each card still names the family its technique
+    belongs to."""
     store = CardStore(database)
     store.put_all(
         [

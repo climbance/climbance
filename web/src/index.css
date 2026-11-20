@@ -65,7 +65,7 @@
   --color-verdict-timeout: var(--verdict-timeout);
   --color-verdict-crashed: var(--verdict-crashed);
 
-  /* pages.md gives the reading column and the sitting as its exception */
+  /* web-app/areas.md gives the reading column and the sitting as its exception */
   --container-reading: 56rem;
   --container-wide: 96rem;
   --container-form: 24rem;

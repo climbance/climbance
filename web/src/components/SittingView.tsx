@@ -83,7 +83,7 @@ type Props = {
 
 // the problem's page once its statement is served. No sitting exists until the
 // first clock press or submission mints one, and `?sitting=` then names it, so
-// a reload reads that sitting, ended or not: `pages.md`
+// a reload reads that sitting, ended or not: `web-app/pages/problems/problem/`
 // the platform's monotonic clock, which a reading's arrival is stamped with
 const now = () => performance.now()
 

@@ -13,7 +13,7 @@ import { usePullSync } from '@/ui/pull';
 
 type ListedCard = components['schemas']['ListedCard'];
 
-/** The cards by depth in the card graph, as the web's list reads them: `pages.md`, A page's areas. */
+/** The cards by depth in the card graph, as the web's list reads them: `web-app/pages/cards/cards/`. */
 export default function CardsScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();

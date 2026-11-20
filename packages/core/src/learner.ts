@@ -31,7 +31,7 @@ export interface Learner {
   limitAt: (now: number) => number;
   order: string[];
   certExams: CertRecord[];
-  /** Whether the device's copy holds an answer or a lesson mark: `pages.md`, Sections. */
+  /** Whether the device's copy holds an answer or a lesson mark: `web-app/pages/practice/board/`. */
   acted: boolean;
 }
 

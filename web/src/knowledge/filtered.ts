@@ -1,6 +1,6 @@
 import { levels, type Catalog, type DrillScope } from '@climb/core'
 
-// a filtered queue's choices, carried in its URL: `pages.md`, The knowledge pages
+// a filtered queue's choices, carried in its URL: `web-app/pages/knowledge/queue/`
 
 export function filteredQuery(scope: DrillScope): string {
   const q = new URLSearchParams({ mode: 'filtered', module: scope.course })

@@ -31,7 +31,7 @@ import { space } from '@/ui/tokens';
 
 /**
  * Every served problem, filtered by technique and difficulty, as the web's
- * listing: `pages.md`, Sections. A row opens the Problem screen.
+ * listing: `web-app/pages/problems/listing/`. A row opens the Problem screen.
  */
 export default function ProblemsScreen() {
   const theme = useTheme();

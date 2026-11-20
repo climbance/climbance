@@ -44,7 +44,7 @@ export function useMe(read = true): Me | undefined {
 }
 
 // Account sits apart from the sections, as the web's account menu does:
-// `pages.md`, The structure
+// `web-app/README.md`, The structure
 export function AccountMenu() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);

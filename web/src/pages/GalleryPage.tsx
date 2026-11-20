@@ -135,7 +135,7 @@ export function GalleryPage() {
     <div className="space-y-section">
       <PageHeader
         title="The gallery"
-        note="Served in development alone. pages.md gives the design system this page shows."
+        note="Served in development alone. web-app/design-system.md gives the design system this page shows."
       />
 
       <Section title="Colour">

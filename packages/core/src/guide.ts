@@ -1,5 +1,5 @@
 // the guide, one text both clients render: the web at `/start`, the phone's
-// Guide screen. `pages.md`, Sections
+// Guide screen. `web-app/pages/practice/guide/`
 const GUIDE = `# How practice works
 
 Climbance trains algorithmic problem solving in a few kinds of practice. Each

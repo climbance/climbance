@@ -195,7 +195,7 @@ export function problemCards<C extends Pick<ListedCard, 'technique' | 'family'>>
   return cards.filter((card) => asked.includes(card.technique) || asked.includes(card.family));
 }
 
-// a graduated card is done, and a lapsed one is offered again: `pages.md`
+// a graduated card is done, and a lapsed one is offered again: `web-app/pages/practice/board/`
 const STUDYING: ListedCard['status']['state'][] = ['acquiring', 'consolidating'];
 
 /** The cards acquiring or consolidating, the most recently active first. */
@@ -205,7 +205,7 @@ export function inProgress(cards: ListedCard[]): ListedCard[] {
     .sort((a, b) => (b.status.last_at ?? '').localeCompare(a.status.last_at ?? ''));
 }
 
-// the board names a few, and the cards list holds the rest: `pages.md`
+// the board names a few, and the cards list holds the rest: `web-app/pages/practice/board/`
 export const NEXT_CARDS = 5;
 
 /**

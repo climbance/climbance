@@ -68,7 +68,7 @@ export type Session = QueueSession | ExamSession;
 
 interface Store {
   ready: boolean;
-  acted: boolean; // an answer or a lesson mark on the device: `pages.md`, Sections
+  acted: boolean; // an answer or a lesson mark on the device: `web-app/pages/practice/board/`
   catalog: Catalog | null; // archived courses removed
   archived: Course[];
   attempts: AttemptRecord[];

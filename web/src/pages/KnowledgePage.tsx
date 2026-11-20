@@ -59,7 +59,7 @@ export function KnowledgePage() {
       {k.sync.error && !k.sync.running && (
         <ErrorLine title={k.sync.error}>{syncErrorSummary(k.sync.error)}</ErrorLine>
       )}
-      {/* the lessons are a step down from the home: `pages.md`, The structure */}
+      {/* the lessons are a step down from the home: `web-app/README.md`, The structure */}
       <p className="flex gap-4 text-meta">
         <Link to={LESSONS} className="font-medium underline-offset-4 hover:underline">
           {LESSONS_LINK}

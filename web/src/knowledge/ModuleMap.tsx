@@ -81,7 +81,7 @@ type Props = {
 }
 
 // a module's prerequisite graph, laid out by the core as the phone lays it out:
-// `pages.md`, The structure
+// `web-app/README.md`, The structure
 export function ModuleMap({ c, b, focus, certExams, onStart, onAim }: Props) {
   const [withLessons, setWithLessons] = useState(false)
   const [zoom, setZoom] = useState(2)

@@ -14,7 +14,7 @@ type Props = {
 }
 
 // drawn outside the page's readings, so a page loading or failed still names
-// itself and its way back: `pages.md`, A page's areas
+// itself and its way back: `web-app/areas.md`
 export function PageHeader({ back, title, note, aside }: Props) {
   return (
     <header className="space-y-1">

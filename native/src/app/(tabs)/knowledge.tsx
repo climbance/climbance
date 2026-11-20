@@ -69,7 +69,7 @@ export default function Home() {
   const header = (
     <View style={{ gap: space[3], marginBottom: space[3] }}>
       <SyncBanner sync={st.sync} />
-      {/* the lessons and the certifications are steps down from the home: `pages.md`, The structure */}
+      {/* the lessons and the certifications are steps down from the home: `web-app/README.md`, The structure */}
       <View style={styles.row}>
         <Button compact icon="book-open-variant" onPress={() => router.push('/lessons')}>
           {LESSONS_LINK}
@@ -103,7 +103,7 @@ export default function Home() {
           </PickPanel>
         ) : null}
         {focused && cont ? (
-          // the focus opens what it covers: `pages.md`, The knowledge pages
+          // the focus opens what it covers: `web-app/pages/knowledge/home/`
           <TouchableRipple
             onPress={() => {
               const to = focusOpens(focused);

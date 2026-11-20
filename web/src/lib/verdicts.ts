@@ -2,7 +2,7 @@ import { failures, OUTCOME_LABELS, SEVEREST, severest } from '@climb/core'
 
 export { failures, SEVEREST, severest }
 
-// one token per outcome, beside the label core gives it: `pages.md` gives why
+// one token per outcome, beside the label core gives it: `web-app/design-system.md` gives why
 // a wrong answer and a timeout are not one colour
 export const OUTCOME = {
   passed: { label: OUTCOME_LABELS.passed, mark: 'bg-verdict-passed', text: 'text-verdict-passed' },

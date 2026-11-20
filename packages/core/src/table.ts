@@ -6,7 +6,7 @@ export const TABLE_GAP = 2;
 
 /**
  * A grid where every column holds its longest cell within `cols` characters
- * of prose, and blocks otherwise: `pages.md`, The design system.
+ * of prose, and blocks otherwise: `web-app/design-system.md`.
  */
 export function tableShape(header: string[], rows: string[][], cols: number): TableShape {
   const widths = header.map((h, i) => Math.max(h.trim().length, ...rows.map((r) => (r[i] ?? '').trim().length)));

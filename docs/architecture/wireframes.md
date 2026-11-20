@@ -1,14 +1,14 @@
 # Wireframes
 
 Every page of the web app, drawn at low fidelity, and the pages the cards add
-beside them. Part of the architecture, and `README.md` is the map. `pages.md`
+beside them. Part of the architecture, and `README.md` is the map. `web-app/`
 gives the sections, the pages and the design system, and `flows.md` gives the
 steps of a flow. This file draws what the user sees at each step.
 
 - **A drawing fixes what sits on a page and in what order.** The size of a box,
   the weight of a line and the wording of a label are the design system's to
   answer, and a drawing fixing them would be redrawn at every restyle.
-- **A drawing is read against `pages.md`, never against the code.** The pages
+- **A drawing is read against `web-app/`, never against the code.** The pages
   are rebuilt on these drawings, so a drawing copied from the pages as they
   stand would license the layout the rebuild exists to replace.
 
@@ -320,8 +320,8 @@ problem's path reads as its record, as "Every problem" gives.
 - The statement reads on the left and the editor takes the right, which is the
   one page in two columns.
 - A quiet `Report this problem` press sits under the statement. It opens the
-  dialog asking the author to retire the problem, and `pages.md` gives the
-  request.
+  dialog asking the author to retire the problem, and
+  `web-app/pages/problems/problem/README.md` gives the request.
 - The editor opens on the signature every case calls, and the statement column
   does not repeat it. A second copy beside the editor's first line says the
   same thing twice.
@@ -469,9 +469,10 @@ problem's path reads as its record, as "Every problem" gives.
 +------------------------------------------------------------------------+
 ```
 
-- The page reads the card graph by depth, as `pages.md` gives: the roots
-  first, then each depth under its own heading with its count. Within a
-  depth, the cards read in the order their slugs sort.
+- The page reads the card graph by depth, as
+  `web-app/pages/cards/cards/README.md` gives: the roots first, then each depth
+  under its own heading with its count. Within a depth, the cards read in the
+  order their slugs sort.
 - The gutter at the left draws the edges. An edge leaves a required card's
   row at `o` and enters each card requiring it at `*`. Hovering a row
   brightens its own edges and dims the rest, since a graph of twenty cards

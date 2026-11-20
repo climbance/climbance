@@ -18,7 +18,7 @@ export function CardsPage() {
       <PageHeader title={CARDS_TITLE} note={CARDS_NOTE} />
       <Loaded of={OF.cards} state={cards} blank={CARDS_NONE}>
         {(cards) => (
-          // the card graph by depth, the roots first: `pages.md`. A started
+          // the card graph by depth, the roots first: `web-app/pages/cards/cards/`. A started
           // card reads its progress in its own row, so no card is listed twice
           <CardGraph edges={cardEdges(cards)} hovered={hovered}>
             <div className="space-y-section">

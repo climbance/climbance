@@ -27,7 +27,7 @@ export function Markdown({ children }: { children: string }) {
   )
 }
 
-// a link leaving the app opens a tab and carries the mark: `pages.md`, The design system
+// a link leaving the app opens a tab and carries the mark: `web-app/design-system.md`
 export const ProseLink = ({ href = '', children }: { href?: string; children?: ReactNode }) =>
   isExternal(href) ? (
     <a href={href} target="_blank" rel="noreferrer">
@@ -43,7 +43,7 @@ type Hast = { type: string; tagName?: string; value?: string; properties?: { cla
 
 const textOf = (n: Hast): string => n.value ?? (n.children ?? []).map(textOf).join('')
 
-// a fenced block wraps where its fence names a language: `pages.md`, The design system
+// a fenced block wraps where its fence names a language: `web-app/design-system.md`
 export const CodeFence: Components['pre'] = ({ node, children }) => {
   const code = (node as Hast | undefined)?.children?.find((x) => x.tagName === 'code')
   const classes = code?.properties?.className
@@ -83,7 +83,7 @@ const textRows = (n: Hast): string[][] =>
     .flatMap((part) => (part.children ?? []).filter((tr) => tr.tagName === 'tr'))
     .map((tr) => (tr.children ?? []).filter((c) => c.tagName === 'th' || c.tagName === 'td').map(textOf))
 
-// a grid where the columns fit, and a block per row where they do not: `pages.md`, The design system
+// a grid where the columns fit, and a block per row where they do not: `web-app/design-system.md`
 export const ProseTable: Components['table'] = ({ node, children }) => {
   const { ref, cols } = useColumns(PROSE_PROBE)
   const [header = [], ...rows] = node ? textRows(node as Hast) : []

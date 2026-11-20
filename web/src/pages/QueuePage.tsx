@@ -53,7 +53,7 @@ import { ExamRunning } from '@/pages/ExamPage'
 const HOME = '/knowledge'
 
 // the query names the queue, and a reload starts one of the same mode again:
-// `pages.md`, The knowledge pages
+// `web-app/pages/knowledge/queue/`
 export function QueuePage() {
   const [params] = useSearchParams()
   const named = params.get('mode')
@@ -281,8 +281,7 @@ function Summary(props: {
 }
 
 // a lesson the queue offers is a stop: its title, why it is offered, and Read
-// opening the lesson page, whose way back returns here. `pages.md`, The
-// knowledge pages
+// opening the lesson page, whose way back returns here. `web-app/pages/knowledge/queue/`
 function LessonStop(props: {
   item: LessonItem
   read: boolean

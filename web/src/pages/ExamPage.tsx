@@ -63,8 +63,7 @@ import { CERTIFICATIONS, KNOWLEDGE } from '@/knowledge/paths'
 const ALL = 'all'
 
 // an exam's choices, the exam itself and its results, on one page: the sample
-// is drawn at the start, so a reload returns to the choices. `pages.md`, The
-// knowledge pages
+// is drawn at the start, so a reload returns to the choices. `web-app/pages/knowledge/exam/`
 export function ExamPage() {
   const k = useKnowledge()
   const learner = useLearner()

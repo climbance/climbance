@@ -32,7 +32,7 @@ import type { Scope } from '@/knowledge/StartSheet'
 export type OpenCert = { c: Course; b: Board; states: Map<string, CertStatus>; id: string }
 
 // a certification's conditions, its exam and its focus press, opened from
-// the certifications' grid and from the map: `pages.md`, The two clients
+// the certifications' grid and from the map: `core-package/screens.md`
 export function CertDialog({
   open,
   onClose,

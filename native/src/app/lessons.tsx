@@ -25,7 +25,7 @@ import { SectionBar } from '@/ui/sections';
 import { usePullSync } from '@/ui/pull';
 import { space } from '@/ui/tokens';
 
-// every module's lessons, by module, as the web lists them: `pages.md`, The two clients
+// every module's lessons, by module, as the web lists them: `web-app/pages/knowledge/lessons/`
 export default function LessonsScreen() {
   const st = useStore();
   const pull = usePullSync();
@@ -38,7 +38,7 @@ export default function LessonsScreen() {
     [st.catalog, st.courseOrder, board],
   );
 
-  // every group is open until the reader closes it: `pages.md`, A page's areas
+  // every group is open until the reader closes it: `web-app/areas.md`
   const [closed, setClosed] = useState<string[]>([]);
   const isOpen = (key: string) => !closed.includes(key);
   const sections = useMemo(

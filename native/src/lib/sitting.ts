@@ -10,7 +10,7 @@ import {
 import { getMeta, setMeta } from './db';
 
 // the sitting's state the phone keeps itself, as the browser keeps it:
-// `pages.md`. A draft is the user's code, so it is keyed to the signed-in
+// `web-app/README.md`. A draft is the user's code, so it is keyed to the signed-in
 // user, and signing out deletes it with the rest of their copy
 
 export const DRAFT_PREFIX = 'draft:';

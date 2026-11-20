@@ -62,7 +62,7 @@ export default function PracticeScreen() {
   const st = useStore();
   const next = useContinue();
   // the knowledge modules, from the device's copy: the board is the overview
-  // of every study, `pages.md`, Sections
+  // of every study, `web-app/pages/practice/board/`
   const { board: learner, courseOrder, now } = st;
   const all = useMemo(() => learner(null), [learner]);
   const modules = useMemo(() => (all ? orderedModuleRows(all, courseOrder, now) : []), [all, now, courseOrder]);
@@ -96,7 +96,7 @@ export default function PracticeScreen() {
           </>
         ) : null}
         {/* the knowledge study first, from the device's copy, so it reads
-            before and without the engine's answer: `pages.md`, Sections */}
+            before and without the engine's answer: `web-app/pages/practice/board/` */}
         {next.focus && next.cont ? (
           <TouchableRipple
             onPress={() => router.navigate('/knowledge')}
@@ -178,7 +178,7 @@ function BoardBody({
   // the knowledge reading, from the device's copy: `api/mastery.md`
   const known = (row: Board['rows'][number]) => (learner ? techniqueKnowledge(learner, row) : null);
   const { untouched, practised, foot } = boardView(board, known);
-  // each list closes from its own heading, as the web's board does: `pages.md`
+  // each list closes from its own heading, as the web's board does: `web-app/pages/practice/board/`
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const toggle = (id: string) =>
     setClosed((was) => {
@@ -216,7 +216,7 @@ function BoardBody({
           <CardPanel technique={null} cards={studying} />
         </>
       ) : null}
-      {/* the short exercises, across every card: `pages.md`, Judging, Filling */}
+      {/* the short exercises, across every card: `web-app/pages/cards/judging/` and `web-app/pages/cards/key-line/` */}
       <Panel>
         <PickRow title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} onPress={() => router.push('/judge')} />
         <PickRow title={FILL_TITLE} note={FILL_NOTE} stats={[]} onPress={() => router.push('/fill')} />

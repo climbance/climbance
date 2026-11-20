@@ -22,9 +22,9 @@ LIMIT = 50
 COVERED = [
     (r"^(docs/.*|README|CLAUDE)\.md$", ["tests/test_prose.py"], "rewrap or split the line"),
     (
-        r"^(web/src/App\.tsx|native/src/app/.*|docs/architecture/pages\.md)$",
+        r"^(web/src/App\.tsx|native/src/app/.*|docs/architecture/core-package/screens\.md)$",
         ["tests/test_pages_inventory.py"],
-        "update the inventory in pages.md or the test's route table",
+        "update the inventory in core-package/screens.md or the test's route table",
     ),
     (r"^src/climb/.*\.py$", ["tests/test_api_openapi.py"], "run `just types`"),
 ]

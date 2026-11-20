@@ -24,7 +24,7 @@ export function setting(records: readonly SettingRecord[], name: SettingName): n
   return latest ? latest.n : SETTING_DEFAULT[name];
 }
 
-// the Study settings, in the phone's order: `pages.md`, Sections
+// the Study settings, in the phone's order: `web-app/pages/settings/`
 export const STUDY_SETTINGS: readonly SettingName[] = ['new_per_day', 'exam_size'];
 
 export interface StudyForm {
@@ -49,7 +49,7 @@ export function studyForm(typed: Record<SettingName, string>, stored: Record<Set
   };
 }
 
-// the phone's own settings, each checked where its rule is worded: `pages.md`, The two clients
+// the phone's own settings, each checked where its rule is worded: `core-package/screens.md`
 export const validOrigin = (origin: string) => /^https?:\/\/[^\s/]+$/.test(origin.trim());
 export const validDeviceName = (name: string) => /^[A-Za-z0-9_-]+$/.test(name);
 export const validReminderHour = (hour: number) => Number.isInteger(hour) && hour >= 0 && hour <= 23;

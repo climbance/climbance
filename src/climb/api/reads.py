@@ -71,7 +71,7 @@ class Board(BaseModel):
     rows: list[TechniqueRow]
     ungrouped: int
     excluded: int
-    # any act in the engine's log, before the device's answers: `pages.md`
+    # an engine act, before the device's: `web-app/pages/practice/board/`
     acted: bool
 
 
@@ -246,7 +246,7 @@ def every_card(root: Root, user_id: UserId) -> list[ListedCard]:
         )
         for card in cards
     ]
-    # the card graph's order: `pages.md`, the cards list reads it by depth
+    # the card graph's order, by depth: `web-app/pages/cards/cards/`
     return sorted(listed, key=lambda one: (one.depth, one.slug))
 
 

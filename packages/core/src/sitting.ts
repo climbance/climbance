@@ -201,7 +201,7 @@ export function submissionView(submitted: Submitted): SubmissionView {
   };
 }
 
-/** The page a problem was opened from: the way back from it returns there, `pages.md` Sections. */
+/** The page a problem was opened from: the way back from it returns there, `web-app/README.md`, The structure. */
 export type ProblemFrom =
   | { kind: 'card'; slug: string; title: string | null }
   | { kind: 'listing' }
@@ -250,7 +250,7 @@ export function sittingBack(from: ProblemFrom): string {
 }
 /**
  * When the claim is asked: at each solve and at the end, of the attempts not
- * yet asked (`pages.md`). The key moves with each, so an answered ask does not
+ * yet asked (`web-app/pages/problems/problem/`). The key moves with each, so an answered ask does not
  * hide the next one.
  */
 export function claimAsk(ended: boolean, lastSolved: boolean, submissions: number): string | null {

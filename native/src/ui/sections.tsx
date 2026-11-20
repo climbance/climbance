@@ -148,7 +148,7 @@ export function SectionBar({ sections }: { sections: Pick<Sections, 'items' | 'c
   const chips = useRef(new Map<string, { x: number; width: number }>());
   const [view, setView] = useState({ x: 0, width: 0, content: 0 });
 
-  // the row follows the marked section, as the web's does: `pages.md`
+  // the row follows the marked section, as the web's does: `web-app/areas.md`
   useEffect(() => {
     const chip = sections.current ? chips.current.get(sections.current) : undefined;
     if (!chip || !view.width) return;

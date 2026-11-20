@@ -7,7 +7,7 @@ import { ASK_NEXT, ASK_REVEAL, askSubmit } from './words/queue';
 
 // one question's answer, for every platform: what the user has picked, typed
 // and ticked, and the one press the question asks for at each point. Each
-// platform holds the state and draws it: `pages.md`, The knowledge pages
+// platform holds the state and draws it: `web-app/pages/knowledge/queue/`
 
 export interface AskState {
   picked: number[]; // displayed positions

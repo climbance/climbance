@@ -18,7 +18,7 @@ export function SectionBar({
 }) {
   const row = useRef<HTMLDivElement>(null)
 
-  // the row follows the marked section, as the navigation does: `pages.md`
+  // the row follows the marked section, as the navigation does: `web-app/areas.md`
   useEffect(() => {
     const el = row.current
     const marked = el?.querySelector<HTMLElement>('[aria-current="true"]')

@@ -13,7 +13,7 @@ import { Tag } from '@/components/Tag'
 import { modulePath } from '@/knowledge/paths'
 
 // one module reads as one row wherever it is listed, the knowledge home and
-// the board alike: `pages.md`, A page's areas. `from` names the page the
+// the board alike: `web-app/areas.md`. `from` names the page the
 // module's way back returns to
 export function ModuleRow({ row, from, aside }: { row: Row; from?: 'board'; aside?: ReactNode }) {
   return (

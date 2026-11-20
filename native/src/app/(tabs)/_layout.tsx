@@ -4,7 +4,7 @@ import { Tabs } from 'expo-router/js-tabs';
 import { SECTION_PRACTICE, SECTION_PROBLEMS, SECTION_CARDS, SECTION_KNOWLEDGE } from '@climb/core';
 import { Frozen } from '@/ui/frozen';
 
-// the sections the phone holds, as bottom tabs: `pages.md`, The structure. A
+// the sections the phone holds, as bottom tabs: `web-app/README.md`, The structure. A
 // tab shows once the phone holds a page under its section, and a bar of one
 // tab names nothing, so it shows from the second section on
 const SECTIONS = [
@@ -16,7 +16,7 @@ const SECTIONS = [
 
 // Practice opens first, as the board does on the web, and back from another tab
 // returns there. It holds the redirect to the login, and its knowledge part
-// serves offline from the device's copy: `pages.md`, The two clients
+// serves offline from the device's copy: `web-app/pages/practice/board/`
 export const unstable_settings = { anchor: 'index' };
 
 export default function TabsLayout() {

@@ -2,7 +2,7 @@
 // every platform: a platform changes the look alone, and reads each sentence
 // from here
 
-// the sections the navigation names: `pages.md`, Sections
+// the sections the navigation names: `web-app/pages/shell/`
 export const SECTION_PRACTICE = 'Practice';
 export const SECTION_PROBLEMS = 'Problems';
 export const SECTION_CARDS = 'Cards';
@@ -78,7 +78,7 @@ export const CARDS_TITLE = 'Cards';
 export const CARDS_NOTE =
   'One card teaches one technique: when to reach for it, and the forms to reproduce from memory. A card opens once its required cards are met.';
 export const CARDS_NONE = 'No card is seeded yet.';
-// the cards list reads the card graph by depth: `pages.md`
+// the cards list reads the card graph by depth: `web-app/pages/cards/cards/`
 export const cardsDepth = (depth: number) => (depth === 0 ? 'Depth 0, roots' : `Depth ${depth}`);
 export const CARD_LOCKED = 'locked';
 export const CARD_MET = 'met';
@@ -162,7 +162,7 @@ export const MAP_FIT_PRESS = 'Fit';
 export const cardsOffered = (n: number) => (n === 1 ? 'Card:' : 'Cards:');
 export const NO_DIFFICULTY = 'no difficulty';
 
-// the phone's own settings and sign-in: `pages.md`, The two clients
+// the phone's own settings and sign-in: `core-package/screens.md`
 export const DEVICE_NAME = 'Device name';
 export const DEVICE_NAME_RULE = 'Letters, digits, - and _ only';
 export const REMINDER_HOUR = 'Reminder hour (0–23)';
@@ -218,7 +218,7 @@ export const SIGN_IN_CANCELLED = 'Sign-in was cancelled.';
 export const SIGN_IN_NO_CODE = 'Sign-in returned no code.';
 /** A lesson's node on a module's map, named for whoever reads the map aloud. */
 export const mapLessonLabel = (title: string) => `Lesson: ${title}`;
-/** A link leaving the app carries the mark after its text: `pages.md`, The design system. */
+/** A link leaving the app carries the mark after its text: `web-app/design-system.md`. */
 export const EXTERNAL_MARK = ' ↗';
 export const EXTERNAL_HINT = 'Opens in the browser';
 export const isExternal = (href: string) => /^https?:\/\//i.test(href);

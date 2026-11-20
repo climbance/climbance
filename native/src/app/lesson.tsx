@@ -112,7 +112,7 @@ export default function LessonScreen() {
   const insets = useSafeAreaInsets();
   const { course, slug, anchor } = useLocalSearchParams<{ course: string; slug: string; anchor?: string }>();
   const { c, x: lesson, body, read: done, title, note } = lessonPage(st.catalog, course ?? '', slug ?? '');
-  // the parts read as a long screen's sections: `pages.md`, A page's areas
+  // the parts read as a long screen's sections: `web-app/areas.md`
   const parts = useMemo(() => lessonParts(body), [body]);
   const titled = parts.filter((part) => part.title !== null);
   const sections = useSections(titled.map((part) => ({ id: part.anchor!, label: part.title! })));
@@ -138,7 +138,7 @@ export default function LessonScreen() {
   const mark = async (status: 'done' | 'undone') => {
     if (!course || !slug) return;
     await st.setLessonState(course, slug, status);
-    // Mark read returns where the lesson was opened from: `pages.md`
+    // Mark read returns where the lesson was opened from: `web-app/pages/knowledge/lesson/`
     if (status === 'done') {
       if (router.canGoBack()) router.back();
       else router.replace('/lessons');

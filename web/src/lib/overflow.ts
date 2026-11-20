@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react'
 
-// a faded edge says the row goes on past it: `pages.md`
+// a faded edge says the row goes on past it: `web-app/areas.md`
 export function useEdgeFade(
   row: RefObject<HTMLElement | null>,
   deps: unknown[] = [],

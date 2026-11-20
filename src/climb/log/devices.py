@@ -1,5 +1,5 @@
 """Every client signed in as one user: the browsers' sessions and the apps'
-tokens, as both clients' account menus list them. `pages.md`, Sections."""
+tokens, as both clients' account menus list them. `web-app/pages/shell/`."""
 
 from datetime import UTC, datetime
 from enum import StrEnum

@@ -22,7 +22,7 @@ import { space } from '@/ui/tokens';
 /**
  * A module's groups, a table of subtopics by level per topic. Each scope
  * starts a filtered queue, and each subtopic carries its own focus press:
- * `pages.md`, The knowledge pages.
+ * `web-app/pages/knowledge/module/`.
  */
 export function ModuleGroups({
   c,

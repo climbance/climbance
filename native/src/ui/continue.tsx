@@ -73,7 +73,7 @@ export type Next = ReturnType<typeof useContinue>;
 
 /**
  * Continue in the bar at the bottom, with its counts above it, as the
- * knowledge home holds it. The home adds Exam beside it, at a lower weight: `pages.md`, A page's areas.
+ * knowledge home holds it. The home adds Exam beside it, at a lower weight: `web-app/areas.md`.
  */
 export function ContinueBar({ next, exam = false }: { next: Next; exam?: boolean }) {
   return (
@@ -133,7 +133,7 @@ function CountsLine({ next, bare = false, start = false }: { next: Next; bare?: 
 
 /**
  * Continue inside the focus's panel, as the board holds it: the board names
- * several studies, so its bottom bar holds no press. `pages.md`, Sections.
+ * several studies, so its bottom bar holds no press. `web-app/pages/practice/board/`.
  */
 export function ContinueInPanel({ next, inFocus = false }: { next: Next; inFocus?: boolean }) {
   return (

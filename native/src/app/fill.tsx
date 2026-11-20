@@ -28,7 +28,7 @@ import { font, radius, space } from '@/ui/tokens';
 type FilledItem = components['schemas']['FilledItem'];
 type FillDecided = components['schemas']['FillDecided'];
 
-/** Filling a key line, as the web's page: `pages.md`, Filling a key line. */
+/** Filling a key line, as the web's page: `web-app/pages/cards/key-line/`. */
 export default function FillScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();

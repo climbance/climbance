@@ -662,7 +662,8 @@ times. Each record class is specified in one of the files beside it.
 | [`cli/generation/site-outcomes.md`](cli/generation/site-outcomes.md) | What a generation run's call sites leave |
 | [`cli/calls.md`](cli/calls.md) | The call log and the transport to the model router |
 | [`flows.md`](flows.md) | Generating a problem, the states it is written through, replaying a site, the drill loop, starting a card run, solving a rung, recalling a template, which sittings review a template, the pick, adjudicating the eval set |
-| [`pages.md`](pages.md) | The web app's sections and pages, every screen of both clients and how the two differ, a page's areas, the design system |
+| [`web-app/`](web-app/README.md) | The structure of the pages, a file per page, a page's areas, the design system |
+| [`core-package/screens.md`](core-package/screens.md) | Every screen of both clients, and how the two differ |
 | [`wireframes.md`](wireframes.md) | Each page drawn at low fidelity |
 | [`core-package/knowledge/`](core-package/knowledge/README.md) | The schedule, gating, the queues, certifications, the baseline and delayed tests, projections, a client's store |
 | [`cli/seed.md`](cli/seed.md) | Seeding cards and modules, and retiring what the files no longer hold |
@@ -921,8 +922,8 @@ times. Each record class is specified in one of the files beside it.
     exist in TypeScript and in Python, held together by the shared fixtures.
   - A sitting and a recall are typed on both clients. The phone types them
     through a keyboard of the app's own, since the system keyboard hides the
-    symbols code is made of and completes words. `pages.md` lists what each
-    client holds.
+    symbols code is made of and completes words.
+    `core-package/screens.md` lists what each client holds.
   - The web app wrapped in a WebView, as Capacitor ships one, was rejected.
     Every screen would then scroll, type and navigate through a WebView, where
     a native screen gets the platform's own lists, sheets and back gesture.
@@ -966,7 +967,8 @@ times. Each record class is specified in one of the files beside it.
     The doc is the contract the fixtures are generated against.
   - The app served the knowledge modules first, and the rest of the engine
     followed feature by feature. The phone now holds every page but the
-    gallery, and `pages.md` lists what each client holds.
+    gallery, and `core-package/screens.md` lists what each client
+    holds.
   - The app runs on Android first, and iOS follows from the same code. It is
     installed directly from a build signed by a key kept out of git. A store
     release is deferred until someone other than the author installs it.

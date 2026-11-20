@@ -5,7 +5,7 @@ import type { SchemeChoice } from '@climb/core';
 import { getMeta, setMeta } from './db';
 
 // about this phone rather than the account, so it stays on the device, as the
-// web's scheme stays in the browser: `pages.md`, The design system
+// web's scheme stays in the browser: `web-app/design-system.md`
 const KEY = 'scheme';
 
 interface Scheme {

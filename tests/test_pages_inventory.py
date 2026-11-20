@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ROOT / "docs" / "architecture" / "pages.md"
+PAGES = ROOT / "docs" / "architecture" / "core-package" / "screens.md"
 APP = ROOT / "web" / "src" / "App.tsx"
 SCREENS = ROOT / "native" / "src" / "app"
 
@@ -82,7 +82,7 @@ PHONE_PARTS = {
 
 def inventory() -> dict[str, dict[str, str]]:
     text = PAGES.read_text()
-    table = text[text.index("### Screens") : text.index("### Acts")]
+    table = text[text.index("## Screens") : text.index("## Acts")]
     rows = {}
     for line in table.splitlines():
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
@@ -116,7 +116,7 @@ def test_every_phone_screen_is_in_the_table():
 
 
 def test_every_row_the_tables_name_is_in_the_inventory():
-    """A row renamed in pages.md fails here until the tables follow it."""
+    """A row renamed in screens.md fails here until the tables follow it."""
     rows = inventory()
     named = set(WEB.values()) | set(PHONE.values()) | set(PHONE_PARTS)
     assert named - set(rows) == set()

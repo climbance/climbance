@@ -14,7 +14,7 @@ import { LessonBody } from '@/pages/LessonPage'
 export type Reading = { course: string; slug: string; anchor?: string } | null
 
 // a lesson read over a running queue, as the phone reads it, so reading ends
-// nothing: `pages.md`, The knowledge pages. A linked lesson opens in place
+// nothing: `web-app/pages/knowledge/queue/`. A linked lesson opens in place
 export function LessonOver(props: { reading: Reading; onRead: (r: Reading) => void }) {
   const { reading, onRead } = props
   const { catalog } = useLearner()
