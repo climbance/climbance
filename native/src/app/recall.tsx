@@ -49,7 +49,7 @@ type Hint = components['schemas']['Hint'];
 type RecallAttempt = components['schemas']['RecallAttempt'];
 
 /**
- * One template reproduced from memory: `flows.md`, Recalling a template. A
+ * One template reproduced from memory: `flows/recalling-a-template.md`. A
  * screen opened without a template recalls the one the trainer draws, and
  * withholds its title.
  */

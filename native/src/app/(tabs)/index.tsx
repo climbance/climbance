@@ -192,7 +192,7 @@ function BoardBody({
   const { origin } = useStore().settings;
   return (
     <>
-      {/* the schedule's one act, above every list: `flows.md`, The pick */}
+      {/* the schedule's one act, above every list: `api/pick.md` */}
       {view ? (
         <>
           <Heading title={view.heading} />

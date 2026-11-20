@@ -9,7 +9,7 @@ import { HIGHLIGHTER } from './python';
 
 /**
  * How Python is edited on every client: highlighting, indentation and paired
- * brackets, and no `autocompletion()`. `flows.md` gives why the editor
+ * brackets, and no `autocompletion()`. `flows/drill-loop.md` gives why the editor
  * proposes no library name, and a closing bracket names none. A client adds its
  * own keymap and its own look.
  */

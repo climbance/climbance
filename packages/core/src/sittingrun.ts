@@ -5,7 +5,7 @@ import { CLOCK_PAUSE, CLOCK_RESUME, CLOCK_START, type ClockMove, type ClockState
 // a sitting's controller, for every platform: the requests that mint it, move
 // its clock, submit to it and read it back, and what the clock's presses
 // offer. Each platform holds the result in its own state and times its own
-// touches: `flows.md`, Drill loop
+// touches: `flows/drill-loop.md`
 
 type Sitting = components['schemas']['Sitting'];
 type Submitted = components['schemas']['Submitted'];

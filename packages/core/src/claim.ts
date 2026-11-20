@@ -3,7 +3,7 @@ import { described, type EngineClient } from './engine';
 import { duration } from './sitting';
 
 // the claim and the self-label asked after a sitting, for every platform:
-// `flows.md`, Drill loop. Which modes an attempt's verdict leaves open, and
+// `flows/drill-loop.md`. Which modes an attempt's verdict leaves open, and
 // the skip on an attempt that crashed on every case, are the engine's: it
 // sends them with each attempt and refuses a label outside them
 

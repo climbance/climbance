@@ -215,7 +215,7 @@ export const KeyPad = memo(function KeyPad({
 });
 
 // the names the file declares, in the strip's place so they cost no height:
-// `flows.md` gives why a declared name is offered and a library name never is
+// `flows/drill-loop.md` gives why a declared name is offered and a library name never is
 function Names({ names, onKey }: { names: string[]; onKey: (key: Key) => void }) {
   const theme = useTheme();
   return (

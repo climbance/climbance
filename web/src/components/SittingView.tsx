@@ -255,7 +255,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
   const served = loaded.data
   const clock = moved ?? { elapsedSec: served.elapsed_sec, at: served.receivedAt }
   // a reload during the sitting restores what was typed in it, and a new
-  // sitting opens on the work in progress `flows.md` carries
+  // sitting opens on the work in progress `flows/drill-loop.md` carries
   const opened = editorOpening(
     draftOf(user, problemId),
     sittingId,
@@ -427,7 +427,7 @@ export function SittingView({ problemId, drilled, card, from }: Props) {
               onSubmit={submit}
               handle={editor}
               // a solve ends the sitting, and its code is read back, not
-              // carried into a new sitting: `flows.md`, Drill loop
+              // carried into a new sitting: `flows/drill-loop.md`
               readOnly={ended}
             />
           </div>

@@ -2,8 +2,9 @@ import type { components } from './api/schema';
 import { failures, OUTCOME_LABELS, SEVEREST } from './recall';
 import { BACK_BOARD, BACK_PROBLEMS } from './words/pages';
 
-// a sitting, for every platform: `flows.md`, Drill loop, and `api/sitting.md`. Each platform keeps the draft and the clock preference in its own
-// storage, and times its own ticks; what they mean is decided here
+// a sitting, for every platform: `flows/drill-loop.md`, and `api/sitting.md`.
+// Each platform keeps the draft and the clock preference in its own storage,
+// and times its own ticks; what they mean is decided here
 
 type Sitting = components['schemas']['Sitting'];
 type Carry = components['schemas']['Carry'];

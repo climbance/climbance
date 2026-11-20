@@ -3,7 +3,7 @@ import { described, type EngineClient } from './engine';
 import type { Outcome } from './sittingrun';
 import { A_FORM } from './words/pages';
 
-// the recall trainer, for every platform: `flows.md`, Recalling a template
+// the recall trainer, for every platform: `flows/recalling-a-template.md`
 
 type Hint = components['schemas']['Hint'];
 type CaseResult = components['schemas']['CaseResult'];

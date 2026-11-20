@@ -96,7 +96,7 @@ export function BoardPage() {
 
           return (
             <div className="space-y-section">
-              {/* the schedule's one act, above every list: `flows.md`, The pick */}
+              {/* the schedule's one act, above every list: `api/pick.md` */}
               {pick.data && <BoardPick pick={pick.data} />}
 
               {/* the study the user declared, ahead of any staleness ranking */}

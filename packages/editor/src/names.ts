@@ -2,7 +2,7 @@ import { python } from '@codemirror/lang-python';
 import type { SyntaxNode, Tree } from '@lezer/common';
 
 // the names a file declares, which the phone's keyboard offers back:
-// `flows.md`, Drill loop. A name the file only reads, such as `len`, is the
+// `flows/drill-loop.md`. A name the file only reads, such as `len`, is the
 // library's, and is never offered
 
 const PARSER = python().language.parser;

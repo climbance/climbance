@@ -650,7 +650,7 @@ export interface PickView {
 
 const PICK_NOTES: Record<number, string> = { 1: PICK_CHECK_OWED, 2: PICK_CHECK_OPEN };
 
-/** The board's pick as both clients show it, above the lists: `flows.md`, The pick. */
+/** The board's pick as both clients show it, above the lists: `api/pick.md`. */
 export function pickView(pick: BoardPick): PickView {
   const card = pick.card_slug;
   const target: PickTarget =
