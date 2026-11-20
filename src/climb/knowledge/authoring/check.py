@@ -15,6 +15,7 @@ from climb.knowledge.authoring.lessons import lessons_run
 from climb.knowledge.authoring.likeness import overlaps
 from climb.knowledge.authoring.pairing import paired
 from climb.knowledge.authoring.prose import prose
+from climb.knowledge.authoring.quotes import quoted
 from climb.knowledge.authoring.repeats import repeats
 from climb.knowledge.authoring.snippets import interpreters, snippets, versions
 from climb.knowledge.authoring.static import (
@@ -53,7 +54,7 @@ STATIC = (
 )
 # a module written by concept files each question by its concept, where
 # another files it in the coverage map: docs/authoring/concepts.md
-BY_CONCEPT = (records, taught, prose, filed, replies, shared, verdicts, centres)
+BY_CONCEPT = (records, quoted, taught, prose, filed, replies, shared, verdicts, centres)
 
 
 @dataclass

@@ -54,7 +54,7 @@ the coverage map for a module written by concept.
 | `source` | A URL with an anchor, to the documentation or the specification, or a list of them where one section does not cover every clause. |
 | `witness` | Code whose output shows the claim holds. |
 | `output` | The witness's output, the same on every supported build. |
-| `quote` | The source's sentence the claim rests on, where no witness can run. |
+| `quote` | The source's sentence the claim rests on, where no witness can run. `[...]` marks text left out between two parts. |
 | `read_on` | The date the quoted source was read, beside a `quote`. |
 | `misconceptions` | Wrong beliefs about the claim, each `{ id, text }`. |
 | `taught_by` | The lesson section teaching the concept, as `<slug>#<anchor>`. |
@@ -84,6 +84,10 @@ the coverage map for a module written by concept.
   URL without its scheme and fragment, each run of other characters made `-`.
   Two runs fetching one page on different days keep two snapshots, so a
   quote's `read_on` names the snapshot it was read in.
+- **The module check finds each quote in the snapshot its `read_on` names**,
+  the latest fetched on or before that date. Rule 30 in `rules.md` gives the
+  check. A quote is copied from the text files, so a later edit of the source
+  shows as a new snapshot the quote is missing from.
 - **`sources.py <url>` reads the latest snapshot, and `--on <date>` reads the
   snapshot fetched that day.** `--refresh` fetches again, and keeps the fetch
   as today's snapshot only when its text differs from the latest snapshot's.
@@ -446,7 +450,7 @@ back to a concept in the pilot broke one of them.
 
 ## Mechanical checks
 
-The module check holds a module written by concept to rules 26 to 29 of
+The module check holds a module written by concept to rules 26 to 30 of
 `rules.md`: the witnesses, the concept records, the lessons' sections and
 the prose a program can check. Rule 19 files each question by its concept.
 It warns of a concept no question tests, and of a misconception no wrong

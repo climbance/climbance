@@ -273,3 +273,11 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     program can check.** No sentence opens with What, Where, Neither, Both or
     Nothing, no sentence runs over 40 words, and spelling is Oxford British.
     The rest of the writing rules need a reader. *check (warning), review*
+30. **A concept's sources are in the library, and its quote is in the snapshot
+    its `read_on` names.** That snapshot is the latest fetched on or before
+    `read_on`, and a concept with no quote is read against the latest
+    snapshot. Each `#` anchor is held by its snapshot, and a `#page=` names a
+    page the snapshot holds. The quote matches whitespace aside, and each part
+    between two `[...]` is found after the part before it. A concept quoting
+    beside a source kept outside git, as Wikipedia is, is refused, since a
+    review cannot read the text the quote came from. *check*

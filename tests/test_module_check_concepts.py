@@ -2,10 +2,11 @@ import json
 from datetime import date
 from pathlib import Path
 
-from authoring import found, written
+from authoring import found, shelved, written
 
 from climb.knowledge.authoring import check
 
+URL = "https://docs.python.org/3/reference/compound_stmts.html#the-while-statement"
 LESSON = "## While\n\n`while` tests its condition first.\n"
 
 
@@ -14,7 +15,7 @@ def concept(**fields) -> dict:
         "id": "while-retests",
         "level": 0,
         "claim": "`while` tests its condition before every iteration.",
-        "source": "https://docs.python.org/3/reference/compound_stmts.html#the-while-statement",
+        "source": URL,
         "witness": "n = 0\nwhile n > 0:\n    print('body')\nprint('done')\n",
         "output": "done\n",
         "misconceptions": [{"id": "body-runs-once", "text": "A `while` body always runs once."}],
@@ -38,6 +39,8 @@ def asking(name: str = "while-retests") -> dict:
 
 def module(tmp_path: Path, *concepts: dict, lesson: str = LESSON, q: dict | None = None) -> Path:
     root = written(tmp_path, [q or asking()], lessons={"les": (["sub@0"], lesson)}, coverage="")
+    page = "[#the-while-statement]\nThe while\nstatement. A sentence."
+    shelved(tmp_path, URL, "2026-11-10", page)
     (root / "concepts" / "t").mkdir(parents=True)
     body = ""
     for one in concepts or (concept(),):
@@ -325,3 +328,72 @@ def test_a_centred_key_among_tuples_is_warned(tmp_path):
     warnings = found(check(module(tmp_path, q=q), run=False).report.warnings, 10)
 
     assert any("shares a part with every other choice" in w for w in warnings)
+
+
+def quoting(quote: str, **fields) -> dict:
+    bare = {k: v for k, v in concept().items() if k not in ("witness", "output")}
+    return bare | {"quote": quote, "read_on": date(2026, 11, 15)} | fields
+
+
+def test_a_quote_in_its_snapshot_whitespace_aside_is_accepted(tmp_path):
+    """Rule 30: the text breaks lines the quote does not, and marks anchors."""
+    root = module(tmp_path, quoting("The while statement."))
+
+    assert found(check(root, run=False).report.errors, 30) == []
+
+
+def test_a_source_the_library_holds_no_snapshot_of_is_refused(tmp_path):
+    """Rule 30: a source never fetched gives the review nothing to read."""
+    url = "https://docs.python.org/3/library/sys.html#sys.exit"
+    root = module(tmp_path, concept(source=[URL, url]))
+
+    errors = found(check(root, run=False).report.errors, 30)
+
+    assert errors == [f"[30] concepts/t/sub.toml while-retests: no snapshot of {url}"]
+
+
+def test_a_quote_only_a_later_snapshot_holds_is_refused(tmp_path):
+    """Rule 30: `read_on` names the latest snapshot fetched by that date."""
+    shelved(tmp_path, URL, "2026-11-20", "[#the-while-statement]\nA new sentence.")
+    root = module(tmp_path, quoting("A new sentence."))
+
+    errors = found(check(root, run=False).report.errors, 30)
+
+    assert errors == [
+        "[30] concepts/t/sub.toml while-retests: no snapshot it cites holds the quote "
+        "'A new sentence.'"
+    ]
+
+
+def test_an_anchor_the_snapshot_does_not_hold_is_refused(tmp_path):
+    """Rule 30: a renamed section leaves the link pointing at the page's top."""
+    url = URL.replace("#the-while-statement", "#the-for-statement")
+    root = module(tmp_path, concept(source=url))
+
+    errors = found(check(root, run=False).report.errors, 30)
+
+    assert errors == [
+        f"[30] concepts/t/sub.toml while-retests: snapshot 2026-11-10 of {url} "
+        "holds no #the-for-statement"
+    ]
+
+
+def test_a_quote_beside_a_source_kept_outside_git_is_refused(tmp_path):
+    """Rule 30: a review cannot read a Wikipedia snapshot from git."""
+    wiki = "https://en.wikipedia.org/wiki/While_loop#Overview"
+    root = module(tmp_path, quoting("A sentence.", source=[URL, wiki]))
+
+    errors = found(check(root, run=False).report.errors, 30)
+
+    assert errors == [
+        f"[30] concepts/t/sub.toml while-retests: quotes beside {wiki}, which git does not hold"
+    ]
+
+
+def test_an_elided_quote_matches_its_parts_in_order(tmp_path):
+    """Rule 30: `[...]` stands for skipped text, never for a reordering."""
+    kept = module(tmp_path / "a", quoting("The while [...] A sentence."))
+    swapped = module(tmp_path / "b", quoting("A sentence. [...] The while"))
+
+    assert found(check(kept, run=False).report.errors, 30) == []
+    assert len(found(check(swapped, run=False).report.errors, 30)) == 1

@@ -5,6 +5,8 @@ import json
 import subprocess
 from pathlib import Path
 
+from climb.knowledge.library import name
+
 LESSON = "# Lesson\n\n## Section\n\nProse.\n"
 
 
@@ -102,3 +104,14 @@ def rebanked(root: Path, questions: list[dict]) -> None:
 
 def found(lines: list[str], rule: int) -> list[str]:
     return [line for line in lines if line.startswith(f"[{rule}] ")]
+
+
+def shelved(where: Path, url: str, on: str, *pages: str) -> Path:
+    """A snapshot of `url` fetched on `on`, in the library beside `modules/`."""
+    snapshot = where / "library" / name(url) / on
+    snapshot.mkdir(parents=True)
+    for number, page in enumerate(pages, 1):
+        (snapshot / f"page-{number:03}.txt").write_text(page)
+    meta = {"url": url.split("#")[0], "fetched_on": on, "pages": len(pages)}
+    (snapshot / "meta.json").write_text(json.dumps(meta))
+    return snapshot

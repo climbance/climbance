@@ -15,12 +15,11 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
+from climb.knowledge.library import committed, name, snapshots, text
+
 ENGINE = Path(__file__).resolve().parents[3]
 CACHE = ENGINE / "data" / "sources"
-UNCOMMITTED = ("wikipedia.org",)
 SKIPPED = {"script", "style", "nav", "header", "footer"}
-# docs.python.org rebuilds daily, and a rebuild moves this line alone
-STAMPS = (re.compile(r"^\s*Last updated on .+ \(\d\d:\d\d UTC\)\.\s*$", re.M),)
 
 
 class Text(HTMLParser):
@@ -48,25 +47,7 @@ class Text(HTMLParser):
 
 
 def folder(url: str, content: Path) -> Path:
-    bare = url.split("#")[0]
-    host = bare.split("://", 1)[-1].split("/")[0]
-    name = re.sub(r"[^A-Za-z0-9.]+", "-", bare.split("://", 1)[-1]).strip("-")[:120]
-    if host.endswith(UNCOMMITTED):
-        return CACHE / name
-    return content / "library" / name
-
-
-def snapshots(source: Path) -> list[Path]:
-    if not source.is_dir():
-        return []
-    return sorted(p for p in source.iterdir() if (p / "meta.json").exists())
-
-
-def text(snapshot: Path) -> list[str]:
-    pages = [p.read_text() for p in sorted(snapshot.glob("page-*.txt"))]
-    for stamp in STAMPS:
-        pages = [stamp.sub("", page) for page in pages]
-    return pages
+    return (content / "library" if committed(url) else CACHE) / name(url)
 
 
 def download(url: str) -> tuple[bytes, str]:
@@ -79,13 +60,13 @@ def write(url: str, body: bytes, kind: str, into: Path, on: date) -> dict:
     into.mkdir(parents=True)
     if kind == "application/pdf" or body[:5] == b"%PDF-":
         (into / "source.pdf").write_bytes(body)
-        text = subprocess.run(
+        extracted = subprocess.run(
             ["pdftotext", "-layout", str(into / "source.pdf"), "-"],
             capture_output=True,
             text=True,
             check=True,
         ).stdout
-        pages = text.split("\f")
+        pages = extracted.split("\f")
         if pages and not pages[-1].strip():
             pages.pop()
     else:
