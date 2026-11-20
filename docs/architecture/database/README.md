@@ -95,3 +95,7 @@ class links to the file that specifies the record.
   path is then refused by the database instead of rewriting the log. A
   migration creating an append-only table adds the trigger by hand, since
   Alembic generates none, and a test lists the tables that carry it.
+- **[`schema.md`](schema.md) draws every table, its foreign keys and the
+  component owning it, generated from the declared tables.** A test fails where
+  the database the migrations build holds another table or foreign key. The
+  graph then shows the migrated schema, and generating it needs no database.

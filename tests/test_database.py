@@ -1,5 +1,5 @@
 from database import emptied
-from sqlalchemy import func, insert, select, text
+from sqlalchemy import func, insert, inspect, select, text
 
 from climb.calls.table import calls
 from climb.storage import metadata
@@ -30,6 +30,25 @@ def test_the_worker_s_database_is_built_by_the_migrations(database):
 
     assert head
     assert tables >= set(metadata.tables)
+
+
+def test_the_migrations_build_the_declared_tables_and_foreign_keys(database):
+    """`database/schema.md` is drawn from the declarations, so a migration
+    that adds or drops a table or a key differently would make it wrong."""
+    built = inspect(database.engine)
+    names = set(built.get_table_names()) - {"alembic_version"}
+    migrated = {(name, (), "") for name in names} | {
+        (name, tuple(key["constrained_columns"]), key["referred_table"])
+        for name in names
+        for key in built.get_foreign_keys(name)
+    }
+    declared = {(name, (), "") for name in metadata.tables} | {
+        (table.name, tuple(key.column_keys), key.referred_table.name)
+        for table in metadata.tables.values()
+        for key in table.foreign_key_constraints
+    }
+
+    assert sorted(migrated ^ declared) == []
 
 
 def test_a_test_starts_on_an_empty_database(database):

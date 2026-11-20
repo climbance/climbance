@@ -54,10 +54,12 @@ model-views:
 # by the containers whose `code` in `model.toml` reaches each package, and the
 # import contracts in `pyproject.toml` that keep each container's code imported
 # by its own package alone. Also the clients' TypeScript import graph in
-# `docs/architecture/client-modules.md`.
+# `docs/architecture/client-modules.md`, and the schema graph in
+# `docs/architecture/database/schema.md`.
 module-graph:
     python3 tools/module_graph.py write
     python3 tools/client_graph.py write
+    uv run python tools/schema_graph.py write
 
 # Regenerate the shared fixture's scheduling cases from the Python replay.
 fixtures:

@@ -82,6 +82,11 @@ fi
 if echo "$FILES" | grep -qE '^(web|native|packages/[^/]+)/.*\.tsx?$|^docs/architecture/(model\.toml|client-modules\.md)$|^tools/client_graph\.py$'; then
     python3 tools/client_graph.py check || exit 1
 fi
+# The schema graph in `docs/architecture/database/schema.md`, where the staging
+# touches a table declaration, the model, the graph or its generator.
+if echo "$FILES" | grep -qE '^src/climb/.*table\.py$|^docs/architecture/(model\.toml|database/schema\.md)$|^tools/schema_graph\.py$'; then
+    uv run python tools/schema_graph.py check || exit 1
+fi
 # The size limits on each architecture doc, where the staging touches the docs.
 if echo "$FILES" | grep -qE '^docs/architecture/|^tests/test_doc_sizes\.py$'; then
     uv run pytest -q -n 0 tests/test_doc_sizes.py || exit 1

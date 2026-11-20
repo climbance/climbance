@@ -259,7 +259,7 @@ and each component is a file named by its id.
 | [`cli/`](cli/README.md) | Generation as a command run off the server, and a file or folder per component: generation and its states, difficulty, the classifier, the eval set, the matcher, the diagnoser, the exercise items, the seed and the calls |
 | [`broker/`](broker/README.md) | Holding the container runtime's socket, and admitting one run at a time |
 | [`sandbox/`](sandbox/README.md) | The container a run happens in, a child per case, and gVisor |
-| [`database/`](database/README.md) | The one Postgres store, the data-class table as an index of every record, the tables and the migrations |
+| [`database/`](database/README.md) | The one Postgres store, the data-class table as an index of every record, the tables and the migrations, and the schema graph of every table's foreign keys and owner, generated from the declared tables |
 | [`proxy/`](proxy/README.md) | Caddy, its certificates and why it serves no files |
 | [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique, modules, questions, lessons |
 | [`core-package/`](core-package/README.md) | The three layers both clients share, the fixtures, every screen of both clients, and the knowledge module's rules |

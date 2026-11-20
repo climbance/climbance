@@ -29,6 +29,10 @@
 # The module-graph check fails where `runs` and the reach differ, so a new
 # import that brings a package into another container fails the commit.
 #
+# `tables` on an element names the tables it owns: those whose record its doc
+# specifies. The schema graph in `database/schema.md` draws each table in its
+# owner's box, and its check fails on a table with no owner or with two.
+#
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
 # that relation's label, as a sequence diagram in that page.
@@ -216,6 +220,9 @@ container = "api"
 name = "Sitting"
 role = "Times one session on one problem, minted at the first clock press or submission, and ended where next read."
 doc = "api/sitting.md"
+tables = [
+    "sitting_pauses", "sittings",
+]
 
 [[element]]
 id = "submission"
@@ -240,6 +247,9 @@ container = "api"
 name = "Run faults"
 role = "Stores a run the sandbox answered no result for, so the run caps count it."
 doc = "api/run-faults.md"
+tables = [
+    "run_faults",
+]
 
 [[element]]
 id = "attempt-log"
@@ -248,6 +258,9 @@ container = "api"
 name = "Attempt log"
 role = "Appends each attempt and its attempt verification; private to the user."
 doc = "api/attempt-log.md"
+tables = [
+    "attempt_verification_case_results", "attempt_verifications", "attempts",
+]
 
 [[element]]
 id = "attempt-claims"
@@ -256,6 +269,9 @@ container = "api"
 name = "Attempt claims"
 role = "Stores which techniques an attempt's code used, the user's claim standing over the classifier's."
 doc = "api/attempt-claims.md"
+tables = [
+    "attempt_claims",
+]
 
 [[element]]
 id = "self-labels"
@@ -264,6 +280,9 @@ container = "api"
 name = "Self-labels"
 role = "Stores the user's verdict on why an attempt went the way it did, as a failure mode."
 doc = "api/self-labels.md"
+tables = [
+    "self_labels",
+]
 
 [[element]]
 id = "template-schedule"
@@ -304,6 +323,9 @@ container = "api"
 name = "Predictions"
 role = "Stores what each pick expected, from FSRS and from mastery, before the user acts on it."
 doc = "api/predictions.md"
+tables = [
+    "predictions",
+]
 
 [[element]]
 id = "snapshot"
@@ -328,6 +350,10 @@ container = "api"
 name = "Knowledge log"
 role = "The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."
 doc = "api/knowledge-log.md"
+tables = [
+    "answers", "certification_exams", "focuses", "lesson_marks", "limit_raises",
+    "module_orders", "module_status_changes", "setting_changes", "stints",
+]
 
 [[element]]
 id = "problems"
@@ -344,6 +370,9 @@ container = "api"
 name = "Card runs"
 role = "Stores that a card was started, and the probes the start gave it."
 doc = "api/card-runs.md"
+tables = [
+    "card_run_probes", "card_runs",
+]
 
 [[element]]
 id = "recall"
@@ -352,6 +381,9 @@ container = "api"
 name = "Recall"
 role = "Runs a template typed from memory against the template's cases, and stores the recall attempt."
 doc = "api/recall.md"
+tables = [
+    "recall_attempt_case_results", "recall_attempts",
+]
 
 [[element]]
 id = "short-exercises"
@@ -360,6 +392,9 @@ container = "api"
 name = "Short exercises"
 role = "Serves the judgement and key-line items, and stores each judgement and fill."
 doc = "api/short-exercises.md"
+tables = [
+    "fills", "judgements",
+]
 
 [[element]]
 id = "retirement-requests"
@@ -368,6 +403,9 @@ container = "api"
 name = "Retirement requests"
 role = "Stores a user's request that a problem be retired, for the author to read."
 doc = "api/retirement-requests.md"
+tables = [
+    "retirement_requests",
+]
 
 [[element]]
 id = "feedback"
@@ -376,6 +414,9 @@ container = "api"
 name = "Feedback"
 role = "Stores a user's note to the author, naming the client and the page."
 doc = "api/feedback.md"
+tables = [
+    "feedback",
+]
 
 [[element]]
 id = "sign-in"
@@ -384,6 +425,9 @@ container = "api"
 name = "Sign-in"
 role = "Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."
 doc = "api/sign-in.md"
+tables = [
+    "identities", "invitations", "sessions", "users",
+]
 
 [[element]]
 id = "app-tokens"
@@ -392,6 +436,9 @@ container = "api"
 name = "App tokens"
 role = "Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."
 doc = "api/app-tokens.md"
+tables = [
+    "app_codes", "app_tokens",
+]
 
 # Components of the command line
 
@@ -402,6 +449,9 @@ container = "cli"
 name = "Classifier"
 role = "Reads an attempt's code and claims the techniques it used, filling what no user claimed."
 doc = "cli/classifier.md"
+tables = [
+    "solution_claims",
+]
 
 [[element]]
 id = "eval-set"
@@ -418,6 +468,11 @@ container = "cli"
 name = "Generation"
 role = "Writes each problem through its six call sites, and lands it with its cases and its solutions."
 doc = "cli/generation/README.md"
+tables = [
+    "draft_declared_cases", "draft_settled_cases", "drafts", "problems",
+    "site_outcomes", "solutions", "test_cases", "verification_case_results",
+    "verifications",
+]
 
 [[element]]
 id = "difficulty"
@@ -426,6 +481,9 @@ container = "cli"
 name = "Difficulty"
 role = "Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."
 doc = "cli/difficulty/README.md"
+tables = [
+    "difficulty_fit_members", "difficulty_fits", "difficulty_ratings", "trials",
+]
 
 [[element]]
 id = "seed"
@@ -434,6 +492,10 @@ container = "cli"
 name = "Seed"
 role = "Reads the authored cards and modules from `content/`, and refreshes the content tables from them."
 doc = "cli/seed.md"
+tables = [
+    "card_requirements", "card_templates", "cards", "diagrams", "lessons", "modules",
+    "questions", "subtopics", "template_cases", "topics",
+]
 
 [[element]]
 id = "diagnoser"
@@ -442,6 +504,9 @@ container = "cli"
 name = "Diagnoser"
 role = "Reads a failed attempt or a labelled mutant and names the cause, scored against the self-labels."
 doc = "cli/diagnoser.md"
+tables = [
+    "diagnoses", "mutant_diagnoses",
+]
 
 [[element]]
 id = "matcher"
@@ -450,6 +515,9 @@ container = "cli"
 name = "Matcher"
 role = "Reads a canonical beside its statement and names the card templates it displays."
 doc = "cli/matcher.md"
+tables = [
+    "template_matches",
+]
 
 [[element]]
 id = "exercise-items"
@@ -458,6 +526,9 @@ container = "cli"
 name = "Exercise items"
 role = "Builds the judgement items and the key-line items from the seeded templates and their mutants."
 doc = "cli/exercise-items.md"
+tables = [
+    "judgement_items", "key_line_choices", "key_line_items",
+]
 
 [[element]]
 id = "calls"
@@ -466,6 +537,9 @@ container = "cli"
 name = "Calls"
 role = "Sends every model call through one transport, each pinned to one endpoint, and appends it to the call log."
 doc = "cli/calls.md"
+tables = [
+    "calls",
+]
 
 # Relations
 
