@@ -275,6 +275,8 @@ ignore_names = [
     "compose", "on_*", "action_*", "CSS", "BINDINGS", "theme", "can_focus",
     # ast.NodeTransformer dispatches by name
     "visit_*",
+    # html.parser.HTMLParser dispatches by name
+    "handle_*",
     # a result record names the pair that failed; the report reads only the reason
     "card_id",
     # a card's recall state says when a form was last reproduced, which the page
