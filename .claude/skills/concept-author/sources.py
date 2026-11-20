@@ -1,17 +1,15 @@
-"""Read a module's source from the library: `sources.py <url>` prints the folder
-holding its text, one file per PDF page, and the date it was fetched.
-
-The library is `library/` in the content repository, committed: the original
-file beside its text, so a cited `#page=` names a page of a copy git holds.
-Wikipedia changes with every edit, so it is cached in the engine's gitignored
-`data/` instead.
+"""Read a module's source from the library: `sources.py <url> [--on <date>]`
+prints the folder of the snapshot that date names, or of the latest, and the
+date it was fetched. `docs/authoring/concepts.md` gives the layout.
 """
 
 import argparse
 import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from datetime import date
 from html.parser import HTMLParser
@@ -21,6 +19,8 @@ ENGINE = Path(__file__).resolve().parents[3]
 CACHE = ENGINE / "data" / "sources"
 UNCOMMITTED = ("wikipedia.org",)
 SKIPPED = {"script", "style", "nav", "header", "footer"}
+# docs.python.org rebuilds daily, and a rebuild moves this line alone
+STAMPS = (re.compile(r"^\s*Last updated on .+ \(\d\d:\d\d UTC\)\.\s*$", re.M),)
 
 
 class Text(HTMLParser):
@@ -56,13 +56,27 @@ def folder(url: str, content: Path) -> Path:
     return content / "library" / name
 
 
-def fetch(url: str, into: Path) -> dict:
-    bare = url.split("#")[0]
-    request = urllib.request.Request(bare, headers={"User-Agent": "source-cache"})
+def snapshots(source: Path) -> list[Path]:
+    if not source.is_dir():
+        return []
+    return sorted(p for p in source.iterdir() if (p / "meta.json").exists())
+
+
+def text(snapshot: Path) -> list[str]:
+    pages = [p.read_text() for p in sorted(snapshot.glob("page-*.txt"))]
+    for stamp in STAMPS:
+        pages = [stamp.sub("", page) for page in pages]
+    return pages
+
+
+def download(url: str) -> tuple[bytes, str]:
+    request = urllib.request.Request(url, headers={"User-Agent": "source-cache"})
     with urllib.request.urlopen(request, timeout=60) as response:
-        body = response.read()
-        kind = response.headers.get_content_type()
-    into.mkdir(parents=True, exist_ok=True)
+        return response.read(), response.headers.get_content_type()
+
+
+def write(url: str, body: bytes, kind: str, into: Path, on: date) -> dict:
+    into.mkdir(parents=True)
     if kind == "application/pdf" or body[:5] == b"%PDF-":
         (into / "source.pdf").write_bytes(body)
         text = subprocess.run(
@@ -82,26 +96,49 @@ def fetch(url: str, into: Path) -> dict:
     for number, page in enumerate(pages, 1):
         (into / f"page-{number:03}.txt").write_text(page)
     meta = {
-        "url": bare,
-        "fetched_on": date.today().isoformat(),
+        "url": url,
+        "fetched_on": on.isoformat(),
         "pages": len(pages),
     }
     (into / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     return meta
 
 
+def fetch(url: str, source: Path, on: date, body: bytes, kind: str) -> Path:
+    """Keep the fetch as the snapshot of `on`, unless its text matches."""
+    bare = url.split("#")[0]
+    with tempfile.TemporaryDirectory() as scratch:
+        fresh = Path(scratch) / "snapshot"
+        write(bare, body, kind, fresh, on)
+        if (kept := snapshots(source)) and text(kept[-1]) == text(fresh):
+            return kept[-1]
+        into = source / on.isoformat()
+        shutil.rmtree(into, ignore_errors=True)
+        source.mkdir(parents=True, exist_ok=True)
+        shutil.move(fresh, into)
+        return into
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("url")
     parser.add_argument("--content", type=Path, default=ENGINE / "content", help="the repository")
-    parser.add_argument("--refresh", action="store_true", help="fetch again, a new edition")
+    parser.add_argument("--on", type=date.fromisoformat, help="the snapshot fetched on this date")
+    parser.add_argument(
+        "--refresh", action="store_true", help="fetch again, kept if the text moved"
+    )
     args = parser.parse_args()
-    into = folder(args.url, args.content)
-    meta_path = into / "meta.json"
-    if meta_path.exists() and not args.refresh:
-        meta = json.loads(meta_path.read_text())
+    source = folder(args.url, args.content)
+    kept = snapshots(source)
+    if args.on:
+        into = source / args.on.isoformat()
+        if into not in kept:
+            sys.exit(f"no snapshot of {args.url} on {args.on}: {[p.name for p in kept]}")
+    elif kept and not args.refresh:
+        into = kept[-1]
     else:
-        meta = fetch(args.url, into)
+        into = fetch(args.url, source, date.today(), *download(args.url.split("#")[0]))
+    meta = json.loads((into / "meta.json").read_text())
     sys.stdout.write(f"{into}\nfetched {meta['fetched_on']}, {meta['pages']} page(s)\n")
     if wanted := re.search(r"#page=(\d+)", args.url):
         sys.stdout.write(f"{into / f'page-{int(wanted.group(1)):03}.txt'}\n")

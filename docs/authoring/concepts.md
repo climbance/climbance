@@ -76,8 +76,19 @@ the coverage map for a module written by concept.
   repository.** `sources.py` in the `concept-author` skill fetches a source
   once, and the library keeps the original file beside its text, one file per
   PDF page. Both are committed, so a `#page=` in a `source` names a page of a
-  copy git holds, and a later edition shows as a diff. Wikipedia changes with
-  every edit, so it is cached in the engine's gitignored `data/` instead.
+  copy git holds. Wikipedia changes with every edit, so it is cached in the
+  engine's gitignored `data/` instead, in the same layout.
+- **The library keeps each source as dated snapshots.** A snapshot is the
+  folder `library/<source>/<fetched_on>/`, holding `source.html` or
+  `source.pdf`, a `page-<n>.txt` per page and `meta.json`. `<source>` is the
+  URL without its scheme and fragment, each run of other characters made `-`.
+  Two runs fetching one page on different days keep two snapshots, so a
+  quote's `read_on` names the snapshot it was read in.
+- **`sources.py <url>` reads the latest snapshot, and `--on <date>` reads the
+  snapshot fetched that day.** `--refresh` fetches again, and keeps the fetch
+  as today's snapshot only when its text differs from the latest snapshot's.
+  The comparison drops a page's build stamp first: docs.python.org is rebuilt
+  daily, and a rebuild changes its "Last updated on" line alone.
 - **A writer or a reviewer reads a source's text files alone.** The original
   PDF or HTML is kept only for extracting the text again, with another tool or
   another layout. Parsing it while citing would give two sessions two texts of
