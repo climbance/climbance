@@ -63,7 +63,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f("limit_raises_user_id_idx"), "limit_raises", ["user_id"], unique=False)
 
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     for table in APPEND_ONLY:
         op.execute(
             f"CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON {table}"

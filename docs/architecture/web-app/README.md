@@ -6,8 +6,9 @@ holds the same tree of pages, and `../core-package/screens.md` lists every
 screen of both clients.
 
 `../flows.md` gives the steps of a flow and their order. The page files give
-what the user sees at a step, and which page holds it. `../wireframes.md`
-draws each of those steps at low fidelity.
+what the user sees at a step, and which page holds it. Beside each page's
+`README.md`, a file per screen draws that screen at low fidelity, as
+`## Wireframes` gives.
 
 | File | Holds |
 |---|---|
@@ -98,12 +99,13 @@ Account       the guide, the settings, the signed-in devices, the sign-out
 | `/settings` | reads the account, sets the daily limit and the exam size, syncs, restores an archived module, sends feedback, exports the record and deletes the account | none | [`settings`](pages/settings/README.md) |
 | `/login` | signs in | none | [`login`](pages/login/README.md) |
 | `/privacy` | reads the privacy policy | none | [`privacy`](pages/privacy/README.md) |
+| any other path | reads that no page is there | none | [`not-found`](pages/not-found/README.md) |
 | `/gallery` | reads the design system, in development alone | none | [`gallery`](pages/gallery/README.md) |
 
 ## Paths
 
 - **A page's path names the record the page serves**, so a reload reaches the
-  same page. `../README.md` gives how the server answers a path naming no
+  same page. `../api/README.md` gives how the server answers a path naming no
   file.
 - **A page loads the record its path names.** The picked problem is read as its
   own record rather than found in the technique's candidates, since a page
@@ -126,6 +128,20 @@ Account       the guide, the settings, the signed-in devices, the sign-out
 - **The knowledge module keeps a copy of its content and of the user's log in
   the browser too**, in IndexedDB. `../core-package/knowledge/store.md` gives
   why the native app and the web app keep the same copy.
+
+## Wireframes
+
+A wireframe is a page's screen drawn at low fidelity, as text in a fenced
+block. Each page's folder holds a file per screen beside its `README.md`, such
+as `pages/problems/problem/paused.md` for the sitting with its clock paused.
+
+- **A wireframe fixes what sits on a page and in what order.** The size of a
+  box, the weight of a line and the wording of a label are the design system's
+  to answer, and a wireframe fixing them would be redrawn at every restyle.
+- **A wireframe is read against the page's `README.md`, never against the
+  code.** The pages are rebuilt on these wireframes, so a wireframe copied from
+  the pages as they stand would license the layout the rebuild exists to
+  replace.
 
 ## Rules a page holds, specified elsewhere
 

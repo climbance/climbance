@@ -128,9 +128,10 @@ def shapes(schema: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 @pytest.mark.parametrize("record", RECORDS, ids=lambda record: record.__name__)
 def test_a_schema_change_is_additive(record: type[BaseModel]):
-    """`README.md`: a change adds an optional field, and never removes one,
-    requires one that was not, changes what one holds or drops an enum
-    member, since the stored log has to stay readable by its own schema.
+    """`concepts/repo-constraints.md`: a change adds an optional field, and
+    never removes one, requires one that was not, changes what one holds or
+    drops an enum member, since the stored log has to stay readable by its own
+    schema.
 
     The snapshot under `tests/schemas/` is the shape as last agreed. An
     intended tightening rewrites it in the same commit: `just schemas`.

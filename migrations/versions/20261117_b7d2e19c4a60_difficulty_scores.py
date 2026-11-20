@@ -54,7 +54,7 @@ def upgrade() -> None:
         sa.UniqueConstraint("appended", name=op.f("difficulty_ratings_appended_key")),
     )
     op.create_index(op.f("difficulty_ratings_problem_id_idx"), "difficulty_ratings", ["problem_id"])
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     op.execute(TRIGGER)
 
 

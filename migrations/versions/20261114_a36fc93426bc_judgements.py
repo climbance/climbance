@@ -38,7 +38,7 @@ def upgrade() -> None:
     op.create_index(op.f("judgements_item_id_idx"), "judgements", ["item_id"], unique=False)
     op.create_index(op.f("judgements_user_id_idx"), "judgements", ["user_id"], unique=False)
 
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     op.execute(
         "CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON judgements"
         " FOR EACH STATEMENT EXECUTE FUNCTION refuse_rewrite()"

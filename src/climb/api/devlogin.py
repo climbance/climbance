@@ -1,5 +1,6 @@
 """Signing in with no provider, as the user `CLIMB_DEV_LOGIN` names, for
-local work: `README.md` gives the guards that keep it off a deployed engine."""
+local work: `api/sign-in.md` gives the guards that keep it off a deployed
+engine."""
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool

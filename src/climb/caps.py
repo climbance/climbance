@@ -1,4 +1,4 @@
-"""How many runs of one kind a user may start: `docs/architecture/README.md`."""
+"""How many runs of one kind a user may start: `api/submission.md`."""
 
 from collections.abc import Callable
 from datetime import datetime, timedelta

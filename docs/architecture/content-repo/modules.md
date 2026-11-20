@@ -26,8 +26,8 @@ and system design. A user answers its questions from memory.
   writing the files live.
 - **A module, a topic, a subtopic, a question and a lesson each carry an
   engine-minted id**, and the seed matches each by its authored slug. A log
-  record then references a minted id, as `../README.md` requires of every
-  append-only record.
+  record then references a minted id, as `../concepts/invariants.md` requires
+  of every append-only record.
 
 ## Techniques
 

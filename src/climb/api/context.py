@@ -24,7 +24,7 @@ def bearer_of(request: Request) -> str | None:
 
 def _user_id(request: Request, root: Root) -> str:
     # an app's bearer token or the pages' session, read on every request, so a
-    # revoked one ends at once. Each reaches every route: `README.md`
+    # revoked one ends at once. Each reaches every route: `api/app-tokens.md`
     token = bearer_of(request)
     if token:
         user_id = app_user_of(root, token)

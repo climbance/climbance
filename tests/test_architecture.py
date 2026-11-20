@@ -222,8 +222,8 @@ def test_every_path_the_docs_name_exists():
 
 
 def test_a_record_keyed_to_an_attempt_carries_what_the_log_needs():
-    """`README.md`: an engine-minted `id`, its `attempt_id` and `created_at`,
-    each required, so one reader orders all of them."""
+    """`concepts/invariants.md`: an engine-minted `id`, its `attempt_id` and
+    `created_at`, each required, so one reader orders all of them."""
     keyed = [
         cls
         for _, cls in inspect.getmembers(schema, inspect.isclass)
@@ -255,10 +255,10 @@ APPEND_ONLY = (
 
 
 def test_the_stores_write_as_the_data_class_table_says():
-    """`README.md`: attempts, claims, cases, solutions, solution claims,
-    matches, site outcomes and calls are append-only; drafts and sittings are
-    revised in place; a problem is created once and only its status moves; cards
-    are re-seeded by slug."""
+    """`database/README.md`: attempts, claims, cases, solutions, solution
+    claims, matches, site outcomes and calls are append-only; drafts and
+    sittings are revised in place; a problem is created once and only its status
+    moves; cards are re-seeded by slug."""
     # by what a store can do rather than by its base: a store's backend moves
     # under it, and its write semantics do not
     for log in APPEND_ONLY:

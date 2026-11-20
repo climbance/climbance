@@ -1,7 +1,7 @@
 # The two clients
 
 Every screen either client holds, in one inventory, and the reasons the two
-clients differ where they do. `../README.md` gives the rule: a platform may
+clients differ where they do. `README.md` gives the rule: a platform may
 change how a thing looks and how it is used, and never what it offers. The
 inventory is the list both clients build to. A page's own file under
 `../web-app/pages/` gives what the page offers on both clients.

@@ -355,21 +355,21 @@ flowchart LR
 
 The load-bearing invariants:
 
-- **[The log is append-only.](docs/architecture/README.md#invariants)** No
+- **[The log is append-only.](docs/architecture/concepts/invariants.md)** No
   record is revised or removed in place. Component boundaries can therefore be
   refactored, and the record schema cannot. The schema is designed a phase
   ahead of the features on purpose.
-- **[Identity is the engine's.](docs/architecture/README.md#invariants)** Every
-  reference in an append-only record is one the engine minted, so the log stays
-  readable on its own.
+- **[Identity is the engine's.](docs/architecture/concepts/invariants.md)**
+  Every reference in an append-only record is one the engine minted, so the log
+  stays readable on its own.
 - **[The user's record stands over the
   machine's](docs/architecture/api/attempt-claims.md)** answer to the same
   question, whichever was written later. The machine's record is kept and
   scored, never deleted and never promoted.
-- **[Aggregates are derived views](docs/architecture/README.md#invariants)**,
+- **[Aggregates are derived views](docs/architecture/concepts/invariants.md)**,
   never stored truth: the board, a card's ladder, mastery.
 - **[No third-party problem statements or test cases in
-  git](docs/architecture/README.md#repo-constraints)**, in any repo. The engine
+  git](docs/architecture/concepts/invariants.md)**, in any repo. The engine
   contacts no external platform, and no platform client lives here.
 
 If you read one section, read **[technique

@@ -275,7 +275,7 @@ def _top(line: str) -> str:
 )
 def test_the_seed_refuses_malformed_authored_structure(tmp_path, files, refusal):
     """The JSONB column would store whatever it was given, so the record's
-    model refuses it first: `README.md`, Storage."""
+    model refuses it first: `database/README.md`."""
     found = refusals(read_module(authored(tmp_path, **files)))
 
     assert any(refusal in one for one in found), found

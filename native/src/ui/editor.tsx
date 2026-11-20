@@ -41,7 +41,7 @@ export interface EditorHandle {
 
 /**
  * The phone's Python editor: CodeMirror in a WebView, set up as the web's is,
- * typed through the app's keyboard. `README.md` gives why the editor alone is
+ * typed through the app's keyboard. `native-app/README.md` gives why the editor alone is
  * a WebView.
  */
 export function CodeEditor({

@@ -1,6 +1,6 @@
-"""Signing in through Google or GitHub: `README.md` gives why the engine holds
-no password. Authlib runs the round trip and checks the state, the nonce and
-PKCE; this module reads who signed in."""
+"""Signing in through Google or GitHub: `api/sign-in.md` gives why the engine
+holds no password. Authlib runs the round trip and checks the state, the nonce
+and PKCE; this module reads who signed in."""
 
 import logging
 from collections.abc import Awaitable, Callable, Mapping

@@ -4,6 +4,8 @@ The page at `/start` on the web and the Guide screen on the phone, under no
 section. The guide says what each kind of practice trains and where a new
 user starts.
 
+[`guide.md`](guide.md) draws the page at low fidelity.
+
 - **The guide says what each kind of practice trains and where to start.**
   It names the sitting, the recall, judging a solution, filling a key line
   and a question, each with what it trains and where it is reached. Under the

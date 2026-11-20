@@ -83,7 +83,7 @@ jobs:
 
   # The image, then one command to the server. The server's key carries a
   # forced command, so the argument below is all this job decides: which image
-  # to run. `docs/architecture/README.md` gives why the server pulls the
+  # to run. `docs/architecture/concepts/deployment.md` gives why the server pulls the
   # compose file out of that image rather than cloning this repo.
   deploy:
     needs: check
@@ -117,7 +117,7 @@ jobs:
           # reinstalls none
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      # the address is a secret, as `README.md` requires. The key's own
+      # the address is a secret, as `docs/architecture/concepts/deployment.md` requires. The key's own
       # `known_hosts` entry is checked, so a redirected host answers nothing
       - env:
           KEY: ${{ secrets.DEPLOY_KEY }}

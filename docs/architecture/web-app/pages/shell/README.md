@@ -3,6 +3,9 @@
 The parts every signed-in page sits in: the navigation, the account menu, the
 signed-in devices and the error screen that replaces a page that threw.
 
+[`frame.md`](frame.md) draws the navigation and the header at low fidelity, and
+[`readings.md`](readings.md) draws a page loading, failed and empty.
+
 ## The navigation
 
 - **The navigation names four sections: Practice, Problems, Cards and

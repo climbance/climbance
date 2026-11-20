@@ -3,6 +3,8 @@
 The page at `/settings` and the phone's Settings screen, under no section.
 The account menu opens it, as `../shell/README.md` gives.
 
+[`settings.md`](settings.md) draws the page at low fidelity.
+
 - **The settings are a page of their own, `/settings`, as on the phone.** The
   page reads as the phone's Settings screen does: the account first, then
   the Study settings, the daily limit on new questions and the exam size.

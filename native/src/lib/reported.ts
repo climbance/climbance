@@ -4,7 +4,7 @@ import { errorReport, reportError } from '@climb/core';
 import { engine } from '@/lib/engine';
 import { getToken } from '@/lib/settings';
 
-/** Sends an error the app did not handle to the author: `README.md`, Boundaries. */
+/** Sends an error the app did not handle to the author: `api/README.md`. */
 export async function reported(origin: string, error: unknown, page: string) {
   const token = await getToken().catch(() => null);
   // signed out, or no engine named: the engine takes a report from a session alone

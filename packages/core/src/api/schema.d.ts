@@ -699,8 +699,8 @@ export interface paths {
     put?: never;
     /**
      * Error Reported
-     * @description One line in the API's log, which the host keeps 14 days: `README.md`,
-     *     Boundaries.
+     * @description One line in the API's log, which the host keeps 14 days:
+     *     `api/README.md`.
      */
     post: operations['error_reported_api_errors_post'];
     delete?: never;
@@ -1884,7 +1884,7 @@ export interface components {
     };
     /**
      * Provider
-     * @description Who holds an identity and its login: `README.md`.
+     * @description Who holds an identity and its login: `api/sign-in.md`.
      * @enum {string}
      */
     Provider: 'google' | 'github';

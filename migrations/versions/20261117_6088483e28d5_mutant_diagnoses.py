@@ -40,7 +40,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("mutant_diagnoses_pkey")),
         sa.UniqueConstraint("appended", name=op.f("mutant_diagnoses_appended_key")),
     )
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     op.execute(
         "CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON mutant_diagnoses"
         " FOR EACH STATEMENT EXECUTE FUNCTION refuse_rewrite()"

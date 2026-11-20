@@ -1,5 +1,5 @@
 """The native app's sign-in: a one-time code bound to a PKCE challenge, then a
-token the app keeps. `README.md` gives the rules."""
+token the app keeps. `api/app-tokens.md` gives the rules."""
 
 import base64
 import hashlib

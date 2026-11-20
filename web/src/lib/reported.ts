@@ -2,7 +2,7 @@ import { errorReport, reportError } from '@climb/core'
 
 import { api } from '@/api/client'
 
-/** Sends an error this page did not handle to the author: `README.md`, Boundaries. */
+/** Sends an error this page did not handle to the author: `api/README.md`. */
 export const reported = (error: unknown) =>
   void reportError(api, errorReport(error, 'web', __BUILT__, window.location.pathname))
 

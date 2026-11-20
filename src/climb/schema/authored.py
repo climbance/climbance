@@ -1,5 +1,5 @@
 """The authored structure a content row holds as JSONB, typed so the seed
-refuses a malformed one: `README.md`, Storage."""
+refuses a malformed one: `database/README.md`."""
 
 from typing import Annotated, Literal
 

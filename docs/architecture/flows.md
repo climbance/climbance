@@ -689,7 +689,8 @@ The page layout is not designed here, and using the loop decides it.
   the claim has just framed.
 - **One press stores the claim and the label.** The two answer one attempt, so
   a press each would have the solver confirm the same attempt twice.
-  `wireframes.md` draws the overlay the two are asked in.
+  `web-app/pages/problems/problem/claim-and-label.md` draws the overlay the
+  two are asked in.
 - **A skipped label stops nothing.** The loop moves to the next attempt of the
   sitting, and the attempt stays unlabelled. `api/self-labels.md` gives what a
   skip leaves.

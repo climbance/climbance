@@ -4,6 +4,8 @@ The page at `/techniques/:technique` and the phone's Technique screen: a
 technique's cards and the problems a user picks from. The board opens it, as
 `../board/README.md` gives.
 
+[`candidates.md`](candidates.md) draws the page at low fidelity.
+
 - **A technique's page lists its cards, then its problems, on both clients.**
   The cards are those teaching the technique or a narrower one, each as its
   row on the cards list reads. A row carries the card's progress and its

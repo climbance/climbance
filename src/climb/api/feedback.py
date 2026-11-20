@@ -57,8 +57,8 @@ class ErrorReport(BaseModel):
 
 @router.post("/errors", status_code=204)
 def error_reported(user_id: UserId, body: ErrorReport) -> Response:
-    """One line in the API's log, which the host keeps 14 days: `README.md`,
-    Boundaries."""
+    """One line in the API's log, which the host keeps 14 days:
+    `api/README.md`."""
     at = datetime.now(UTC)
     times = _reported[user_id]
     while times and at - times[0] > timedelta(minutes=1):

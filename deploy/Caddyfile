@@ -1,6 +1,6 @@
 # The one public entry to the engine. Caddy issues and renews the certificate
 # for CLIMB_DOMAIN, and hands every request to the API, which serves the
-# pages beside `/api`. `docs/architecture/README.md` gives why the pages and the
+# pages beside `/api`. `docs/architecture/api/README.md` gives why the pages and the
 # API share one origin.
 
 {$CLIMB_DOMAIN} {

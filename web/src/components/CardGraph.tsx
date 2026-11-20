@@ -17,9 +17,10 @@ interface Drawn extends CardEdge {
 }
 
 /**
- * The card graph's edges, drawn in a gutter left of the rows: `wireframes.md`,
- * The cards. Rows are found by `data-card` inside `children`, so the sections
- * and panels lay out as any list does and the gutter follows them.
+ * The card graph's edges, drawn in a gutter left of the rows, as
+ * `docs/architecture/web-app/pages/cards/cards/cards.md` draws them. Rows are
+ * found by `data-card` inside `children`, so the sections and panels lay out
+ * as any list does and the gutter follows them.
  */
 export function CardGraph({
   edges,

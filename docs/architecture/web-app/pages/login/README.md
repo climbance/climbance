@@ -1,7 +1,9 @@
 # The login
 
 The page at `/login` and the phone's Login screen, under no section and open
-without a session. `../../../README.md` `## Boundaries` gives the sign-in flow.
+without a session. `../../../api/sign-in.md` gives the sign-in flow.
+
+[`login.md`](login.md) draws the page at low fidelity.
 
 - **The login page and the privacy policy carry no navigation.** The two pages
   open without a session, and every section behind the menu answers 401 to a

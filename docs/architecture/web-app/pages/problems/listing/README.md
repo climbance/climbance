@@ -3,6 +3,8 @@
 The page at `/problems`, the root of Problems, and the phone's Problems tab:
 every problem the corpus serves, filtered and read in pages.
 
+[`listing.md`](listing.md) draws the page at low fidelity.
+
 ## Filters
 
 - **The listing filters by two things a problem carries: its techniques and its

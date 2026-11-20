@@ -54,8 +54,8 @@ def test_only_the_status_of_a_stored_problem_moves(database):
 
 
 def test_a_problem_carrying_its_view_is_refused(database):
-    """`README.md`: `techniques` is derived from the solution claims, and a
-    record stored with it would be truth nothing re-derives."""
+    """`concepts/invariants.md`: `techniques` is derived from the solution
+    claims, and a record stored with it would be truth nothing re-derives."""
     with pytest.raises(ValueError, match="carries a view"):
         ProblemStore(database).put(make_problem(techniques=["greedy"]))
 

@@ -631,14 +631,14 @@ def test_a_draft_s_rules_hold_in_the_table():
 
 def test_a_user_is_the_engine_s_own_id_and_nothing_of_an_account():
     """A private record's `user_id` references this row, and a provider switch
-    would otherwise rewrite the log: `README.md`."""
+    would otherwise rewrite the log: `api/sign-in.md`."""
     assert [one.name for one in users.columns] == ["id", "created_at"]
     assert users.c.id.primary_key and not users.c.created_at.nullable
 
 
 def test_an_identity_is_the_provider_s_id_for_an_account_linked_to_a_user():
     """Keyed by the provider's own id, which one account keeps where its email
-    moves, and linking the user the records reference: `README.md`."""
+    moves, and linking the user the records reference: `api/sign-in.md`."""
     assert [one.name for one in identities.primary_key.columns] == [
         "provider",
         "provider_user_id",
@@ -670,7 +670,7 @@ def test_an_invitation_is_an_email_stored_as_it_is_matched():
 
 def test_a_session_ends_when_it_expires_or_is_revoked():
     """A stored session can be revoked before it expires, where a signed token
-    stands until then: `README.md`."""
+    stands until then: `api/sign-in.md`."""
     assert [key.target_fullname for key in sessions.c.user_id.foreign_keys] == ["users.id"]
     assert not sessions.c.expires_at.nullable and sessions.c.revoked_at.nullable
     assert checks(sessions) == {
@@ -681,7 +681,7 @@ def test_a_session_ends_when_it_expires_or_is_revoked():
 
 def test_an_attempt_references_its_user_problem_and_sitting():
     """Every reference in an append-only record is engine-minted, and the table
-    refuses one that names nothing: `README.md`."""
+    refuses one that names nothing: `concepts/invariants.md`."""
     targets = {
         column.name: key.target_fullname
         for column in attempts.columns
@@ -734,14 +734,14 @@ def test_an_attempt_claim_s_rules_hold_in_the_table():
 
 
 def test_every_record_keyed_to_an_attempt_references_it():
-    """`README.md`: a record keyed to an attempt carries its `attempt_id`, and
-    the table refuses one naming no attempt."""
+    """`concepts/invariants.md`: a record keyed to an attempt carries its
+    `attempt_id`, and the table refuses one naming no attempt."""
     for table in (attempt_verifications, attempt_claims, self_labels, diagnoses):
         (key,) = table.c.attempt_id.foreign_keys
         assert key.target_fullname == "attempts.id"
 
 
-# the append-only data classes of `README.md`
+# the append-only data classes of `database/README.md`
 APPEND_ONLY = {
     "calls",
     "test_cases",

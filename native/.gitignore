@@ -42,6 +42,6 @@ example
 /ios
 /android
 
-# the signing key and the engine's address stay out of a public repo: README.md
+# the signing key and the engine's address stay out of a public repo: docs/architecture/concepts/deployment.md
 /signing/
 .env

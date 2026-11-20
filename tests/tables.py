@@ -109,7 +109,7 @@ def _typed(column: Column[Any], annotation: object) -> bool:
         # JSON of any shape: a stored `null` is a value, so NOT NULL still holds
         return isinstance(kind, JSONB)
     if typing.get_origin(annotation) is dict or _authored(annotation):
-        # any shape, or a seeded row's authored structure: `README.md`
+        # any shape, or a seeded row's authored structure: `database/README.md`
         return isinstance(kind, JSONB)
     if typing.get_origin(annotation) is list:
         (item,) = typing.get_args(annotation)

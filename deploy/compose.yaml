@@ -1,6 +1,6 @@
 # What the server runs. The server extracts this file from the image it pulled
 # and starts it with `docker compose up -d`, so a deploy needs no checkout of
-# this repo. `docs/architecture/README.md` gives the shape it describes: one
+# this repo. `docs/architecture/concepts/deployment.md` gives the shape it describes: one
 # server, the API and Postgres on it, and the broker starting a run's container.
 #
 # `.env` sits beside this file on the server and is held nowhere else. It names

@@ -56,7 +56,7 @@ def upgrade() -> None:
         op.f("setting_changes_user_id_idx"), "setting_changes", ["user_id"], unique=False
     )
 
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     op.execute(
         "CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON setting_changes"
         " FOR EACH STATEMENT EXECUTE FUNCTION refuse_rewrite()"

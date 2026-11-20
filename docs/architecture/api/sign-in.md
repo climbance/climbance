@@ -1,9 +1,70 @@
 # Sign-in
 
-The engine's user, whose id every private record carries. The providers, the
-identities, the sessions and the invitations are still in `../README.md` `##
-Boundaries`, under "Google and GitHub hold each identity and its login", until
-`split-readme-doc` moves them here.
+The engine's user, whose id every private record carries, and the way a person
+reaches it. Google and GitHub hold each identity and its login. A person signs
+in through one of the two, and the engine stores no password. Password resets,
+second factors and leaked credentials are the provider's to handle, so no
+credential handling is the engine's own.
+
+`app-tokens.md` gives how the native app signs in through the same flow.
+
+## Providers and identities
+
+- **The engine runs the sign-in flow itself, through Authlib, which checks the
+  state, the nonce and PKCE.** A managed account provider is rejected: its
+  login and its tokens live on its own domain, and the session cookie stays on
+  the pages' origin.
+- **An `identities` row links a provider's user id to a user id the engine
+  mints at the first sign-in.** The log keys on the engine's id, so adding or
+  replacing a provider rewrites no record.
+- **A new account whose email matches another account's joins that account's
+  user, so one person reaches one log through Google or GitHub.** The email
+  counts only where the provider verified it. An address added and never
+  verified would otherwise join the log of whoever holds that address.
+- **Sign-in by email is deferred until a user needs it.** An emailed link, a
+  managed provider or a company's own sign-in would each be one more provider
+  an `identities` row names.
+
+## Invitations
+
+- **Sign-in is by invitation.** The callback refuses a verified email the
+  `invitations` table does not hold, before any user, identity or session is
+  stored. A signed-in user's code runs on the engine, so open registration is
+  an abuse surface with no upside at this size.
+- **An invitation is added, withdrawn and listed by `climb invite`.** A
+  withdrawn invitation stops the next sign-in. The dev login is never gated,
+  since it answers on loopback alone.
+
+## Sessions
+
+- **The engine keeps each session in Postgres for 30 days, and sets the
+  session's token in an `HttpOnly`, `SameSite=Lax` cookie.** A stored session
+  can be revoked, where a signed token stands until it expires.
+- **The table holds the hash of each token, and never the token.** A copy of
+  the table then signs nobody in.
+- **A request naming a user without a live session answers 401, and the pages
+  send the browser to the login page.** The login page offers each configured
+  provider and the dev login, and needs no session itself.
+- **Signing out revokes the session and clears its cookie.** A copy of the
+  cookie kept elsewhere then signs nobody in either.
+- **A session records when it last signed a request in and the user agent it
+  was opened by, as an app's token records its device.** Two browsers on one
+  account then read apart in the list.
+- **The account menu lists every signed-in device, each browser's session and
+  each app's token, and revokes any one of them, on either client.** Signing
+  out in the app revokes that app's token.
+
+## The dev login
+
+- **A dev login signs in with no provider, for local work, as the user
+  `CLIMB_DEV_LOGIN` names.** Setting the variable enables the dev login, and
+  two guards keep it off a deployed engine.
+- **The app refuses to start with the flag beside a provider's client.** A
+  deployed engine signs its users in through a provider, so it carries one.
+- **The dev login answers only a request that arrived at a loopback address.**
+  Another machine's request never does, however the server is bound. The app
+  cannot check the bound address at start, since it is built before the server
+  binds one.
 
 ## The hosted log
 

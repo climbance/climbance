@@ -56,7 +56,8 @@ def test_a_trial_carries_the_members_configuration():
 
 
 def test_a_stored_trial_reads_back_and_is_never_rewritten(database):
-    """Product data, append-only, as `README.md`'s data classes give."""
+    """Product data, append-only, as the data classes of `database/README.md`
+    give."""
     ProblemStore(database).put(make_problem())
     TrialLog(database).append(trial())
 

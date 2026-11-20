@@ -27,7 +27,7 @@ SCRIPT = (Path(__file__).parent.parent / "runner" / "child.py").read_text()
 # a broker that died mid-run left
 LABEL = "climb.run"
 
-# gVisor, named here and never by a request: `docs/architecture/README.md`
+# gVisor, named here and never by a request: `sandbox/README.md`
 RUNTIME = "runsc"
 # nobody, by number, so the image's own user list decides nothing
 USER = "65534:65534"

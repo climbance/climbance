@@ -16,7 +16,7 @@ export const DEFAULTS: Settings = {
   reminderHour: 9,
 };
 
-// the engine's token for this app, never logged: `docs/architecture/README.md`
+// the engine's token for this app, never logged: `api/app-tokens.md`
 const TOKEN = 'app_token';
 
 export async function loadSettings(): Promise<Settings> {

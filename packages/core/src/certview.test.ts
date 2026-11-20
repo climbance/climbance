@@ -14,7 +14,7 @@ import {
   type Snapshot,
 } from './index';
 
-// the shared fixtures, which the Python side generates: `README.md`, Boundaries
+// the shared fixtures, which the Python side generates: `core-package/README.md`
 const fixtures = JSON.parse(
   readFileSync(resolve(__dirname, '../../../tests/fixtures/knowledge/scheduling.json'), 'utf8'),
 );

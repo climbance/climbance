@@ -13,8 +13,9 @@ down_revision: str | Sequence[str] | None = "24d3fa6eee53"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-# the append-only records, `README.md`'s invariants, and the case results a run
-# is stored with. Written out: a migration keeps the list it was applied with
+# the append-only records of `concepts/invariants.md`, and the case results a
+# run is stored with. Written out: a migration keeps the list it was applied
+# with
 APPEND_ONLY = (
     "calls",
     "test_cases",

@@ -4,6 +4,8 @@ The page at `/knowledge/exam`: a level exam's choices or a certification's,
 then the exam itself. The phone takes its choices on the Exam screen and runs
 the exam on the quiz screen, as `../../../../core-package/screens.md` gives.
 
+[`level-exam.md`](level-exam.md) draws the page at low fidelity.
+
 - **Exam opens on the focus**, on either client, as
   `../../../../core-package/knowledge/queues.md` gives. The focus is a record
   of the log, so a focus aimed on the phone opens the same exam on the web.

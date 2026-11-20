@@ -2,7 +2,7 @@
 
 Nine append-only tables hold the user's knowledge log, one per kind of event.
 Each is private to the user, and each refuses an update and a delete by a
-trigger, as `../README.md` requires.
+trigger, as `../database/README.md` requires.
 
 ## Every record
 

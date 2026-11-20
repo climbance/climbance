@@ -60,7 +60,7 @@ A lesson's pretest is a different thing, as
   ordinary answers they would make those questions weak, and the review
   queue would serve them before their lesson is read.
 - **The rule exists in Python and in `packages/core`**, held together by the
-  shared fixtures, as `../../README.md` gives for the schedule.
+  shared fixtures, as `../README.md` gives for the schedule.
 - **The baseline's questions are read from its answers**, never stored as a
   list. A topic has one baseline test, so the answers measuring `baseline` on
   that topic's questions are the test.

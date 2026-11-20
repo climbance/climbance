@@ -5,7 +5,7 @@ import { type components, refusal, SIGN_IN_CANCELLED, SIGN_IN_NO_CODE } from '@c
 
 import { call, engine } from './engine';
 
-// the engine redirects here, a constant on both sides: `docs/architecture/README.md`.
+// the engine redirects here, a constant on both sides: `api/app-tokens.md`.
 // The dev app has a scheme of its own, so the release app never receives its code
 export const REDIRECT = __DEV__ ? 'climbancedev://signed-in' : 'climbance://signed-in';
 const CLIENT = __DEV__ ? 'app-dev' : 'app';

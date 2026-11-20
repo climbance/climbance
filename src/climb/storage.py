@@ -1,7 +1,7 @@
 """What every store is built on: the database handle, the append-only `Log`, and
 the conventions the Postgres tables are declared against, as
-`docs/architecture/README.md` gives them. The schema is the contract, and this
-is what sits underneath it."""
+`docs/architecture/database/README.md` gives them. The schema is the contract,
+and this is what sits underneath it."""
 
 from collections.abc import Generator
 from contextlib import contextmanager

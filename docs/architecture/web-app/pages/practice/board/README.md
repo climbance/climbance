@@ -3,6 +3,9 @@
 The page at `/`, the root of Practice, and the phone's Practice tab. The board
 is the overview of the user's practice, and serves the scheduler's pick.
 
+[`before-the-first-act.md`](before-the-first-act.md) and [`board.md`](board.md)
+draw the page's screens at low fidelity.
+
 ## Landing
 
 - **A signed-in user lands on the board, on both clients.** Every sitting

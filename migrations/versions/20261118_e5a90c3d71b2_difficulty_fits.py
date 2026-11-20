@@ -54,7 +54,7 @@ def upgrade() -> None:
         ["fit_id"],
         ["id"],
     )
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     for table in ("difficulty_fits", "difficulty_fit_members"):
         op.execute(
             f"CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON {table}"

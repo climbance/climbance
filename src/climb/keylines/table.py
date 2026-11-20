@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from climb.schema import CaseOutcome, ItemStatus
 from climb.storage import enumerated, metadata, timestamp
 
-# created once, and only the status moves: `README.md`, Data classes
+# created once, and only the status moves: `database/README.md`
 key_line_items = Table(
     "key_line_items",
     metadata,

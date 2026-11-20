@@ -4,6 +4,10 @@ The page at `/knowledge/queue` and the phone's quiz screen: one question at a
 time, from the next queue, the review queue or a filtered queue.
 `../../../../core-package/knowledge/queues.md` gives the queues.
 
+[`answered.md`](answered.md), [`asking.md`](asking.md),
+[`open-question.md`](open-question.md) and [`stopped.md`](stopped.md) draw the
+page's screens at low fidelity.
+
 ## The path and a reload
 
 - **The queue's path is `/knowledge/queue`, and `?mode=` names the queue**:

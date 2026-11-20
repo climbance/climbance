@@ -5,6 +5,10 @@ brief and its templates, its ladder and probes, and the press starting its
 run. `../../../../content-repo/cards.md` gives the card, and
 `../../../../flows.md` the flows a card starts.
 
+[`before-a-run.md`](before-a-run.md), [`card.md`](card.md),
+[`run-open.md`](run-open.md) and [`rung.md`](rung.md) draw the page's screens
+at low fidelity.
+
 - **The phone's card reads its ladder and its probes as the web's does.** A
   rung and a probe each open the phone's Problem screen, named by the card,
   and the sitting it opens returns to that card.

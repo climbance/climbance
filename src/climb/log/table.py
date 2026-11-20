@@ -42,15 +42,15 @@ users = Table(
 
 
 class Provider(StrEnum):
-    """Who holds an identity and its login: `README.md`."""
+    """Who holds an identity and its login: `api/sign-in.md`."""
 
     GOOGLE = "google"
     GITHUB = "github"
 
 
-# an account a person signs in with, linked to one user: `README.md` gives when
-# two accounts share one. Keyed by the provider's own id, which the account
-# keeps where its email moves
+# an account a person signs in with, linked to one user: `api/sign-in.md` gives
+# when two accounts share one. Keyed by the provider's own id, which the
+# account keeps where its email moves
 identities = Table(
     "identities",
     metadata,
@@ -65,7 +65,7 @@ identities = Table(
 )
 
 # an email allowed to sign in, whichever provider verified it. Sign-in is by
-# invitation alone: `README.md`
+# invitation alone: `api/sign-in.md`
 invitations = Table(
     "invitations",
     metadata,
@@ -94,7 +94,7 @@ sessions = Table(
 )
 
 # a one-time code the native app exchanges for its token, bound to the app's
-# PKCE challenge. Keyed by the code's hash, as a session is: `README.md`
+# PKCE challenge. Keyed by the code's hash, as a session is: `api/app-tokens.md`
 app_codes = Table(
     "app_codes",
     metadata,
@@ -109,7 +109,7 @@ app_codes = Table(
 )
 
 # a signed-in native app. Keyed by its token's hash, and alive while used: the
-# token expires once unused for the bound `README.md` gives
+# token expires once unused for the bound `api/app-tokens.md` gives
 app_tokens = Table(
     "app_tokens",
     metadata,

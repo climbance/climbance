@@ -1,5 +1,5 @@
 """The native app's side of signing in, whichever flow issued its code: a
-provider's, or the dev login's on a local engine. `README.md` gives the
+provider's, or the dev login's on a local engine. `api/app-tokens.md` gives the
 rules."""
 
 import re

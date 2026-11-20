@@ -77,8 +77,8 @@ def test_the_latest_record_stands_and_append_order_breaks_a_tie(records):
 
 @given(stamped("machine"), stamped("user"))
 def test_the_weaker_writer_never_stands_where_the_stronger_wrote(machine, user):
-    """`README.md`: the user's record stands over the machine's, whichever was
-    written later."""
+    """`concepts/invariants.md`: the user's record stands over the machine's,
+    whichever was written later."""
     stands = standing([*machine, *user], lambda one: one.key, by_what_each_knew=("machine", "user"))
     for record in user:
         assert stands[record.key].source == "user"

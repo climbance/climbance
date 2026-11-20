@@ -5,6 +5,10 @@ problem's record and statement, the sitting on it, the claim and the label
 asked after a solve, and the request to retire it. The page sits under
 Practice, as `../../shell/README.md` gives.
 
+[`claim-and-label.md`](claim-and-label.md), [`paused.md`](paused.md),
+[`phone-width.md`](phone-width.md) and [`sitting.md`](sitting.md) draw the
+page's screens at low fidelity.
+
 ## The page and its path
 
 - **The problem's page holds the statement and the sitting.** The path serves

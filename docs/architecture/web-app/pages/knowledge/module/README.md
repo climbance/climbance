@@ -4,6 +4,9 @@ The page at `/knowledge/modules/:module` and the phone's Module screen: a
 module's groups and its map, the start sheet, the focus and the module's
 status. `../../../README.md` `## The structure` gives what the page holds.
 
+[`module.md`](module.md) and [`start-sheet.md`](start-sheet.md) draw the page's
+screens at low fidelity.
+
 - **A module's page reads each topic as a panel of subtopics by level.** Each
   group reads as covered, open, locked or holding no questions.
 - **The module's page is one screen on both clients.** The two clients read

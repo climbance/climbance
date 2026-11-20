@@ -5,7 +5,7 @@ import type { paths } from './api/schema';
 export type EngineClient = Client<paths>;
 
 export interface EngineOptions {
-  // the app's bearer token; the pages send a session cookie instead: `README.md`, Boundaries
+  // the app's bearer token; the pages send a session cookie instead: `api/app-tokens.md`
   token?: () => string | null | undefined | Promise<string | null | undefined>;
   // a request refused for want of a session or a token
   signedOut?: (response: Response) => void;

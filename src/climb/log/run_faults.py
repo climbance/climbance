@@ -28,7 +28,7 @@ class RunFaultLog(Log[RunFault]):
 
     def counted[T](self, user_id: str, kind: RunKind, at: datetime, run: Callable[[], T]) -> T:
         """The run, a fault stored so the caps count it: a solution can end its
-        own sandbox, `README.md`, Boundaries."""
+        own sandbox, `api/submission.md`."""
         try:
             return run()
         except RunnerError as error:

@@ -39,9 +39,8 @@ id = "author"
 kind = "person"
 name = "Author"
 role = "Generates and reviews the corpus, authors the content, invites users and deploys the engine."
-doc = "README.md"
-section = "Boundaries"
-bullet = "Content generation is a command of the engine"
+doc = "cli/README.md"
+section = "Generation is a command"
 
 # Systems outside the engine
 
@@ -50,9 +49,8 @@ id = "identity-providers"
 kind = "system"
 name = "Google and GitHub"
 role = "Hold each identity and its login; the engine stores no password."
-doc = "README.md"
-section = "Boundaries"
-bullet = "Google and GitHub hold each identity and its login."
+doc = "api/sign-in.md"
+section = "Providers and identities"
 
 [[element]]
 id = "model-router"
@@ -68,27 +66,25 @@ id = "content-repo"
 kind = "system"
 name = "Content repository"
 role = "The private repository of authored cards and modules under `content/`, seeded into the store."
-doc = "README.md"
-section = "Boundaries"
-bullet = "Cards are ingested from files."
+doc = "content-repo/README.md"
 
 [[element]]
 id = "image-registry"
 kind = "system"
 name = "Image registry"
 role = "Holds the engine's image, built on each push to main and pulled by digest."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The engine runs on one virtual server, and Docker Compose starts its containers."
+doc = "concepts/deployment.md"
+section = "Deploying an image"
+bullet = "A push to main builds the image"
 
 [[element]]
 id = "offsite-dumps"
 kind = "system"
 name = "Off-server dump storage"
 role = "Keeps the scheduled database dumps away from the storage the database lives on."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The engine runs on one virtual server, and Docker Compose starts its containers."
+doc = "concepts/deployment.md"
+section = "The server"
+bullet = "The database is dumped on a schedule"
 
 # Containers of the engine
 
@@ -104,72 +100,56 @@ id = "native-app"
 kind = "container"
 name = "Native app"
 role = "The phone client for Android and iOS; schedules the knowledge queues offline and syncs."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The native app schedules the knowledge queues offline."
+doc = "native-app/README.md"
 
 [[element]]
 id = "core-package"
 kind = "library"
 name = "Shared core"
 role = "`packages/core`: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The web and the native app import one TypeScript package"
+doc = "core-package/README.md"
 
 [[element]]
 id = "proxy"
 kind = "container"
 name = "Caddy"
 role = "Terminates TLS, keeps the certificates on a volume, and passes every request to the API."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The web app is served from one origin."
+doc = "proxy/README.md"
 
 [[element]]
 id = "api"
 kind = "container"
 name = "API"
 role = "Python and FastAPI: answers JSON under `/api`, serves the web app's files, signs users in and records the log."
-doc = "README.md"
-section = "Boundaries"
-bullet = "The web app is served from one origin."
+doc = "api/README.md"
 
 [[element]]
 id = "broker"
 kind = "container"
 name = "Broker"
 role = "Holds the container runtime's socket, admits one submission at a time and starts its sandbox."
-doc = "README.md"
-section = "Boundaries"
-bullet = "A submission runs in a container the broker starts, and the API reaches no container runtime."
+doc = "broker/README.md"
 
 [[element]]
 id = "sandbox"
 kind = "container"
 name = "Sandbox"
 role = "One container per run under gVisor, no network, read-only root; its entry process forks a child per case."
-doc = "README.md"
-section = "Terminology"
-bullet = "Sandbox"
+doc = "sandbox/README.md"
 
 [[element]]
 id = "database"
 kind = "container"
 name = "Postgres"
 role = "The one store: the corpus, the content, every user's log and the call log."
-doc = "README.md"
-section = "Boundaries"
-bullet = "Storage is one Postgres database"
+doc = "database/README.md"
 
 [[element]]
 id = "cli"
 kind = "container"
 name = "Command line"
 role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."
-doc = "README.md"
-section = "Boundaries"
-bullet = "Content generation is a command of the engine"
+doc = "cli/README.md"
 
 # Components of the API: the core loop, from an attempt arriving to the next
 # item scheduled
@@ -188,8 +168,7 @@ kind = "component"
 container = "api"
 name = "Submission"
 role = "Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."
-doc = "flows.md"
-section = "Drill loop"
+doc = "api/submission.md"
 
 [[element]]
 id = "runner"
@@ -344,6 +323,22 @@ name = "Feedback"
 role = "Stores a user's note to the author, naming the client and the page."
 doc = "api/feedback.md"
 
+[[element]]
+id = "sign-in"
+kind = "component"
+container = "api"
+name = "Sign-in"
+role = "Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."
+doc = "api/sign-in.md"
+
+[[element]]
+id = "app-tokens"
+kind = "component"
+container = "api"
+name = "App tokens"
+role = "Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."
+doc = "api/app-tokens.md"
+
 # Components of the command line
 
 [[element]]
@@ -467,7 +462,7 @@ label = "serves the built files"
 technology = "HTTP"
 
 [[relation]]
-from = "api"
+from = "sign-in"
 to = "identity-providers"
 label = "runs the sign-in flow"
 technology = "OpenID Connect, OAuth"
@@ -835,3 +830,28 @@ label = "sends each request, pinned to one endpoint"
 from = "calls"
 to = "database"
 label = "appends each call to the call log"
+
+[[relation]]
+from = "web-app"
+to = "sign-in"
+label = "signs in and out"
+
+[[relation]]
+from = "native-app"
+to = "app-tokens"
+label = "signs in, exchanging a one-time code for a token"
+
+[[relation]]
+from = "app-tokens"
+to = "sign-in"
+label = "passes the same provider callback"
+
+[[relation]]
+from = "sign-in"
+to = "database"
+label = "stores the identities, the invitations and the sessions"
+
+[[relation]]
+from = "app-tokens"
+to = "database"
+label = "stores each one-time code and app token"

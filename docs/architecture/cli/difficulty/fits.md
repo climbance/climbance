@@ -35,7 +35,7 @@ models, and links those scores to the contest scale through anchors.
   mapping from the fitted difficulty to the contest rating, set on the
   anchors, then converts every problem's difficulty into a score.
 - **An anchor is never served, never stored with the corpus and never in git.**
-  It is a third-party problem, and `../../README.md` `## Invariants` keeps
+  It is a third-party problem, and `../../concepts/invariants.md` keeps
   every third-party statement and case out of git. Each anchor's licence is
   recorded where the anchors are kept, outside this repository.
 - **The anchor set is fixed before any trial runs, and named by its hash.**

@@ -60,6 +60,8 @@ fixed here rather than by whatever executed it.
 
 ## The runner's boundary
 
+- **Verification runs locally**, so every submission is judged by whatever ran
+  it.
 - **No case observes another.** A solution memoising in a module global would
   otherwise answer one case from a cache built for a different one, and a wrong
   key would pass. Which mechanism gives that isolation is the runner's to

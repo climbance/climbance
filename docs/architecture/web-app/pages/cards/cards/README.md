@@ -3,6 +3,8 @@
 The page at `/cards`, the root of Cards, and the phone's Cards tab: where each
 card stands, read by its depth in the card graph.
 
+[`cards.md`](cards.md) draws the page at low fidelity.
+
 - **The cards list reads the card graph by depth.** The roots come first, and
   each depth is a section under its own heading. A row names its card's
   technique, its card state, and the required cards a locked card waits on. A

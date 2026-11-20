@@ -37,11 +37,19 @@ See `README.md` for what this is.
   both. The page is at the address Vite prints.
 
 @docs/architecture/README.md
+@docs/architecture/concepts/terms/content.md
+@docs/architecture/concepts/terms/corpus.md
+@docs/architecture/concepts/terms/generation.md
+@docs/architecture/concepts/terms/execution.md
+@docs/architecture/concepts/terms/machine.md
+@docs/architecture/concepts/terms/log.md
+@docs/architecture/concepts/terms/knowledge.md
+@docs/architecture/concepts/terms/clients.md
 
 The other files in `docs/architecture/` are not loaded at start. Before
 changing what one of them governs, read that file: the map in its README names
-which file holds what. A rule in `.claude/rules/` names the file for the code
-it covers.
+which folder holds what. A rule in `.claude/rules/` names the folder for the
+code it covers.
 
 ## Where knowledge lives
 
@@ -88,7 +96,7 @@ Docs, `README.md`, commits.
   the previous one in more abstract words rather than adding a fact. Cut it,
   or name what it stands for.
 - **Every word this project gives its own meaning is an entry in
-  `docs/architecture/README.md` `## Terminology`.** A file uses the word
+  `docs/architecture/concepts/terms/`.** A file uses the word
   without redefining it. A word not there is defined in the sentence that
   introduces it, or added to the glossary. `the bench`, `the walk`, `the
   builder` are each defined in one file and used in four, so a reader of the

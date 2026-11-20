@@ -2,8 +2,7 @@
 
 The private repository under `content/`, where the author writes the cards and
 the knowledge modules. The seed stores both in Postgres, and the engine reads
-them from there. The bullets on ingesting cards from files are still in
-`../README.md` `## Boundaries`, under "Cards are ingested from files".
+them from there.
 
 | File | Holds |
 |---|---|
@@ -13,3 +12,18 @@ them from there. The bullets on ingesting cards from files are still in
 | [`modules.md`](modules.md) | A module's topics, subtopics and levels, where its authoring rules live, its diagrams |
 | [`questions.md`](questions.md) | A question's formats, its key and its grading |
 | [`lessons.md`](lessons.md) | Lessons and their pretests |
+
+## Cards are ingested from files
+
+Cards are ingested from files. They are authored in `content/` and seeded into
+the datastore. `content/` is gitignored like `data/`, and is a private
+repository of its own. The technique vocabulary is the exception: it ships with
+the package, in git.
+
+- **An authored card has its own shape.** `CardSeed`
+  (`src/climb/schema/seed.py`) is the payload the stored card is built from,
+  not the card, and it has no field for the identity the engine mints.
+- **A card and each template are matched by their authored slug, which makes
+  re-seeding refresh rather than duplicate.** A new slug is a new card: the
+  runs and the recall history stay with the old card, so renaming is a title
+  change.

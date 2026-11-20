@@ -1,5 +1,5 @@
 # The engine's image: the API, the pages' built files, the migrations, and the
-# compose file the server deploys with. `docs/architecture/README.md` gives why
+# compose file the server deploys with. `docs/architecture/concepts/deployment.md` gives why
 # the image carries that compose file.
 
 FROM node:26-slim AS pages

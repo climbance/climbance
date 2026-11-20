@@ -54,7 +54,7 @@ def signed_in_app(database, monkeypatch):
 
 def test_the_callback_returns_to_the_app_with_a_code_and_no_cookie(database, monkeypatch):
     """The app cannot carry the pages' cookie, so the flow ends in a code it
-    exchanges: `README.md`."""
+    exchanges: `api/app-tokens.md`."""
     _, response = returned(database, monkeypatch)
 
     assert response.status_code == 303
@@ -166,7 +166,7 @@ def test_a_token_unused_for_ninety_days_expires(database, monkeypatch):
 
 def test_each_use_extends_the_token(database, monkeypatch):
     """The app works offline for days, so the lifetime counts from the last
-    use: `README.md`."""
+    use: `api/app-tokens.md`."""
     client, token = signed_in_app(database, monkeypatch)
     with database.begin() as conn:
         conn.execute(update(app_tokens).values(last_used_at=datetime.now(UTC) - timedelta(days=80)))

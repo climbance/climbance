@@ -1,5 +1,5 @@
-"""The built pages, served on the API's origin: `README.md` gives why the two
-share one."""
+"""The built pages, served on the API's origin: `api/README.md` gives why
+the two share one."""
 
 from pathlib import Path
 

@@ -1559,7 +1559,7 @@
     "/api/errors": {
       "post": {
         "summary": "Error Reported",
-        "description": "One line in the API's log, which the host keeps 14 days: `README.md`,\nBoundaries.",
+        "description": "One line in the API's log, which the host keeps 14 days:\n`api/README.md`.",
         "operationId": "error_reported_api_errors_post",
         "requestBody": {
           "content": {
@@ -4730,7 +4730,7 @@
           "github"
         ],
         "title": "Provider",
-        "description": "Who holds an identity and its login: `README.md`."
+        "description": "Who holds an identity and its login: `api/sign-in.md`."
       },
       "Rank": {
         "type": "integer",

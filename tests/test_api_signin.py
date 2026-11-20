@@ -216,7 +216,7 @@ def test_an_id_token_issued_to_another_sign_in_signs_nobody_in(database, monkeyp
 
 def test_an_unverified_google_email_signs_nobody_in(database, monkeypatch):
     """An address the provider never verified would join the log of whoever
-    holds it: `README.md`."""
+    holds it: `api/sign-in.md`."""
     client = browser(database)
     sent = redirected(client, Provider.GOOGLE)
     google_returns(monkeypatch, client, nonce=sent["nonce"], email_verified=False)

@@ -88,7 +88,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("item_id", "position", name=op.f("key_line_choices_pkey")),
     )
 
-    # by hand, since Alembic generates no trigger: `README.md`, Storage
+    # by hand, since Alembic generates no trigger: `database/README.md`
     op.execute(
         "CREATE TRIGGER append_only BEFORE UPDATE OR DELETE ON fills"
         " FOR EACH STATEMENT EXECUTE FUNCTION refuse_rewrite()"

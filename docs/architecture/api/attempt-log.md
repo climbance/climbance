@@ -7,7 +7,7 @@ attempt verification. The log appends both, and they are private to the user.
   watched the sitting, so nothing else is in a position to assert an attempt.
 - **An attempt records whether its sitting restored an earlier solve**, as
   `restored`. The page sends it with the submission, and the engine does not
-  check it, for the reason `README.md` gives about guarding a verdict. Absent
+  check it, for the reason `../README.md` gives about guarding a verdict. Absent
   on every attempt written before the field, and absent means no restore.
 - **A restored attempt is not counted as a solve by mastery.** Its verdict
   stands, and its sitting counts as a failure to solve independently.

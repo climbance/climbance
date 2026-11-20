@@ -3,6 +3,8 @@
 The page at `/knowledge`, the root of Knowledge, and the phone's Home screen.
 The home asks for Continue, names the focus, and lists the modules.
 
+[`home.md`](home.md) draws the page at low fidelity.
+
 ## The act
 
 - **The knowledge home asks for one act: Continue.** Continue starts the next

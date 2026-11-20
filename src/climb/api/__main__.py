@@ -1,6 +1,6 @@
 """`python -m climb.api`: the API, and the built pages where
 CLIMB_PAGES names them. Locally Vite serves the pages instead, on the same
-origin: `README.md` gives why."""
+origin: `api/README.md` gives why."""
 
 import argparse
 import json

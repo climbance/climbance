@@ -83,7 +83,7 @@ def test_a_token_no_session_carries_is_not_signed_in(client, database):
 
 def test_a_revoked_session_signs_nobody_in(client, database):
     """A stored session ends when it is revoked, where a signed token would
-    stand until it expired: `README.md`."""
+    stand until it expired: `api/sign-in.md`."""
     token = signed_in(client, database)
     with database.begin() as conn:
         conn.execute(

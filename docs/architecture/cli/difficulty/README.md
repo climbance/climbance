@@ -73,6 +73,6 @@ score. `climb difficulty` runs the panel's trials and fits the scores, and a
 - **The label ratings stored before scores existed are deleted** when the
   `score` field lands, after their labels have informed the bands' cuts. A
   rating carrying a label alone would be a second shape every reader branches
-  on, as `../../README.md` `## Repo constraints` gives.
+  on, as `../../concepts/repo-constraints.md` gives.
 - **A difficulty estimated from users' attempts is deferred.** Whether an
   estimate is a rating with a source of its own is decided when it is planned.
