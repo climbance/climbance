@@ -161,7 +161,7 @@ class Job:
                 self.progress(f"{step}: API unreachable, waiting {wait / 60:.0f} min")
             else:
                 break
-            time.sleep(wait)
+            wait_until(time.time() + wait)
         self.tokens(step, model, events)
 
     def tokens(self, step: str, model: str, events: str) -> None:
@@ -533,6 +533,12 @@ def unreachable(events: str) -> bool:
         line for line in events.splitlines() if line.startswith('{"') and '"type":"result"' in line
     ]
     return bool(results) and '"api_error":"connection_failed"' in results[-1]
+
+
+def wait_until(at: float) -> None:
+    # short steps on the wall clock: macOS pauses a sleep while the Mac sleeps
+    while (left := at - time.time()) > 0:
+        time.sleep(min(left, 60))
 
 
 def limit_reset(events: str) -> float | None:
