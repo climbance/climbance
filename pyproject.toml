@@ -132,20 +132,86 @@ layers = [
     "climb.schema : climb.ids : climb.storage : climb.standing",
 ]
 
+# each container's code, as `code` in `docs/architecture/model.toml` names it, is
+# imported by nothing outside its own package
+# generated from model.toml by `just module-graph`, never edited
+
 [[tool.importlinter.contracts]]
-name = "nothing imports an adapter"
+name = "nothing outside climb.api imports the API's code"
 type = "forbidden"
 source_modules = [
-    "climb.attempt_claims",
-    "climb.solution_claims",
-    "climb.matches",
-    "climb.generation",
-    "climb.board",
-    "climb.sitting",
-    "climb.runner",
-    "climb.mutation",
+    "climb.attempt_claims", "climb.board", "climb.broker", "climb.calls", "climb.caps",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cli", "climb.diagnoser",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.feedback",
+    "climb.generation", "climb.graduation", "climb.ids", "climb.judgements",
+    "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
+    "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
+    "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
+    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
+    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.verifications",
 ]
-forbidden_modules = ["climb.cli", "climb.api"]
+forbidden_modules = ["climb.api"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "nothing outside climb.broker imports the Broker's code"
+type = "forbidden"
+source_modules = [
+    "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cli", "climb.diagnoser",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.feedback",
+    "climb.generation", "climb.graduation", "climb.ids", "climb.judgements",
+    "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
+    "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
+    "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
+    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
+    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.verifications",
+]
+forbidden_modules = ["climb.broker"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "nothing outside climb.runner imports the Sandbox's code"
+type = "forbidden"
+source_modules = [
+    "climb.api", "climb.attempt_claims", "climb.board", "climb.broker", "climb.calls",
+    "climb.caps", "climb.cards", "climb.cases", "climb.classifier", "climb.cli",
+    "climb.diagnoser", "climb.diagnosing", "climb.difficulty", "climb.drafts",
+    "climb.feedback", "climb.generation", "climb.graduation", "climb.ids",
+    "climb.judgements", "climb.judging", "climb.keylines", "climb.knowledge",
+    "climb.ladder", "climb.log", "climb.matches", "climb.mint",
+    "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.pick",
+    "climb.problems", "climb.ratings", "climb.recall", "climb.retirement", "climb.runs",
+    "climb.schema", "climb.sitting", "climb.solution_claims", "climb.solutions",
+    "climb.standing", "climb.storage", "climb.techniques", "climb.template_schedule",
+    "climb.trials", "climb.verifications",
+]
+forbidden_modules = ["climb.runner.child"]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "nothing outside climb.cli imports the Command line's code"
+type = "forbidden"
+source_modules = [
+    "climb.api", "climb.attempt_claims", "climb.board", "climb.broker", "climb.calls",
+    "climb.caps", "climb.cards", "climb.cases", "climb.classifier", "climb.diagnoser",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.feedback",
+    "climb.generation", "climb.graduation", "climb.ids", "climb.judgements",
+    "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
+    "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
+    "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
+    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
+    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.verifications",
+]
+forbidden_modules = ["climb.cli"]
+allow_indirect_imports = true
+# end of the generated contracts
 
 # the process holding the container runtime's socket loads no engine code. The
 # wildcard covers a package added later, and matches none of the broker's own
@@ -153,6 +219,13 @@ forbidden_modules = ["climb.cli", "climb.api"]
 name = "the broker imports nothing of the engine"
 type = "forbidden"
 source_modules = ["climb.broker"]
+forbidden_modules = ["climb.*"]
+
+# the sandbox's image carries no engine code, so its entry process imports none
+[[tool.importlinter.contracts]]
+name = "the sandbox's entry process imports nothing of the engine"
+type = "forbidden"
+source_modules = ["climb.runner.child"]
 forbidden_modules = ["climb.*"]
 
 # used outside `src`, which is all deptry reads: Alembic runs `migrations/`, and

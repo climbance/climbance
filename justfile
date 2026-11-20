@@ -50,6 +50,13 @@ schemas:
 model-views:
     python3 tools/model_views.py write
 
+# Generate the package import graph in `docs/architecture/modules.md`, grouped
+# by the containers whose `code` in `model.toml` reaches each package, and the
+# import contracts in `pyproject.toml` that keep each container's code imported
+# by its own package alone.
+module-graph:
+    python3 tools/module_graph.py write
+
 # Regenerate the shared fixture's scheduling cases from the Python replay.
 fixtures:
     uv run python tests/scheduling_fixture.py

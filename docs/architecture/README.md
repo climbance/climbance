@@ -242,6 +242,7 @@ and each component is a file named by its id.
 | Path | Holds |
 |---|---|
 | [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, its relations, and each flow as an ordered list of them. The views above, and each flow's diagram in its page, are generated from it |
+| [`modules.md`](modules.md) | The engine's Python packages and the imports between them, grouped by the containers whose code reaches each package. Generated from `src/climb` and `model.toml` |
 | [`concepts/terms/`](concepts/terms/) | Every word this project gives its own meaning, a file per group |
 | [`concepts/invariants.md`](concepts/invariants.md) | The properties the system holds at all times |
 | [`concepts/repo-constraints.md`](concepts/repo-constraints.md) | How this repo is built, the meta-rule, and the calibration corpus |

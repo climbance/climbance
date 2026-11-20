@@ -18,6 +18,13 @@
 # target unchanged, and `writes` where it changes state in or through the
 # target, starting a run included. A view draws a read dashed.
 #
+# `code` on a container names the Python modules its process runs first. The
+# package graph in `modules.md` groups each package of `src/climb` by the
+# containers whose `code` reaches it through imports. The sandbox runs
+# `climb.runner.child` as a script, so the package above it never runs there.
+# A container's `code` is imported by nothing outside its own package, by an
+# import contract generated into `pyproject.toml`.
+#
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
 # that relation's label, as a sequence diagram in that page.
@@ -128,6 +135,7 @@ kind = "container"
 name = "API"
 role = "Python and FastAPI: answers JSON under `/api`, serves the web app's files, signs users in and records the log."
 doc = "api/README.md"
+code = ["climb.api", "climb.api.__main__"]
 
 [[element]]
 id = "broker"
@@ -135,6 +143,7 @@ kind = "container"
 name = "Broker"
 role = "Holds the container runtime's socket, admits one submission at a time and starts its sandbox."
 doc = "broker/README.md"
+code = ["climb.broker", "climb.broker.__main__"]
 
 [[element]]
 id = "sandbox"
@@ -142,6 +151,7 @@ kind = "container"
 name = "Sandbox"
 role = "One container per run under gVisor, no network, read-only root; its entry process forks a child per case."
 doc = "sandbox/README.md"
+code = ["climb.runner.child"]
 
 [[element]]
 id = "database"
@@ -156,6 +166,7 @@ kind = "container"
 name = "Command line"
 role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."
 doc = "cli/README.md"
+code = ["climb.cli"]
 
 # Components of the API: the core loop, from an attempt arriving to the next
 # item scheduled

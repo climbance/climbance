@@ -70,6 +70,12 @@ fi
 if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$'; then
     python3 tools/model_views.py check || exit 1
 fi
+# The package graph in `docs/architecture/modules.md` and the contracts generated
+# into `pyproject.toml`, where the staging touches the engine's code, the model,
+# either output or the generator.
+if echo "$FILES" | grep -qE '^src/climb/.*\.py$|^docs/architecture/(model\.toml|modules\.md)$|^pyproject\.toml$|^tools/module_graph\.py$'; then
+    python3 tools/module_graph.py check || exit 1
+fi
 # The size limits on each architecture doc, where the staging touches the docs.
 if echo "$FILES" | grep -qE '^docs/architecture/|^tests/test_doc_sizes\.py$'; then
     uv run pytest -q -n 0 tests/test_doc_sizes.py || exit 1

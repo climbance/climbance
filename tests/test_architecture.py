@@ -95,8 +95,9 @@ def exported(tree: ast.Module) -> set[str]:
 
 def test_the_import_contracts_hold():
     """The package graph `pyproject.toml` states: leaves import no domain, the
-    transport and vocabulary sit under it, stores are independent, nothing
-    imports an adapter, and the broker imports none of the engine."""
+    transport and vocabulary sit under it, stores are independent, each
+    container's code is imported by its own package alone, and neither the
+    broker nor the sandbox's entry process imports the engine."""
     assert lint_imports(config_filename=str(ROOT / "pyproject.toml"), no_cache=True) == 0
 
 
