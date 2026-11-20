@@ -37,6 +37,8 @@ problem's path reads as its record, as `README.md` gives.
 +------------------------------------------------------------------------+
 ```
 
+## The bar
+
 - A bar across the top carries the clock, its press and the end, and it stays
   at the top of the window while the statement scrolls. The clock is never
   scrolled out of sight.
@@ -48,16 +50,22 @@ problem's path reads as its record, as `README.md` gives.
   press. The preference was set by a press the user may not remember.
 - A sitting a submission minted with no clock reads `untimed` in the clock's
   place, since `0:00` reads as a time the sitting took.
-- One line above the statement carries what the picked problem's page used to:
-  the difficulty, the techniques, the attempts on this problem and the cards.
 - The bar carries the problem's title, the page's only one, at the heading
   size. The statement column repeats none, since the bar keeps the title in view
   while the statement scrolls.
+
+## The statement
+
+- One line above the statement carries what the picked problem's page used to:
+  the difficulty, the techniques, the attempts on this problem and the cards.
 - The statement reads on the left and the editor takes the right, which is the
   one page in two columns.
 - A quiet `Report this problem` press sits under the statement. It opens the
   dialog asking the author to retire the problem, and
   `README.md` gives the request.
+
+## The editor and the verdict
+
 - The editor opens on the signature every case calls, and the statement column
   does not repeat it. A second copy beside the editor's first line says the
   same thing twice.
