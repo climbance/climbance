@@ -48,6 +48,7 @@ flowchart TB
         web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
         native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
         core_package["Shared core<br/>packages/core: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."]
+        shared_editor["Shared editor<br/>packages/editor: the CodeMirror setup for editing Python, imported by both clients."]
         proxy["Caddy<br/>Terminates TLS, keeps the certificates on a volume, and passes every request to the API."]
         api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
         broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
@@ -61,6 +62,8 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     web_app -.->|"imports the rules and screens"| core_package
     native_app -.->|"imports the rules and screens"| core_package
+    web_app -.->|"imports the editor setup"| shared_editor
+    native_app -.->|"imports the editor setup, bundled into the editor's WebView page"| shared_editor
     web_app -->|"sends JSON with the session cookie"| proxy
     native_app -->|"syncs knowledge records and runs sittings, with an app token"| proxy
     proxy -->|"passes every request"| api
@@ -259,5 +262,6 @@ and each component is a file named by its id.
 | [`proxy/`](proxy/README.md) | Caddy, its certificates and why it serves no files |
 | [`content-repo/`](content-repo/README.md) | Cards, the card graph, how a card and a subtopic share a technique, modules, questions, lessons |
 | [`core-package/`](core-package/README.md) | The three layers both clients share, the fixtures, every screen of both clients, and the knowledge module's rules |
+| [`shared-editor/`](shared-editor/README.md) | The CodeMirror setup for editing Python that both clients import |
 | [`web-app/`](web-app/README.md) | The structure of the pages, a folder per page with a wireframe per screen, a page's areas, the design system |
 | [`native-app/`](native-app/README.md) | The phone client: offline practice, typing code, the editor's measurements |

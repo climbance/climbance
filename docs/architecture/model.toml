@@ -127,6 +127,13 @@ role = "`packages/core`: the knowledge module's rules, each screen's labels and 
 doc = "core-package/README.md"
 
 [[element]]
+id = "shared-editor"
+kind = "library"
+name = "Shared editor"
+role = "`packages/editor`: the CodeMirror setup for editing Python, imported by both clients."
+doc = "shared-editor/README.md"
+
+[[element]]
 id = "proxy"
 kind = "container"
 name = "Caddy"
@@ -496,6 +503,18 @@ access = "reads"
 from = "native-app"
 to = "core-package"
 label = "imports the rules and screens"
+access = "reads"
+
+[[relation]]
+from = "web-app"
+to = "shared-editor"
+label = "imports the editor setup"
+access = "reads"
+
+[[relation]]
+from = "native-app"
+to = "shared-editor"
+label = "imports the editor setup, bundled into the editor's WebView page"
 access = "reads"
 
 [[relation]]
