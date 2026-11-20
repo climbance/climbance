@@ -20,10 +20,20 @@ END = "<!-- end of the generated views -->"
 FLOW_BEGIN = "<!-- generated from model.toml by `just model-views`, never edited: the flow -->"
 FLOW_END = "<!-- end of the generated flow -->"
 KINDS = {"person", "system", "container", "library", "component"}
+ACCESS = {"reads", "writes"}
 
 
 def load() -> dict:
     return tomllib.loads(MODEL.read_text())
+
+
+def relation_problems(model: dict, ids: list[str]) -> list[str]:
+    found = []
+    for r in model["relation"]:
+        found += [f"a relation names `{r[end]}`" for end in ("from", "to") if r[end] not in ids]
+        if r.get("access") not in ACCESS:
+            found.append(f"the relation from `{r['from']}` to `{r['to']}` lacks `access`")
+    return found
 
 
 def problems(model: dict) -> list[str]:
@@ -38,8 +48,7 @@ def problems(model: dict) -> list[str]:
             found.append(f"`{e['id']}` names a container, or lacks one, against its kind")
         elif "container" in e and e["container"] not in ids:
             found.append(f"`{e['id']}` sits in `{e['container']}`, which is not an element")
-    for r in model["relation"]:
-        found += [f"a relation names `{r[end]}`" for end in ("from", "to") if r[end] not in ids]
+    found += relation_problems(model, ids)
     pairs = {(r["from"], r["to"]) for r in model["relation"]}
     for f in model.get("flow", []):
         found += [
@@ -74,8 +83,8 @@ def node(e: dict) -> str:
     return f'{key(e["id"])}["{label(e["name"])}<br/>{label(e["role"])}"]'
 
 
-def edge(source: str, target: str, text: str) -> str:
-    return f'    {key(source)} -->|"{label(text)}"| {key(target)}'
+def edge(source: str, target: str, text: str, reads: bool) -> str:
+    return f'    {key(source)} {"-.->" if reads else "-->"}|"{label(text)}"| {key(target)}'
 
 
 def joined(after: dict[str, set[str]], source: str, target: str) -> bool:
@@ -104,6 +113,7 @@ def edges(model: dict, shown: set[str], owner: dict[str, str]) -> list[str]:
         if {r["from"], r["to"]} <= shown:
             after.setdefault(r["from"], set()).add(r["to"])
     labels: dict[tuple[str, str], list[str]] = {}
+    reads: dict[tuple[str, str], bool] = {}
     for r in model["relation"]:
         pair = (up(r["from"]), up(r["to"]))
         mapped = pair != (r["from"], r["to"])
@@ -111,7 +121,8 @@ def edges(model: dict, shown: set[str], owner: dict[str, str]) -> list[str]:
             continue
         if r["label"] not in labels.setdefault(pair, []):
             labels[pair].append(r["label"])
-    return [edge(s, t, "; ".join(texts)) for (s, t), texts in labels.items()]
+        reads[pair] = reads.get(pair, True) and r["access"] == "reads"
+    return [edge(s, t, "; ".join(texts), reads[s, t]) for (s, t), texts in labels.items()]
 
 
 def owners(model: dict) -> dict[str, str]:
@@ -175,6 +186,9 @@ def views(model: dict) -> str:
         BEGIN,
         "",
         "## Views",
+        "",
+        "A dashed arrow reads and leaves its target unchanged. A solid arrow writes,",
+        "or starts a run.",
         "",
         "The engine's context: who uses it and what it reaches outside itself.",
         "",

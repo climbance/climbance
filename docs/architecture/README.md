@@ -7,6 +7,9 @@ files. On any difference, the doc wins.
 
 ## Views
 
+A dashed arrow reads and leaves its target unchanged. A solid arrow writes,
+or starts a run.
+
 The engine's context: who uses it and what it reaches outside itself.
 
 ```mermaid
@@ -22,10 +25,10 @@ flowchart TB
     learner -->|"practises in a browser; practises on a phone"| engine
     author -->|"generates, reviews, seeds and invites"| engine
     author -->|"authors cards and modules"| content_repo
-    engine -->|"runs the sign-in flow"| identity_providers
-    engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call; sends each request, pinned to one endpoint"| model_router
-    engine -->|"seeds cards and modules from content/"| content_repo
+    engine -.->|"runs the sign-in flow"| identity_providers
+    engine -.->|"pulls the submission image by digest, through the host's daemon"| image_registry
+    engine -.->|"sends every model call; sends each request, pinned to one endpoint"| model_router
+    engine -.->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
 ```
@@ -56,20 +59,20 @@ flowchart TB
     learner -->|"practises on a phone"| native_app
     author -->|"generates, reviews, seeds and invites"| cli
     author -->|"authors cards and modules"| content_repo
-    web_app -->|"imports the rules and screens"| core_package
-    native_app -->|"imports the rules and screens"| core_package
+    web_app -.->|"imports the rules and screens"| core_package
+    native_app -.->|"imports the rules and screens"| core_package
     web_app -->|"sends JSON with the session cookie"| proxy
     native_app -->|"syncs knowledge records and runs sittings, with an app token"| proxy
     proxy -->|"passes every request"| api
-    api -->|"serves the built files"| web_app
-    api -->|"runs the sign-in flow"| identity_providers
+    api -.->|"serves the built files"| web_app
+    api -.->|"runs the sign-in flow"| identity_providers
     api -->|"reads and writes the store"| database
     api -->|"asks for one run: code, arguments, cap"| broker
     broker -->|"starts one container per run, the run on standard input"| sandbox
-    broker -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    cli -->|"sends every model call"| model_router
+    broker -.->|"pulls the submission image by digest, through the host's daemon"| image_registry
+    cli -.->|"sends every model call"| model_router
     cli -->|"writes the corpus and the by-hand records"| database
-    cli -->|"seeds cards and modules from content/"| content_repo
+    cli -.->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| api
     database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
 ```
@@ -108,53 +111,53 @@ flowchart TB
         sign_in["Sign-in<br/>Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."]
         app_tokens["App tokens<br/>Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."]
     end
-    sign_in -->|"runs the sign-in flow"| identity_providers
+    sign_in -.->|"runs the sign-in flow"| identity_providers
     web_app -->|"starts, pauses and ends the clock"| sitting
     web_app -->|"submits code for the problem"| submission
     submission -->|"mints the sitting where no clock started"| sitting
     submission -->|"runs the code against the problem's cases"| runner
     runner -->|"asks for one run: code, arguments, cap"| broker
     runner -->|"records a run that answered nothing"| run_faults
-    submission -->|"counts recent runs against the caps"| run_faults
+    submission -.->|"counts recent runs against the caps"| run_faults
     submission -->|"appends the attempt and its verification"| attempt_log
     web_app -->|"names the techniques the code used"| attempt_claims
     web_app -->|"says why the attempt went as it did"| self_labels
-    template_schedule -->|"replays each sitting's verdict as a review"| attempt_log
-    card_states -->|"reads which rungs are solved"| attempt_log
-    card_states -->|"reads the recall probability of a spaced check"| template_schedule
-    mastery -->|"scores execution per sitting"| attempt_log
-    mastery -->|"credits the techniques an attempt used"| attempt_claims
-    mastery -->|"reads the failure mode"| self_labels
+    template_schedule -.->|"replays each sitting's verdict as a review"| attempt_log
+    card_states -.->|"reads which rungs are solved"| attempt_log
+    card_states -.->|"reads the recall probability of a spaced check"| template_schedule
+    mastery -.->|"scores execution per sitting"| attempt_log
+    mastery -.->|"credits the techniques an attempt used"| attempt_claims
+    mastery -.->|"reads the failure mode"| self_labels
     web_app -->|"asks for the next item"| pick
-    pick -->|"reads each template's FSRS state"| template_schedule
-    pick -->|"reads each card's state and next check"| card_states
-    pick -->|"reads each technique's mastery"| mastery
+    pick -.->|"reads each template's FSRS state"| template_schedule
+    pick -.->|"reads each card's state and next check"| card_states
+    pick -.->|"reads each technique's mastery"| mastery
     pick -->|"stores what the pick expected"| predictions
     attempt_log -->|"appends to the user's log"| database
     sitting -->|"revises the sitting in place"| database
     predictions -->|"appends each prediction"| database
     attempt_claims -->|"appends each claim"| database
     self_labels -->|"appends each label"| database
-    web_app -->|"loads the content"| snapshot
-    native_app -->|"loads the content"| snapshot
+    web_app -.->|"loads the content"| snapshot
+    native_app -.->|"loads the content"| snapshot
     web_app -->|"syncs answers and sessions"| knowledge_sync
     native_app -->|"syncs answers and sessions"| knowledge_sync
     knowledge_sync -->|"appends each line"| knowledge_log
     knowledge_log -->|"appends to the user's knowledge log"| database
-    snapshot -->|"reads the seeded content"| database
-    runner -->|"reads the problem's cases"| problems
-    problems -->|"reads the corpus"| database
+    snapshot -.->|"reads the seeded content"| database
+    runner -.->|"reads the problem's cases"| problems
+    problems -.->|"reads the corpus"| database
     web_app -->|"starts a card"| card_runs
     card_runs -->|"appends each card run"| database
-    card_states -->|"reads when each run began and its probes"| card_runs
-    card_runs -->|"draws the probes from the technique's problems"| problems
-    card_runs -->|"reads which problems the user attempted"| attempt_log
-    web_app -->|"reads a card's ladder and its state"| card_states
-    card_states -->|"reads which rungs a sitting skipped"| sitting
+    card_states -.->|"reads when each run began and its probes"| card_runs
+    card_runs -.->|"draws the probes from the technique's problems"| problems
+    card_runs -.->|"reads which problems the user attempted"| attempt_log
+    web_app -.->|"reads a card's ladder and its state"| card_states
+    card_states -.->|"reads which rungs a sitting skipped"| sitting
     web_app -->|"types a template from memory"| recall
     recall -->|"runs the typed form against the template's cases"| runner
     recall -->|"appends each recall attempt"| database
-    template_schedule -->|"replays each recall attempt as a review"| recall
+    template_schedule -.->|"replays each recall attempt as a review"| recall
     web_app -->|"judges a solution; fills a key line"| short_exercises
     short_exercises -->|"appends each judgement and fill"| database
     web_app -->|"asks for a problem's retirement"| retirement_requests
@@ -186,12 +189,12 @@ flowchart TB
         exercise_items["Exercise items<br/>Builds the judgement items and the key-line items from the seeded templates and their mutants."]
         calls["Calls<br/>Sends every model call through one transport, each pinned to one endpoint, and appends it to the call log."]
     end
-    seed -->|"seeds cards and modules from content/"| content_repo
+    seed -.->|"seeds cards and modules from content/"| content_repo
     seed -->|"refreshes the content tables"| database
     classifier -->|"asks which techniques the code used"| calls
     classifier -->|"appends a machine attempt claim"| database
     eval_set -->|"scores a configuration's claims against the set"| classifier
-    eval_set -->|"reads the blind claims and the frontier's claims"| database
+    eval_set -.->|"reads the blind claims and the frontier's claims"| database
     matcher -->|"asks which templates a solution displays"| calls
     matcher -->|"appends a machine template match"| database
     exercise_items -->|"reads the templates and appends the items"| database
@@ -201,7 +204,7 @@ flowchart TB
     difficulty -->|"appends the trials, the fits and the ratings"| database
     diagnoser -->|"asks why an attempt failed"| calls
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
-    calls -->|"sends each request, pinned to one endpoint"| model_router
+    calls -.->|"sends each request, pinned to one endpoint"| model_router
     calls -->|"appends each call to the call log"| database
 ```
 

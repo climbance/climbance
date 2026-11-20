@@ -14,7 +14,9 @@
 # engine and deployed or run on its own; library, inside the engine and built
 # into the containers that import it; component, a part of one container,
 # named by its `container`. A relation runs from the element that acts to the
-# element it acts on.
+# element it acts on. Its `access` is `reads` where the relation leaves its
+# target unchanged, and `writes` where it changes state in or through the
+# target, starting a run included. A view draws a read dashed.
 #
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
@@ -422,116 +424,137 @@ doc = "cli/calls.md"
 from = "learner"
 to = "web-app"
 label = "practises in a browser"
+access = "writes"
 
 [[relation]]
 from = "learner"
 to = "native-app"
 label = "practises on a phone"
+access = "writes"
 
 [[relation]]
 from = "author"
 to = "cli"
 label = "generates, reviews, seeds and invites"
+access = "writes"
 
 [[relation]]
 from = "author"
 to = "content-repo"
 label = "authors cards and modules"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "core-package"
 label = "imports the rules and screens"
+access = "reads"
 
 [[relation]]
 from = "native-app"
 to = "core-package"
 label = "imports the rules and screens"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "proxy"
 label = "sends JSON with the session cookie"
+access = "writes"
 technology = "HTTPS"
 
 [[relation]]
 from = "native-app"
 to = "proxy"
 label = "syncs knowledge records and runs sittings, with an app token"
+access = "writes"
 technology = "HTTPS"
 
 [[relation]]
 from = "proxy"
 to = "api"
 label = "passes every request"
+access = "writes"
 technology = "HTTP"
 
 [[relation]]
 from = "api"
 to = "web-app"
 label = "serves the built files"
+access = "reads"
 technology = "HTTP"
 
 [[relation]]
 from = "sign-in"
 to = "identity-providers"
 label = "runs the sign-in flow"
+access = "reads"
 technology = "OpenID Connect, OAuth"
 
 [[relation]]
 from = "api"
 to = "database"
 label = "reads and writes the store"
+access = "writes"
 technology = "SQLAlchemy Core"
 
 [[relation]]
 from = "api"
 to = "broker"
 label = "asks for one run: code, arguments, cap"
+access = "writes"
 technology = "HTTP, on a network only the two join"
 
 [[relation]]
 from = "broker"
 to = "sandbox"
 label = "starts one container per run, the run on standard input"
+access = "writes"
 technology = "docker run -i"
 
 [[relation]]
 from = "broker"
 to = "image-registry"
 label = "pulls the submission image by digest, through the host's daemon"
+access = "reads"
 
 [[relation]]
 from = "cli"
 to = "model-router"
 label = "sends every model call"
+access = "reads"
 technology = "chat completions"
 
 [[relation]]
 from = "cli"
 to = "database"
 label = "writes the corpus and the by-hand records"
+access = "writes"
 technology = "SSH tunnel to the server's loopback"
 
 [[relation]]
 from = "seed"
 to = "content-repo"
 label = "seeds cards and modules from `content/`"
+access = "reads"
 
 [[relation]]
 from = "seed"
 to = "database"
 label = "refreshes the content tables"
+access = "writes"
 
 [[relation]]
 from = "image-registry"
 to = "api"
 label = "supplies the image the server deploys"
+access = "writes"
 
 [[relation]]
 from = "database"
 to = "offsite-dumps"
 label = "is dumped on a schedule and copied off the server"
+access = "writes"
 
 # The core loop, inside the API
 
@@ -539,131 +562,157 @@ label = "is dumped on a schedule and copied off the server"
 from = "web-app"
 to = "sitting"
 label = "starts, pauses and ends the clock"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "submission"
 label = "submits code for the problem"
+access = "writes"
 
 [[relation]]
 from = "submission"
 to = "sitting"
 label = "mints the sitting where no clock started"
+access = "writes"
 
 [[relation]]
 from = "submission"
 to = "runner"
 label = "runs the code against the problem's cases"
+access = "writes"
 
 [[relation]]
 from = "runner"
 to = "broker"
 label = "asks for one run: code, arguments, cap"
+access = "writes"
 
 [[relation]]
 from = "runner"
 to = "run-faults"
 label = "records a run that answered nothing"
+access = "writes"
 
 [[relation]]
 from = "submission"
 to = "run-faults"
 label = "counts recent runs against the caps"
+access = "reads"
 
 [[relation]]
 from = "submission"
 to = "attempt-log"
 label = "appends the attempt and its verification"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "attempt-claims"
 label = "names the techniques the code used"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "self-labels"
 label = "says why the attempt went as it did"
+access = "writes"
 
 [[relation]]
 from = "template-schedule"
 to = "attempt-log"
 label = "replays each sitting's verdict as a review"
+access = "reads"
 
 [[relation]]
 from = "card-states"
 to = "attempt-log"
 label = "reads which rungs are solved"
+access = "reads"
 
 [[relation]]
 from = "card-states"
 to = "template-schedule"
 label = "reads the recall probability of a spaced check"
+access = "reads"
 
 [[relation]]
 from = "mastery"
 to = "attempt-log"
 label = "scores execution per sitting"
+access = "reads"
 
 [[relation]]
 from = "mastery"
 to = "attempt-claims"
 label = "credits the techniques an attempt used"
+access = "reads"
 
 [[relation]]
 from = "mastery"
 to = "self-labels"
 label = "reads the failure mode"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "pick"
 label = "asks for the next item"
+access = "writes"
 
 [[relation]]
 from = "pick"
 to = "template-schedule"
 label = "reads each template's FSRS state"
+access = "reads"
 
 [[relation]]
 from = "pick"
 to = "card-states"
 label = "reads each card's state and next check"
+access = "reads"
 
 [[relation]]
 from = "pick"
 to = "mastery"
 label = "reads each technique's mastery"
+access = "reads"
 
 [[relation]]
 from = "pick"
 to = "predictions"
 label = "stores what the pick expected"
+access = "writes"
 
 [[relation]]
 from = "attempt-log"
 to = "database"
 label = "appends to the user's log"
+access = "writes"
 
 [[relation]]
 from = "sitting"
 to = "database"
 label = "revises the sitting in place"
+access = "writes"
 
 [[relation]]
 from = "predictions"
 to = "database"
 label = "appends each prediction"
+access = "writes"
 
 [[relation]]
 from = "attempt-claims"
 to = "database"
 label = "appends each claim"
+access = "writes"
 
 [[relation]]
 from = "self-labels"
 to = "database"
 label = "appends each label"
+access = "writes"
 
 # The knowledge side, the corpus and the classifier
 
@@ -671,231 +720,277 @@ label = "appends each label"
 from = "web-app"
 to = "snapshot"
 label = "loads the content"
+access = "reads"
 
 [[relation]]
 from = "native-app"
 to = "snapshot"
 label = "loads the content"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "knowledge-sync"
 label = "syncs answers and sessions"
+access = "writes"
 
 [[relation]]
 from = "native-app"
 to = "knowledge-sync"
 label = "syncs answers and sessions"
+access = "writes"
 
 [[relation]]
 from = "knowledge-sync"
 to = "knowledge-log"
 label = "appends each line"
+access = "writes"
 
 [[relation]]
 from = "knowledge-log"
 to = "database"
 label = "appends to the user's knowledge log"
+access = "writes"
 
 [[relation]]
 from = "snapshot"
 to = "database"
 label = "reads the seeded content"
+access = "reads"
 
 [[relation]]
 from = "runner"
 to = "problems"
 label = "reads the problem's cases"
+access = "reads"
 
 [[relation]]
 from = "problems"
 to = "database"
 label = "reads the corpus"
+access = "reads"
 
 [[relation]]
 from = "classifier"
 to = "calls"
 label = "asks which techniques the code used"
+access = "writes"
 
 [[relation]]
 from = "classifier"
 to = "database"
 label = "appends a machine attempt claim"
+access = "writes"
 
 [[relation]]
 from = "eval-set"
 to = "classifier"
 label = "scores a configuration's claims against the set"
+access = "writes"
 
 [[relation]]
 from = "eval-set"
 to = "database"
 label = "reads the blind claims and the frontier's claims"
+access = "reads"
 
 [[relation]]
 from = "matcher"
 to = "calls"
 label = "asks which templates a solution displays"
+access = "writes"
 
 [[relation]]
 from = "matcher"
 to = "database"
 label = "appends a machine template match"
+access = "writes"
 
 [[relation]]
 from = "exercise-items"
 to = "database"
 label = "reads the templates and appends the items"
+access = "writes"
 
 [[relation]]
 from = "generation"
 to = "calls"
 label = "sends each call site's prompt"
+access = "writes"
 
 [[relation]]
 from = "generation"
 to = "database"
 label = "revises the drafts and lands each problem"
+access = "writes"
 
 [[relation]]
 from = "difficulty"
 to = "calls"
 label = "asks each panel member for a solution"
+access = "writes"
 
 [[relation]]
 from = "difficulty"
 to = "database"
 label = "appends the trials, the fits and the ratings"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "card-runs"
 label = "starts a card"
+access = "writes"
 
 [[relation]]
 from = "card-runs"
 to = "database"
 label = "appends each card run"
+access = "writes"
 
 [[relation]]
 from = "card-states"
 to = "card-runs"
 label = "reads when each run began and its probes"
+access = "reads"
 
 [[relation]]
 from = "card-runs"
 to = "problems"
 label = "draws the probes from the technique's problems"
+access = "reads"
 
 [[relation]]
 from = "card-runs"
 to = "attempt-log"
 label = "reads which problems the user attempted"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "card-states"
 label = "reads a card's ladder and its state"
+access = "reads"
 
 [[relation]]
 from = "card-states"
 to = "sitting"
 label = "reads which rungs a sitting skipped"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "recall"
 label = "types a template from memory"
+access = "writes"
 
 [[relation]]
 from = "recall"
 to = "runner"
 label = "runs the typed form against the template's cases"
+access = "writes"
 
 [[relation]]
 from = "recall"
 to = "database"
 label = "appends each recall attempt"
+access = "writes"
 
 [[relation]]
 from = "template-schedule"
 to = "recall"
 label = "replays each recall attempt as a review"
+access = "reads"
 
 [[relation]]
 from = "web-app"
 to = "short-exercises"
 label = "judges a solution; fills a key line"
+access = "writes"
 
 [[relation]]
 from = "short-exercises"
 to = "database"
 label = "appends each judgement and fill"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "retirement-requests"
 label = "asks for a problem's retirement"
+access = "writes"
 
 [[relation]]
 from = "retirement-requests"
 to = "database"
 label = "appends each request"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "feedback"
 label = "sends a note to the author"
+access = "writes"
 
 [[relation]]
 from = "feedback"
 to = "database"
 label = "appends each note"
+access = "writes"
 
 [[relation]]
 from = "diagnoser"
 to = "calls"
 label = "asks why an attempt failed"
+access = "writes"
 
 [[relation]]
 from = "diagnoser"
 to = "database"
 label = "appends each diagnosis and mutant diagnosis"
+access = "writes"
 
 [[relation]]
 from = "calls"
 to = "model-router"
 label = "sends each request, pinned to one endpoint"
+access = "reads"
 
 [[relation]]
 from = "calls"
 to = "database"
 label = "appends each call to the call log"
+access = "writes"
 
 [[relation]]
 from = "web-app"
 to = "sign-in"
 label = "signs in and out"
+access = "writes"
 
 [[relation]]
 from = "native-app"
 to = "app-tokens"
 label = "signs in, exchanging a one-time code for a token"
+access = "writes"
 
 [[relation]]
 from = "app-tokens"
 to = "sign-in"
 label = "passes the same provider callback"
+access = "writes"
 
 [[relation]]
 from = "sign-in"
 to = "database"
 label = "stores the identities, the invitations and the sessions"
+access = "writes"
 
 [[relation]]
 from = "app-tokens"
 to = "database"
 label = "stores each one-time code and app token"
+access = "writes"
 
 # Flows
 
