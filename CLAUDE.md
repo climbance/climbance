@@ -168,6 +168,8 @@ configuration produced it, or which prompt hash it was sent."
   when unconfigured is worse than no guard.
 - Pre-commit runs the frontend's type check, lint and tests when `web/` is
   staged, and `just web-check` runs them by hand.
+- Pre-commit runs the shared core's type check and tests when `packages/core/`
+  is staged. Those tests include the check that fails on an import cycle.
 - Pre-commit also runs ruff, pyright, vulture and `tests/test_architecture.py`
   when code is staged: the import contracts in `pyproject.toml`, the module size
   limit, and that a name is imported from where it is defined. The full suite is
