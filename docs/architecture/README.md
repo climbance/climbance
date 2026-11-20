@@ -24,7 +24,7 @@ flowchart TB
     author -->|"authors cards and modules"| content_repo
     engine -->|"runs the sign-in flow"| identity_providers
     engine -->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -->|"sends every model call; asks which techniques the code used; asks which templates a solution displays; sends each call site's prompt; asks each panel member for a solution; asks why an attempt failed; sends each request, pinned to one endpoint"| model_router
+    engine -->|"sends every model call; sends each request, pinned to one endpoint"| model_router
     engine -->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys"| engine
     engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
@@ -176,16 +176,16 @@ flowchart TB
     end
     seed -->|"seeds cards and modules from content/"| content_repo
     seed -->|"refreshes the content tables"| database
-    classifier -->|"asks which techniques the code used"| model_router
+    classifier -->|"asks which techniques the code used"| calls
     classifier -->|"appends a machine attempt claim"| database
-    matcher -->|"asks which templates a solution displays"| model_router
+    matcher -->|"asks which templates a solution displays"| calls
     matcher -->|"appends a machine template match"| database
     exercise_items -->|"reads the templates and appends the items"| database
-    generation -->|"sends each call site's prompt"| model_router
+    generation -->|"sends each call site's prompt"| calls
     generation -->|"revises the drafts and lands each problem"| database
-    difficulty -->|"asks each panel member for a solution"| model_router
+    difficulty -->|"asks each panel member for a solution"| calls
     difficulty -->|"appends the trials, the fits and the ratings"| database
-    diagnoser -->|"asks why an attempt failed"| model_router
+    diagnoser -->|"asks why an attempt failed"| calls
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
     calls -->|"sends each request, pinned to one endpoint"| model_router
     calls -->|"appends each call to the call log"| database

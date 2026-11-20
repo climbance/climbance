@@ -708,7 +708,7 @@ label = "reads the corpus"
 
 [[relation]]
 from = "classifier"
-to = "model-router"
+to = "calls"
 label = "asks which techniques the code used"
 
 [[relation]]
@@ -718,7 +718,7 @@ label = "appends a machine attempt claim"
 
 [[relation]]
 from = "matcher"
-to = "model-router"
+to = "calls"
 label = "asks which templates a solution displays"
 
 [[relation]]
@@ -733,7 +733,7 @@ label = "reads the templates and appends the items"
 
 [[relation]]
 from = "generation"
-to = "model-router"
+to = "calls"
 label = "sends each call site's prompt"
 
 [[relation]]
@@ -743,7 +743,7 @@ label = "revises the drafts and lands each problem"
 
 [[relation]]
 from = "difficulty"
-to = "model-router"
+to = "calls"
 label = "asks each panel member for a solution"
 
 [[relation]]
@@ -818,7 +818,7 @@ label = "appends each note"
 
 [[relation]]
 from = "diagnoser"
-to = "model-router"
+to = "calls"
 label = "asks why an attempt failed"
 
 [[relation]]
