@@ -1,9 +1,9 @@
 # Log records
 
-The rules every record of a user's private log follows. The log is what the
-user attempted, what it used, why it went the way it did, the study a card run
-tracks, and the knowledge log. Every record of it is append-only apart from the
-sitting, which is revised while the sitting runs.
+The rules every record of a user's private log follows. The log holds the
+user's attempts, the techniques each used, why each went the way it did, the
+study a card run tracks, and the knowledge log. Every record of it is
+append-only apart from the sitting, which is revised while the sitting runs.
 
 ## Every record keyed to an attempt
 

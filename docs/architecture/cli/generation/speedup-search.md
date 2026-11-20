@@ -1,8 +1,8 @@
 # Speedup search
 
 Steps 7 to 9 and 11 of `README.md` `## Generating a problem`. The input
-generator is written for every problem. Where the template claims a speedup, a
-naive solution is written, and the search finds the smallest input on which
+generator is written for every problem. A naive solution is written when the
+template claims a speedup. The search then finds the smallest input on which
 the naive solution exceeds the sitting's cap and the canonical does not. The
 case at that size is appended after the mutation loop.
 

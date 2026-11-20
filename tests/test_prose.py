@@ -4,7 +4,7 @@ import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ARCHITECTURE = sorted((ROOT / "docs" / "architecture").glob("*.md"))
+ARCHITECTURE = sorted((ROOT / "docs" / "architecture").rglob("*.md"))
 SRC = ROOT / "src" / "climb"
 DOCS = [*sorted((ROOT / "docs").rglob("*.md")), ROOT / "README.md", ROOT / "CLAUDE.md"]
 PROSE_WIDTH = tomllib.loads((ROOT / "pyproject.toml").read_text())["tool"]["ruff"]["lint"][
@@ -47,7 +47,7 @@ def opener(sentence: str) -> str:
 
 def test_no_sentence_in_the_architecture_runs_past_forty_words():
     over = [
-        f"{path.name}: {one[:60]}..."
+        f"{path.relative_to(ROOT)}: {one[:60]}..."
         for path in ARCHITECTURE
         for one in sentences(prose(path))
         if len(one.split()) > 40
@@ -59,7 +59,7 @@ def test_the_architecture_states_the_subject_rather_than_clefting_it():
     """ "The reference is what discards" names the subject after the verb, and
     a reader holds the verb until it arrives."""
     clefts = [
-        f"{path.name}: {one[:60]}..."
+        f"{path.relative_to(ROOT)}: {one[:60]}..."
         for path in ARCHITECTURE
         for one in sentences(prose(path))
         if CLEFT.search(one)
@@ -71,7 +71,7 @@ def test_no_sentence_in_the_architecture_opens_on_an_abstraction():
     """`What`, `Where`, `Neither`, `Both` and `Nothing` front an abstraction and
     hold the concrete noun back to the end of the sentence."""
     fronted = [
-        f"{path.name}: {one[:60]}..."
+        f"{path.relative_to(ROOT)}: {one[:60]}..."
         for path in ARCHITECTURE
         for one in sentences(prose(path))
         if opener(one) in OPENERS
