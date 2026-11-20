@@ -10,8 +10,10 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
 
 ```
  run.py --level N --jobs 1 --only <subs>
+ │  merges main into py-auto first
  │  starts a subtopic once every subtopic it needs is merged into py-auto
- │  one git worktree and one branch per subtopic, cut from py-auto
+ │  one git worktree and one branch per subtopic, cut from py-auto,
+ │  both removed once the subtopic merges
  ▼
 ┌──────────────────────────── one subtopic ───────────────────────────────┐
 │                                                                         │
@@ -52,7 +54,8 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
 │                        └───────────────────┘               │            │
 │        digest: "For you" = what is left, "Decided" = log   │            │
 │                                                            ▼            │
-│                  commit on the branch, merge into py-auto if it checks  │
+│     commit the module and the fetched library/ sources on the branch,   │
+│     merge into py-auto if it checks; py-auto's library/ wins a conflict │
 └─────────────────────────────────────────────────┬───────────────────────┘
                                                   │
                     ┌─────────────────────────────┴──────────────────────┐
@@ -89,5 +92,9 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
 - Each stage runs at most two full reviews, then reviews of the last fix's
   diff, until one finds no WRONG. That review's other findings are fixed with
   no further review.
+- A session fetching a source not yet in the library writes it into the
+  subtopic's worktree, under `library/<source>/<fetched_on>/`. The subtopic's
+  commit holds it, so the source reaches `py-auto`, then `main`, with the
+  concepts citing it.
 - The module check, the confirmation of WRONG findings, the merges, the
   release and the resume from `state.json` are code, and no model runs them.

@@ -50,6 +50,24 @@ def git(*args: str, cwd: Path = CONTENT, check: bool = True) -> str:
     return done.stdout.strip()
 
 
+def stage(module: str, wt: Path) -> None:
+    """Stages the module and the sources its concepts cite."""
+    git("add", f"modules/{module}", *(["library"] if (wt / "library").exists() else []), cwd=wt)
+
+
+def retire(wt: Path, branch: str, into: str) -> str:
+    """Removes a subtopic's worktree and branch once `into` holds the branch."""
+    held = subprocess.run(["git", "merge-base", "--is-ancestor", branch, into], cwd=CONTENT)
+    if held.returncode:
+        return f"kept {wt.name}: {branch} is not merged"
+    if edited := git("diff", "--name-only", "HEAD", cwd=wt).split():
+        return f"kept {wt.name}: uncommitted {', '.join(edited)}"
+    # untracked files are a session's leftovers: the commit staged what counts
+    git("worktree", "remove", "--force", str(wt))
+    git("branch", "-D", branch)
+    return f"removed {wt.name}"
+
+
 def models(chosen: dict[str, str]) -> str:
     """Each role's model, for the commit body: `machine-records.md`."""
     return "Models: " + ", ".join(f"{role} {model}" for role, model in chosen.items())
@@ -157,8 +175,8 @@ def write(args: argparse.Namespace, topic: str, sub: str, title: str) -> str:
     first = digest.read_text().splitlines()[0] if digest.exists() else "FAILED: no digest"
     if not first.startswith("DONE"):
         return f"{sub}: {first}"
-    git("add", f"modules/{args.module}", cwd=wt)
-    # staged alone: a session can leave files outside the module untracked
+    stage(args.module, wt)
+    # staged alone: a session can leave other files untracked
     if not git("diff", "--cached", "--name-only", cwd=wt):
         return f"{sub}: DONE"
     subject = (
@@ -177,6 +195,17 @@ def setup(args: argparse.Namespace) -> tuple[Path, list[tuple[str, str, str]], d
     main_wt = args.runs / "wt" / "integration"
     if not main_wt.exists():
         git("worktree", "add", str(main_wt), args.branch)
+    # a branch behind main would cut each subtopic without main's fixes
+    if git("status", "--porcelain", "--untracked-files=no", cwd=main_wt):
+        raise SystemExit(f"setup: {main_wt} has uncommitted changes")
+    merged = subprocess.run(
+        ["git", "merge", "-q", "--no-edit", "main"], cwd=main_wt, capture_output=True, text=True
+    )
+    if merged.returncode:
+        git("merge", "--abort", cwd=main_wt, check=False)
+        raise SystemExit(
+            f"setup: main does not merge into {args.branch}: {merged.stdout}{merged.stderr}"
+        )
     subs, needs, titles = plan(args.source)
     register(main_wt, args.module, subs, needs, titles)
     # two jobs append lessons to graph.toml and skips to check.toml
@@ -240,6 +269,8 @@ def schedule(args: argparse.Namespace, main_wt: Path, subs: list, needs: dict) -
                     branch = f"{args.branch}-{sub}-L{args.level}"
                     if errors := merge_checked(main_wt, branch, args.module):
                         line = f"{sub}: FAILED: merge: check: {errors[-1]}"
+                    else:
+                        log(retire(args.runs / "wt" / f"{sub}-L{args.level}", branch, args.branch))
                 if line.endswith("DONE"):
                     finished.add(sub)
                 else:
@@ -258,10 +289,14 @@ def merge_checked(main_wt: Path, branch: str, module: str) -> list[str]:
         capture_output=True,
         text=True,
     )
-    if merged.returncode:
-        conflicts = git("diff", "--name-only", "--diff-filter=U", cwd=main_wt, check=False)
+    conflicts = git("diff", "--name-only", "--diff-filter=U", cwd=main_wt, check=False).split()
+    if conflicts and all(c.startswith("library/") for c in conflicts):
+        # one page fetched twice in a day: the snapshots differ by a stamp
+        git("checkout", "--ours", "--", *conflicts, cwd=main_wt)
+        git("add", "--", *conflicts, cwd=main_wt)
+    elif merged.returncode:
         git("merge", "--abort", cwd=main_wt)
-        return [f"merge conflicts in {conflicts.replace(chr(10), ', ') or merged.stderr.strip()}"]
+        return [f"merge conflicts in {', '.join(conflicts) or merged.stderr.strip()}"]
     done = subprocess.run(
         ["uv", "run", "climb", "module", "check", "--content", str(main_wt / "modules"), module],
         cwd=ENGINE,
@@ -397,12 +432,12 @@ def relevel(args: argparse.Namespace) -> None:
         )
         if not sub_job.state().get("relevel"):
             stages.relevel(sub_job, mine)
-        git("add", f"modules/{args.module}", cwd=wt)
+        stage(args.module, wt)
         if git("diff", "--cached", "--name-only", cwd=wt):
             subject = f"fix({args.module}): re-level {topic}/{sub}"
             git("commit", "-q", "-m", subject, "-m", models(job.models), cwd=wt)
         git("merge", "-q", "--no-ff", "--no-edit", branch, cwd=main_wt)
-        print(f"{sub}: re-levelled")
+        print(f"{sub}: re-levelled; {retire(wt, branch, args.branch)}")
 
 
 def release(args: argparse.Namespace) -> None:

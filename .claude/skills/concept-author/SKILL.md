@@ -198,12 +198,22 @@ nohup uv run python .claude/skills/concept-author/run.py --level 0 \
   change a role's model. `scratch/<sub>-L<n>/tokens.tsv` holds
   each step's tokens and cost.
 - **Where the work goes.** The content repository gets a branch, `py-auto`,
-  and a worktree of it in `../py-runs/wt/integration`. Each subtopic is
-  written in a worktree of its own, on a branch cut from `py-auto`. A
+  and a worktree of it in `../py-runs/wt/integration`. A run first merges
+  the content repository's `main` into `py-auto`, so each subtopic starts
+  with every fix `main` holds. A conflict in that merge stops the run. Each
+  subtopic is written in a worktree of its own, on a branch cut from
+  `py-auto`. A
   subtopic whose digest reads `DONE` is committed there, the pre-commit hook
-  running the module check, and merged into `py-auto`. The merge is committed
+  running the module check, and merged into `py-auto`. The commit holds the
+  module's files and every source its sessions fetched into `library/`, so a
+  source reaches `main` with the concepts citing it. The merge is committed
   only if the merged module passes its check, since two subtopics written in
-  parallel once each wrote a concept of one id. A run never touches `main`.
+  parallel once each wrote a concept of one id. Two subtopics fetching one
+  page on one day conflict only in `library/`, and the merge keeps the
+  snapshot `py-auto` already holds. Once a subtopic's branch merges, the
+  run removes its worktree and its branch. A worktree holding an uncommitted
+  change to a tracked file is kept, and the report names the file. A run
+  reads `main` and never writes it.
 - **Re-levelling.** `run.py --relevel` re-levels the written concepts,
   as `concepts.md` `### Re-levelling` gives. An assess session proposes
   moves from a table of every claim, a fresh verify session keeps the moves
