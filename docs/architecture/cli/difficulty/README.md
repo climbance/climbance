@@ -31,10 +31,20 @@ scores through `climb difficulty judge`. A `user` rating is written by hand.
   medium and hard mean what the platforms' three levels mean, since a user
   compares a label with those. [`criteria.md`](criteria.md) gives the
   criteria for each level.
-- **The bands' cuts are set when the judge first scores the corpus.** They are
-  read so that the derived labels agree with the criteria on the served
-  problems as often as possible. The criteria then keep the meaning a label had
-  before scores existed.
+- **The bands' cuts are read from the judge's first scores of the corpus.** A
+  cut is placed where the derived labels agree most often with the labels the
+  generator wrote to the criteria, on the served problems. The criteria then
+  keep the meaning a label had before scores existed.
+- **Medium starts at 1100.** On the 133 served problems of the first judge run,
+  a cut between the scores 1058 and 1109 agrees with the generator's label on
+  97 problems, the most of any cut. The provisional cut at 1300 agreed on 85.
+  Most scores lie within one deviation, about 265, of the cut, so one
+  problem's label is uncertain even where the labels agree in aggregate.
+- **Hard starts at 1900, a cut the corpus cannot set.** The generator wrote 3
+  served problems as hard, and the judge scored them 1312 to 1414, among the
+  medium ones. No corpus problem scored above 1567. Every hard cut therefore
+  lowers agreement, and the cut keeps its provisional value. The cut is read
+  again once the corpus holds problems the judge scores above 1600.
 - **Whether a ladder requires an easy rung of a user who passed the recall is
   deferred** until real sittings show what the easy rung adds. A recall checks
   the user types the form, and an easy problem that the user sees it.

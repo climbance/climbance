@@ -14,11 +14,11 @@ class RatingSource(StrEnum):
     JUDGE = "judge"  # the corrected median of the judge's draws, named by `correction_id`
 
 
-# Each label's lowest score, easy first. Provisional: the first judge run sets
-# the cuts against the criteria's labels, as `cli/difficulty/README.md` gives
+# Each label's lowest score, easy first; `cli/difficulty/README.md` gives how
+# each cut was set
 BANDS: tuple[tuple[float, ProblemDifficulty], ...] = (
     (float("-inf"), ProblemDifficulty.EASY),
-    (1300.0, ProblemDifficulty.MEDIUM),
+    (1100.0, ProblemDifficulty.MEDIUM),
     (1900.0, ProblemDifficulty.HARD),
 )
 
