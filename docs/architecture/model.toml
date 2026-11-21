@@ -34,7 +34,8 @@
 # owner's box, and its check fails on a table with no owner or with two.
 #
 # `src` on an element names the source files it owns, as globs relative to the
-# repository root. Every file under `src/climb` and `packages/core/src` has
+# repository root. Every file under `src/climb`, `packages/core/src`,
+# `packages/editor/src`, `web/src`, `native/src` and `native/editor` has
 # exactly one owner, and the model-views check fails on a file with none or
 # with two, and on a glob matching no file. A component owns the files its doc
 # specifies, and each record's schema file goes to the component owning its
@@ -125,6 +126,13 @@ kind = "container"
 name = "Web app"
 role = "Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."
 doc = "web-app/README.md"
+src = [
+    "web/src/App.tsx",
+    "web/src/main.tsx",
+    "web/src/globals.d.ts",
+    "web/src/api/**",
+    "web/src/lib/format.ts",
+]
 
 [[element]]
 id = "native-app"
@@ -132,6 +140,14 @@ kind = "container"
 name = "Native app"
 role = "The phone client for Android and iOS; schedules the knowledge queues offline and syncs."
 doc = "native-app/README.md"
+src = [
+    "native/src/app/_layout.tsx",
+    "native/src/app/(tabs)/_layout.tsx",
+    "native/src/lib/engine.ts",
+    "native/src/lib/useEngine.ts",
+    "native/src/lib/settings.ts",
+    "native/src/lib/name.ts",
+]
 
 [[element]]
 id = "core-package"
@@ -139,7 +155,15 @@ kind = "library"
 name = "Shared core"
 role = "`packages/core`: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."
 doc = "core-package/README.md"
-src = ["packages/core/src/**"]
+src = [
+    "packages/core/src/index.ts",
+    "packages/core/src/types.ts",
+    "packages/core/src/engine.*",
+    "packages/core/src/api/**",
+    "packages/core/src/core.test.ts",
+    "packages/core/src/cycles.test.ts",
+    "packages/core/src/real-data.test.ts",
+]
 
 [[element]]
 id = "shared-editor"
@@ -147,6 +171,7 @@ kind = "library"
 name = "Shared editor"
 role = "`packages/editor`: the CodeMirror setup for editing Python, imported by both clients."
 doc = "shared-editor/README.md"
+src = ["packages/editor/src/**"]
 
 [[element]]
 id = "proxy"
@@ -805,6 +830,551 @@ tables = [
     "calls",
 ]
 
+# Components of the shared core: the knowledge rules, then what each screen says
+
+[[element]]
+id = "knowledge-schedule"
+kind = "component"
+container = "core-package"
+name = "Schedule"
+role = "Replays FSRS over a user's answers, rates each one, and reads each question's state."
+doc = "core-package/knowledge/schedule.md"
+src = [
+    "packages/core/src/fsrs.*",
+    "packages/core/src/schedule.*",
+    "packages/core/src/stats.*",
+    "packages/core/src/reminder.*",
+    "packages/core/src/stepping.*",
+    "packages/core/src/spec.*",
+]
+
+[[element]]
+id = "gating"
+kind = "component"
+container = "core-package"
+name = "Gating"
+role = "Reads the levels, the groups and the prerequisite graph from the snapshot, and opens each group's new questions."
+doc = "core-package/knowledge/gating.md"
+src = [
+    "packages/core/src/courses.*",
+    "packages/core/src/graph.*",
+    "packages/core/src/subtitles.*",
+]
+
+[[element]]
+id = "queues"
+kind = "component"
+container = "core-package"
+name = "Queues"
+role = "Picks each queue's next question under the daily limit, the focus, the settings and the module order."
+doc = "core-package/knowledge/queues.md"
+src = [
+    "packages/core/src/queue.*",
+    "packages/core/src/select.*",
+    "packages/core/src/focus.*",
+    "packages/core/src/order.*",
+    "packages/core/src/settings.*",
+    "packages/core/src/raise.*",
+]
+
+[[element]]
+id = "certifications"
+kind = "component"
+container = "core-package"
+name = "Certifications"
+role = "Decides each certification's state, and samples a level exam or a certification's."
+doc = "core-package/knowledge/certifications.md"
+src = [
+    "packages/core/src/certs.*",
+    "packages/core/src/exam.*",
+    "packages/core/src/modes.*",
+]
+
+[[element]]
+id = "baseline-tests"
+kind = "component"
+container = "core-package"
+name = "Baseline tests"
+role = "Samples a topic's baseline test, and asks its questions again as the delayed test."
+doc = "core-package/knowledge/baseline-tests.md"
+src = [
+    "packages/core/src/baseline.*",
+    "packages/core/src/delayed.*",
+]
+
+[[element]]
+id = "projections"
+kind = "component"
+container = "core-package"
+name = "Projections"
+role = "Counts the reviews of the next fourteen learning days, and dates when the focus is reached."
+doc = "core-package/knowledge/projections.md"
+src = [
+    "packages/core/src/forecast.*",
+    "packages/core/src/target.*",
+]
+
+[[element]]
+id = "client-store"
+kind = "component"
+container = "core-package"
+name = "Store and sync"
+role = "Names the records a client keeps, folds them into the learner, and syncs the outbox with the engine."
+doc = "core-package/knowledge/store.md"
+section = "The outbox"
+src = [
+    "packages/core/src/records.*",
+    "packages/core/src/learner.*",
+    "packages/core/src/sync.*",
+    "packages/core/src/synced.*",
+    "packages/core/src/syncstate.*",
+]
+
+[[element]]
+id = "answering"
+kind = "component"
+container = "core-package"
+name = "Answering"
+role = "Runs a queue or an exam one question at a time: the reply, its grade, and the result each answer shows."
+doc = "web-app/pages/knowledge/queue/README.md"
+src = [
+    "packages/core/src/run.*",
+    "packages/core/src/ask.*",
+    "packages/core/src/answer.*",
+    "packages/core/src/reply.*",
+    "packages/core/src/result.*",
+    "packages/core/src/words/queue.*",
+]
+
+[[element]]
+id = "knowledge-screens"
+kind = "component"
+container = "core-package"
+name = "Knowledge screens"
+role = "Computes what the knowledge home, a module, its map, a subtopic, the lessons and the certifications say."
+doc = "core-package/screens.md"
+section = "Screens"
+src = [
+    "packages/core/src/home.*",
+    "packages/core/src/module.*",
+    "packages/core/src/mapview.*",
+    "packages/core/src/layout.*",
+    "packages/core/src/screens.*",
+    "packages/core/src/certview.*",
+    "packages/core/src/lessons.*",
+    "packages/core/src/lessontext.*",
+    "packages/core/src/pairing.*",
+    "packages/core/src/nextup.*",
+    "packages/core/src/words/home.*",
+    "packages/core/src/words/module.*",
+]
+
+[[element]]
+id = "practice-screens"
+kind = "component"
+container = "core-package"
+name = "Practice screens"
+role = "Computes what the board, the cards, the listing and the guide say, and each page's readings and sections."
+doc = "web-app/pages/practice/board/README.md"
+src = [
+    "packages/core/src/practice.*",
+    "packages/core/src/listing.*",
+    "packages/core/src/guide.*",
+    "packages/core/src/reading.*",
+    "packages/core/src/sections.*",
+    "packages/core/src/retirement.*",
+    "packages/core/src/words/pages.*",
+]
+
+[[element]]
+id = "core-sitting"
+kind = "component"
+container = "core-package"
+name = "Sitting controller"
+role = "Drives a sitting: the requests minting it, moving its clock and submitting to it, then the claim and the label."
+doc = "flows/drill-loop.md"
+src = [
+    "packages/core/src/sitting.*",
+    "packages/core/src/sittingrun.*",
+    "packages/core/src/claim.*",
+]
+
+[[element]]
+id = "core-recall"
+kind = "component"
+container = "core-package"
+name = "Recall trainer"
+role = "Draws the template a recall reproduces, and offers its hints in order."
+doc = "flows/recalling-a-template.md"
+src = [
+    "packages/core/src/recall.*",
+]
+
+[[element]]
+id = "core-exercises"
+kind = "component"
+container = "core-package"
+name = "Exercise screens"
+role = "Serves the judging and the key-line items one at a time, and reads each answer back."
+doc = "web-app/pages/cards/judging/README.md"
+src = [
+    "packages/core/src/judging.*",
+    "packages/core/src/filling.*",
+]
+
+[[element]]
+id = "core-account"
+kind = "component"
+container = "core-package"
+name = "Account"
+role = "Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy."
+doc = "web-app/pages/settings/README.md"
+src = [
+    "packages/core/src/account.*",
+    "packages/core/src/feedback.*",
+    "packages/core/src/privacy.*",
+]
+
+[[element]]
+id = "drawing"
+kind = "component"
+container = "core-package"
+name = "Code and diagrams"
+role = "Wraps code to a width, and shapes the tables and the diagrams authored prose holds."
+doc = "web-app/design-system.md"
+section = "Diagrams and tables"
+src = [
+    "packages/core/src/code.*",
+    "packages/core/src/table.*",
+    "packages/core/src/diagram.*",
+]
+
+# Components of the web app
+
+[[element]]
+id = "web-shell"
+kind = "component"
+container = "web-app"
+name = "Web shell"
+role = "The navigation, the account menu, the signed-in devices, the error screen, the settings and the pages under no section."
+doc = "web-app/pages/shell/README.md"
+src = [
+    "web/src/components/NavMenu.tsx",
+    "web/src/components/AccountMenu.tsx",
+    "web/src/components/SignOut.tsx",
+    "web/src/components/SignedInDevices.tsx",
+    "web/src/components/ThemeToggle.tsx",
+    "web/src/components/Broke.tsx",
+    "web/src/components/SendFeedback.tsx",
+    "web/src/pages/SettingsPage.tsx",
+    "web/src/pages/LoginPage.tsx",
+    "web/src/pages/PrivacyPage.tsx",
+    "web/src/pages/NotFoundPage.tsx",
+    "web/src/lib/theme.ts",
+    "web/src/lib/reported.ts",
+]
+
+[[element]]
+id = "web-design-system"
+kind = "component"
+container = "web-app"
+name = "Web design system"
+role = "The tokens, the shadcn components and the shared shapes every web page is built from, shown in the gallery."
+doc = "web-app/design-system.md"
+section = "Tokens and shapes"
+src = [
+    "web/src/components/ui/**",
+    "web/src/index.css",
+    "web/src/components/Tag.tsx",
+    "web/src/components/ProgressBar.tsx",
+    "web/src/components/Choice.tsx",
+    "web/src/components/Inline.tsx",
+    "web/src/components/optionTile.ts",
+    "web/src/components/Markdown.tsx",
+    "web/src/components/Diagram.tsx",
+    "web/src/components/PythonCode.tsx",
+    "web/src/components/GridTable.tsx",
+    "web/src/lib/utils.ts",
+    "web/src/lib/verdicts.ts",
+    "web/src/lib/grid.ts",
+    "web/src/lib/columns.ts",
+    "web/src/pages/GalleryPage.tsx",
+]
+
+[[element]]
+id = "web-areas"
+kind = "component"
+container = "web-app"
+name = "Web page areas"
+role = "The header, the body, the act, the panels and the section bar a web page is laid out in."
+doc = "web-app/areas.md"
+src = [
+    "web/src/components/PageHeader.tsx",
+    "web/src/components/PageSection.tsx",
+    "web/src/components/SectionHeading.tsx",
+    "web/src/components/SectionBar.tsx",
+    "web/src/components/Panel.tsx",
+    "web/src/components/BackLink.tsx",
+    "web/src/components/ErrorLine.tsx",
+    "web/src/components/Loaded.tsx",
+    "web/src/lib/overflow.ts",
+    "web/src/lib/sections.ts",
+]
+
+[[element]]
+id = "web-practice"
+kind = "component"
+container = "web-app"
+name = "Web practice pages"
+role = "The board, a technique's problems, the guide and the problem listing."
+doc = "web-app/pages/practice/board/README.md"
+src = [
+    "web/src/pages/BoardPage.tsx",
+    "web/src/pages/TechniquePage.tsx",
+    "web/src/pages/GuidePage.tsx",
+    "web/src/pages/ProblemsPage.tsx",
+    "web/src/components/PickRow.tsx",
+    "web/src/components/ProblemRow.tsx",
+    "web/src/components/ProblemFacts.tsx",
+]
+
+[[element]]
+id = "web-cards"
+kind = "component"
+container = "web-app"
+name = "Web card pages"
+role = "The cards, a card's ladder and templates, a recall, and the judging and key-line exercises."
+doc = "web-app/pages/cards/card/README.md"
+src = [
+    "web/src/pages/CardsPage.tsx",
+    "web/src/pages/CardPage.tsx",
+    "web/src/pages/RecallPage.tsx",
+    "web/src/pages/JudgePage.tsx",
+    "web/src/pages/FillPage.tsx",
+    "web/src/components/CardGraph.tsx",
+    "web/src/components/CardPanel.tsx",
+    "web/src/components/TemplatePanel.tsx",
+    "web/src/lib/paths.ts",
+]
+
+[[element]]
+id = "web-sitting"
+kind = "component"
+container = "web-app"
+name = "Web sitting"
+role = "A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request."
+doc = "web-app/pages/problems/problem/README.md"
+src = [
+    "web/src/pages/ProblemPage.tsx",
+    "web/src/components/SittingView.tsx",
+    "web/src/components/ElapsedClock.tsx",
+    "web/src/components/CodeEditor.tsx",
+    "web/src/components/ClaimPrompt.tsx",
+    "web/src/components/Verdict.tsx",
+    "web/src/components/ReportProblem.tsx",
+    "web/src/components/YourRecord.tsx",
+    "web/src/lib/clock.ts",
+    "web/src/lib/draft.ts",
+]
+
+[[element]]
+id = "web-knowledge"
+kind = "component"
+container = "web-app"
+name = "Web knowledge pages"
+role = "The knowledge home, a module, a subtopic, a queue, an exam, the lessons and the certifications."
+doc = "web-app/pages/knowledge/home/README.md"
+src = [
+    "web/src/pages/KnowledgePage.tsx",
+    "web/src/pages/ModulePage.tsx",
+    "web/src/pages/SubtopicPage.tsx",
+    "web/src/pages/QueuePage.tsx",
+    "web/src/pages/ExamPage.tsx",
+    "web/src/pages/LessonsPage.tsx",
+    "web/src/pages/LessonPage.tsx",
+    "web/src/pages/CertificationsPage.tsx",
+    "web/src/knowledge/Ask.tsx",
+    "web/src/knowledge/CertDialog.tsx",
+    "web/src/knowledge/KnowledgeNext.tsx",
+    "web/src/knowledge/LessonOver.tsx",
+    "web/src/knowledge/LessonText.tsx",
+    "web/src/knowledge/ModuleMap.tsx",
+    "web/src/knowledge/ModuleRow.tsx",
+    "web/src/knowledge/ReviewForecast.tsx",
+    "web/src/knowledge/StartSheet.tsx",
+    "web/src/knowledge/filtered.*",
+    "web/src/knowledge/paths.ts",
+]
+
+[[element]]
+id = "web-knowledge-store"
+kind = "component"
+container = "web-app"
+name = "Web knowledge store"
+role = "Keeps the browser's copy of the content and the user's log in IndexedDB, and runs the sync loop."
+doc = "core-package/knowledge/store.md"
+section = "The copy"
+src = [
+    "web/src/knowledge/KnowledgeProvider.tsx",
+    "web/src/knowledge/context.ts",
+    "web/src/knowledge/copy.*",
+    "web/src/knowledge/learner.ts",
+    "web/src/knowledge/transport.ts",
+]
+
+# Components of the native app
+
+[[element]]
+id = "native-shell"
+kind = "component"
+container = "native-app"
+name = "Phone shell"
+role = "The account menu, the sign-in, the signed-in devices, the error screen, the settings and the reminder."
+doc = "web-app/pages/shell/README.md"
+src = [
+    "native/src/app/login.tsx",
+    "native/src/app/signed-in.tsx",
+    "native/src/app/devices.tsx",
+    "native/src/app/settings.tsx",
+    "native/src/app/privacy.tsx",
+    "native/src/ui/account.tsx",
+    "native/src/ui/signout.tsx",
+    "native/src/ui/broke.tsx",
+    "native/src/ui/feedback.tsx",
+    "native/src/ui/record.tsx",
+    "native/src/ui/frozen.tsx",
+    "native/src/lib/auth.ts",
+    "native/src/lib/scheme.tsx",
+    "native/src/lib/reported.ts",
+    "native/src/lib/notify.ts",
+]
+
+[[element]]
+id = "native-design-system"
+kind = "component"
+container = "native-app"
+name = "Phone design system"
+role = "The tokens and the shared shapes every phone screen is built from: rows, sheets, sections, tables, prose and diagrams."
+doc = "web-app/design-system.md"
+section = "Tokens and shapes"
+src = [
+    "native/src/ui/tokens.ts",
+    "native/src/ui/common.tsx",
+    "native/src/ui/rows.tsx",
+    "native/src/ui/sections.tsx",
+    "native/src/ui/sheet.tsx",
+    "native/src/ui/table.tsx",
+    "native/src/ui/toggle.tsx",
+    "native/src/ui/markdown.tsx",
+    "native/src/ui/diagram.tsx",
+    "native/src/ui/pull.tsx",
+    "native/src/ui/verdict.tsx",
+    "native/src/lib/math.*",
+]
+
+[[element]]
+id = "native-editor"
+kind = "component"
+container = "native-app"
+name = "Phone editor"
+role = "The CodeMirror page in its WebView, and the app's own keyboard typing into it."
+doc = "native-app/README.md"
+section = "Typing code"
+src = [
+    "native/src/editor/page.*",
+    "native/src/ui/editor.tsx",
+    "native/src/ui/keys.tsx",
+    "native/src/lib/keys.*",
+    "native/editor/**",
+]
+
+[[element]]
+id = "native-practice"
+kind = "component"
+container = "native-app"
+name = "Phone practice screens"
+role = "The Practice tab, a technique's problems, the guide and the Problems tab."
+doc = "web-app/pages/practice/board/README.md"
+src = [
+    "native/src/app/(tabs)/index.tsx",
+    "native/src/app/(tabs)/problems.tsx",
+    "native/src/app/technique.tsx",
+    "native/src/app/guide.tsx",
+]
+
+[[element]]
+id = "native-cards"
+kind = "component"
+container = "native-app"
+name = "Phone card screens"
+role = "The Cards tab, a card, a recall, and the judging and key-line exercises."
+doc = "web-app/pages/cards/card/README.md"
+src = [
+    "native/src/app/(tabs)/cards.tsx",
+    "native/src/app/card.tsx",
+    "native/src/app/recall.tsx",
+    "native/src/app/judge.tsx",
+    "native/src/app/fill.tsx",
+    "native/src/ui/cards.tsx",
+]
+
+[[element]]
+id = "native-sitting"
+kind = "component"
+container = "native-app"
+name = "Phone sitting"
+role = "A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request."
+doc = "web-app/pages/problems/problem/README.md"
+src = [
+    "native/src/app/problem.tsx",
+    "native/src/ui/claim.tsx",
+    "native/src/ui/pause.tsx",
+    "native/src/ui/report.tsx",
+    "native/src/lib/sitting.ts",
+]
+
+[[element]]
+id = "native-knowledge"
+kind = "component"
+container = "native-app"
+name = "Phone knowledge screens"
+role = "The Knowledge tab, a module, a subtopic, the quiz screen, an exam, the lessons and the certifications."
+doc = "web-app/pages/knowledge/home/README.md"
+src = [
+    "native/src/app/(tabs)/knowledge.tsx",
+    "native/src/app/module.tsx",
+    "native/src/app/subtopic.tsx",
+    "native/src/app/quiz.tsx",
+    "native/src/app/exam.tsx",
+    "native/src/app/lessons.tsx",
+    "native/src/app/lesson.tsx",
+    "native/src/app/certs.tsx",
+    "native/src/ui/certs.tsx",
+    "native/src/ui/continue.tsx",
+    "native/src/ui/focuscard.tsx",
+    "native/src/ui/forecast.tsx",
+    "native/src/ui/groups.tsx",
+    "native/src/ui/mapcanvas.tsx",
+    "native/src/ui/modules.tsx",
+    "native/src/ui/start.tsx",
+    "native/src/lib/useSavedSize.ts",
+]
+
+[[element]]
+id = "native-knowledge-store"
+kind = "component"
+container = "native-app"
+name = "Phone knowledge store"
+role = "Keeps the phone's copy of the content and the user's log in SQLite, and syncs it in the background."
+doc = "core-package/knowledge/store.md"
+section = "The copy"
+src = [
+    "native/src/lib/db.ts",
+    "native/src/lib/store.tsx",
+    "native/src/lib/sync.ts",
+    "native/src/lib/courses-cache.ts",
+]
+
 # Relations
 
 [[relation]]
@@ -1401,6 +1971,290 @@ from = "app-tokens"
 to = "database"
 label = "stores each one-time code and app token"
 access = "writes"
+
+# Inside the clients and the shared core
+
+[[relation]]
+from = "queues"
+to = "knowledge-schedule"
+label = "reads each question's state"
+access = "reads"
+
+[[relation]]
+from = "queues"
+to = "gating"
+label = "reads the open groups"
+access = "reads"
+
+[[relation]]
+from = "certifications"
+to = "knowledge-schedule"
+label = "reads which questions are retained"
+access = "reads"
+
+[[relation]]
+from = "certifications"
+to = "gating"
+label = "reads the groups a certification covers"
+access = "reads"
+
+[[relation]]
+from = "baseline-tests"
+to = "certifications"
+label = "samples the questions as an exam does"
+access = "reads"
+
+[[relation]]
+from = "projections"
+to = "queues"
+label = "reads what the next queue serves"
+access = "reads"
+
+[[relation]]
+from = "projections"
+to = "knowledge-schedule"
+label = "replays each question forward"
+access = "reads"
+
+[[relation]]
+from = "client-store"
+to = "queues"
+label = "reads the focus, the settings and the order records"
+access = "reads"
+
+[[relation]]
+from = "answering"
+to = "queues"
+label = "draws the next question"
+access = "reads"
+
+[[relation]]
+from = "answering"
+to = "baseline-tests"
+label = "runs a baseline or a delayed test"
+access = "reads"
+
+[[relation]]
+from = "answering"
+to = "certifications"
+label = "runs an exam"
+access = "reads"
+
+[[relation]]
+from = "answering"
+to = "client-store"
+label = "appends each answer to the outbox"
+access = "writes"
+
+[[relation]]
+from = "knowledge-screens"
+to = "queues"
+label = "counts what each queue serves"
+access = "reads"
+
+[[relation]]
+from = "knowledge-screens"
+to = "certifications"
+label = "reads each certification's state"
+access = "reads"
+
+[[relation]]
+from = "knowledge-screens"
+to = "gating"
+label = "reads the groups and the prerequisite graph"
+access = "reads"
+
+[[relation]]
+from = "practice-screens"
+to = "core-account"
+label = "reads the account the navigation names"
+access = "reads"
+
+[[relation]]
+from = "web-knowledge"
+to = "knowledge-screens"
+label = "draws what each knowledge screen says"
+access = "reads"
+
+[[relation]]
+from = "web-knowledge"
+to = "answering"
+label = "runs a queue or an exam"
+access = "reads"
+
+[[relation]]
+from = "web-knowledge"
+to = "projections"
+label = "draws the review forecast"
+access = "reads"
+
+[[relation]]
+from = "web-knowledge"
+to = "web-knowledge-store"
+label = "reads the copy and starts a sync"
+access = "reads"
+
+[[relation]]
+from = "web-knowledge-store"
+to = "client-store"
+label = "runs the sync over the browser's copy"
+access = "reads"
+
+[[relation]]
+from = "web-practice"
+to = "practice-screens"
+label = "draws the board, the guide and the listing"
+access = "reads"
+
+[[relation]]
+from = "web-cards"
+to = "practice-screens"
+label = "draws the cards and their ladders"
+access = "reads"
+
+[[relation]]
+from = "web-cards"
+to = "core-recall"
+label = "runs a recall"
+access = "reads"
+
+[[relation]]
+from = "web-cards"
+to = "core-exercises"
+label = "runs a judging or a key-line exercise"
+access = "reads"
+
+[[relation]]
+from = "web-cards"
+to = "web-sitting"
+label = "types a recall in the sitting's editor"
+access = "reads"
+
+[[relation]]
+from = "web-sitting"
+to = "core-sitting"
+label = "runs the sitting's clock and submissions"
+access = "reads"
+
+[[relation]]
+from = "web-sitting"
+to = "shared-editor"
+label = "imports the editor setup"
+access = "reads"
+
+[[relation]]
+from = "web-shell"
+to = "core-account"
+label = "reads the devices, the export and the deletion"
+access = "reads"
+
+[[relation]]
+from = "web-areas"
+to = "practice-screens"
+label = "reads a page's readings and its sections"
+access = "reads"
+
+[[relation]]
+from = "web-design-system"
+to = "drawing"
+label = "reads how code wraps, and the shape of each table and diagram"
+access = "reads"
+
+[[relation]]
+from = "native-knowledge"
+to = "knowledge-screens"
+label = "draws what each knowledge screen says"
+access = "reads"
+
+[[relation]]
+from = "native-knowledge"
+to = "answering"
+label = "runs a queue or an exam"
+access = "reads"
+
+[[relation]]
+from = "native-knowledge"
+to = "projections"
+label = "draws the review forecast"
+access = "reads"
+
+[[relation]]
+from = "native-knowledge"
+to = "native-knowledge-store"
+label = "reads the copy and starts a sync"
+access = "reads"
+
+[[relation]]
+from = "native-knowledge-store"
+to = "client-store"
+label = "runs the sync over the phone's copy"
+access = "reads"
+
+[[relation]]
+from = "native-practice"
+to = "practice-screens"
+label = "draws the board, the guide and the listing"
+access = "reads"
+
+[[relation]]
+from = "native-cards"
+to = "practice-screens"
+label = "draws the cards and their ladders"
+access = "reads"
+
+[[relation]]
+from = "native-cards"
+to = "core-recall"
+label = "runs a recall"
+access = "reads"
+
+[[relation]]
+from = "native-cards"
+to = "core-exercises"
+label = "runs a judging or a key-line exercise"
+access = "reads"
+
+[[relation]]
+from = "native-cards"
+to = "native-editor"
+label = "types a recall"
+access = "reads"
+
+[[relation]]
+from = "native-sitting"
+to = "core-sitting"
+label = "runs the sitting's clock and submissions"
+access = "reads"
+
+[[relation]]
+from = "native-sitting"
+to = "native-editor"
+label = "types the sitting's code"
+access = "reads"
+
+[[relation]]
+from = "native-editor"
+to = "shared-editor"
+label = "bundles the editor setup into the WebView page"
+access = "reads"
+
+[[relation]]
+from = "native-shell"
+to = "core-account"
+label = "reads the devices, the export and the deletion"
+access = "reads"
+
+[[relation]]
+from = "native-design-system"
+to = "practice-screens"
+label = "reads a screen's readings and its sections"
+access = "reads"
+
+[[relation]]
+from = "native-design-system"
+to = "drawing"
+label = "reads how code wraps, and the shape of each table and diagram"
+access = "reads"
 
 # Flows
 

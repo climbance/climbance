@@ -16,7 +16,14 @@ from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs" / "architecture"
-OWNED = ["src/climb", "packages/core/src"]
+OWNED = [
+    "src/climb",
+    "packages/core/src",
+    "packages/editor/src",
+    "web/src",
+    "native/src",
+    "native/editor",
+]
 MODEL = DOCS / "model.toml"
 README = DOCS / "README.md"
 BEGIN = "<!-- generated from model.toml by `just model-views`, never edited -->"

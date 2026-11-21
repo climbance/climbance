@@ -80,6 +80,125 @@ flowchart TB
     database -->|"is dumped on a schedule and copied off the server [pg_dump]"| offsite_dumps
 ```
 
+The Web app's components, and what each reads and writes.
+
+```mermaid
+flowchart TB
+    core_package["Shared core<br/>packages/core: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."]
+    shared_editor["Shared editor<br/>packages/editor: the CodeMirror setup for editing Python, imported by both clients."]
+    subgraph web_app["Web app"]
+        web_shell["Web shell<br/>The navigation, the account menu, the signed-in devices, the error screen, the settings and the pages under no section."]
+        web_design_system["Web design system<br/>The tokens, the shadcn components and the shared shapes every web page is built from, shown in the gallery."]
+        web_areas["Web page areas<br/>The header, the body, the act, the panels and the section bar a web page is laid out in."]
+        web_practice["Web practice pages<br/>The board, a technique's problems, the guide and the problem listing."]
+        web_cards["Web card pages<br/>The cards, a card's ladder and templates, a recall, and the judging and key-line exercises."]
+        web_sitting["Web sitting<br/>A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request."]
+        web_knowledge["Web knowledge pages<br/>The knowledge home, a module, a subtopic, a queue, an exam, the lessons and the certifications."]
+        web_knowledge_store["Web knowledge store<br/>Keeps the browser's copy of the content and the user's log in IndexedDB, and runs the sync loop."]
+    end
+    web_knowledge -.->|"draws what each knowledge screen says; runs a queue or an exam; draws the review forecast"| core_package
+    web_knowledge -.->|"reads the copy and starts a sync"| web_knowledge_store
+    web_knowledge_store -.->|"runs the sync over the browser's copy"| core_package
+    web_practice -.->|"draws the board, the guide and the listing"| core_package
+    web_cards -.->|"draws the cards and their ladders; runs a recall; runs a judging or a key-line exercise"| core_package
+    web_cards -.->|"types a recall in the sitting's editor"| web_sitting
+    web_sitting -.->|"runs the sitting's clock and submissions"| core_package
+    web_sitting -.->|"imports the editor setup"| shared_editor
+    web_shell -.->|"reads the devices, the export and the deletion"| core_package
+    web_areas -.->|"reads a page's readings and its sections"| core_package
+    web_design_system -.->|"reads how code wraps, and the shape of each table and diagram"| core_package
+```
+
+The Native app's components, and what each reads and writes.
+
+```mermaid
+flowchart TB
+    core_package["Shared core<br/>packages/core: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."]
+    shared_editor["Shared editor<br/>packages/editor: the CodeMirror setup for editing Python, imported by both clients."]
+    subgraph native_app["Native app"]
+        native_shell["Phone shell<br/>The account menu, the sign-in, the signed-in devices, the error screen, the settings and the reminder."]
+        native_design_system["Phone design system<br/>The tokens and the shared shapes every phone screen is built from: rows, sheets, sections, tables, prose and diagrams."]
+        native_editor["Phone editor<br/>The CodeMirror page in its WebView, and the app's own keyboard typing into it."]
+        native_practice["Phone practice screens<br/>The Practice tab, a technique's problems, the guide and the Problems tab."]
+        native_cards["Phone card screens<br/>The Cards tab, a card, a recall, and the judging and key-line exercises."]
+        native_sitting["Phone sitting<br/>A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request."]
+        native_knowledge["Phone knowledge screens<br/>The Knowledge tab, a module, a subtopic, the quiz screen, an exam, the lessons and the certifications."]
+        native_knowledge_store["Phone knowledge store<br/>Keeps the phone's copy of the content and the user's log in SQLite, and syncs it in the background."]
+    end
+    native_knowledge -.->|"draws what each knowledge screen says; runs a queue or an exam; draws the review forecast"| core_package
+    native_knowledge -.->|"reads the copy and starts a sync"| native_knowledge_store
+    native_knowledge_store -.->|"runs the sync over the phone's copy"| core_package
+    native_practice -.->|"draws the board, the guide and the listing"| core_package
+    native_cards -.->|"draws the cards and their ladders; runs a recall; runs a judging or a key-line exercise"| core_package
+    native_cards -.->|"types a recall"| native_editor
+    native_sitting -.->|"runs the sitting's clock and submissions"| core_package
+    native_sitting -.->|"types the sitting's code"| native_editor
+    native_editor -.->|"bundles the editor setup into the WebView page"| shared_editor
+    native_shell -.->|"reads the devices, the export and the deletion"| core_package
+    native_design_system -.->|"reads a screen's readings and its sections; reads how code wraps, and the shape of each table and diagram"| core_package
+```
+
+The Shared core's components, and what each reads and writes.
+
+```mermaid
+flowchart TB
+    web_app["Web app<br/>Vite, React and TypeScript, built to static files; the pages a learner uses in a browser."]
+    native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
+    subgraph core_package["Shared core"]
+        knowledge_schedule["Schedule<br/>Replays FSRS over a user's answers, rates each one, and reads each question's state."]
+        gating["Gating<br/>Reads the levels, the groups and the prerequisite graph from the snapshot, and opens each group's new questions."]
+        queues["Queues<br/>Picks each queue's next question under the daily limit, the focus, the settings and the module order."]
+        certifications["Certifications<br/>Decides each certification's state, and samples a level exam or a certification's."]
+        baseline_tests["Baseline tests<br/>Samples a topic's baseline test, and asks its questions again as the delayed test."]
+        projections["Projections<br/>Counts the reviews of the next fourteen learning days, and dates when the focus is reached."]
+        client_store["Store and sync<br/>Names the records a client keeps, folds them into the learner, and syncs the outbox with the engine."]
+        answering["Answering<br/>Runs a queue or an exam one question at a time: the reply, its grade, and the result each answer shows."]
+        knowledge_screens["Knowledge screens<br/>Computes what the knowledge home, a module, its map, a subtopic, the lessons and the certifications say."]
+        practice_screens["Practice screens<br/>Computes what the board, the cards, the listing and the guide say, and each page's readings and sections."]
+        core_sitting["Sitting controller<br/>Drives a sitting: the requests minting it, moving its clock and submitting to it, then the claim and the label."]
+        core_recall["Recall trainer<br/>Draws the template a recall reproduces, and offers its hints in order."]
+        core_exercises["Exercise screens<br/>Serves the judging and the key-line items one at a time, and reads each answer back."]
+        core_account["Account<br/>Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy."]
+        drawing["Code and diagrams<br/>Wraps code to a width, and shapes the tables and the diagrams authored prose holds."]
+    end
+    queues -.->|"reads each question's state"| knowledge_schedule
+    queues -.->|"reads the open groups"| gating
+    certifications -.->|"reads which questions are retained"| knowledge_schedule
+    certifications -.->|"reads the groups a certification covers"| gating
+    baseline_tests -.->|"samples the questions as an exam does"| certifications
+    projections -.->|"reads what the next queue serves"| queues
+    projections -.->|"replays each question forward"| knowledge_schedule
+    client_store -.->|"reads the focus, the settings and the order records"| queues
+    answering -.->|"draws the next question"| queues
+    answering -.->|"runs a baseline or a delayed test"| baseline_tests
+    answering -.->|"runs an exam"| certifications
+    answering -->|"appends each answer to the outbox"| client_store
+    knowledge_screens -.->|"counts what each queue serves"| queues
+    knowledge_screens -.->|"reads each certification's state"| certifications
+    knowledge_screens -.->|"reads the groups and the prerequisite graph"| gating
+    practice_screens -.->|"reads the account the navigation names"| core_account
+    web_app -.->|"draws what each knowledge screen says"| knowledge_screens
+    web_app -.->|"runs a queue or an exam"| answering
+    web_app -.->|"draws the review forecast"| projections
+    web_app -.->|"runs the sync over the browser's copy"| client_store
+    web_app -.->|"draws the board, the guide and the listing; draws the cards and their ladders; reads a page's readings and its sections"| practice_screens
+    web_app -.->|"runs a recall"| core_recall
+    web_app -.->|"runs a judging or a key-line exercise"| core_exercises
+    web_app -.->|"runs the sitting's clock and submissions"| core_sitting
+    web_app -.->|"reads the devices, the export and the deletion"| core_account
+    web_app -.->|"reads how code wraps, and the shape of each table and diagram"| drawing
+    native_app -.->|"draws what each knowledge screen says"| knowledge_screens
+    native_app -.->|"runs a queue or an exam"| answering
+    native_app -.->|"draws the review forecast"| projections
+    native_app -.->|"runs the sync over the phone's copy"| client_store
+    native_app -.->|"draws the board, the guide and the listing; draws the cards and their ladders; reads a screen's readings and its sections"| practice_screens
+    native_app -.->|"runs a recall"| core_recall
+    native_app -.->|"runs a judging or a key-line exercise"| core_exercises
+    native_app -.->|"runs the sitting's clock and submissions"| core_sitting
+    native_app -.->|"reads the devices, the export and the deletion"| core_account
+    native_app -.->|"reads how code wraps, and the shape of each table and diagram"| drawing
+```
+
 The API's components, and what each reads and writes.
 
 ```mermaid

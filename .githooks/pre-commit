@@ -68,7 +68,7 @@ fi
 # where the staging touches the docs, their generator or the owned sources: a
 # stale diagram, a citation naming a section that moved, or a source file with
 # no owner or with two fails the commit.
-if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$|^src/climb/|^packages/core/src/'; then
+if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$|^src/climb/|^packages/(core|editor)/src/|^web/src/|^native/(src|editor)/'; then
     python3 tools/model_views.py check || exit 1
 fi
 # The package graph in `docs/architecture/modules.md` and the contracts generated
