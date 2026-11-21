@@ -47,3 +47,16 @@ def test_a_glob_matching_nothing_fails() -> None:
     added = {"submission": ["src/climb/caps.py", "src/climb/gone.py"]}
     found = _found(["src/climb/caps.py"], lambda i, _: added.get(i, []))
     assert found == ["`submission` names `src/climb/gone.py` in `src`, which matches no file"]
+
+
+def test_a_relation_between_containers_without_technology_fails() -> None:
+    """At the container level a relation says what it runs over."""
+    tool = _tool()
+    model = tomllib.loads(tool.MODEL.read_text())
+    for r in model["relation"]:
+        if (r["from"], r["to"]) in {("proxy", "api"), ("seed", "content-repo")}:
+            r.pop("technology", None)
+    ids = [model["engine"]["id"], *(e["id"] for e in model["element"])]
+    assert tool.relation_problems(model, ids) == [
+        "the relation from `proxy` to `api` lacks `technology`"
+    ]

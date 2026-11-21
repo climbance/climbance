@@ -33,10 +33,15 @@ def load() -> dict:
 
 def relation_problems(model: dict, ids: list[str]) -> list[str]:
     found = []
+    kinds = {e["id"]: e["kind"] for e in model["element"]}
     for r in model["relation"]:
         found += [f"a relation names `{r[end]}`" for end in ("from", "to") if r[end] not in ids]
         if r.get("access") not in ACCESS:
             found.append(f"the relation from `{r['from']}` to `{r['to']}` lacks `access`")
+        # C4 names what a relation runs over between containers, not inside one
+        outer = "component" not in (kinds.get(r["from"]), kinds.get(r["to"]))
+        if outer and not r.get("technology"):
+            found.append(f"the relation from `{r['from']}` to `{r['to']}` lacks `technology`")
     return found
 
 

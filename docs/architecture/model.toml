@@ -810,48 +810,56 @@ from = "learner"
 to = "web-app"
 label = "practises in a browser"
 access = "writes"
+technology = "a web browser"
 
 [[relation]]
 from = "learner"
 to = "native-app"
 label = "practises on a phone"
 access = "writes"
+technology = "the app on Android or iOS"
 
 [[relation]]
 from = "author"
 to = "cli"
 label = "generates, reviews, seeds and invites"
 access = "writes"
+technology = "a terminal"
 
 [[relation]]
 from = "author"
 to = "content-repo"
 label = "authors cards and modules"
 access = "writes"
+technology = "git"
 
 [[relation]]
 from = "web-app"
 to = "core-package"
 label = "imports the rules and screens"
 access = "reads"
+technology = "TypeScript imports, through the npm workspace"
 
 [[relation]]
 from = "native-app"
 to = "core-package"
 label = "imports the rules and screens"
 access = "reads"
+technology = "TypeScript imports, through the npm workspace"
 
 [[relation]]
 from = "web-app"
 to = "shared-editor"
 label = "imports the editor setup"
 access = "reads"
+technology = "TypeScript imports, through the npm workspace"
 
 [[relation]]
 from = "native-app"
 to = "shared-editor"
 label = "imports the editor setup, bundled into the editor's WebView page"
 access = "reads"
+technology = "TypeScript imports, bundled into a WebView page"
 
 [[relation]]
 from = "web-app"
@@ -914,6 +922,7 @@ from = "broker"
 to = "image-registry"
 label = "pulls the submission image by digest, through the host's daemon"
 access = "reads"
+technology = "docker pull"
 
 [[relation]]
 from = "cli"
@@ -946,12 +955,14 @@ from = "image-registry"
 to = "api"
 label = "supplies the image the server deploys"
 access = "writes"
+technology = "docker pull by digest, on a deploy"
 
 [[relation]]
 from = "database"
 to = "offsite-dumps"
 label = "is dumped on a schedule and copied off the server"
 access = "writes"
+technology = "pg_dump"
 
 # The core loop, inside the API
 
