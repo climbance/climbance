@@ -1,7 +1,7 @@
 # Command line
 
 `climb`, run by the author off the server. It holds generation, the by-hand
-passes, seeding, invitations and difficulty fits.
+passes, seeding, invitations and difficulty ratings.
 
 ## Generation is a command
 

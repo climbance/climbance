@@ -54,7 +54,7 @@ flowchart TB
         broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
         sandbox["Sandbox<br/>One container per run under gVisor, no network, read-only root; its entry process forks a child per case."]
         database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
-        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."]
+        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."]
     end
     learner -->|"practises in a browser [a web browser]"| web_app
     learner -->|"practises on a phone [Android, iOS]"| native_app
@@ -185,7 +185,7 @@ flowchart TB
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
         eval_set["Eval set<br/>Holds the hand-claimed attempts adjudicated against a frontier model, and scores each classifier configuration against them."]
         generation["Generation<br/>Writes each problem through its six call sites, and lands it with its cases and its solutions."]
-        difficulty["Difficulty<br/>Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."]
+        difficulty["Difficulty<br/>Judges each statement's rating, corrects it to the contest scale on the anchors, stores each problem's rating, and runs the panel's trials."]
         seed["Seed<br/>Reads the authored cards and modules from content/, and refreshes the content tables from them."]
         diagnoser["Diagnoser<br/>Reads a failed attempt or a labelled mutant and names the cause, scored against the self-labels."]
         matcher["Matcher<br/>Reads a canonical beside its statement and names the card templates it displays."]
@@ -203,8 +203,8 @@ flowchart TB
     exercise_items -->|"reads the templates and appends the items"| database
     generation -->|"sends each call site's prompt"| calls
     generation -->|"revises the drafts and lands each problem"| database
-    difficulty -->|"asks each panel member for a solution"| calls
-    difficulty -->|"appends the trials, the fits and the ratings"| database
+    difficulty -->|"asks the judge for each draw, and each panel member for a solution"| calls
+    difficulty -->|"appends the draws, the corrections, the ratings and the trials"| database
     diagnoser -->|"asks why an attempt failed"| calls
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
     calls -.->|"sends each request, pinned to one endpoint"| model_router

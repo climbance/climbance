@@ -53,23 +53,42 @@ without redefining them.
 - **Deviation**: one standard error of a score, on the contest scale.
 - **Band**: the range of scores one label covers: easy, medium or hard.
 - **Difficulty rating**: one judgement of a problem's score and deviation,
-  written after landing, by hand or by a difficulty fit. A `DifficultyRating`
-  record stores one.
+  written after landing, by hand or by the difficulty judge. A
+  `DifficultyRating` record stores one.
 - **Standing difficulty**: the score a problem is served with, its standing
   rating's, and the label of the band it falls in. With no rating, the label
   is the generator's `difficulty` and there is no score.
-- **Panel**: the model configurations whose trials a difficulty fit reads,
-  ranging from weak to strong. Each configuration is a **member**.
-- **Trial**: one member's solution to one problem, with its verdict. A `Trial`
-  record stores one. An attempt is a different thing: a user's solution.
+
+## The difficulty judge
+
+- **Difficulty judge** (judge): the model call reading one problem's
+  statement alone and answering the contest rating it expects. Distinct from
+  the framing judge, which grades a recognition drill.
+- **Draw**: one difficulty judge call on one statement, and the rating it
+  answered. A `DifficultyDraw` record stores one on a corpus problem.
+- **Judged rating**: the median of one problem's draws, before the
+  correction.
+- **Correction**: the line from the judged rating to the contest scale,
+  fitted on the anchors for one judge and one prompt. A `DifficultyCorrection`
+  record stores one, with the deviation its held-out anchors measured.
+- **Instructions hash**: the hash of the difficulty judge's prompt with the
+  statement left out, named on a correction.
 - **Anchor**: an external problem whose contest rating was fitted from the
   contestants who solved it. Never served, never stored with the corpus, and
   never in git.
-- **Anchor set**: the fixed list of anchors a fit reads, named by its hash.
-  Some of its anchors are held out of the mapping.
+- **Anchor set**: the fixed list of anchors a correction is fitted on, named
+  by its hash. Some of its anchors are held out of the line.
+
+## The panel
+
+- **Panel**: the model configurations whose trials are stored, ranging from
+  weak to strong. Each configuration is a **member**. The trials check the
+  judge on the corpus, and no score is read from them.
+- **Trial**: one member's solution to one problem, with its verdict. A `Trial`
+  record stores one. An attempt is a different thing: a user's solution.
 - **Difficulty fit** (fit): one item response fit over the panel's trials,
-  linked to the contest scale on the anchors. A `DifficultyFit` record stores
-  one.
+  linked to the contest scale on the anchors. The first fit failed its metric,
+  so no fit is stored and no record holds one.
 
 ## The calibration corpus
 

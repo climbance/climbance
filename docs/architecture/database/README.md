@@ -20,7 +20,8 @@ class links to the file that specifies the record.
 | [Solutions](../cli/generation/solutions.md) | product | global | append-only | the store |
 | [Solution claims](../cli/classifier.md) | product | global | append-only | the store |
 | [Difficulty ratings](../cli/difficulty/README.md) | product | global | append-only | the store |
-| [Difficulty fits](../cli/difficulty/fits.md) | product | global | append-only | the store |
+| [Difficulty corrections](../cli/difficulty/judge.md) | product | global | append-only | the store |
+| [Difficulty draws](../cli/difficulty/judge.md) | product | global | append-only | the store, or beside the anchors for an anchor's draw |
 | [Trials](../cli/difficulty/trials.md) | product | global | append-only | the store, or beside the anchors for an anchor's trial |
 | [Verification runs](../cli/generation/verification-runs.md) | product | global | append-only | the store |
 | [Template matches](../cli/matcher.md) | product | global | append-only | the store |

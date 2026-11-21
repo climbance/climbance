@@ -2,12 +2,13 @@
 
 A problem's difficulty is a score on the contest scale, with a deviation. The
 label a problem is served with, easy, medium or hard, is derived from that
-score. `climb difficulty` runs the panel's trials and fits the scores, and a
-`user` rating is written by hand.
+score. The difficulty judge, a model reading the statement alone, writes the
+scores through `climb difficulty judge`. A `user` rating is written by hand.
 
 | File | Holds |
 |---|---|
-| [`fits.md`](fits.md) | The difficulty fit: the panel, the anchors, the first fit's result |
+| [`judge.md`](judge.md) | The difficulty judge: its draws, the correction to the contest scale, the records and the run |
+| [`fits.md`](fits.md) | The panel, the anchors, the first fit's result, and what the trials are for now |
 | [`trials.md`](trials.md) | A panel member's solution to one problem |
 | [`criteria.md`](criteria.md) | What easy, medium and hard mean |
 | [`easy-templates.md`](easy-templates.md) | The templates that admit an easy problem |
@@ -30,7 +31,7 @@ score. `climb difficulty` runs the panel's trials and fits the scores, and a
   medium and hard mean what the platforms' three levels mean, since a user
   compares a label with those. [`criteria.md`](criteria.md) gives the
   criteria for each level.
-- **The bands' cuts are set when the first fit scores the corpus.** They are
+- **The bands' cuts are set when the judge first scores the corpus.** They are
   read so that the derived labels agree with the criteria on the served
   problems as often as possible. The criteria then keep the meaning a label had
   before scores existed.
@@ -42,24 +43,44 @@ score. `climb difficulty` runs the panel's trials and fits the scores, and a
   writes to the criteria. A problem is never edited, so a score found
   later cannot overwrite that field.
 
+## Anchors
+
+- **Anchors link the scores to the contest scale.** An anchor is an external
+  problem whose contest rating was fitted from the contestants who solved it.
+  The judge's correction is fitted on them, as [`judge.md`](judge.md) gives.
+- **An anchor is never served, never stored with the corpus and never in git.**
+  It is a third-party problem, and `../../concepts/invariants.md` keeps
+  every third-party statement and case out of git. Each anchor's licence is
+  recorded where the anchors are kept, outside this repository.
+- **The anchor set is fixed before any call reads it, and named by its hash.**
+  A correction cites the hash, so a score is traceable to the anchors without
+  naming one. A changed anchor set is a new hash, and the corrections on the
+  old one stay readable.
+- **Some anchors are held out of every fitted line.** Their residuals measure
+  the error of a score on a problem the line did not see.
+
 ## Ratings
 
 - **A `DifficultyRating` stores one judgement of one problem's score.** It
   carries an engine-minted `id`, the `problem_id`, the `score`, the
-  `deviation`, its `source` and `created_at`. A rating with `source` `fit`
-  names the difficulty fit that computed it, by `fit_id`. A rating with
-  `source` `user` names nothing more.
+  `deviation`, its `source` and `created_at`. A rating with `source` `judge`
+  names its correction by `correction_id`, and its draws, as
+  [`judge.md`](judge.md) gives. A rating with `source` `user` names nothing
+  more, and its deviation is deferred.
 - **Ratings are product data, global and append-only.** A problem is served to
   every user, so its score is the same for every user. A rating replaced by a
   later one stays readable beside it.
 - **The standing difficulty is read at every read and never stored.** The
   standing rating answers, by the standing rule. A `user` rating stands over a
-  `fit` one, and among each source's ratings the latest stands. With no
+  `judge` one, and among each source's ratings the latest stands. With no
   rating, the problem has no score, and its label is the generator's
   `difficulty`.
-- **A problem landed after the latest fit has no score until a fit reads it.**
-  Whether a new problem is scored against the members' fitted abilities, or by
-  fitting again, is deferred to the first problem landed after the first fit.
+- **A problem landed after the latest judge run has no score until the next
+  run rates it.** The judge rates each problem from its own statement, so the
+  new score needs no other problem rated again.
+- **The `fit` source is removed with the `DifficultyFit` record.** No fit was
+  ever stored, so no rating names one, and the removal deletes no row.
+  [`fits.md`](fits.md) gives why the panel's fit is not the score's source.
 - **Every reader of a label reads the standing difficulty.** These readers are
   the badge, the listing's filter and a card's selector.
 - **A loaded problem carries the label of its standing score in

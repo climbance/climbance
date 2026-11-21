@@ -234,7 +234,7 @@ src = [
 id = "cli"
 kind = "container"
 name = "Command line"
-role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."
+role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."
 doc = "cli/README.md"
 src = [
     "src/climb/cli/__init__.py",
@@ -680,7 +680,7 @@ id = "difficulty"
 kind = "component"
 container = "cli"
 name = "Difficulty"
-role = "Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."
+role = "Judges each statement's rating, corrects it to the contest scale on the anchors, stores each problem's rating, and runs the panel's trials."
 doc = "cli/difficulty/README.md"
 src = [
     "src/climb/difficulty/**",
@@ -1235,13 +1235,13 @@ access = "writes"
 [[relation]]
 from = "difficulty"
 to = "calls"
-label = "asks each panel member for a solution"
+label = "asks the judge for each draw, and each panel member for a solution"
 access = "writes"
 
 [[relation]]
 from = "difficulty"
 to = "database"
-label = "appends the trials, the fits and the ratings"
+label = "appends the draws, the corrections, the ratings and the trials"
 access = "writes"
 
 [[relation]]

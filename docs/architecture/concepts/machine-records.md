@@ -64,6 +64,9 @@ call log the records cite.
   than a verdict about one. The generator's variance buys diversity across a
   corpus of statements, and the naive site's variance buys a second draw where
   the first draw wrote the form.
+- **The difficulty judge is sampled**, for the reason
+  `../cli/difficulty/judge.md` gives: a problem's judged rating is the median
+  of several draws, and greedy draws would all answer one number.
 - **The other four sites are greedy.** Greedy answers make two configurations
   of one site comparable over the same item. Those sites answer about a
   statement that already exists, and each answer decides something.
