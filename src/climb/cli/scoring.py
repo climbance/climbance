@@ -6,7 +6,7 @@ from collections.abc import Callable, Sequence
 from climb.attempt_claims import Comparison, ConfigurationScore, Score
 from climb.cli.display import UNSET, sampled, table
 from climb.schema import Configuration
-from climb.scorer import CategoryScore
+from climb.scorer import CategoryScore, percent
 
 
 # Which attempts a configuration failed on. With the numbers rather than as it
@@ -151,7 +151,7 @@ def labels(configurations: Sequence[Configuration]) -> list[str]:
 
 
 def exactly(scored: Score) -> str:
-    return f"{scored.exact}/{scored.scored} exact ({scored.exact / scored.scored:.0%})"
+    return f"{scored.exact}/{scored.scored} exact ({percent(scored.exact, scored.scored)})"
 
 
 # Unrounded: sorting on the printed percent ties configurations a point apart.
@@ -160,14 +160,14 @@ def exact(scored: Score) -> float:
 
 
 def share(scored: Score) -> str:
-    return f"{scored.exact}/{scored.scored} ({scored.exact / scored.scored:.0%})"
+    return f"{scored.exact}/{scored.scored} ({percent(scored.exact, scored.scored)})"
 
 
 # To a tenth, unlike the shares: configurations sit a point or two apart here.
 def decided(scored: Score) -> str:
     return (
         f"{scored.decisions_agreed}/{scored.decisions} "
-        f"({scored.decisions_agreed / scored.decisions:.1%})"
+        f"({percent(scored.decisions_agreed, scored.decisions, 1)})"
     )
 
 

@@ -1,4 +1,6 @@
-from climb.scorer import agreement, per_decision
+import pytest
+
+from climb.scorer import agreement, per_decision, percent, wilson
 
 
 def rows(result):
@@ -156,3 +158,26 @@ def test_per_decision_skips_what_the_classifier_did_not_read():
     )
 
     assert (total, agreed) == (2, 2)
+
+
+def test_a_share_at_either_end_keeps_a_width():
+    """Wilson's point: the normal approximation reads 1/1 as exactly 100%."""
+    assert wilson(1, 1)[1] == 1.0
+    assert wilson(1, 1)[0] == pytest.approx(0.2065, abs=1e-4)
+    assert wilson(0, 1) == (0.0, pytest.approx(0.7935, abs=1e-4))
+
+
+def test_the_interval_matches_the_published_value():
+    """7 of 10, as the Wilson tables give it."""
+    assert wilson(7, 10) == (pytest.approx(0.3968, abs=1e-4), pytest.approx(0.8922, abs=1e-4))
+
+
+def test_a_printed_share_carries_its_interval():
+    assert percent(1, 2) == "50% [9–91%]"
+    assert percent(7, 10, 1) == "70.0% [39.7–89.2%]"
+
+
+def test_a_share_over_nothing_is_refused():
+    """An interval over no items would print a number that measured nothing."""
+    with pytest.raises(ValueError, match="denominator"):
+        wilson(0, 0)

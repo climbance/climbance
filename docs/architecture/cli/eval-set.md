@@ -56,6 +56,10 @@ and the matcher are to run through it next.
   model did not name, and `over` counts a category the model named without the
   label. A score reporting only misses cannot show a category the model names
   too readily.
+- **Every share the scorer prints carries its 95% Wilson interval**, as
+  `50% [9–91%]`. A share over a small denominator reads as a finding without
+  one. The Wilson interval is used because the normal approximation collapses
+  to a point at 0 of n and n of n.
 
 ## The spot check
 

@@ -1,4 +1,5 @@
 import pytest
+from commands import run_cli
 
 from climb.scorer.spot import Verdict, draw, read, sheet
 
@@ -54,3 +55,14 @@ def test_a_multiline_verdict_stays_on_its_line():
     found = [Verdict(id="a", kind="real", text="one\ntwo")]
 
     assert "1. [ ] `a` one two" in sheet(found, 1, seed=0)
+
+
+def test_the_printed_precision_carries_its_interval(tmp_path, monkeypatch, capsys):
+    """Twenty marked lines leave a wide interval, and the reader sees it."""
+    marked = tmp_path / "sheet.md"
+    text = sheet(verdicts("real", 20), 20, seed=3)
+    marked.write_text(text.replace("[ ]", "[y]", 18).replace("[ ]", "[n]"))
+
+    run_cli(monkeypatch, "spot", "read", str(marked))
+
+    assert "90% [70–97%]" in capsys.readouterr().out

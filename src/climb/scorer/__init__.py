@@ -1,8 +1,29 @@
 """A model's verdicts scored against labels, per category: `cli/eval-set.md`."""
 
+import math
 from collections.abc import Mapping, Sequence
 
 from pydantic import BaseModel
+
+Z = 1.959964  # two-sided 95%
+
+
+def wilson(successes: int, total: int) -> tuple[float, float]:
+    """The 95% Wilson score interval of a share. Wilson over the normal
+    approximation: that one collapses to a point at 0/n and n/n."""
+    if total <= 0:
+        raise ValueError("a share needs a denominator")
+    p = successes / total
+    centre = p + Z * Z / (2 * total)
+    spread = Z * math.sqrt(p * (1 - p) / total + Z * Z / (4 * total * total))
+    scale = 1 + Z * Z / total
+    return max(0.0, (centre - spread) / scale), min(1.0, (centre + spread) / scale)
+
+
+def percent(successes: int, total: int, places: int = 0) -> str:
+    """A share and its interval: `50% [9–91%]`."""
+    low, high = wilson(successes, total)
+    return f"{successes / total:.{places}%} [{low * 100:.{places}f}–{high:.{places}%}]"
 
 
 class CategoryScore(BaseModel):

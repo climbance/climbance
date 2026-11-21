@@ -47,7 +47,7 @@ def test_the_command_reports_the_agreement(hand_claimed, monkeypatch, capsys):
 
     out = capsys.readouterr().out
     assert MODEL in out
-    assert "1/1 exact (100%)" in out
+    assert "1/1 exact (100% [21–100%])" in out
     assert "greedy" in out
 
 
@@ -55,7 +55,7 @@ def test_the_rows_carry_what_was_over_claimed(hand_claimed, monkeypatch, capsys)
     run(monkeypatch, FakeTransport.answering(Verdict(["greedy", "sorting"])))
 
     out = capsys.readouterr().out
-    assert "0/1 exact (0%)" in out
+    assert "0/1 exact (0% [0–79%])" in out
     assert "sorting" in out
 
 
@@ -93,7 +93,7 @@ def test_the_command_says_how_many_named_no_candidate(hand_claimed, monkeypatch,
     run(monkeypatch, FakeTransport.answering(Verdict([]), Verdict(["greedy"])))
 
     out = capsys.readouterr().out
-    assert "1/2 exact (50%)" in out
+    assert "1/2 exact (50% [9–91%])" in out
     assert re.search(r"named no candidate\s+1", out)
 
 
@@ -109,7 +109,7 @@ def test_the_named_classifier_is_the_one_scored(hand_claimed, monkeypatch, capsy
 
     out = capsys.readouterr().out
     assert "a-cheap-model" in out
-    assert "1/1 exact (100%)" in out
+    assert "1/1 exact (100% [21–100%])" in out
 
 
 def test_the_effort_attaches_to_the_model_before_it(hand_claimed, monkeypatch, capsys):
@@ -177,8 +177,8 @@ def test_the_shares_are_over_what_both_read(hand_claimed, monkeypatch, capsys):
 
     out = capsys.readouterr().out
     assert "1 hand-claimed attempts, 1 read by all" in out
-    assert "1/1 (100%)" in out
-    assert "0/1 (0%)" in out
+    assert "1/1 (100% [21–100%])" in out
+    assert "0/1 (0% [0–79%])" in out
     # The split names each configuration by its summary row, so the verdicts
     # line up with the numbers the technique table is headed by.
     assert re.search(r"1:\s+greedy", out)
@@ -240,7 +240,7 @@ def test_a_stored_run_makes_no_call_and_needs_no_key(hand_claimed, monkeypatch, 
 
     cli.main()
 
-    assert "1/1 exact (100%)" in capsys.readouterr().out
+    assert "1/1 exact (100% [21–100%])" in capsys.readouterr().out
 
 
 def test_a_stored_run_with_a_limit_is_refused(hand_claimed, monkeypatch, capsys):
