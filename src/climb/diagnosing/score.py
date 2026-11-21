@@ -19,6 +19,7 @@ from climb.schema import (
     MutantDiagnosis,
     SelfLabel,
 )
+from climb.scorer import agreement
 
 # under this many verdicts a share swings on one of them, so none is shown
 MINIMUM = 10
@@ -62,7 +63,7 @@ def scored(
         _row(
             labelled.value,
             IMPLIED[labelled],
-            [cause[one] for one, named in mode.items() if named is labelled and one in cause],
+            {one: cause[one] for one, named in mode.items() if named is labelled and one in cause},
         )
         for labelled in (FailureMode.SYNTAX, FailureMode.GAP, FailureMode.RUST)
     ]
@@ -79,9 +80,9 @@ def scored(
         and (key := (*_key(one), request_hash(tasks.mutant(one), one.code))) in verdicts
     ]
     implied = IMPLIED[FailureMode.RUST]
-    rows.append(_row("mutants", implied, [found for _, found in read]))
+    rows.append(_row("mutants", implied, {_id(one): found for one, found in read}))
     for operator in [one for one in Operator if any(m.operator is one for m in mutants)]:
-        named = [found for one, found in read if one.operator is operator]
+        named = {_id(one): found for one, found in read if one.operator is operator}
         rows.append(_row(f"  {operator}", implied, named))
     return rows
 
@@ -99,5 +100,10 @@ def _key(one: LabelledMutant) -> tuple[str, str, str]:
     return one.template_id, one.form_digest, code_hash(one.code)
 
 
-def _row(label: str, implied: Cause, causes: list[Cause]) -> Row:
-    return Row(label, implied, len(causes), sum(one is implied for one in causes))
+def _id(one: LabelledMutant) -> str:
+    return "/".join(_key(one))
+
+
+def _row(label: str, implied: Cause, causes: dict[str, Cause]) -> Row:
+    result = agreement({one: [implied] for one in causes}, {k: [v] for k, v in causes.items()})
+    return Row(label, implied, result.scored, result.exact)

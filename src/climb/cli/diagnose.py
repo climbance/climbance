@@ -27,6 +27,7 @@ from climb.keylines import KeyLineStore
 from climb.log import AttemptLog
 from climb.mutant_diagnoses import MutantDiagnosisLog
 from climb.problems import ProblemStore
+from climb.scorer import percent
 from climb.storage import Database
 
 
@@ -122,4 +123,6 @@ def cell(row: Row) -> str:
     if row.read == 0:
         return "unread"
     # under the minimum only the count shows: `1/1` is a share by another name
-    return f"n={row.read}" if row.share is None else f"{row.share:.0%} of {row.read}"
+    return (
+        f"n={row.read}" if row.share is None else f"{percent(row.matched, row.read)} of {row.read}"
+    )

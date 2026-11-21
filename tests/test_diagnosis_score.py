@@ -2,6 +2,7 @@ from dataclasses import replace
 
 from helpers import PROVENANCE_FIELDS, T0, make_problem
 
+from climb.cli.diagnose import cell
 from climb.diagnoser import Tool, request_hash
 from climb.diagnosing import MINIMUM, Tasks, scored
 from climb.diagnosing.run import code_hash
@@ -152,3 +153,11 @@ def test_the_form_code_column_reads_no_mutant():
     found = rows(AT, [], [], [one], [verdict(one, Cause.FORM, tooled)], tasks=tooled)
 
     assert found["mutants"].read == 0
+
+
+def test_a_printed_share_carries_its_interval():
+    """7 of 10 prints as the shared scorer prints every share."""
+    labels = [label(f"a{n}", FailureMode.SYNTAX) for n in range(MINIMUM)]
+    diagnoses = [diagnosis(f"a{n}", Cause.SLIP if n < 7 else Cause.FORM) for n in range(MINIMUM)]
+
+    assert cell(rows(AT, labels, diagnoses)["syntax"]) == "70% [40–89%] of 10"

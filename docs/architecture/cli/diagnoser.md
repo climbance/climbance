@@ -76,6 +76,9 @@ re-diagnosed and compared.
 - **A share counts one configuration's latest verdict on each item of the
   row**, and the fraction naming the implied cause. A row the configuration
   has not read prints `unread`, so it is never mistaken for 0%.
+- **Each row is scored by the shared scorer of `eval-set.md`**, and its share
+  prints with its interval, as `70% [40–89%] of 10`. The per-mode rows and the
+  classifier's rows then report a share the same way.
 - **A row under 10 verdicts prints its count and no share.** One `syntax`
   self-label would read as 0% or 100%.
 - **The labelled mutants are a row apart from the self-labels, split by
