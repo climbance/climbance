@@ -498,6 +498,7 @@ def main() -> None:
     )
     p.add_argument("--relevel", action="store_true", help="re-level the written concepts")
     args = p.parse_args()
+    args.runs = args.runs.resolve()  # git runs in the content repo, not the cwd
     (args.runs / "logs").mkdir(parents=True, exist_ok=True)
     if args.status:
         return status(args)
