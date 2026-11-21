@@ -638,7 +638,9 @@ src = [
     "src/climb/attempt_claims/score.py",
     "src/climb/cli/score.py",
     "src/climb/cli/scoring.py",
-    "src/climb/scorer.py",
+    "src/climb/cli/spot.py",
+    "src/climb/scorer/__init__.py",
+    "src/climb/scorer/spot.py",
 ]
 
 [[element]]

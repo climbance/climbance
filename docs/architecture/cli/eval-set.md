@@ -56,3 +56,28 @@ and the matcher are to run through it next.
   model did not name, and `over` counts a category the model named without the
   label. A score reporting only misses cannot show a category the model names
   too readily.
+
+## The spot check
+
+A judge is a model call whose verdicts have no labels to be scored against,
+such as a call naming each review finding `real` or `false`. The judge's
+precision is measured by hand on a sample of its verdicts. `climb.scorer.spot`
+draws the sample and reads the author's marks back.
+
+- **`climb spot draw` reads a judge's verdicts as JSON lines and prints a
+  sheet.** Each line names an id, a kind and a text. Taking a file keeps the
+  spot check free of any domain record, so a judge outside the engine is
+  checked by the same command.
+- **The draw is per verdict kind, 20 of each by default.** A judge naming one
+  kind thirteen times as often as the other would leave the rare kind a
+  handful of lines in one pooled sample.
+- **The seed is fixed and printed on the sheet.** The same seed draws the same
+  lines from the same verdicts in any order, so a marked sheet can be checked
+  against a fresh draw.
+- **`climb spot read` reports each kind's precision over the marked lines.**
+  An unmarked line is left out of the denominator and counted apart, and a mark
+  other than `y` or `n` is refused. A typo counted as unmarked would shrink the
+  denominator without notice.
+- **Each kind's heading carries its population, the verdicts of that kind the
+  sample was drawn from.** The share is an estimate for that population, and
+  20 lines of 2,672 say less than 20 of 210.

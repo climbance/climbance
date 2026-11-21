@@ -39,12 +39,15 @@ from climb.cli.problem import problem
 from climb.cli.retime import retime
 from climb.cli.score import score
 from climb.cli.seed import BadLine, seed
+from climb.cli.spot import spot
 from climb.cli.user_log import user_log
 from climb.diagnoser import DEFAULT as DIAGNOSER
 from climb.diagnoser import Tool
 from climb.diagnosing import SAMPLE
 from climb.difficulty import TRIES
 from climb.schema import CallSite, ProblemDifficulty, RetirementReason
+from climb.scorer.spot import SAMPLE as SPOT_SAMPLE
+from climb.scorer.spot import SEED as SPOT_SEED
 from climb.storage import Database
 
 # What a shell reports for a command its user stopped: 128 plus the signal.
@@ -356,6 +359,17 @@ def main() -> None:
         )
         run_arguments(one, record="diagnosis", per=" per model and endpoint")
 
+    spot_parser = command(sub, "spot", "a judge's verdicts sampled for marking by hand")
+    spot_action = spot_parser.add_subparsers(dest="action", required=True)
+    on_draw = spot_action.add_parser(
+        "draw", help="print a sheet of verdicts drawn per kind", formatter_class=Defaults
+    )
+    on_draw.add_argument("verdicts", help="a JSON-lines file: an id, a kind and a text per line")
+    on_draw.add_argument("--per-kind", type=int, default=SPOT_SAMPLE, help="verdicts per kind")
+    on_draw.add_argument("--seed", type=int, default=SPOT_SEED, help="the draw's seed")
+    on_read = spot_action.add_parser("read", help="the judge's precision per kind, from the marks")
+    on_read.add_argument("sheet", help="a sheet `spot draw` printed, marked")
+
     judge_parser = command(sub, "judge", "the judging exercise's items")
     judge_action = judge_parser.add_subparsers(dest="action", required=True)
     judge_action.add_parser(
@@ -482,6 +496,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "invite": invitation,
     "feedback": lambda _args, _parser, root: feedback_listed(root),
     "diagnose": diagnose,
+    "spot": lambda args, parser, _root: spot(args, parser),
 }
 
 
