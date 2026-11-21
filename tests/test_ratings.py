@@ -15,14 +15,16 @@ SCORE = {EASY: 1000.0, MEDIUM: 1600.0, HARD: 2400.0}
 
 
 def rating(label, *, source="user", at=0, problem_id="p1") -> DifficultyRating:
-    fitted = {"fit_id": "f1", "deviation": 80.0} if source == "fit" else {}
+    judged = (
+        {"correction_id": "c1", "deviation": 270.0, "draw_ids": ["d1"]} if source == "judge" else {}
+    )
     return DifficultyRating(
         id=f"r-{source}-{at}",
         created_at=T0 + timedelta(minutes=at),
         problem_id=problem_id,
         score=SCORE[label],
         source=source,
-        **fitted,
+        **judged,
     )
 
 
@@ -42,8 +44,8 @@ def test_the_latest_rating_stands():
     assert standing(make_problem(difficulty=EASY), ratings) is MEDIUM
 
 
-def test_the_users_rating_stands_over_a_later_fit():
-    ratings = [rating(MEDIUM, at=0), rating(HARD, source="fit", at=5)]
+def test_the_users_rating_stands_over_a_later_judges():
+    ratings = [rating(MEDIUM, at=0), rating(HARD, source="judge", at=5)]
 
     assert standing(make_problem(difficulty=EASY), ratings) is MEDIUM
 
@@ -65,13 +67,15 @@ def test_a_band_starts_at_its_cut():
 @pytest.mark.parametrize(
     "fields",
     [
-        {"source": "fit", "deviation": 80.0},
-        {"source": "fit", "fit_id": "f1"},
-        {"source": "user", "fit_id": "f1"},
-        {"source": "user", "deviation": 80.0},
+        {"source": "judge", "deviation": 270.0, "draw_ids": ["d1"]},
+        {"source": "judge", "correction_id": "c1", "draw_ids": ["d1"]},
+        {"source": "judge", "correction_id": "c1", "deviation": 270.0},
+        {"source": "user", "correction_id": "c1"},
+        {"source": "user", "deviation": 270.0},
+        {"source": "user", "draw_ids": ["d1"]},
     ],
 )
-def test_a_fit_and_only_a_fit_names_its_fit_and_deviation(fields):
+def test_the_judge_and_only_the_judge_names_its_correction_deviation_and_draws(fields):
     with pytest.raises(ValidationError):
         DifficultyRating(id="r1", created_at=T0, problem_id="p1", score=1500.0, **fields)
 

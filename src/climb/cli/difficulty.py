@@ -1,27 +1,34 @@
-"""The panel's trials on the corpus, and a difficulty fit over them.
+"""The panel's trials, the judge's correction, and the judge's ratings.
 
-`cli/difficulty/fits.md` gives the design. The anchors are read from
-files outside every repository, named on the command line, and never stored.
+`cli/difficulty/judge.md` and `trials.md` give the design. The anchors and
+their draws are read from files outside every repository, and never stored.
 """
 
 import argparse
 import csv
 import hashlib
-import json
-import statistics
 import sys
 import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from climb.calls import CallLog
+from climb.calls import CallLog, Transport
 from climb.cli.transport import transport
-from climb.difficulty import PANEL, Anchor, Member, calibrate, trial
-from climb.difficulty.calibrate import member_of
+from climb.difficulty import (
+    PANEL,
+    Anchor,
+    Member,
+    correct,
+    draw,
+    rating,
+    standing_correction,
+    trial,
+)
+from climb.difficulty.judge import current
 from climb.generation import Corpus
-from climb.ratings import FitLog
-from climb.schema import Problem, Trial, band
+from climb.ratings import CorrectionLog, DrawLog, RatingLog
+from climb.schema import DifficultyDraw, Problem, Trial, band
 from climb.storage import Database
 from climb.trials import TrialLog
 
@@ -31,7 +38,9 @@ HASH_LENGTH = 12
 def difficulty(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
     if args.action == "trials":
         return trials(args, parser, root)
-    return fitted(args, parser, root)
+    if args.action == "correct":
+        return corrected(args, parser, root)
+    return judged(args, parser, root)
 
 
 def trials(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
@@ -76,6 +85,10 @@ def trials(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Data
     print(f"difficulty: spent ${spent[0]:.3f}")
 
 
+def member_of(one: Trial) -> tuple[str, str, str]:
+    return (one.model or "", one.effort or "", one.pin or "")
+
+
 def key(member: Member) -> tuple[str, str, str]:
     c = member.configuration
     return (c.model, c.effort, c.pin)
@@ -85,82 +98,130 @@ def label(member: tuple[str, str, str]) -> str:
     return f"{member[0].split('/')[-1]}/{member[1]}"
 
 
-def fitted(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
-    """A fit read out; stored with its ratings only under `--write`."""
+def corrected(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
+    """The anchors' draws fitted to a correction, stored under `--write`."""
     anchors = read_anchors(args.anchors, parser)
-    anchored = [
-        Trial.model_validate_json(line)
-        for line in args.anchor_trials.read_text().splitlines()
-        if line.strip()
-    ]
-    anchored = [one for one in anchored if one.problem_id in anchors]
-    corpus = Corpus.at(root)
-    served = {one.id: one for one in corpus.problems.all() if one.served}
-    stored = [one for one in TrialLog(root).all() if one.problem_id in served]
-    if not stored:
-        parser.exit(
-            2, "difficulty: no trial on a served problem is stored; run `difficulty trials`\n"
-        )
-    anchor_set = hashlib.sha256(args.anchors.read_bytes()).hexdigest()[:HASH_LENGTH]
-    order = [key(member) for member in PANEL]
     try:
-        fit, ratings = calibrate(stored, anchored, anchors, anchor_set=anchor_set, order=order)
+        draws = [
+            DifficultyDraw.model_validate_json(line)
+            for line in args.anchor_draws.read_text().splitlines()
+            if line.strip()
+        ]
+    except (OSError, ValueError) as exc:
+        parser.exit(2, f"difficulty: {args.anchor_draws} holds no draws: {exc}\n")
+    anchor_set = hashlib.sha256(args.anchors.read_bytes()).hexdigest()[:HASH_LENGTH]
+    try:
+        correction = correct(draws, anchors, anchor_set=anchor_set)
     except ValueError as exc:
         parser.exit(2, f"difficulty: {exc}\n")
-
     print(
-        f"anchor set {anchor_set}: {fit.anchors_fitted} fitted,"
-        f" {fit.anchors_held_out} held out; {fit.problems} problem(s)"
+        f"anchor set {anchor_set}: {correction.anchors_fitted} fitted,"
+        f" {correction.anchors_held_out} held out, of {len(anchors)};"
+        f" {correction.draws} draws a statement"
     )
-    print(f"link: score = {fit.slope:.1f} x difficulty + {fit.intercept:.1f}")
+    print(f"line: score = {correction.intercept:.1f} + {correction.slope:.3f} x judged")
     print(
-        f"held-out log-loss {fit.held_out_log_loss:.3f}, against"
-        f" {fit.baseline_log_loss:.3f} from each member's solve rate"
+        f"held out: Spearman {correction.held_out_spearman:.3f},"
+        f" mean error {correction.held_out_mean_error:.0f}, deviation {correction.deviation:.0f}"
     )
-    for member in fit.members:
-        print(
-            f"  {label((member.model, member.effort, member.pin)):<34}"
-            f" ability {member.ability:+.2f} over {member.trials} trial(s)"
-        )
-    labels = Counter[tuple[str, str]]()
-    by_label: dict[str, list[float]] = {}
-    for rating in ratings:
-        aimed = str(served[rating.problem_id].difficulty)
-        labels[aimed, str(band(rating.score))] += 1
-        by_label.setdefault(aimed, []).append(rating.score)
-    for aimed, scores in sorted(by_label.items()):
-        print(
-            f"  {aimed:<6} {len(scores):>3}: median {statistics.median(scores):.0f},"
-            f" range {min(scores):.0f} to {max(scores):.0f}"
-        )
-    deviations = sorted(one.deviation or 0 for one in ratings)
-    print(f"deviation: median {statistics.median(deviations):.0f}, largest {deviations[-1]:.0f}")
-    print(
-        "generator's label -> band: "
-        + ", ".join(f"{a}->{b} {n}" for (a, b), n in sorted(labels.items()))
-    )
-    if args.scores:
-        rows = [
-            {
-                "problem_id": one.problem_id,
-                "aimed": str(served[one.problem_id].difficulty),
-                "score": round(one.score, 1),
-                "deviation": round(one.deviation or 0, 1),
-            }
-            for one in ratings
-        ]
-        args.scores.write_text("".join(json.dumps(row) + "\n" for row in rows))
     if not args.write:
-        print("difficulty: nothing stored; --write stores the fit and its ratings")
+        print("difficulty: nothing stored; --write stores the correction")
         return
-    FitLog(root).append(fit, ratings)
-    print(f"difficulty: fit {fit.id} stored with {len(ratings)} rating(s)")
+    CorrectionLog(root).append(correction)
+    print(f"difficulty: correction {correction.id} stored")
+
+
+def judged(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
+    """Every served problem with no rating under the standing correction, drawn
+    and rated; the draws and ratings stored only under `--write`."""
+    correction = standing_correction(CorrectionLog(root).all())
+    if correction is None:
+        parser.exit(
+            2, "difficulty: no correction matches the judge; run `difficulty correct --write`\n"
+        )
+    corpus = Corpus.at(root)
+    ratings, draw_log = RatingLog(root), DrawLog(root)
+    rated = {one.problem_id for one in ratings.all() if one.correction_id == correction.id}
+    todo = [one for one in corpus.problems.all() if one.served and one.id not in rated]
+    todo = todo[: args.limit]
+    stored: dict[str, list[DifficultyDraw]] = {}
+    for held_draw in draw_log.all():
+        stored.setdefault(held_draw.problem_id, []).append(held_draw)
+    print(f"difficulty: {len(todo)} problem(s) to rate under correction {correction.id[:8]}")
+    sender, calls = transport(args, parser), CallLog(root)
+    spend, lock, counts = Spend(args.budget), threading.Lock(), Counter[str]()
+
+    def one(problem: Problem) -> None:
+        held = [d for d in stored.get(problem.id, []) if current(d, problem.statement)]
+        new = fresh(problem, correction.draws - len(held), sender, calls, spend)
+        if args.write:
+            for made in new:
+                draw_log.append(made)
+        read = (held + new)[: correction.draws]
+        if len(read) < correction.draws:
+            with lock:
+                counts["unrated"] += 1
+            return
+        rated_one = rating(problem.id, read, correction)
+        if args.write:
+            ratings.append(rated_one)
+        with lock:
+            counts["rated"] += 1
+            print(
+                f"{problem.id[:8]} {problem.difficulty!s:<6} -> {band(rated_one.score)!s:<6}"
+                f" {rated_one.score:.0f} from {[d.judged for d in read]} ${spend.spent:.4f}",
+                flush=True,
+            )
+
+    with ThreadPoolExecutor(args.workers) as pool:
+        list(pool.map(one, todo))
+    print(
+        f"difficulty: {counts['rated']} rated, {counts['unrated']} left unrated with fewer than"
+        f" {correction.draws} readable draws; spent ${spend.spent:.4f}"
+    )
+    if not args.write:
+        print("difficulty: nothing stored; --write stores the draws and the ratings")
+
+
+class Spend:
+    """Dollars spent across the run's threads, against its budget."""
+
+    def __init__(self, budget: float) -> None:
+        self.budget, self.spent, self.lock = budget, 0.0, threading.Lock()
+
+    def open(self) -> bool:
+        with self.lock:
+            return self.spent < self.budget
+
+    def add(self, cost: float | None) -> None:
+        with self.lock:
+            self.spent += cost or 0
+
+
+def fresh(
+    problem: Problem, wanted: int, sender: Transport, calls: CallLog, spend: Spend
+) -> list[DifficultyDraw]:
+    """Up to `wanted` new draws; an unreadable reply is a draw short."""
+    got: list[DifficultyDraw] = []
+    for _ in range(wanted):
+        if not spend.open():
+            break
+        try:
+            call, made = draw(problem.id, problem.statement, transport=sender, calls=calls)
+        except Exception as exc:  # the call is logged; the problem is drawn on the next run
+            sys.stderr.write(f"{problem.id[:8]}: {exc}\n")
+            break
+        spend.add(call.cost)
+        if made is not None:
+            got.append(made)
+    return got
 
 
 def read_anchors(path: Path, parser: argparse.ArgumentParser) -> dict[str, Anchor]:
     """`id`, `rating` and `split` (`fit` or `held_out`), one anchor a row."""
     try:
-        rows = list(csv.DictReader(path.open()))
+        with path.open() as listed:
+            rows = list(csv.DictReader(listed))
         return {
             row["id"]: Anchor(rating=float(row["rating"]), held_out=row["split"] == "held_out")
             for row in rows

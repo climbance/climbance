@@ -97,8 +97,9 @@ flowchart LR
             mutant_diagnoses
         end
         subgraph difficulty_tables["Difficulty"]
-            difficulty_fit_members
-            difficulty_fits
+            difficulty_corrections
+            difficulty_draws
+            difficulty_rating_draws
             difficulty_ratings
             trials
         end
@@ -150,8 +151,10 @@ flowchart LR
     certification_exams --> modules
     certification_exams --> topics
     diagnoses --> attempts
-    difficulty_fit_members --> difficulty_fits
-    difficulty_ratings --> difficulty_fits
+    difficulty_draws --> problems
+    difficulty_rating_draws --> difficulty_draws
+    difficulty_rating_draws --> difficulty_ratings
+    difficulty_ratings --> difficulty_corrections
     difficulty_ratings --> problems
     draft_declared_cases --> drafts
     draft_settled_cases --> drafts
@@ -218,9 +221,10 @@ flowchart LR
 | `certification_exams` | Knowledge log | `module_id` → `modules`, `topic_id` → `topics`, `user_id` → `users` |
 | `diagnoses` | Diagnoser | `attempt_id` → `attempts`, `call_id` → `calls` |
 | `diagrams` | Seed |  |
-| `difficulty_fit_members` | Difficulty | `fit_id` → `difficulty_fits` |
-| `difficulty_fits` | Difficulty |  |
-| `difficulty_ratings` | Difficulty | `fit_id` → `difficulty_fits`, `problem_id` → `problems` |
+| `difficulty_corrections` | Difficulty |  |
+| `difficulty_draws` | Difficulty | `call_id` → `calls`, `problem_id` → `problems` |
+| `difficulty_rating_draws` | Difficulty | `draw_id` → `difficulty_draws`, `rating_id` → `difficulty_ratings` |
+| `difficulty_ratings` | Difficulty | `correction_id` → `difficulty_corrections`, `problem_id` → `problems` |
 | `draft_declared_cases` | Generation | `draft_id` → `drafts` |
 | `draft_settled_cases` | Generation | `call_id` → `calls`, `draft_id` → `drafts` |
 | `drafts` | Generation | `blind_call_id` → `calls`, `discrimination_call_id` → `calls`, `generator_call_id` → `calls`, `inputs_call_id` → `calls`, `naive_call_id` → `calls`, `problem_id` → `problems`, `screen_call_id` → `calls`, `target_template_id` → `card_templates` |

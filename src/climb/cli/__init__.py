@@ -254,7 +254,9 @@ def main() -> None:
         help="score the problem the id names by hand, on the contest scale; its band is the label",
     )
 
-    difficulty_parser = command(sub, "difficulty", "the panel's trials, and a difficulty fit")
+    difficulty_parser = command(
+        sub, "difficulty", "the panel's trials, and the judge's correction and ratings"
+    )
     difficulty_action = difficulty_parser.add_subparsers(dest="action", required=True)
     trials_parser = difficulty_action.add_parser(
         "trials",
@@ -268,19 +270,31 @@ def main() -> None:
     trials_parser.add_argument(
         "--budget", type=float, default=10.0, help="dollars, then no new call"
     )
-    fit_parser = difficulty_action.add_parser(
-        "fit",
-        help="fit the stored trials with the anchors', linked to the contest scale",
+    correct_parser = difficulty_action.add_parser(
+        "correct",
+        help="fit the judge's line to the contest scale on the anchors' draws",
         formatter_class=Defaults,
     )
-    fit_parser.add_argument("--anchors", type=Path, required=True, help="CSV: id, rating, split")
-    fit_parser.add_argument(
-        "--anchor-trials", type=Path, required=True, help="the anchors' trials, JSON lines"
+    correct_parser.add_argument(
+        "--anchors", type=Path, required=True, help="CSV: id, rating, split"
     )
-    fit_parser.add_argument(
-        "--scores", type=Path, help="write each problem's score here, JSON lines"
+    correct_parser.add_argument(
+        "--anchor-draws", type=Path, required=True, help="the anchors' draws, JSON lines"
     )
-    fit_parser.add_argument("--write", action="store_true", help="store the fit and its ratings")
+    correct_parser.add_argument("--write", action="store_true", help="store the correction")
+    judge_parser = difficulty_action.add_parser(
+        "judge",
+        help="rate every served problem the standing correction has not",
+        formatter_class=Defaults,
+    )
+    judge_parser.add_argument("--workers", type=int, default=12, help="calls in flight at once")
+    judge_parser.add_argument(
+        "--limit", type=int, help="rate at most this many problems; every unrated one otherwise"
+    )
+    judge_parser.add_argument("--budget", type=float, default=1.0, help="dollars, then no new call")
+    judge_parser.add_argument(
+        "--write", action="store_true", help="store the draws and the ratings"
+    )
 
     gaps_parser = command(sub, "gaps", "core templates no stored solution displays")
     gaps_parser.add_argument(

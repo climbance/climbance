@@ -1,15 +1,56 @@
-from typing import Any
+from collections import defaultdict
 
-from sqlalchemy import insert, select
+from sqlalchemy import ColumnElement, insert, select
 
-from climb.ratings.table import difficulty_fit_members, difficulty_fits, difficulty_ratings
-from climb.schema import DifficultyFit, DifficultyRating
+from climb.ratings.table import (
+    difficulty_corrections,
+    difficulty_draws,
+    difficulty_rating_draws,
+    difficulty_ratings,
+)
+from climb.schema import DifficultyCorrection, DifficultyDraw, DifficultyRating
 from climb.storage import Database, Log
 
 
 class RatingLog(Log[DifficultyRating]):
+    """Each rating with the links to its draws, written in one transaction: a
+    judge rating without them names no evidence."""
+
     def __init__(self, root: Database) -> None:
         super().__init__(root, difficulty_ratings, DifficultyRating)
+
+    def append(self, record: DifficultyRating) -> None:
+        with self.root.begin() as conn:
+            conn.execute(insert(difficulty_ratings).values(record.model_dump(exclude={"draw_ids"})))
+            if record.draw_ids:
+                conn.execute(
+                    insert(difficulty_rating_draws),
+                    [
+                        {"rating_id": record.id, "position": position, "draw_id": draw_id}
+                        for position, draw_id in enumerate(record.draw_ids)
+                    ],
+                )
+
+    def where(self, *conditions: ColumnElement[bool]) -> list[DifficultyRating]:
+        query = select(difficulty_ratings).where(*conditions)
+        with self.root.connect() as conn:
+            rows = [
+                dict(row)
+                for row in conn.execute(query.order_by(difficulty_ratings.c.appended)).mappings()
+            ]
+            linked: dict[str, list[str]] = defaultdict(list)
+            links = select(difficulty_rating_draws).where(
+                difficulty_rating_draws.c.rating_id.in_([row["id"] for row in rows])
+            )
+            for link in conn.execute(
+                links.order_by(
+                    difficulty_rating_draws.c.rating_id, difficulty_rating_draws.c.position
+                )
+            ).mappings():
+                linked[link["rating_id"]].append(link["draw_id"])
+        return [
+            DifficultyRating.model_validate(row | {"draw_ids": linked[row["id"]]}) for row in rows
+        ]
 
     def ratings(self) -> list[DifficultyRating]:
         return self.all()
@@ -18,36 +59,11 @@ class RatingLog(Log[DifficultyRating]):
         return self.where(difficulty_ratings.c.problem_id == problem_id)
 
 
-class FitLog:
-    """Each fit with the ratings it scored, written in one transaction: a fit
-    with half its ratings would stand for problems it never scored."""
-
+class DrawLog(Log[DifficultyDraw]):
     def __init__(self, root: Database) -> None:
-        self.root = root
+        super().__init__(root, difficulty_draws, DifficultyDraw)
 
-    def append(self, fit: DifficultyFit, ratings: list[DifficultyRating]) -> None:
-        if any(one.fit_id != fit.id for one in ratings):
-            raise ValueError("a fit stores only the ratings naming it")
-        with self.root.begin() as conn:
-            conn.execute(insert(difficulty_fits).values(fit.model_dump(exclude={"members"})))
-            conn.execute(
-                insert(difficulty_fit_members),
-                [
-                    member.model_dump() | {"fit_id": fit.id, "position": position}
-                    for position, member in enumerate(fit.members)
-                ],
-            )
-            if ratings:
-                conn.execute(insert(difficulty_ratings), [one.model_dump() for one in ratings])
 
-    def fits(self) -> list[DifficultyFit]:
-        with self.root.connect() as conn:
-            rows = conn.execute(select(difficulty_fits).order_by(difficulty_fits.c.appended))
-            fits = [dict(row) for row in rows.mappings()]
-            members: dict[str, list[dict[str, Any]]] = {row["id"]: [] for row in fits}
-            held = conn.execute(
-                select(difficulty_fit_members).order_by(difficulty_fit_members.c.position)
-            ).mappings()
-            for one in held:
-                members[one["fit_id"]].append(dict(one))
-        return [DifficultyFit.model_validate(row | {"members": members[row["id"]]}) for row in fits]
+class CorrectionLog(Log[DifficultyCorrection]):
+    def __init__(self, root: Database) -> None:
+        super().__init__(root, difficulty_corrections, DifficultyCorrection)

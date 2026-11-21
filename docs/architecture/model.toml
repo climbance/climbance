@@ -714,12 +714,13 @@ src = [
     "src/climb/ratings/**",
     "src/climb/trials/**",
     "src/climb/cli/difficulty.py",
-    "src/climb/schema/fit.py",
+    "src/climb/schema/judged.py",
     "src/climb/schema/rating.py",
     "src/climb/schema/trial.py",
 ]
 tables = [
-    "difficulty_fit_members", "difficulty_fits", "difficulty_ratings", "trials",
+    "difficulty_corrections", "difficulty_draws", "difficulty_rating_draws",
+    "difficulty_ratings", "trials",
 ]
 
 [[element]]

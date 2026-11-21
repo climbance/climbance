@@ -4,8 +4,8 @@ from operator import attrgetter
 from climb.schema import DifficultyRating, Problem, RatingSource
 from climb.standing import standing
 
-# weakest first: the user's rating stands over a fit's, however late
-BY_WHAT_EACH_KNEW = (RatingSource.FIT, RatingSource.USER)
+# weakest first: the user's rating stands over the judge's, however late
+BY_WHAT_EACH_KNEW = (RatingSource.JUDGE, RatingSource.USER)
 
 
 def standing_ratings(ratings: Iterable[DifficultyRating]) -> dict[str, DifficultyRating]:

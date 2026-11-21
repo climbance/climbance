@@ -3,13 +3,26 @@
     "RatingSource": {
       "enum": [
         "user",
-        "fit"
+        "judge"
       ],
       "title": "RatingSource",
       "type": "string"
     }
   },
   "properties": {
+    "correction_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Correction Id"
+    },
     "created_at": {
       "format": "date-time",
       "title": "Created At",
@@ -28,18 +41,13 @@
       "default": null,
       "title": "Deviation"
     },
-    "fit_id": {
-      "anyOf": [
-        {
-          "minLength": 1,
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Fit Id"
+    "draw_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Draw Ids",
+      "type": "array"
     },
     "id": {
       "title": "Id",

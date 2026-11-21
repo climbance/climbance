@@ -80,7 +80,11 @@ from climb.matches.table import template_matches
 from climb.mutant_diagnoses import mutant_diagnoses
 from climb.outcomes.table import site_outcomes
 from climb.problems.table import problems
-from climb.ratings.table import difficulty_fit_members, difficulty_fits, difficulty_ratings
+from climb.ratings.table import (
+    difficulty_corrections,
+    difficulty_draws,
+    difficulty_ratings,
+)
 from climb.schema import (
     Answer,
     Attempt,
@@ -95,13 +99,13 @@ from climb.schema import (
     ClaimSource,
     Diagnosis,
     Diagram,
-    DifficultyFit,
+    DifficultyCorrection,
+    DifficultyDraw,
     DifficultyRating,
     Draft,
     DraftCase,
     Feedback,
     Fill,
-    FitMember,
     Focus,
     Judgement,
     JudgementItem,
@@ -210,9 +214,9 @@ STORED: list[Stored] = [
     Stored(RetirementRequest, retirement_requests),
     Stored(Feedback, feedback),
     Stored(RunFault, run_faults),
-    Stored(DifficultyRating, difficulty_ratings),
-    Stored(DifficultyFit, difficulty_fits, elsewhere=frozenset({"members"})),
-    Stored(FitMember, difficulty_fit_members, structural=frozenset({"fit_id", "position"})),
+    Stored(DifficultyRating, difficulty_ratings, elsewhere=frozenset({"draw_ids"})),
+    Stored(DifficultyCorrection, difficulty_corrections),
+    Stored(DifficultyDraw, difficulty_draws, through_call=True, required=frozenset({"call_id"})),
     Stored(Trial, trials, through_call=True, required=frozenset({"call_id"})),
     Stored(TemplateMatch, template_matches, through_call=True),
     Stored(SiteOutcome, site_outcomes, through_call=True, required=frozenset({"call_id"})),
@@ -259,9 +263,17 @@ def test_a_table_holds_exactly_its_record_s_fields(stored):
 
 
 # the tables no record is stored in whole: the user is an id the records
-# reference, an identity links an account to it, a session signs it in, and an
-# invitation lets its email sign in at all
-WITHOUT_A_RECORD = {"app_codes", "app_tokens", "identities", "invitations", "sessions", "users"}
+# reference, an identity links an account to it, a session signs it in, an
+# invitation lets its email sign in at all, and a judge rating's draws are ids
+WITHOUT_A_RECORD = {
+    "app_codes",
+    "app_tokens",
+    "difficulty_rating_draws",
+    "identities",
+    "invitations",
+    "sessions",
+    "users",
+}
 
 
 def test_every_stored_record_has_a_table():
@@ -748,7 +760,8 @@ APPEND_ONLY = {
     "solutions",
     "solution_claims",
     "difficulty_ratings",
-    "difficulty_fits",
+    "difficulty_corrections",
+    "difficulty_draws",
     "trials",
     "mutant_diagnoses",
     "template_matches",
@@ -794,7 +807,7 @@ CASE_RESULTS = {
     "attempt_verification_case_results",
     "recall_attempt_case_results",
     "card_run_probes",
-    "difficulty_fit_members",
+    "difficulty_rating_draws",
 }
 
 

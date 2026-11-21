@@ -1,0 +1,108 @@
+{
+  "properties": {
+    "anchor_set": {
+      "minLength": 1,
+      "title": "Anchor Set",
+      "type": "string"
+    },
+    "anchors_fitted": {
+      "minimum": 2,
+      "title": "Anchors Fitted",
+      "type": "integer"
+    },
+    "anchors_held_out": {
+      "minimum": 2,
+      "title": "Anchors Held Out",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "deviation": {
+      "exclusiveMinimum": 0,
+      "title": "Deviation",
+      "type": "number"
+    },
+    "draws": {
+      "minimum": 1,
+      "title": "Draws",
+      "type": "integer"
+    },
+    "effort": {
+      "minLength": 1,
+      "title": "Effort",
+      "type": "string"
+    },
+    "held_out_mean_error": {
+      "minimum": 0,
+      "title": "Held Out Mean Error",
+      "type": "number"
+    },
+    "held_out_spearman": {
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Held Out Spearman",
+      "type": "number"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "instructions_hash": {
+      "minLength": 1,
+      "title": "Instructions Hash",
+      "type": "string"
+    },
+    "intercept": {
+      "title": "Intercept",
+      "type": "number"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "pin": {
+      "title": "Pin",
+      "type": "string"
+    },
+    "slope": {
+      "exclusiveMinimum": 0,
+      "title": "Slope",
+      "type": "number"
+    },
+    "temperature": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Temperature"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "anchor_set",
+    "model",
+    "effort",
+    "pin",
+    "instructions_hash",
+    "draws",
+    "intercept",
+    "slope",
+    "anchors_fitted",
+    "anchors_held_out",
+    "held_out_spearman",
+    "held_out_mean_error",
+    "deviation"
+  ],
+  "title": "DifficultyCorrection",
+  "type": "object"
+}

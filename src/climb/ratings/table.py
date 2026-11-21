@@ -1,36 +1,41 @@
 from sqlalchemy import CheckConstraint, Column, Double, ForeignKey, Integer, Table, Text
 
 from climb.schema import RatingSource
-from climb.storage import appended_column, enumerated, metadata, timestamp
+from climb.storage import appended_column, call_column, enumerated, metadata, timestamp
 
-difficulty_fits = Table(
-    "difficulty_fits",
+difficulty_corrections = Table(
+    "difficulty_corrections",
     metadata,
     Column("id", Text, primary_key=True),
     appended_column(),
     Column("created_at", timestamp(), nullable=False),
     Column("anchor_set", Text, nullable=False),
-    Column("slope", Double, nullable=False),
-    Column("intercept", Double, nullable=False),
-    Column("anchors_fitted", Integer, nullable=False),
-    Column("anchors_held_out", Integer, nullable=False),
-    Column("problems", Integer, nullable=False),
-    Column("held_out_log_loss", Double, nullable=False),
-    Column("baseline_log_loss", Double, nullable=False),
-    CheckConstraint("slope > 0", name="harder_scores_higher"),
-)
-
-# one row per member, in the panel's order, weak to strong
-difficulty_fit_members = Table(
-    "difficulty_fit_members",
-    metadata,
-    Column("fit_id", Text, ForeignKey("difficulty_fits.id"), primary_key=True),
-    Column("position", Integer, primary_key=True),
     Column("model", Text, nullable=False),
     Column("effort", Text, nullable=False),
     Column("pin", Text, nullable=False),
-    Column("ability", Double, nullable=False),
-    Column("trials", Integer, nullable=False),
+    Column("temperature", Double),
+    Column("instructions_hash", Text, nullable=False),
+    Column("draws", Integer, nullable=False),
+    Column("intercept", Double, nullable=False),
+    Column("slope", Double, nullable=False),
+    Column("anchors_fitted", Integer, nullable=False),
+    Column("anchors_held_out", Integer, nullable=False),
+    Column("held_out_spearman", Double, nullable=False),
+    Column("held_out_mean_error", Double, nullable=False),
+    Column("deviation", Double, nullable=False),
+    CheckConstraint("slope > 0", name="harder_scores_higher"),
+)
+
+# an anchor's draws are never stored here: `cli/difficulty/judge.md`
+difficulty_draws = Table(
+    "difficulty_draws",
+    metadata,
+    Column("id", Text, primary_key=True),
+    appended_column(),
+    Column("created_at", timestamp(), nullable=False),
+    Column("problem_id", Text, ForeignKey("problems.id"), nullable=False, index=True),
+    Column("judged", Integer, nullable=False),
+    call_column(nullable=False),
 )
 
 difficulty_ratings = Table(
@@ -43,9 +48,19 @@ difficulty_ratings = Table(
     Column("score", Double, nullable=False),
     Column("deviation", Double),
     Column("source", enumerated(RatingSource), nullable=False),
-    Column("fit_id", Text, ForeignKey("difficulty_fits.id")),
+    Column("correction_id", Text, ForeignKey("difficulty_corrections.id")),
     CheckConstraint(
-        "(source = 'fit') = (fit_id IS NOT NULL) AND (source = 'fit') = (deviation IS NOT NULL)",
-        name="fit_matches_source",
+        "(source = 'judge') = (correction_id IS NOT NULL)"
+        " AND (source = 'judge') = (deviation IS NOT NULL)",
+        name="judge_matches_source",
     ),
+)
+
+# one row per draw a judge rating's median read, in the order it read them
+difficulty_rating_draws = Table(
+    "difficulty_rating_draws",
+    metadata,
+    Column("rating_id", Text, ForeignKey("difficulty_ratings.id"), primary_key=True),
+    Column("position", Integer, primary_key=True),
+    Column("draw_id", Text, ForeignKey("difficulty_draws.id"), nullable=False),
 )

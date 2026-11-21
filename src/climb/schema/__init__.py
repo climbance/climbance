@@ -30,7 +30,7 @@ from climb.schema.configuration import Configuration
 from climb.schema.diagnosis import IMPLIED, Cause, Diagnosis, MutantDiagnosis
 from climb.schema.draft import Draft, DraftCase, SettledCase, WritingState
 from climb.schema.feedback import Client, Feedback
-from climb.schema.fit import DifficultyFit, FitMember
+from climb.schema.judged import DifficultyCorrection, DifficultyDraw
 from climb.schema.judgement import ItemStatus, Judgement, JudgementItem
 from climb.schema.keyline import Fill, KeyLineChoice, KeyLineItem
 from climb.schema.knowledge import (
@@ -110,7 +110,8 @@ __all__ = [
     "Configuration",
     "Diagnosis",
     "Diagram",
-    "DifficultyFit",
+    "DifficultyCorrection",
+    "DifficultyDraw",
     "DifficultyRating",
     "Draft",
     "DraftCase",
@@ -119,7 +120,6 @@ __all__ = [
     "FailureMode",
     "Feedback",
     "Fill",
-    "FitMember",
     "Focus",
     "Gate",
     "GraphSettings",
