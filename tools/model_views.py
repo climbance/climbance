@@ -3,16 +3,20 @@ diagram in the page the flow names, from `docs/architecture/model.toml`, and
 check them.
 
     python3 tools/model_views.py write   # rewrite the views
-    python3 tools/model_views.py check   # fail on a stale view or broken model
+    python3 tools/model_views.py check   # fail on a stale view, a broken model,
+                                         # or a source file without one owner
 """
 
 import re
+import subprocess
 import sys
 import tomllib
 from collections.abc import Callable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
-DOCS = Path(__file__).resolve().parent.parent / "docs" / "architecture"
+ROOT = Path(__file__).resolve().parent.parent
+DOCS = ROOT / "docs" / "architecture"
+OWNED = ["src/climb", "packages/core/src"]
 MODEL = DOCS / "model.toml"
 README = DOCS / "README.md"
 BEGIN = "<!-- generated from model.toml by `just model-views`, never edited -->"
@@ -33,6 +37,37 @@ def relation_problems(model: dict, ids: list[str]) -> list[str]:
         found += [f"a relation names `{r[end]}`" for end in ("from", "to") if r[end] not in ids]
         if r.get("access") not in ACCESS:
             found.append(f"the relation from `{r['from']}` to `{r['to']}` lacks `access`")
+    return found
+
+
+def sources() -> list[str]:
+    # untracked files count, so a new file fails the suite before it is staged
+    listed = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", *OWNED],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return [f for f in listed.stdout.splitlines() if (ROOT / f).is_file()]
+
+
+def owner_problems(model: dict, files: list[str]) -> list[str]:
+    found = []
+    globs = {e["id"]: e.get("src", []) for e in model["element"]}
+    for f in files:
+        path = PurePosixPath(f)
+        owner = [i for i, gs in globs.items() if any(path.full_match(g) for g in gs)]
+        if not owner:
+            found.append(f"`{f}` is named by no element's `src`")
+        elif len(owner) > 1:
+            found.append(f"`{f}` is named by the `src` of {', '.join(f'`{o}`' for o in owner)}")
+    for i, gs in globs.items():
+        found += [
+            f"`{i}` names `{g}` in `src`, which matches no file"
+            for g in gs
+            if not any(PurePosixPath(f).full_match(g) for f in files)
+        ]
     return found
 
 
@@ -233,6 +268,7 @@ def drawn(text: str, model: dict, flow: dict) -> str:
 def main(command: str) -> int:
     model = load()
     found = problems(model)
+    found += owner_problems(model, sources())
     if found:  # a view drawn from a broken model would raise or mislead
         for line in found:
             sys.stderr.write(f"model views: {line}\n")

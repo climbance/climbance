@@ -65,9 +65,10 @@ if echo "$FILES" | grep -qE '^packages/core/'; then
     (cd packages/core && npm run --silent typecheck && npm run --silent test) || exit 1
 fi
 # The model views in `docs/architecture/README.md` and each flow's diagram,
-# where the staging touches the docs or their generator: a stale diagram or a
-# citation naming a section that moved fails the commit.
-if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$'; then
+# where the staging touches the docs, their generator or the owned sources: a
+# stale diagram, a citation naming a section that moved, or a source file with
+# no owner or with two fails the commit.
+if echo "$FILES" | grep -qE '^docs/architecture/|^tools/model_views\.py$|^src/climb/|^packages/core/src/'; then
     python3 tools/model_views.py check || exit 1
 fi
 # The package graph in `docs/architecture/modules.md` and the contracts generated

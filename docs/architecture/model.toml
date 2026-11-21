@@ -33,6 +33,16 @@
 # specifies. The schema graph in `database/schema.md` draws each table in its
 # owner's box, and its check fails on a table with no owner or with two.
 #
+# `src` on an element names the source files it owns, as globs relative to the
+# repository root. Every file under `src/climb` and `packages/core/src` has
+# exactly one owner, and the model-views check fails on a file with none or
+# with two, and on a glob matching no file. A component owns the files its doc
+# specifies, and each record's schema file goes to the component owning its
+# table. A container owns a file spanning several of its components, such as a
+# module of routes. `database` owns the base every package may import and the
+# table files declaring several components' tables. A diff then maps to the
+# elements it changed.
+#
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
 # that relation's label, as a sequence diagram in that page.
@@ -129,6 +139,7 @@ kind = "library"
 name = "Shared core"
 role = "`packages/core`: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."
 doc = "core-package/README.md"
+src = ["packages/core/src/**"]
 
 [[element]]
 id = "shared-editor"
@@ -150,6 +161,16 @@ kind = "container"
 name = "API"
 role = "Python and FastAPI: answers JSON under `/api`, serves the web app's files, signs users in and records the log."
 doc = "api/README.md"
+src = [
+    "src/climb/api/__init__.py",
+    "src/climb/api/__main__.py",
+    "src/climb/api/app.py",
+    "src/climb/api/context.py",
+    "src/climb/api/pages.py",
+    "src/climb/api/reads.py",
+    "src/climb/api/writes.py",
+    "src/climb/api/knowledge.py",
+]
 code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
@@ -168,6 +189,7 @@ kind = "container"
 name = "Broker"
 role = "Holds the container runtime's socket, admits one submission at a time and starts its sandbox."
 doc = "broker/README.md"
+src = ["src/climb/broker/**"]
 code = ["climb.broker", "climb.broker.__main__"]
 runs = [
     "climb.broker",
@@ -179,6 +201,10 @@ kind = "container"
 name = "Sandbox"
 role = "One container per run under gVisor, no network, read-only root; its entry process forks a child per case."
 doc = "sandbox/README.md"
+src = [
+    "src/climb/runner/child.py",
+    "src/climb/runner/encoding.py",
+]
 code = ["climb.runner.child"]
 runs = [
     "climb.runner",
@@ -190,6 +216,19 @@ kind = "container"
 name = "Postgres"
 role = "The one store: the corpus, the content, every user's log and the call log."
 doc = "database/README.md"
+src = [
+    "src/climb/__init__.py",
+    "src/climb/ids.py",
+    "src/climb/mint.py",
+    "src/climb/standing.py",
+    "src/climb/storage.py",
+    "src/climb/schema/__init__.py",
+    "src/climb/schema/record.py",
+    "src/climb/log/__init__.py",
+    "src/climb/log/table.py",
+    "src/climb/knowledge/__init__.py",
+    "src/climb/knowledge/table.py",
+]
 
 [[element]]
 id = "cli"
@@ -197,6 +236,16 @@ kind = "container"
 name = "Command line"
 role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."
 doc = "cli/README.md"
+src = [
+    "src/climb/cli/__init__.py",
+    "src/climb/cli/__main__.py",
+    "src/climb/cli/display.py",
+    "src/climb/cli/flags.py",
+    "src/climb/cli/prompts.py",
+    "src/climb/cli/rows.py",
+    "src/climb/cli/problem.py",
+    "src/climb/cli/user_log.py",
+]
 code = ["climb.cli"]
 runs = [
     "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps", "climb.cards",
@@ -220,6 +269,11 @@ container = "api"
 name = "Sitting"
 role = "Times one session on one problem, minted at the first clock press or submission, and ended where next read."
 doc = "api/sitting.md"
+src = [
+    "src/climb/sitting.py",
+    "src/climb/log/sittings.py",
+    "src/climb/schema/sitting.py",
+]
 tables = [
     "sitting_pauses", "sittings",
 ]
@@ -231,6 +285,7 @@ container = "api"
 name = "Submission"
 role = "Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."
 doc = "api/submission.md"
+src = ["src/climb/caps.py"]
 
 [[element]]
 id = "runner"
@@ -239,6 +294,13 @@ container = "api"
 name = "Runner"
 role = "Runs code against a problem's cases, through the broker or the local subprocess, and reads each case's outcome."
 doc = "api/runner.md"
+src = [
+    "src/climb/runner/__init__.py",
+    "src/climb/runner/execution.py",
+    "src/climb/runner/outputs.py",
+    "src/climb/runner/remote.py",
+    "src/climb/runner/verdicts.py",
+]
 
 [[element]]
 id = "run-faults"
@@ -247,6 +309,10 @@ container = "api"
 name = "Run faults"
 role = "Stores a run the sandbox answered no result for, so the run caps count it."
 doc = "api/run-faults.md"
+src = [
+    "src/climb/log/run_faults.py",
+    "src/climb/schema/run_fault.py",
+]
 tables = [
     "run_faults",
 ]
@@ -258,6 +324,12 @@ container = "api"
 name = "Attempt log"
 role = "Appends each attempt and its attempt verification; private to the user."
 doc = "api/attempt-log.md"
+src = [
+    "src/climb/log/store.py",
+    "src/climb/log/latest.py",
+    "src/climb/schema/attempt.py",
+    "src/climb/schema/verification.py",
+]
 tables = [
     "attempt_verification_case_results", "attempt_verifications", "attempts",
 ]
@@ -269,6 +341,14 @@ container = "api"
 name = "Attempt claims"
 role = "Stores which techniques an attempt's code used, the user's claim standing over the classifier's."
 doc = "api/attempt-claims.md"
+src = [
+    "src/climb/attempt_claims/__init__.py",
+    "src/climb/attempt_claims/attribution.py",
+    "src/climb/attempt_claims/hand.py",
+    "src/climb/attempt_claims/sample.py",
+    "src/climb/attempt_claims/revision.py",
+    "src/climb/cli/claim.py",
+]
 tables = [
     "attempt_claims",
 ]
@@ -291,6 +371,7 @@ container = "api"
 name = "Template schedule"
 role = "Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."
 doc = "api/template-schedule.md"
+src = ["src/climb/template_schedule.py"]
 
 [[element]]
 id = "card-states"
@@ -299,6 +380,10 @@ container = "api"
 name = "Card states"
 role = "Derives each card's state, from not started to graduated or lapsed, from the log on every read."
 doc = "api/card-states.md"
+src = [
+    "src/climb/graduation.py",
+    "src/climb/ladder.py",
+]
 
 [[element]]
 id = "mastery"
@@ -307,6 +392,13 @@ container = "api"
 name = "Mastery"
 role = "Computes each technique's recognition and execution from the log on every read."
 doc = "api/mastery.md"
+src = [
+    "src/climb/board/__init__.py",
+    "src/climb/board/execution.py",
+    "src/climb/board/judged.py",
+    "src/climb/board/view.py",
+    "src/climb/cli/board.py",
+]
 
 [[element]]
 id = "pick"
@@ -315,6 +407,11 @@ container = "api"
 name = "Pick"
 role = "Names the next item: a template and the act that reviews it, read from the three folds."
 doc = "api/pick.md"
+src = [
+    "src/climb/pick.py",
+    "src/climb/api/picks.py",
+    "src/climb/board/candidates.py",
+]
 
 [[element]]
 id = "predictions"
@@ -323,6 +420,10 @@ container = "api"
 name = "Predictions"
 role = "Stores what each pick expected, from FSRS and from mastery, before the user acts on it."
 doc = "api/predictions.md"
+src = [
+    "src/climb/log/predictions.py",
+    "src/climb/schema/prediction.py",
+]
 tables = [
     "predictions",
 ]
@@ -334,6 +435,7 @@ container = "api"
 name = "Snapshot"
 role = "Serves the seeded content to both clients as one document, revalidated by its ETag."
 doc = "api/snapshot.md"
+src = ["src/climb/knowledge/snapshot.py"]
 
 [[element]]
 id = "knowledge-sync"
@@ -342,6 +444,10 @@ container = "api"
 name = "Knowledge sync"
 role = "Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."
 doc = "api/knowledge-sync.md"
+src = [
+    "src/climb/knowledge/sync.py",
+    "src/climb/knowledge/wire.py",
+]
 
 [[element]]
 id = "knowledge-log"
@@ -350,6 +456,10 @@ container = "api"
 name = "Knowledge log"
 role = "The nine append-only tables of the user's knowledge log: answers, stints, focuses and the rest."
 doc = "api/knowledge-log.md"
+src = [
+    "src/climb/knowledge/schedule.py",
+    "src/climb/schema/knowledge.py",
+]
 tables = [
     "answers", "certification_exams", "focuses", "lesson_marks", "limit_raises",
     "module_orders", "module_status_changes", "setting_changes", "stints",
@@ -362,6 +472,10 @@ container = "api"
 name = "Problems"
 role = "Reads a problem from the corpus: its statement, its templates and its test cases."
 doc = "api/problems.md"
+src = [
+    "src/climb/problems/__init__.py",
+    "src/climb/problems/store.py",
+]
 
 [[element]]
 id = "card-runs"
@@ -370,6 +484,10 @@ container = "api"
 name = "Card runs"
 role = "Stores that a card was started, and the probes the start gave it."
 doc = "api/card-runs.md"
+src = [
+    "src/climb/log/runs.py",
+    "src/climb/schema/card_run.py",
+]
 tables = [
     "card_run_probes", "card_runs",
 ]
@@ -381,6 +499,11 @@ container = "api"
 name = "Recall"
 role = "Runs a template typed from memory against the template's cases, and stores the recall attempt."
 doc = "api/recall.md"
+src = [
+    "src/climb/recall.py",
+    "src/climb/log/recalls.py",
+    "src/climb/schema/recall.py",
+]
 tables = [
     "recall_attempt_case_results", "recall_attempts",
 ]
@@ -392,6 +515,14 @@ container = "api"
 name = "Short exercises"
 role = "Serves the judgement and key-line items, and stores each judgement and fill."
 doc = "api/short-exercises.md"
+src = [
+    "src/climb/api/filling.py",
+    "src/climb/api/judging.py",
+    "src/climb/judging/__init__.py",
+    "src/climb/judging/answer.py",
+    "src/climb/log/fills.py",
+    "src/climb/log/judgements.py",
+]
 tables = [
     "fills", "judgements",
 ]
@@ -403,6 +534,11 @@ container = "api"
 name = "Retirement requests"
 role = "Stores a user's request that a problem be retired, for the author to read."
 doc = "api/retirement-requests.md"
+src = [
+    "src/climb/retirement.py",
+    "src/climb/log/retirement_requests.py",
+    "src/climb/schema/retirement_request.py",
+]
 tables = [
     "retirement_requests",
 ]
@@ -414,6 +550,13 @@ container = "api"
 name = "Feedback"
 role = "Stores a user's note to the author, naming the client and the page."
 doc = "api/feedback.md"
+src = [
+    "src/climb/feedback.py",
+    "src/climb/api/feedback.py",
+    "src/climb/log/feedback.py",
+    "src/climb/cli/feedback.py",
+    "src/climb/schema/feedback.py",
+]
 tables = [
     "feedback",
 ]
@@ -425,6 +568,17 @@ container = "api"
 name = "Sign-in"
 role = "Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."
 doc = "api/sign-in.md"
+src = [
+    "src/climb/api/account.py",
+    "src/climb/api/signin.py",
+    "src/climb/api/devlogin.py",
+    "src/climb/log/devices.py",
+    "src/climb/log/invitations.py",
+    "src/climb/log/owned.py",
+    "src/climb/log/sessions.py",
+    "src/climb/log/users.py",
+    "src/climb/cli/invite.py",
+]
 tables = [
     "identities", "invitations", "sessions", "users",
 ]
@@ -436,6 +590,10 @@ container = "api"
 name = "App tokens"
 role = "Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."
 doc = "api/app-tokens.md"
+src = [
+    "src/climb/api/apps.py",
+    "src/climb/log/apps.py",
+]
 tables = [
     "app_codes", "app_tokens",
 ]
@@ -449,6 +607,20 @@ container = "cli"
 name = "Classifier"
 role = "Reads an attempt's code and claims the techniques it used, filling what no user claimed."
 doc = "cli/classifier.md"
+src = [
+    "src/climb/classifier.py",
+    "src/climb/attempt_claims/run.py",
+    "src/climb/attempt_claims/stale.py",
+    "src/climb/solution_claims/**",
+    "src/climb/techniques/**",
+    "src/climb/board/movement.py",
+    "src/climb/cli/classify.py",
+    "src/climb/cli/claim_solutions.py",
+    "src/climb/cli/movement.py",
+    "src/climb/cli/status.py",
+    "src/climb/schema/solution_claim.py",
+    "src/climb/schema/technique.py",
+]
 tables = [
     "solution_claims",
 ]
@@ -460,6 +632,13 @@ container = "cli"
 name = "Eval set"
 role = "Holds the hand-claimed attempts adjudicated against a frontier model, and scores each classifier configuration against them."
 doc = "cli/eval-set.md"
+src = [
+    "src/climb/attempt_claims/eval.py",
+    "src/climb/attempt_claims/plan.py",
+    "src/climb/attempt_claims/score.py",
+    "src/climb/cli/score.py",
+    "src/climb/cli/scoring.py",
+]
 
 [[element]]
 id = "generation"
@@ -468,6 +647,27 @@ container = "cli"
 name = "Generation"
 role = "Writes each problem through its six call sites, and lands it with its cases and its solutions."
 doc = "cli/generation/README.md"
+src = [
+    "src/climb/generation/**",
+    "src/climb/drafts/**",
+    "src/climb/cases/**",
+    "src/climb/outcomes/**",
+    "src/climb/mutation/**",
+    "src/climb/solutions/**",
+    "src/climb/verifications/**",
+    "src/climb/problems/table.py",
+    "src/climb/cli/bench.py",
+    "src/climb/cli/draft.py",
+    "src/climb/cli/generate.py",
+    "src/climb/cli/generating.py",
+    "src/climb/cli/retime.py",
+    "src/climb/schema/case.py",
+    "src/climb/schema/draft.py",
+    "src/climb/schema/outcome.py",
+    "src/climb/schema/problem.py",
+    "src/climb/schema/solution.py",
+    "src/climb/schema/target.py",
+]
 tables = [
     "draft_declared_cases", "draft_settled_cases", "drafts", "problems",
     "site_outcomes", "solutions", "test_cases", "verification_case_results",
@@ -481,6 +681,15 @@ container = "cli"
 name = "Difficulty"
 role = "Runs the panel's trials, fits them to the contest scale, and stores each problem's rating."
 doc = "cli/difficulty/README.md"
+src = [
+    "src/climb/difficulty/**",
+    "src/climb/ratings/**",
+    "src/climb/trials/**",
+    "src/climb/cli/difficulty.py",
+    "src/climb/schema/fit.py",
+    "src/climb/schema/rating.py",
+    "src/climb/schema/trial.py",
+]
 tables = [
     "difficulty_fit_members", "difficulty_fits", "difficulty_ratings", "trials",
 ]
@@ -492,6 +701,24 @@ container = "cli"
 name = "Seed"
 role = "Reads the authored cards and modules from `content/`, and refreshes the content tables from them."
 doc = "cli/seed.md"
+src = [
+    "src/climb/cards/**",
+    "src/climb/knowledge/authoring/**",
+    "src/climb/knowledge/check.py",
+    "src/climb/knowledge/concepts.py",
+    "src/climb/knowledge/diagrams.py",
+    "src/climb/knowledge/files.py",
+    "src/climb/knowledge/library.py",
+    "src/climb/knowledge/refresh.py",
+    "src/climb/knowledge/seed.py",
+    "src/climb/cli/card.py",
+    "src/climb/cli/library.py",
+    "src/climb/cli/module.py",
+    "src/climb/cli/seed.py",
+    "src/climb/schema/authored.py",
+    "src/climb/schema/card.py",
+    "src/climb/schema/seed.py",
+]
 tables = [
     "card_requirements", "card_templates", "cards", "diagrams", "lessons", "modules",
     "questions", "subtopics", "template_cases", "topics",
@@ -504,6 +731,14 @@ container = "cli"
 name = "Diagnoser"
 role = "Reads a failed attempt or a labelled mutant and names the cause, scored against the self-labels."
 doc = "cli/diagnoser.md"
+src = [
+    "src/climb/diagnoser.py",
+    "src/climb/diagnosing/**",
+    "src/climb/mutant_diagnoses/**",
+    "src/climb/judging/labelled.py",
+    "src/climb/cli/diagnose.py",
+    "src/climb/schema/diagnosis.py",
+]
 tables = [
     "diagnoses", "mutant_diagnoses",
 ]
@@ -515,6 +750,14 @@ container = "cli"
 name = "Matcher"
 role = "Reads a canonical beside its statement and names the card templates it displays."
 doc = "cli/matcher.md"
+src = [
+    "src/climb/matches/**",
+    "src/climb/cli/match.py",
+    "src/climb/cli/gaps.py",
+    "src/climb/cli/hand_match.py",
+    "src/climb/cli/hand_matching.py",
+    "src/climb/schema/match.py",
+]
 tables = [
     "template_matches",
 ]
@@ -526,6 +769,16 @@ container = "cli"
 name = "Exercise items"
 role = "Builds the judgement items and the key-line items from the seeded templates and their mutants."
 doc = "cli/exercise-items.md"
+src = [
+    "src/climb/judgements/**",
+    "src/climb/keylines/**",
+    "src/climb/judging/build.py",
+    "src/climb/judging/keylines.py",
+    "src/climb/cli/fill.py",
+    "src/climb/cli/judge.py",
+    "src/climb/schema/judgement.py",
+    "src/climb/schema/keyline.py",
+]
 tables = [
     "judgement_items", "key_line_choices", "key_line_items",
 ]
@@ -537,6 +790,14 @@ container = "cli"
 name = "Calls"
 role = "Sends every model call through one transport, each pinned to one endpoint, and appends it to the call log."
 doc = "cli/calls.md"
+src = [
+    "src/climb/calls/**",
+    "src/climb/runs.py",
+    "src/climb/cli/transport.py",
+    "src/climb/schema/call.py",
+    "src/climb/schema/configuration.py",
+    "src/climb/schema/provenance.py",
+]
 tables = [
     "calls",
 ]

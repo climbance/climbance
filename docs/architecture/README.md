@@ -244,7 +244,7 @@ and each component is a file named by its id.
 
 | Path | Holds |
 |---|---|
-| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, its relations, and each flow as an ordered list of them. The views above, and each flow's diagram in its page, are generated from it |
+| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, the source files it owns, its relations, and each flow as an ordered list of them. The views above, and each flow's diagram in its page, are generated from it |
 | [`modules.md`](modules.md) | The engine's Python packages and the imports between them, grouped by the containers whose code reaches each package. Generated from `src/climb` and `model.toml` |
 | [`client-modules.md`](client-modules.md) | The clients' TypeScript modules and the imports between them: the web app and the native app, then the shared packages per file, grouped by the clients that reach each file. Generated from the workspaces' sources |
 | [`concepts/terms/`](concepts/terms/) | Every word this project gives its own meaning, a file per group |
