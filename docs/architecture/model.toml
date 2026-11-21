@@ -817,7 +817,7 @@ from = "learner"
 to = "native-app"
 label = "practises on a phone"
 access = "writes"
-technology = "the app on Android or iOS"
+technology = "Android, iOS"
 
 [[relation]]
 from = "author"
@@ -838,28 +838,28 @@ from = "web-app"
 to = "core-package"
 label = "imports the rules and screens"
 access = "reads"
-technology = "TypeScript imports, through the npm workspace"
+technology = "npm workspace"
 
 [[relation]]
 from = "native-app"
 to = "core-package"
 label = "imports the rules and screens"
 access = "reads"
-technology = "TypeScript imports, through the npm workspace"
+technology = "npm workspace"
 
 [[relation]]
 from = "web-app"
 to = "shared-editor"
 label = "imports the editor setup"
 access = "reads"
-technology = "TypeScript imports, through the npm workspace"
+technology = "npm workspace"
 
 [[relation]]
 from = "native-app"
 to = "shared-editor"
 label = "imports the editor setup, bundled into the editor's WebView page"
 access = "reads"
-technology = "TypeScript imports, bundled into a WebView page"
+technology = "npm workspace"
 
 [[relation]]
 from = "web-app"
@@ -908,7 +908,7 @@ from = "api"
 to = "broker"
 label = "asks for one run: code, arguments, cap"
 access = "writes"
-technology = "HTTP, on a network only the two join"
+technology = "HTTP, private network"
 
 [[relation]]
 from = "broker"
@@ -936,7 +936,7 @@ from = "cli"
 to = "database"
 label = "writes the corpus and the by-hand records"
 access = "writes"
-technology = "SSH tunnel to the server's loopback"
+technology = "SSH tunnel"
 
 [[relation]]
 from = "seed"
@@ -955,7 +955,7 @@ from = "image-registry"
 to = "api"
 label = "supplies the image the server deploys"
 access = "writes"
-technology = "docker pull by digest, on a deploy"
+technology = "docker pull by digest"
 
 [[relation]]
 from = "database"

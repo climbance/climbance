@@ -16,11 +16,11 @@ sequenceDiagram
     participant sandbox as Sandbox
     participant database as Postgres
     participant template_schedule as Template schedule
-    learner->>web_app: practises in a browser
+    learner->>web_app: practises in a browser [a web browser]
     web_app->>recall: types a template from memory
     recall->>runner: runs the typed form against the template's cases
     runner->>broker: asks for one run: code, arguments, cap
-    broker->>sandbox: starts one container per run, the run on standard input
+    broker->>sandbox: starts one container per run, the run on standard input [docker run -i]
     recall->>database: appends each recall attempt
     template_schedule->>recall: replays each recall attempt as a review
 ```

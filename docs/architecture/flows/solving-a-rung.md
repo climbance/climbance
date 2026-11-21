@@ -19,7 +19,7 @@ sequenceDiagram
     participant sandbox as Sandbox
     participant attempt_claims as Attempt claims
     participant self_labels as Self-labels
-    learner->>web_app: practises in a browser
+    learner->>web_app: practises in a browser [a web browser]
     web_app->>card_states: reads a card's ladder and its state
     card_states->>attempt_log: reads which rungs are solved
     card_states->>sitting: reads which rungs a sitting skipped
@@ -27,7 +27,7 @@ sequenceDiagram
     submission->>sitting: mints the sitting where no clock started
     submission->>runner: runs the code against the problem's cases
     runner->>broker: asks for one run: code, arguments, cap
-    broker->>sandbox: starts one container per run, the run on standard input
+    broker->>sandbox: starts one container per run, the run on standard input [docker run -i]
     submission->>attempt_log: appends the attempt and its verification
     web_app->>attempt_claims: names the techniques the code used
     web_app->>self_labels: says why the attempt went as it did

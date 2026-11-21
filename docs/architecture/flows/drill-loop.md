@@ -27,7 +27,7 @@ sequenceDiagram
     participant card_states as Card states
     participant mastery as Mastery
     participant predictions as Predictions
-    learner->>web_app: practises in a browser
+    learner->>web_app: practises in a browser [a web browser]
     web_app->>submission: submits code for the problem
     submission->>run_faults: counts recent runs against the caps
     submission->>sitting: mints the sitting where no clock started
@@ -36,7 +36,7 @@ sequenceDiagram
     runner->>problems: reads the problem's cases
     problems->>database: reads the corpus
     runner->>broker: asks for one run: code, arguments, cap
-    broker->>sandbox: starts one container per run, the run on standard input
+    broker->>sandbox: starts one container per run, the run on standard input [docker run -i]
     submission->>attempt_log: appends the attempt and its verification
     attempt_log->>database: appends to the user's log
     web_app->>attempt_claims: names the techniques the code used

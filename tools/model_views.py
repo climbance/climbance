@@ -123,6 +123,10 @@ def node(e: dict) -> str:
     return f'{key(e["id"])}["{label(e["name"])}<br/>{label(e["role"])}"]'
 
 
+def said(r: dict) -> str:
+    return f"{r['label']} [{r['technology']}]" if "technology" in r else r["label"]
+
+
 def edge(source: str, target: str, text: str, reads: bool) -> str:
     return f'    {key(source)} {"-.->" if reads else "-->"}|"{label(text)}"| {key(target)}'
 
@@ -159,8 +163,8 @@ def edges(model: dict, shown: set[str], owner: dict[str, str]) -> list[str]:
         mapped = pair != (r["from"], r["to"])
         if pair[0] == pair[1] or (mapped and joined(after, *pair)):
             continue
-        if r["label"] not in labels.setdefault(pair, []):
-            labels[pair].append(r["label"])
+        if said(r) not in labels.setdefault(pair, []):
+            labels[pair].append(said(r))
         reads[pair] = reads.get(pair, True) and r["access"] == "reads"
     return [edge(s, t, "; ".join(texts), reads[s, t]) for (s, t), texts in labels.items()]
 
@@ -209,7 +213,7 @@ def components(model: dict, container: dict) -> list[str]:
 
 def sequence(model: dict, flow: dict) -> list[str]:
     names = {e["id"]: e["name"] for e in [model["engine"], *model["element"]]}
-    labels = {(r["from"], r["to"]): r["label"] for r in model["relation"]}
+    labels = {(r["from"], r["to"]): said(r) for r in model["relation"]}
     lines = ["sequenceDiagram"]
     seen: list[str] = []
     for s in flow["steps"]:

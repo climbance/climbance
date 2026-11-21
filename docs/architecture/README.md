@@ -22,15 +22,15 @@ flowchart TB
     content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
     image_registry["Image registry<br/>Holds the engine's image, built on each push to main and pulled by digest."]
     offsite_dumps["Off-server dump storage<br/>Keeps the scheduled database dumps away from the storage the database lives on."]
-    learner -->|"practises in a browser; practises on a phone"| engine
-    author -->|"generates, reviews, seeds and invites"| engine
-    author -->|"authors cards and modules"| content_repo
-    engine -.->|"runs the sign-in flow"| identity_providers
-    engine -.->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    engine -.->|"sends every model call; sends each request, pinned to one endpoint"| model_router
+    learner -->|"practises in a browser [a web browser]; practises on a phone [Android, iOS]"| engine
+    author -->|"generates, reviews, seeds and invites [a terminal]"| engine
+    author -->|"authors cards and modules [git]"| content_repo
+    engine -.->|"runs the sign-in flow [OpenID Connect, OAuth]"| identity_providers
+    engine -.->|"pulls the submission image by digest, through the host's daemon [docker pull]"| image_registry
+    engine -.->|"sends every model call [chat completions]; sends each request, pinned to one endpoint"| model_router
     engine -.->|"seeds cards and modules from content/"| content_repo
-    image_registry -->|"supplies the image the server deploys"| engine
-    engine -->|"is dumped on a schedule and copied off the server"| offsite_dumps
+    image_registry -->|"supplies the image the server deploys [docker pull by digest]"| engine
+    engine -->|"is dumped on a schedule and copied off the server [pg_dump]"| offsite_dumps
 ```
 
 The engine's containers: what runs on its own, and what each talks to.
@@ -56,28 +56,28 @@ flowchart TB
         database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
         cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty fits; it runs each draft's solutions in a local subprocess, never through the broker."]
     end
-    learner -->|"practises in a browser"| web_app
-    learner -->|"practises on a phone"| native_app
-    author -->|"generates, reviews, seeds and invites"| cli
-    author -->|"authors cards and modules"| content_repo
-    web_app -.->|"imports the rules and screens"| core_package
-    native_app -.->|"imports the rules and screens"| core_package
-    web_app -.->|"imports the editor setup"| shared_editor
-    native_app -.->|"imports the editor setup, bundled into the editor's WebView page"| shared_editor
-    web_app -->|"sends JSON with the session cookie"| proxy
-    native_app -->|"syncs knowledge records and runs sittings, with an app token"| proxy
-    proxy -->|"passes every request"| api
-    api -.->|"serves the built files"| web_app
-    api -.->|"runs the sign-in flow"| identity_providers
-    api -->|"reads and writes the store"| database
-    api -->|"asks for one run: code, arguments, cap"| broker
-    broker -->|"starts one container per run, the run on standard input"| sandbox
-    broker -.->|"pulls the submission image by digest, through the host's daemon"| image_registry
-    cli -.->|"sends every model call"| model_router
-    cli -->|"writes the corpus and the by-hand records"| database
+    learner -->|"practises in a browser [a web browser]"| web_app
+    learner -->|"practises on a phone [Android, iOS]"| native_app
+    author -->|"generates, reviews, seeds and invites [a terminal]"| cli
+    author -->|"authors cards and modules [git]"| content_repo
+    web_app -.->|"imports the rules and screens [npm workspace]"| core_package
+    native_app -.->|"imports the rules and screens [npm workspace]"| core_package
+    web_app -.->|"imports the editor setup [npm workspace]"| shared_editor
+    native_app -.->|"imports the editor setup, bundled into the editor's WebView page [npm workspace]"| shared_editor
+    web_app -->|"sends JSON with the session cookie [HTTPS]"| proxy
+    native_app -->|"syncs knowledge records and runs sittings, with an app token [HTTPS]"| proxy
+    proxy -->|"passes every request [HTTP]"| api
+    api -.->|"serves the built files [HTTP]"| web_app
+    api -.->|"runs the sign-in flow [OpenID Connect, OAuth]"| identity_providers
+    api -->|"reads and writes the store [SQLAlchemy Core]"| database
+    api -->|"asks for one run: code, arguments, cap [HTTP, private network]"| broker
+    broker -->|"starts one container per run, the run on standard input [docker run -i]"| sandbox
+    broker -.->|"pulls the submission image by digest, through the host's daemon [docker pull]"| image_registry
+    cli -.->|"sends every model call [chat completions]"| model_router
+    cli -->|"writes the corpus and the by-hand records [SSH tunnel]"| database
     cli -.->|"seeds cards and modules from content/"| content_repo
-    image_registry -->|"supplies the image the server deploys"| api
-    database -->|"is dumped on a schedule and copied off the server"| offsite_dumps
+    image_registry -->|"supplies the image the server deploys [docker pull by digest]"| api
+    database -->|"is dumped on a schedule and copied off the server [pg_dump]"| offsite_dumps
 ```
 
 The API's components, and what each reads and writes.
@@ -114,7 +114,7 @@ flowchart TB
         sign_in["Sign-in<br/>Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."]
         app_tokens["App tokens<br/>Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."]
     end
-    sign_in -.->|"runs the sign-in flow"| identity_providers
+    sign_in -.->|"runs the sign-in flow [OpenID Connect, OAuth]"| identity_providers
     web_app -->|"starts, pauses and ends the clock"| sitting
     web_app -->|"submits code for the problem"| submission
     submission -->|"mints the sitting where no clock started"| sitting

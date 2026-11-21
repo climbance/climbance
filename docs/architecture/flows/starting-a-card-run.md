@@ -15,7 +15,7 @@ sequenceDiagram
     participant problems as Problems
     participant database as Postgres
     participant attempt_log as Attempt log
-    learner->>web_app: practises in a browser
+    learner->>web_app: practises in a browser [a web browser]
     web_app->>card_states: reads a card's ladder and its state
     web_app->>card_runs: starts a card
     card_runs->>problems: draws the probes from the technique's problems
