@@ -11,7 +11,6 @@ from climb.attempt_claims.score import (
     Comparison,
     ConfigurationScore,
     Split,
-    per_decision,
     score,
     spent,
 )
@@ -137,11 +136,10 @@ def score_backlog(
         if results
         else set[str]()
     )
-    # The whole eval set, not the intersection: `score` and `per_decision` both
-    # skip an attempt a configuration has no verdict for, so each is measured
-    # over what it read. The trade is that two configurations reading different
-    # attempts no longer share a denominator; `common` shows where they
-    # diverge.
+    # The whole eval set, not the intersection: `score` skips an attempt a
+    # configuration has no verdict for, so each is measured over what it read.
+    # The trade is that two configurations reading different attempts no
+    # longer share a denominator; `common` shows where they diverge.
     truth: dict[str, Sequence[str]] = {
         attempt.id: standing[attempt.id].techniques for attempt in hand_claimed
     }
@@ -158,8 +156,7 @@ def score_backlog(
 
     result = Comparison(eval_set=len(hand_claimed), common=len(common))
     for configuration, run in zip(configurations, results, strict=True):
-        scored = score(truth, run.verdicts)
-        scored.decisions, scored.decisions_agreed = per_decision(truth, run.verdicts, candidates)
+        scored = score(truth, run.verdicts, candidates)
         scored.failed = run.failed
         scored.read, scored.reused = run.read, run.reused
         scored.cost, scored.costed = run.cost, run.costed

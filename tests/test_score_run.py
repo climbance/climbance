@@ -89,9 +89,9 @@ def test_agreement_is_scored_against_the_users_claim(hand_claimed):
 def test_disagreement_is_scored_per_technique(hand_claimed):
     result = run(FakeTransport.answering(Verdict(["sorting"])), hand_claimed)
 
-    rows = {row.technique: row for row in result.per_technique}
+    rows = {row.category: row for row in result.per_category}
     assert (result.scored, result.exact) == (1, 0)
-    assert (rows["greedy"].attempts, rows["greedy"].exact) == (1, 0)
+    assert (rows["greedy"].items, rows["greedy"].exact) == (1, 0)
     assert rows["sorting"].over == 1
 
 
@@ -203,8 +203,8 @@ def test_naming_no_candidate_is_scored_against_a_claim_that_named_some(hand_clai
     assert (result.scored, result.exact, result.undecided) == (1, 0, 1)
     assert claim.techniques == []
     # Missed against every technique the claim named, and over-claimed on none.
-    (row,) = [one for one in result.per_technique if one.technique == "greedy"]
-    assert (row.attempts, row.missed, row.over) == (1, 1, 0)
+    (row,) = [one for one in result.per_category if one.category == "greedy"]
+    assert (row.items, row.missed, row.over) == (1, 1, 0)
 
 
 def test_a_reading_that_named_no_candidate_is_paid_for_once(hand_claimed):

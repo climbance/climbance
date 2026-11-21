@@ -14,8 +14,6 @@ from climb.attempt_claims.score import (
     Comparison,
     ConfigurationScore,
     Score,
-    TechniqueScore,
-    score,
 )
 from climb.attempt_claims.stale import at_configuration, is_stale, machine_claims_at
 
@@ -23,7 +21,6 @@ __all__ = [
     "Comparison",
     "ConfigurationScore",
     "Score",
-    "TechniqueScore",
     "against",
     "ask",
     "at_configuration",
@@ -35,7 +32,6 @@ __all__ = [
     "machine_claims_at",
     "resolve_techniques",
     "revisable",
-    "score",
     "score_backlog",
     "spread",
     "standing_attempt_claims",

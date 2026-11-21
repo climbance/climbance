@@ -39,3 +39,20 @@ the classifier the set scores.
   wrong.** Such a case is recorded as an error, and the attempts both writers
   got wrong the same way are never detected. That cost of a fixed reference is
   accepted.
+
+## The shared scorer
+
+The shared scorer is `climb.scorer`: the code scoring a model's verdicts against
+labels, an item at a time and a category per row. The classifier's score runs
+through it, an attempt per item and a technique per category. The diagnosis call
+and the matcher are to run through it next.
+
+- **One scorer serves every model eval.** A score written per eval reports its
+  own shares over its own denominators, and two such scores cannot be compared.
+- **The scorer knows items, categories and labels, and no domain record.** It
+  sits under every package it serves, so the diagnosis call can use it without
+  importing the classifier's code.
+- **Each row reports both directions.** `missed` counts a labelled category the
+  model did not name, and `over` counts a category the model named without the
+  label. A score reporting only misses cannot show a category the model names
+  too readily.

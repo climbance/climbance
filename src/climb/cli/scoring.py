@@ -3,9 +3,10 @@ by side, per technique and per attempt read differently."""
 
 from collections.abc import Callable, Sequence
 
-from climb.attempt_claims import Comparison, ConfigurationScore, Score, TechniqueScore
+from climb.attempt_claims import Comparison, ConfigurationScore, Score
 from climb.cli.display import UNSET, sampled, table
 from climb.schema import Configuration
+from climb.scorer import CategoryScore
 
 
 # Which attempts a configuration failed on. With the numbers rather than as it
@@ -62,9 +63,9 @@ def alone(result: Comparison) -> None:
 
     # In full: reading them is how a mislabelled user claim is caught.
     for disagreement in only.disagreements:
-        user = " ".join(disagreement.user)
+        user = " ".join(disagreement.truth)
         machine = " ".join(disagreement.machine)
-        print(f"\n{disagreement.attempt_id}\n  you: {user}\n  it:  {machine}")
+        print(f"\n{disagreement.item_id}\n  you: {user}\n  it:  {machine}")
 
 
 def compared(result: Comparison, *, splits: bool = False) -> None:
@@ -214,12 +215,12 @@ def rows(scored_entries: Sequence[ConfigurationScore]) -> list[tuple[str, ...]]:
     configurations, since the denominator is the user's claims. A technique no
     claim named is still a row, carrying the over-claims that put it there."""
     counted = [
-        {row.technique: row for row in scored.score.per_technique} for scored in scored_entries
+        {row.category: row for row in scored.score.per_category} for scored in scored_entries
     ]
     body: list[tuple[str, ...]] = []
     for technique in sorted({name for rows in counted for name in rows}):
         found = [rows.get(technique) for rows in counted]
-        attempts = max(row.attempts for row in found if row is not None)
+        attempts = max(row.items for row in found if row is not None)
         if len(found) == 1 and found[0] is not None:
             body.append((technique, str(attempts), *counts(found[0])))
         else:
@@ -227,11 +228,11 @@ def rows(scored_entries: Sequence[ConfigurationScore]) -> list[tuple[str, ...]]:
     return body
 
 
-def counts(row: TechniqueScore) -> tuple[str, str, str]:
+def counts(row: CategoryScore) -> tuple[str, str, str]:
     return str(row.exact), str(row.missed), str(row.over)
 
 
 # A technique a configuration never reached is zeroes, not a blank: a count
 # rather than a gap.
-def packed(row: TechniqueScore | None) -> str:
+def packed(row: CategoryScore | None) -> str:
     return "/".join(counts(row)) if row is not None else "0/0/0"

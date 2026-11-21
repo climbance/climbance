@@ -178,7 +178,7 @@ runs = [
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
     "climb.mint", "climb.mutation", "climb.pick", "climb.problems", "climb.ratings",
-    "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema",
+    "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
     "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
     "climb.storage", "climb.techniques", "climb.template_schedule",
 ]
@@ -254,7 +254,7 @@ runs = [
     "climb.ids", "climb.judgements", "climb.judging", "climb.keylines",
     "climb.knowledge", "climb.log", "climb.matches", "climb.mint",
     "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.problems",
-    "climb.ratings", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
+    "climb.ratings", "climb.runner", "climb.runs", "climb.schema", "climb.scorer", "climb.sitting",
     "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
     "climb.techniques", "climb.trials", "climb.verifications",
 ]
@@ -638,6 +638,7 @@ src = [
     "src/climb/attempt_claims/score.py",
     "src/climb/cli/score.py",
     "src/climb/cli/scoring.py",
+    "src/climb/scorer.py",
 ]
 
 [[element]]

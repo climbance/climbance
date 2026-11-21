@@ -2,49 +2,17 @@
 
 from collections.abc import Mapping, Sequence
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from climb.attempt_claims.run import Failed
 from climb.schema import Call, Configuration
+from climb.scorer import Agreement, agreement
 
 
-class TechniqueScore(BaseModel):
-    """One technique's row. `over` and `missed` are asymmetric failures: a code
-    admitted too readily against one not recognised."""
-
-    technique: str
-    attempts: int = 0  # scored attempts the user's claim names it on
-    exact: int = 0  # of `attempts`, those the classifier's whole set agreed on
-    missed: int = 0  # of `attempts`, those the classifier did not name it on
-    over: int = 0  # attempts it was named on that the user's claim did not —
-
-    # counted outside `attempts`, so the two are not a rate over one
-    # denominator
-
-
-class Disagreement(BaseModel):
-    """One attempt the two claims read differently. The user's claims are ground
-    truth by construction, not by being right, so which is wrong is a reader's
-    question."""
-
-    attempt_id: str
-    user: list[str]
-    machine: list[str]
-
-
-class Score(BaseModel):
-    scored: int = 0
-    exact: int = 0
-    # One include/exclude call per candidate on each scored attempt. Set
-    # equality compounds them, so a run of near misses reads as a far worse
-    # classifier than it is.
-    decisions: int = 0
-    decisions_agreed: int = 0
+class Score(Agreement):
     # Of `undecided`, those cut short by the token cap rather than declined.
     exhausted: int = 0
-    per_technique: list[TechniqueScore] = []
-    disagreements: list[Disagreement] = []
-    failed: list[Failed] = []
+    failed: list[Failed] = Field(default_factory=list[Failed])
     read: int = 0
     reused: int = 0
     undecided: int = 0
@@ -91,63 +59,12 @@ class Comparison(BaseModel):
     splits: list[Split] = []
 
 
-def score(truth: Mapping[str, Sequence[str]], machine: Mapping[str, Sequence[str]]) -> Score:
-    """Agreement by set equality, attempt by attempt. A verdict naming no
-    candidate is scored like any other; an attempt with no verdict at all is
-    unscored, since nothing was read."""
-    rows: dict[str, TechniqueScore] = {}
-
-    def row(technique: str) -> TechniqueScore:
-        return rows.setdefault(technique, TechniqueScore(technique=technique))
-
-    result = Score()
-    for attempt_id, expected in truth.items():
-        if attempt_id not in machine:
-            continue
-        wanted, given = set(expected), set(machine[attempt_id])
-        agreed = wanted == given
-        result.scored += 1
-        result.exact += agreed
-        if not agreed:
-            result.disagreements.append(
-                Disagreement(
-                    attempt_id=attempt_id,
-                    user=sorted(wanted),
-                    machine=sorted(given),
-                )
-            )
-        for technique in wanted:
-            row(technique).attempts += 1
-            row(technique).exact += agreed
-            row(technique).missed += technique not in given
-        # Counted outside `attempts`, or the code a classifier reaches for
-        # wrongly would be the one code the score cannot see.
-        for technique in given - wanted:
-            row(technique).over += 1
-
-    result.per_technique = [rows[technique] for technique in sorted(rows)]
-    return result
-
-
-def per_decision(
+def score(
     truth: Mapping[str, Sequence[str]],
     machine: Mapping[str, Sequence[str]],
-    candidates: Mapping[str, Sequence[str]],
-) -> tuple[int, int]:
-    """How many include/exclude calls a classifier got right, and of how many.
-
-    The denominator is the candidates: declining a code correctly is the
-    decision set equality never credits. A disagreement counts only where it
-    names a candidate, since a stored claim can carry a retired one.
-    """
-    total = agreed = 0
-    for attempt_id, expected in truth.items():
-        offered = set(candidates.get(attempt_id, ()))
-        if attempt_id not in machine or not offered:
-            continue
-        total += len(offered)
-        agreed += len(offered) - len((set(expected) ^ set(machine[attempt_id])) & offered)
-    return total, agreed
+    candidates: Mapping[str, Sequence[str]] | None = None,
+) -> Score:
+    return Score(**vars(agreement(truth, machine, candidates)))
 
 
 def spent(scored: Score, calls: Sequence[Call]) -> None:

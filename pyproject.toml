@@ -127,7 +127,7 @@ layers = [
     "climb.graduation : climb.diagnosing",
     "climb.generation : climb.ladder : climb.recall : climb.judging : climb.retirement : climb.feedback : climb.difficulty",
     "climb.attempt_claims : climb.solution_claims : climb.matches : climb.board : climb.cards : climb.sitting : climb.template_schedule",
-    "climb.classifier : climb.diagnoser : climb.mint : climb.log : climb.caps : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.mutant_diagnoses : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs",
+    "climb.classifier : climb.diagnoser : climb.mint : climb.log : climb.caps : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.mutant_diagnoses : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs : climb.scorer",
     "climb.runner",
     "climb.schema : climb.ids : climb.storage : climb.standing",
 ]
@@ -147,9 +147,9 @@ source_modules = [
     "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
     "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
     "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
-    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
-    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
-    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
+    "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
+    "climb.storage", "climb.techniques", "climb.template_schedule", "climb.trials",
     "climb.verifications",
 ]
 forbidden_modules = ["climb.api"]
@@ -166,9 +166,9 @@ source_modules = [
     "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
     "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
     "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
-    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
-    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
-    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
+    "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
+    "climb.storage", "climb.techniques", "climb.template_schedule", "climb.trials",
     "climb.verifications",
 ]
 forbidden_modules = ["climb.broker"]
@@ -186,9 +186,9 @@ source_modules = [
     "climb.ladder", "climb.log", "climb.matches", "climb.mint",
     "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.pick",
     "climb.problems", "climb.ratings", "climb.recall", "climb.retirement", "climb.runs",
-    "climb.schema", "climb.sitting", "climb.solution_claims", "climb.solutions",
-    "climb.standing", "climb.storage", "climb.techniques", "climb.template_schedule",
-    "climb.trials", "climb.verifications",
+    "climb.schema", "climb.scorer", "climb.sitting", "climb.solution_claims",
+    "climb.solutions", "climb.standing", "climb.storage", "climb.techniques",
+    "climb.template_schedule", "climb.trials", "climb.verifications",
 ]
 forbidden_modules = ["climb.runner.child"]
 allow_indirect_imports = true
@@ -204,9 +204,9 @@ source_modules = [
     "climb.judging", "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log",
     "climb.matches", "climb.mint", "climb.mutant_diagnoses", "climb.mutation",
     "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings", "climb.recall",
-    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.sitting",
-    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
-    "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
+    "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
+    "climb.storage", "climb.techniques", "climb.template_schedule", "climb.trials",
     "climb.verifications",
 ]
 forbidden_modules = ["climb.cli"]

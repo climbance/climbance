@@ -80,6 +80,7 @@ flowchart LR
         climb_ratings["ratings"]
         climb_runs["runs"]
         climb_schema["schema"]
+        climb_scorer["scorer"]
         climb_sitting["sitting"]
         climb_solution_claims["solution_claims"]
         climb_solutions["solutions"]
@@ -102,6 +103,7 @@ flowchart LR
     climb_attempt_claims --> climb_log
     climb_attempt_claims --> climb_mint
     climb_attempt_claims --> climb_runs
+    climb_attempt_claims --> climb_scorer
     climb_board --> climb_attempt_claims
     climb_cards --> climb_mutation
     climb_cards --> climb_techniques
