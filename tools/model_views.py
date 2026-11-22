@@ -23,6 +23,8 @@ OWNED = [
     "web/src",
     "native/src",
     "native/editor",
+    "native/plugins",
+    "native/app.json",
 ]
 MODEL = DOCS / "model.toml"
 README = DOCS / "README.md"

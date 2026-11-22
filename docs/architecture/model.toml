@@ -147,6 +147,8 @@ src = [
     "native/src/lib/useEngine.ts",
     "native/src/lib/settings.ts",
     "native/src/lib/name.ts",
+    "native/app.json",
+    "native/plugins/**",
 ]
 
 [[element]]
