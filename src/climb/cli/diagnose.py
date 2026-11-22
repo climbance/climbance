@@ -1,6 +1,6 @@
-"""`diagnose attempts`, `diagnose mutants` and `diagnose score`: the diagnosis
-call over the failed attempts or the labelled mutants, and its score per label
-mode."""
+"""`diagnose attempts`, `diagnose mutants`, `diagnose score` and `diagnose
+verdicts`: the diagnosis call over the failed attempts or the labelled mutants,
+its score per label mode, and its unscored verdicts for the spot check."""
 
 import argparse
 from dataclasses import replace
@@ -20,6 +20,7 @@ from climb.diagnosing import (
     diagnose_mutants,
     sample,
     scored,
+    unscored,
 )
 from climb.judgements import ItemStore
 from climb.judging import labelled_mutants
@@ -33,6 +34,8 @@ from climb.storage import Database
 
 def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
     named = configurations(args, parser, DEFAULT)
+    if args.subject == "verdicts" and len(named) > 1:
+        parser.exit(2, "diagnose verdicts: one configuration at a time\n")
     asked: list[str] = args.tool or []
     tools = frozenset(Tool(one) for one in asked)
     # `score` reads the baseline beside each tool; a run reads them together
@@ -42,7 +45,7 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
         else [tools]
     )
     # no credentials asked of a run that makes no call
-    stored = args.subject == "score" and args.stored
+    stored = args.subject == "verdicts" or (args.subject == "score" and args.stored)
     log, mutant_log, calls = AttemptLog(root), MutantDiagnosisLog(root), CallLog(root)
     user = getattr(args, "user", None)
     base = Tasks(
@@ -86,6 +89,16 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
             )
             report(on, "mutants", result)
             exit_on(parser, "diagnose", result)
+    if args.subject == "verdicts":
+        configuration, tasks = columns[0]
+        for one in unscored(
+            configuration,
+            tasks,
+            log.attempts(user),
+            log.self_labels(user),
+            log.diagnoses(user),
+        ):
+            print(one.model_dump_json())
     if args.subject == "score":
         attempts = log.attempts(user)
         labels, diagnoses, read = log.self_labels(user), log.diagnoses(user), mutant_log.all()

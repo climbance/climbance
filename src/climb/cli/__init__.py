@@ -351,9 +351,22 @@ def main() -> None:
         "score", help="the call scored per label mode, after reading what it has not"
     )
     on_score.add_argument("--stored", action="store_true", help="score what is stored, no call")
-    on_attempts.set_defaults(per_operator=SAMPLE, all=False)
-    for one in (on_attempts, on_score):
+    on_verdicts = diagnosed.add_parser(
+        "verdicts", help="the verdicts no self-label scores, as `spot draw` reads them"
+    )
+    for one in (on_attempts, on_verdicts):
+        one.set_defaults(per_operator=SAMPLE, all=False)
+    for one in (on_attempts, on_score, on_verdicts):
         user_argument(one)
+    on_verdicts.add_argument(
+        "--tool", action="append", choices=[tool.value for tool in Tool], help="the tool set"
+    )
+    configuration_arguments(
+        on_verdicts,
+        rows("named", "--model", opens_by_default=DIAGNOSER.model),
+        "--model",
+        model="the diagnosis configuration",
+    )
     for one in (on_mutants, on_score):
         one.add_argument("--per-operator", type=int, default=SAMPLE, help="mutants per operator")
         one.add_argument("--all", action="store_true", help="every labelled mutant")

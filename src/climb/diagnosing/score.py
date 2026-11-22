@@ -20,6 +20,7 @@ from climb.schema import (
     SelfLabel,
 )
 from climb.scorer import agreement
+from climb.scorer.spot import Verdict
 
 # under this many verdicts a share swings on one of them, so none is shown
 MINIMUM = 10
@@ -48,16 +49,10 @@ def scored(
 ) -> list[Row]:
     """One row per self-label mode, then the mutants whole and per operator.
     A verdict counts where it answers the prompt this tool set would send."""
-    asked = {
-        one.id: request_hash(tasks.attempt(one), one.code or "")
-        for one in attempts
-        if one.problem_id in tasks.problems
-    }
     mode = {one.attempt_id: one.mode for one in labels}  # in landing order: the latest wins
     cause = {
-        one.attempt_id: one.cause
-        for one in diagnoses
-        if one.attempt_id in asked and one.at_configuration(configuration, asked[one.attempt_id])
+        one: found.cause
+        for one, found in _latest(configuration, tasks, attempts, diagnoses).items()
     }
     rows = [
         _row(
@@ -85,6 +80,50 @@ def scored(
         named = {_id(one): found for one, found in read if one.operator is operator}
         rows.append(_row(f"  {operator}", implied, named))
     return rows
+
+
+def unscored(
+    configuration: Configuration,
+    tasks: Tasks,
+    attempts: Sequence[Attempt],
+    labels: Sequence[SelfLabel],
+    diagnoses: Sequence[Diagnosis],
+) -> list[Verdict]:
+    """The latest verdicts no self-label scores, for the spot check. A `speed`
+    or `none` label implies no cause, so its attempt stays in."""
+    mode = {one.attempt_id: one.mode for one in labels}
+    scored_ids = {one for one, named in mode.items() if named in IMPLIED}
+    by_id = {one.id: one for one in attempts}
+    return [
+        Verdict(
+            id=attempt_id,
+            kind=found.cause.value,
+            # fenced: a statement ends on the signature the code opens with
+            text=f"{tasks.problems[by_id[attempt_id].problem_id].statement}\n\n"
+            f"```python\n{by_id[attempt_id].code or ''}\n```",
+        )
+        for attempt_id, found in _latest(configuration, tasks, attempts, diagnoses).items()
+        if attempt_id not in scored_ids
+    ]
+
+
+def _latest(
+    configuration: Configuration,
+    tasks: Tasks,
+    attempts: Sequence[Attempt],
+    diagnoses: Sequence[Diagnosis],
+) -> dict[str, Diagnosis]:
+    """Each attempt's latest diagnosis at the prompt this tool set sends."""
+    asked = {
+        one.id: request_hash(tasks.attempt(one), one.code or "")
+        for one in attempts
+        if one.problem_id in tasks.problems
+    }
+    return {
+        one.attempt_id: one
+        for one in diagnoses
+        if one.attempt_id in asked and one.at_configuration(configuration, asked[one.attempt_id])
+    }
 
 
 def written_by(record: MachineProvenance, configuration: Configuration) -> bool:

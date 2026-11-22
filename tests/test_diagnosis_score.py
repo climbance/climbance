@@ -4,7 +4,7 @@ from helpers import PROVENANCE_FIELDS, T0, make_problem
 
 from climb.cli.diagnose import cell
 from climb.diagnoser import Tool, request_hash
-from climb.diagnosing import MINIMUM, Tasks, scored
+from climb.diagnosing import MINIMUM, Tasks, scored, unscored
 from climb.diagnosing.run import code_hash
 from climb.judging.labelled import LabelledMutant
 from climb.mutation import Operator
@@ -19,6 +19,8 @@ from climb.schema import (
     SelfLabel,
     Template,
 )
+from climb.scorer.spot import SAMPLE, SEED, sheet
+from climb.scorer.spot import verdicts as spot_verdicts
 
 AT = Configuration(
     model=PROVENANCE_FIELDS["model"],
@@ -161,3 +163,39 @@ def test_a_printed_share_carries_its_interval():
     diagnoses = [diagnosis(f"a{n}", Cause.SLIP if n < 7 else Cause.FORM) for n in range(MINIMUM)]
 
     assert cell(rows(AT, labels, diagnoses)["syntax"]) == "70% [40–89%] of 10"
+
+
+def test_the_spot_check_reads_the_verdicts_no_self_label_scores():
+    """A `gap` label scores its attempt; a `speed` label implies no cause."""
+    attempts = [attempt(one) for one in ("a", "b", "c")]
+    labels = [label("b", FailureMode.GAP), label("c", FailureMode.SPEED)]
+    diagnoses = [diagnosis(one, Cause.FORM) for one in ("a", "b", "c")]
+
+    found = unscored(AT, TASKS, attempts, labels, diagnoses)
+
+    assert [(one.id, one.kind) for one in found] == [("a", "form"), ("c", "form")]
+    assert found[0].text == f"{TASKS.problems['p1'].statement}\n\n```python\na\n```"
+
+
+def test_the_spot_check_reads_one_configurations_latest_verdict():
+    """An earlier verdict and another configuration's never reach the sheet."""
+    earlier = diagnosis("a", Cause.SLIP)
+    other = diagnosis("a", Cause.SLIP).model_copy(update={"model": OTHER.model})
+    later = diagnosis("a", Cause.FORM)
+
+    found = unscored(AT, TASKS, [attempt("a")], [], [earlier, later, other])
+
+    assert [(one.id, one.kind) for one in found] == [("a", "form")]
+
+
+def test_the_exported_verdicts_draw_a_sheet():
+    """`diagnose verdicts` prints the lines `spot draw` reads."""
+    lines = [
+        one.model_dump_json()
+        for one in unscored(AT, TASKS, [attempt("a")], [], [diagnosis("a", Cause.SLIP)])
+    ]
+
+    drawn = sheet(spot_verdicts(lines), SAMPLE, SEED)
+
+    assert "## slip: 1 of 1" in drawn
+    assert "`a`" in drawn

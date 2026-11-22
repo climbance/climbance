@@ -81,6 +81,12 @@ re-diagnosed and compared.
   classifier's rows then report a share the same way.
 - **A row under 10 verdicts prints its count and no share.** One `syntax`
   self-label would read as 0% or 100%.
+- **`climb diagnose verdicts` prints each diagnosis no self-label scores, for
+  the spot check of `eval-set.md`.** It prints one JSON line per attempt: the
+  attempt id, the cause as the kind, and the statement and the fenced code
+  as the text. It reads one configuration's latest verdict at one tool set, as a
+  score column does. An attempt labelled `speed` or `none` stays in, since
+  neither mode implies a cause.
 - **The labelled mutants are a row apart from the self-labels, split by
   operator.** A call can catch a reversed comparison and miss a shifted
   constant, and one mutant row would hide that.
