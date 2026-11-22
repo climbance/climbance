@@ -24,7 +24,7 @@ Read both files, and the module's `CLAUDE.md`, before the first step.
   `concepts.md` `## Stages` gives. A session applies each recommended fix
   and records it in the subtopic's digest, and writes there what it must
   ask instead of stopping to ask. A decide session then answers those
-  questions, and only two kinds reach the author.
+  questions, and only three kinds reach the author.
 - **The writer** is one agent per step. It is given the brief below and the
   layer above, never the layer it replaces: a fresh generation reads no
   earlier version of its own file. The session may write a step itself when

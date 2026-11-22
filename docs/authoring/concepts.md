@@ -179,6 +179,11 @@ steps, with no step waiting for the author.
 - **A move that would retire a question on the content repository's `main`
   goes to the digest's `## For you`**, and is not applied. The answers users
   gave to that question would stop counting.
+- **A concept does not move into a level the subtopic has released.** A
+  level is released once the concept file on `main` holds a concept of the
+  subtopic at it. The move would add questions to a released group, which
+  lowers that group's passed share and can lock the level above it again.
+  The move goes to the digest's `## For you`, and is not applied.
 
 ## Claims about cost
 
@@ -299,7 +304,7 @@ meets the stopping rule.
 
 The author of the module approves by exception. A session applies each
 fix a review recommends and records the decision. A decide session answers
-the questions the stages leave, and only two kinds reach the author. In the
+the questions the stages leave, and only three kinds reach the author. In the
 pilot the author approved the recommended fix nearly every time, so a
 question per fix cost the author's time and changed little.
 
@@ -325,12 +330,13 @@ question per fix cost the author's time and changed little.
 - **A diff review checks the decide session's edits**, under the stopping
   rule of every stage. A decision changes a claim or a question as a fix
   does, and rule 23 holds for a fix.
-- **Two kinds of question still go to the author.** The first is a change
+- **Three kinds of question still go to the author.** The first is a change
   outside the subtopic's own files: `rules.md`, this file, a skill, the
   engine, or the module's `CLAUDE.md` and its baseline. Such a change
   reaches every later subtopic. The second is a change retiring a question
   that is already on the content repository's `main`, since the answers
-  users gave to it stop counting.
+  users gave to it stop counting. The third moves a concept into a level
+  the subtopic has released, as `### Re-levelling` gives.
 - **The digest** is `review/<topic>-<sub>-L<level>.md` in the module's
   directory. It opens with `## For you`: the questions left for the author,
   at most three, or `Nothing.`. `## Decided` follows, with one line per

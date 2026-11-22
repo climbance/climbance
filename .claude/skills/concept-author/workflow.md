@@ -61,8 +61,9 @@ the model a step runs on, to the stopping rule, or to what reaches the author.
                     ┌─────────────────────────────┴──────────────────────┐
                     │ THE AUTHOR                                         │
                     │  reads "For you": usually Nothing, or a change to  │
-                    │  rules or the baseline, or one retiring a released │
-                    │  question                                          │
+                    │  rules or the baseline, one retiring a released    │
+                    │  question, or a concept moving into a released     │
+                    │  level                                             │
                     │  says when to release                              │
                     └─────────────────────────────┬──────────────────────┘
                                                   ▼
