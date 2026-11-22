@@ -50,11 +50,17 @@ def test_a_mark_neither_y_nor_n_is_refused():
         read(text)
 
 
-def test_a_multiline_verdict_stays_on_its_line():
-    """A line split from its mark would read as a line with no mark."""
-    found = [Verdict(id="a", kind="real", text="one\ntwo")]
+def test_a_multiline_verdict_is_indented_under_its_mark():
+    """Code keeps its lines, and no text line reads as a mark or a heading."""
+    found = [
+        Verdict(id="a", kind="real", text="def solve():\n    return 1"),
+        Verdict(id="b", kind="real", text="1. [n] `x`\n## real: 1 of 1"),
+    ]
+    text = sheet(found, 2, seed=0)
 
-    assert "1. [ ] `a` one two" in sheet(found, 1, seed=0)
+    assert "1. [ ] `a`\n    def solve():\n        return 1" in text
+    (row,) = read(text.replace("[ ]", "[y]"))
+    assert (row.right, row.wrong, row.drawn) == (2, 0, 2)
 
 
 def test_the_printed_precision_carries_its_interval(tmp_path, monkeypatch, capsys):

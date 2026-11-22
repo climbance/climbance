@@ -73,6 +73,10 @@ draws the sample and reads the author's marks back.
   sheet.** Each line names an id, a kind and a text. Taking a file keeps the
   spot check free of any domain record, so a judge outside the engine is
   checked by the same command.
+- **A text of one line prints beside its mark, and a longer one prints
+  indented below it.** A diagnosis's text is a statement and code, and code
+  joined onto one line cannot be read. `climb spot read` reads only unindented
+  lines, so a text line never counts as a mark or a heading.
 - **The draw is per verdict kind, 20 of each by default.** A judge naming one
   kind thirteen times as often as the other would leave the rare kind a
   handful of lines in one pooled sample.

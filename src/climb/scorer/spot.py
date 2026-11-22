@@ -63,13 +63,19 @@ def sheet(found: Sequence[Verdict], per_kind: int, seed: int) -> str:
     for kind, lines in draw(found, per_kind, seed).items():
         population = sum(one.kind == kind for one in found)
         out += [f"## {kind}: {len(lines)} of {population}", ""]
-        # one line per verdict, or the reader would split a mark from its line
-        out += [
-            f"{n}. [ ] `{one.id}` {' '.join(one.text.split())}"
-            for n, one in enumerate(lines, start=1)
-        ]
+        for n, one in enumerate(lines, start=1):
+            out += _entry(n, one)
         out.append("")
     return "\n".join(out)
+
+
+def _entry(n: int, one: Verdict) -> list[str]:
+    """A one-line text beside its mark, a longer one indented below it. The
+    indent keeps a text line from reading as a mark or a heading."""
+    text = one.text.strip()
+    if "\n" not in text:
+        return [f"{n}. [ ] `{one.id}` {text}"]
+    return [f"{n}. [ ] `{one.id}`", *(f"    {line}".rstrip() for line in text.splitlines())]
 
 
 def read(text: str) -> list[Precision]:
