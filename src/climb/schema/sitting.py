@@ -4,7 +4,7 @@ Revised while the sitting runs and kept after it ends. `api/sitting.md` gives
 why the pauses are intervals rather than a total.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -39,6 +39,17 @@ class Sitting(BaseModel):
     # Absent on a sitting stored before the field
     device: str | None = Field(default=None, min_length=1)
     pauses: list[Pause] = Field(default_factory=list[Pause])
+    # served with nothing named, under a limit and with no pause:
+    # `api/rating.md`. False on a sitting stored before the field
+    cold: bool = False
+    time_limit_sec: int | None = Field(default=None, gt=0)  # on a cold sitting alone
+
+    @property
+    def limit_at(self) -> datetime | None:
+        """When a cold sitting's limit ends it."""
+        if self.time_limit_sec is None or self.clock_started_at is None:
+            return None
+        return self.clock_started_at + timedelta(seconds=self.time_limit_sec)
 
     @property
     def paused(self) -> bool:
@@ -52,6 +63,22 @@ class Sitting(BaseModel):
         end = self.ended_at or now
         paused = sum(((one.until or now) - one.at).total_seconds() for one in self.pauses)
         return (end - self.clock_started_at).total_seconds() - paused
+
+    @model_validator(mode="after")
+    def _a_cold_sitting_runs_from_serving(self) -> Sitting:
+        """Rejects a cold sitting without its limit, timed from a later press or
+        paused, and a limit on a sitting that is not cold."""
+        if not self.cold:
+            if self.time_limit_sec is not None:
+                raise ValueError("a time limit is on a cold sitting alone")
+            return self
+        if self.time_limit_sec is None:
+            raise ValueError("a cold sitting carries its time limit")
+        if self.clock_started_at != self.started_at:
+            raise ValueError("a cold sitting's clock starts as it is served")
+        if self.pauses:
+            raise ValueError("a cold sitting does not pause")
+        return self
 
     @model_validator(mode="after")
     def _the_intervals_hold(self) -> Sitting:

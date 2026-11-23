@@ -42,6 +42,11 @@
       "default": null,
       "title": "Clock Started At"
     },
+    "cold": {
+      "default": false,
+      "title": "Cold",
+      "type": "boolean"
+    },
     "device": {
       "anyOf": [
         {
@@ -101,6 +106,19 @@
       "format": "date-time",
       "title": "Started At",
       "type": "string"
+    },
+    "time_limit_sec": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Limit Sec"
     },
     "user_id": {
       "minLength": 1,

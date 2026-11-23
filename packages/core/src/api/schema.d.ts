@@ -417,6 +417,57 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/cold-sittings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Served */
+    post: operations['served_api_cold_sittings_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cold-sittings/{sitting_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Seated */
+    get: operations['seated_api_cold_sittings__sitting_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/cold-sittings/{sitting_id}/submissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Submitted */
+    post: operations['submitted_api_cold_sittings__sitting_id__submissions_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/sign-in': {
     parameters: {
       query?: never;
@@ -1147,6 +1198,33 @@ export interface components {
      * @enum {string}
      */
     Client: 'web' | 'native';
+    /**
+     * ColdFailure
+     * @description The first case a cold submission failed, by its number alone.
+     */
+    ColdFailure: {
+      /** Number */
+      number: number;
+      outcome: components['schemas']['CaseOutcome'];
+    };
+    /** ColdSeated */
+    ColdSeated: {
+      /** Statement */
+      statement: string;
+      /** Signature */
+      signature: string | null;
+      sitting: components['schemas']['Sitting'];
+      /** Elapsed Sec */
+      elapsed_sec: number | null;
+      last: components['schemas']['ColdSubmitted'] | null;
+      revealed: components['schemas']['Revealed'] | null;
+    };
+    /** ColdSubmitted */
+    ColdSubmitted: {
+      attempt: components['schemas']['Attempt'];
+      sitting: components['schemas']['Sitting'];
+      failure: components['schemas']['ColdFailure'] | null;
+    };
     /**
      * Confidence
      * @enum {string}
@@ -2006,6 +2084,19 @@ export interface components {
       note: string;
     };
     /**
+     * Revealed
+     * @description What the page withheld while the sitting ran.
+     */
+    Revealed: {
+      /** Title */
+      title: string;
+      /** Techniques */
+      techniques: string[];
+      difficulty: components['schemas']['ProblemDifficulty'] | null;
+      /** Score */
+      score: number | null;
+    };
+    /**
      * RunFault
      * @description A user's run the sandbox answered no result for: `api/run-faults.md`.
      */
@@ -2207,6 +2298,13 @@ export interface components {
       device?: string | null;
       /** Pauses */
       pauses?: components['schemas']['Pause'][];
+      /**
+       * Cold
+       * @default false
+       */
+      cold: boolean;
+      /** Time Limit Sec */
+      time_limit_sec?: number | null;
     };
     /** Stint */
     Stint: {
@@ -3315,6 +3413,105 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SelfLabel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  served_api_cold_sittings_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['Begin'] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ColdSeated'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  seated_api_cold_sittings__sitting_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sitting_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ColdSeated'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  submitted_api_cold_sittings__sitting_id__submissions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sitting_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Submission'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ColdSubmitted'];
         };
       };
       /** @description Validation Error */

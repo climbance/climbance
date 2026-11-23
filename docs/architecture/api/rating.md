@@ -27,6 +27,9 @@ that turns the outcomes into the rating is not specified yet.
 - **A problem the user opened and left without a press may still be served
   cold.** No store records which problems were opened, as `sitting.md` gives.
   This case is accepted, since recording every opening was rejected there.
+- **A user has one cold sitting running at a time.** A second press reaches
+  the running cold sitting, so a double press or a second tab records no
+  second loss.
 - **The problem is drawn at random among the problems a cold sitting may
   serve.** Serving near the user's rating is deferred until a rating exists to
   serve near.
@@ -68,6 +71,12 @@ that turns the outcomes into the rating is not specified yet.
   is refused. The idle bound in `sitting.md` still applies, and ends an
   abandoned cold sitting at its `last_active_at`.
 
+- **A cold sitting has routes of its own under `/api/cold-sittings`**: one
+  serves it, one reads it and one takes a submission. Pressing End and the
+  claim use the sitting's own routes.
+- **The drill loop's submission route refuses a cold sitting.** That route
+  answers the failing case whole.
+
 ## Solved
 
 - **A cold sitting is solved when a submission passes every case within the
@@ -100,3 +109,4 @@ that turns the outcomes into the rating is not specified yet.
   sitting store is revised in place, and `sitting.md` accepts that a refactor
   may lose the pauses. The rating rests on these two fields, so they are kept.
   A cold sitting with no submission has no attempt to carry them instead.
+

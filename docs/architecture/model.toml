@@ -201,13 +201,13 @@ src = [
 code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
-    "climb.cards", "climb.cases", "climb.classifier", "climb.feedback",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.feedback",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
     "climb.mint", "climb.mutation", "climb.pick", "climb.problems", "climb.ratings",
     "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
     "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
-    "climb.storage", "climb.techniques", "climb.template_schedule",
+    "climb.statement", "climb.storage", "climb.techniques", "climb.template_schedule",
 ]
 
 [[element]]
@@ -282,8 +282,8 @@ runs = [
     "climb.knowledge", "climb.log", "climb.matches", "climb.mint",
     "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.problems",
     "climb.ratings", "climb.runner", "climb.runs", "climb.schema", "climb.scorer", "climb.sitting",
-    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.storage",
-    "climb.techniques", "climb.trials", "climb.verifications",
+    "climb.solution_claims", "climb.solutions", "climb.standing", "climb.statement",
+    "climb.storage", "climb.techniques", "climb.trials", "climb.verifications",
 ]
 
 # Components of the API: the core loop, from an attempt arriving to the next
@@ -298,6 +298,9 @@ role = "Times one session on one problem, minted at the first clock press or sub
 doc = "api/sitting.md"
 src = [
     "src/climb/sitting.py",
+    "src/climb/cold.py",
+    "src/climb/statement.py",
+    "src/climb/api/cold.py",
     "src/climb/log/sittings.py",
     "src/climb/schema/sitting.py",
 ]

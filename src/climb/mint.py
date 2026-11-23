@@ -241,18 +241,28 @@ def attempt_verification(attempt_id: str, execution: Execution) -> AttemptVerifi
 
 
 def sitting(
-    user_id: str, problem_id: str, at: datetime | None = None, device: str | None = None
+    user_id: str,
+    problem_id: str,
+    at: datetime | None = None,
+    device: str | None = None,
+    time_limit_sec: int | None = None,
 ) -> Sitting:
+    """A sitting, cold where it carries a time limit: a cold clock starts as it
+    is served."""
     # the caller's clock where it has one, so the sitting it serves and the
     # elapsed time it reports read the same moment
     at = at or datetime.now(UTC)
+    cold = time_limit_sec is not None
     return Sitting(
         id=new_id(),
         user_id=user_id,
         problem_id=problem_id,
         started_at=at,
+        clock_started_at=at if cold else None,
         last_active_at=at,
         device=device,
+        cold=cold,
+        time_limit_sec=time_limit_sec,
     )
 
 

@@ -70,6 +70,7 @@ const SUBMITTED: Submitted = {
     user_id: 'u-4f9c2a',
     problem_id: 'p-gallery',
     started_at: '2026-09-18T08:40:00Z',
+    cold: false,
   },
   verification: {
     id: 'v-gallery',

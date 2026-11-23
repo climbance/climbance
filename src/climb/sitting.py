@@ -32,6 +32,7 @@ from climb.schema import (
     Sitting,
     TestCase,
 )
+from climb.statement import signed
 
 # the cap a sitting judges a submission under. The speedup search picks the
 # separating size against it, and generation's own cap sits well above it
@@ -146,7 +147,7 @@ def serve(
     problem = _servable(problems, problem_id)
     at = now or _clock()
     one = _live(sittings, user_id, problem_id, at)
-    prose, signature = _signed(problem.statement)
+    prose, signature = signed(problem.statement)
     return Served(
         title=problem.title,
         statement=prose,
@@ -191,9 +192,9 @@ def _live(sittings: SittingStore, user_id: str, problem_id: str, at: datetime) -
     one = sittings.running(user_id, problem_id)
     if one is None:
         return None
-    if _idle(one, at):
+    if (ended := lapsed(one, at)) is not None:
         # the clock stopped where the user left; the next press mints another
-        _ended_idle(sittings, one)
+        _ended(sittings, one, ended)
         return None
     return _stored(sittings, one, at)
 
@@ -215,8 +216,9 @@ def get(
         raise ValueError(f"sitting {sitting_id} names no stored problem {one.problem_id}")
     at = now or _clock()
     if one.ended_at is None:
-        one = _ended_idle(sittings, one) if _idle(one, at) else _stored(sittings, one, at)
-    prose, signature = _signed(problem.statement)
+        ended = lapsed(one, at)
+        one = _ended(sittings, one, ended) if ended else _stored(sittings, one, at)
+    prose, signature = signed(problem.statement)
     return Seated(
         title=problem.title,
         statement=prose,
@@ -235,6 +237,7 @@ def submit(
     *,
     user_id: str,
     restored: bool = False,
+    cold: bool = False,
     now: datetime | None = None,
 ) -> Submitted:
     # taken before the run: judging takes seconds the solver did not spend
@@ -242,10 +245,14 @@ def submit(
     # a paused clock stops the timing, not the practice: the attempt carries
     # the time the clock ran, which excludes the open pause
     one = _running(sittings, sitting_id, user_id)
-    if _idle(one, at):
-        # the clock it would stamp counts the hours the user was away
-        _ended_idle(sittings, one)
-        raise Refused(f"sitting {sitting_id} was left idle and has ended")
+    if one.cold != cold:
+        # a cold sitting's failure is answered by number: `climb.cold`
+        raise Refused(f"sitting {sitting_id} is {'' if one.cold else 'not '}cold")
+    if (ended := lapsed(one, at)) is not None:
+        # past the limit, or a clock counting the hours the user was away
+        _ended(sittings, one, ended)
+        why = "reached its time limit" if ended == one.limit_at else "was left idle"
+        raise Refused(f"sitting {sitting_id} {why} and has ended")
     # before the run: a submission past the cap starts no container
     faults = RunFaultLog(log.root)
     capped(
@@ -432,6 +439,8 @@ def pause(
     one = _running(store, sitting_id, user_id)
     if one.clock_started_at is None:
         raise Refused(f"sitting {sitting_id}'s clock has not started")
+    if one.cold:
+        raise Refused(f"sitting {sitting_id} is cold, and a cold clock does not stop")
     if one.paused:
         raise Refused(f"sitting {sitting_id} is already paused")
     at = now or _clock()
@@ -460,23 +469,6 @@ def end(
     )
 
 
-def _signed(statement: str) -> tuple[str, str | None]:
-    """The prose before the `def solve(...)` line a statement ends on, and that
-    line. Split here so no renderer reads a parameter name as markup."""
-    text = statement.rstrip()
-    # a generated statement ends on the line bare, or inside a fenced block
-    fenced = text.endswith("```")
-    body = text.removesuffix("```").rstrip()
-    start = body.rfind("def solve(")
-    at_line_start = start == 0 or (start > 0 and body[start - 1] == "\n")
-    if start == -1 or not at_line_start or "\n" in body[start:]:
-        return statement, None
-    prose = body[:start].rstrip()
-    if fenced:
-        prose = prose[: prose.rfind("```")].rstrip()
-    return prose, body[start:]
-
-
 def _owned(store: SittingStore, sitting_id: str, user_id: str) -> Sitting:
     one = store.get(sitting_id)
     # another user's sitting reads as missing, so an id reveals nothing
@@ -498,18 +490,20 @@ def _active(one: Sitting) -> datetime:
 
 
 def over(one: Sitting, at: datetime) -> bool:
-    """Ended, or ended by the idle bound though no read has closed it yet."""
-    return one.ended_at is not None or _idle(one, at)
+    """Ended, or ended by a bound though no read has closed it yet."""
+    return one.ended_at is not None or lapsed(one, at) is not None
 
 
-def _idle(one: Sitting, at: datetime) -> bool:
-    return at - _active(one) > timedelta(minutes=IDLE_MINUTES)
+def lapsed(one: Sitting, at: datetime) -> datetime | None:
+    """Where the idle bound or a cold sitting's limit ended the sitting by
+    `at`, rather than where a reader happened to find it."""
+    ends = [_active(one)] if at - _active(one) > timedelta(minutes=IDLE_MINUTES) else []
+    if one.limit_at is not None and at > one.limit_at:
+        ends.append(one.limit_at)
+    return min(ends, default=None)
 
 
-def _ended_idle(store: SittingStore, one: Sitting) -> Sitting:
-    """The sitting closed where the loop last touched it, rather than where a
-    reader happened to find it."""
-    at = _active(one)
+def _ended(store: SittingStore, one: Sitting, at: datetime) -> Sitting:
     return _stored(
         store, one, pauses=_closed(one.pauses, at) if one.paused else one.pauses, ended_at=at
     )

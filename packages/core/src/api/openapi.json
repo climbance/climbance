@@ -1050,6 +1050,139 @@
         }
       }
     },
+    "/api/cold-sittings": {
+      "post": {
+        "summary": "Served",
+        "operationId": "served_api_cold_sittings_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Begin"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColdSeated"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cold-sittings/{sitting_id}": {
+      "get": {
+        "summary": "Seated",
+        "operationId": "seated_api_cold_sittings__sitting_id__get",
+        "parameters": [
+          {
+            "name": "sitting_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sitting Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColdSeated"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cold-sittings/{sitting_id}/submissions": {
+      "post": {
+        "summary": "Submitted",
+        "operationId": "submitted_api_cold_sittings__sitting_id__submissions_post",
+        "parameters": [
+          {
+            "name": "sitting_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sitting Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Submission"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColdSubmitted"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sign-in": {
       "get": {
         "summary": "Offered",
@@ -2887,6 +3020,114 @@
           "native"
         ],
         "title": "Client"
+      },
+      "ColdFailure": {
+        "properties": {
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/CaseOutcome"
+          }
+        },
+        "type": "object",
+        "required": [
+          "number",
+          "outcome"
+        ],
+        "title": "ColdFailure",
+        "description": "The first case a cold submission failed, by its number alone."
+      },
+      "ColdSeated": {
+        "properties": {
+          "statement": {
+            "type": "string",
+            "title": "Statement"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          },
+          "sitting": {
+            "$ref": "#/components/schemas/Sitting"
+          },
+          "elapsed_sec": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elapsed Sec"
+          },
+          "last": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColdSubmitted"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revealed": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revealed"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "statement",
+          "signature",
+          "sitting",
+          "elapsed_sec",
+          "last",
+          "revealed"
+        ],
+        "title": "ColdSeated"
+      },
+      "ColdSubmitted": {
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "sitting": {
+            "$ref": "#/components/schemas/Sitting"
+          },
+          "failure": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColdFailure"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt",
+          "sitting",
+          "failure"
+        ],
+        "title": "ColdSubmitted"
       },
       "Confidence": {
         "type": "string",
@@ -4993,6 +5234,51 @@
         ],
         "title": "Retiring"
       },
+      "Revealed": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "techniques": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Techniques"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProblemDifficulty"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "techniques",
+          "difficulty",
+          "score"
+        ],
+        "title": "Revealed",
+        "description": "What the page withheld while the sitting ran."
+      },
       "RunFault": {
         "properties": {
           "id": {
@@ -5496,6 +5782,23 @@
             },
             "type": "array",
             "title": "Pauses"
+          },
+          "cold": {
+            "type": "boolean",
+            "title": "Cold",
+            "default": false
+          },
+          "time_limit_sec": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Limit Sec"
           }
         },
         "type": "object",

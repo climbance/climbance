@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from climb.api.account import router as account
 from climb.api.apps import router as apps
+from climb.api.cold import router as cold
 from climb.api.devlogin import router as dev_login_router
 from climb.api.feedback import router as feedback
 from climb.api.filling import router as filling
@@ -49,6 +50,7 @@ def create_app(
     app.add_exception_handler(Faulted, _refused)
     app.include_router(reads, prefix=PREFIX)
     app.include_router(writes, prefix=PREFIX)
+    app.include_router(cold, prefix=PREFIX)
     app.include_router(account, prefix=PREFIX)
     app.include_router(knowledge, prefix=PREFIX)
     app.include_router(judging, prefix=PREFIX)

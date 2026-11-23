@@ -36,6 +36,7 @@ The clients' TypeScript modules are drawn in `client-modules.md`.
 flowchart LR
     subgraph g0["API"]
         climb_api["api"]
+        climb_cold["cold"]
         climb_feedback["feedback"]
         climb_graduation["graduation"]
         climb_ladder["ladder"]
@@ -85,12 +86,14 @@ flowchart LR
         climb_solution_claims["solution_claims"]
         climb_solutions["solutions"]
         climb_standing["standing"]
+        climb_statement["statement"]
         climb_storage["storage"]
         climb_techniques["techniques"]
     end
     subgraph g4["API, Sandbox and Command line"]
         climb_runner["runner"]
     end
+    climb_api --> climb_cold
     climb_api --> climb_feedback
     climb_api --> climb_judgements
     climb_api --> climb_judging
@@ -98,7 +101,6 @@ flowchart LR
     climb_api --> climb_pick
     climb_api --> climb_recall
     climb_api --> climb_retirement
-    climb_api --> climb_solution_claims
     climb_attempt_claims --> climb_classifier
     climb_attempt_claims --> climb_log
     climb_attempt_claims --> climb_mint
@@ -117,6 +119,8 @@ flowchart LR
     climb_cli --> climb_keylines
     climb_cli --> climb_solution_claims
     climb_cli --> climb_trials
+    climb_cold --> climb_sitting
+    climb_cold --> climb_solution_claims
     climb_diagnoser --> climb_calls
     climb_diagnosing --> climb_diagnoser
     climb_diagnosing --> climb_judging
@@ -157,6 +161,7 @@ flowchart LR
     climb_sitting --> climb_log
     climb_sitting --> climb_mint
     climb_sitting --> climb_problems
+    climb_sitting --> climb_statement
     climb_solution_claims --> climb_classifier
     climb_solution_claims --> climb_mint
     climb_solution_claims --> climb_problems

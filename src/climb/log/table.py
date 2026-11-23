@@ -155,7 +155,11 @@ sittings = Table(
     # when the loop last acted on it: a sitting idle past the bound ends here
     Column("last_active_at", timestamp()),
     Column("device", Text),
+    Column("cold", Boolean, nullable=False, server_default=text("false")),
+    Column("time_limit_sec", Integer),
     CheckConstraint("ended_at >= started_at", name="ends_after_it_starts"),
+    CheckConstraint("cold = (time_limit_sec IS NOT NULL)", name="limit_on_cold"),
+    CheckConstraint("time_limit_sec > 0", name="limit_positive"),
     CheckConstraint("device <> ''", name="device_named"),
     CheckConstraint("clock_started_at >= started_at", name="clock_after_serving"),
     # one clock running on a problem for a user: a second serve reaches it
