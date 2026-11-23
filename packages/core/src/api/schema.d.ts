@@ -794,6 +794,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/product': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Product */
+    get: operations['product_api_author_product_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/author/generation': {
     parameters: {
       query?: never;
@@ -2071,6 +2088,39 @@ export interface components {
      * @enum {string}
      */
     ProblemStatus: 'created' | 'retired';
+    /** ProductDay */
+    ProductDay: {
+      /**
+       * Day
+       * Format: date
+       */
+      day: string;
+      /** Learners */
+      learners: number;
+      /** Sittings */
+      sittings: number;
+      /** Attempts */
+      attempts: number;
+      /** Answers */
+      answers: number;
+    };
+    /** ProductFigures */
+    ProductFigures: {
+      /** Period Days */
+      period_days: number;
+      /** Active Days */
+      active_days: number;
+      /** Invited */
+      invited: number;
+      /** Signed In */
+      signed_in: number;
+      /** Active */
+      active: number;
+      /** Retention */
+      retention: components['schemas']['Retention'][];
+      /** Days */
+      days: components['schemas']['ProductDay'][];
+    };
     /**
      * Prompted
      * @description What the trainer shows: the template it asks for, its trigger, the
@@ -2179,6 +2229,15 @@ export interface components {
       template: string;
       /** Used By */
       used_by: string;
+    };
+    /** Retention */
+    Retention: {
+      /** After Days */
+      after_days: number;
+      /** Counted */
+      counted: number;
+      /** Retained */
+      retained: number;
     };
     /**
      * RetirementReason
@@ -4182,6 +4241,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuthorArea'];
+        };
+      };
+    };
+  };
+  product_api_author_product_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProductFigures'];
         };
       };
     };

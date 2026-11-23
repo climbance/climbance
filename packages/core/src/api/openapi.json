@@ -1757,6 +1757,24 @@
         }
       }
     },
+    "/api/author/product": {
+      "get": {
+        "summary": "Product",
+        "operationId": "product_api_author_product_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductFigures"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/author/generation": {
       "get": {
         "summary": "Generation",
@@ -5209,6 +5227,89 @@
         ],
         "title": "ProblemStatus"
       },
+      "ProductDay": {
+        "properties": {
+          "day": {
+            "type": "string",
+            "format": "date",
+            "title": "Day"
+          },
+          "learners": {
+            "type": "integer",
+            "title": "Learners"
+          },
+          "sittings": {
+            "type": "integer",
+            "title": "Sittings"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "answers": {
+            "type": "integer",
+            "title": "Answers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "day",
+          "learners",
+          "sittings",
+          "attempts",
+          "answers"
+        ],
+        "title": "ProductDay"
+      },
+      "ProductFigures": {
+        "properties": {
+          "period_days": {
+            "type": "integer",
+            "title": "Period Days"
+          },
+          "active_days": {
+            "type": "integer",
+            "title": "Active Days"
+          },
+          "invited": {
+            "type": "integer",
+            "title": "Invited"
+          },
+          "signed_in": {
+            "type": "integer",
+            "title": "Signed In"
+          },
+          "active": {
+            "type": "integer",
+            "title": "Active"
+          },
+          "retention": {
+            "items": {
+              "$ref": "#/components/schemas/Retention"
+            },
+            "type": "array",
+            "title": "Retention"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/ProductDay"
+            },
+            "type": "array",
+            "title": "Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_days",
+          "active_days",
+          "invited",
+          "signed_in",
+          "active",
+          "retention",
+          "days"
+        ],
+        "title": "ProductFigures"
+      },
       "Prompted": {
         "properties": {
           "template_slug": {
@@ -5443,6 +5544,29 @@
         ],
         "title": "Requirement",
         "description": "One edge of the card graph: `content-repo/card-graph.md` gives what it\nasserts."
+      },
+      "Retention": {
+        "properties": {
+          "after_days": {
+            "type": "integer",
+            "title": "After Days"
+          },
+          "counted": {
+            "type": "integer",
+            "title": "Counted"
+          },
+          "retained": {
+            "type": "integer",
+            "title": "Retained"
+          }
+        },
+        "type": "object",
+        "required": [
+          "after_days",
+          "counted",
+          "retained"
+        ],
+        "title": "Retention"
       },
       "RetirementReason": {
         "type": "string",

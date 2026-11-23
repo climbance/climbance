@@ -638,6 +638,7 @@ section = "Who sees them"
 src = [
     "src/climb/api/author.py",
     "src/climb/api/generation_figures.py",
+    "src/climb/api/product_figures.py",
 ]
 
 [[element]]
@@ -1119,6 +1120,7 @@ doc = "web-app/pages/author/README.md"
 src = [
     "web/src/pages/AuthorPage.tsx",
     "web/src/pages/AuthorGenerationPage.tsx",
+    "web/src/pages/AuthorProductPage.tsx",
     "web/src/components/AuthorBar.tsx",
     "web/src/components/FigureTable.tsx",
 ]

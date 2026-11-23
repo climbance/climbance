@@ -9,6 +9,7 @@ import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
 import { cn } from '@/lib/utils'
 import { AuthorGenerationPage } from '@/pages/AuthorGenerationPage'
 import { AuthorPage } from '@/pages/AuthorPage'
+import { AuthorProductPage } from '@/pages/AuthorProductPage'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
 import { FillPage } from '@/pages/FillPage'
@@ -98,6 +99,7 @@ function App() {
               <Route path="start" element={<GuidePage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="author" element={<AuthorPage />} />
+              <Route path="author/product" element={<AuthorProductPage />} />
               <Route path="author/generation" element={<AuthorGenerationPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />

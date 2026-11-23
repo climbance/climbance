@@ -2,6 +2,7 @@ import type { components } from './api/schema';
 import { counted } from './screens';
 
 type Stop = components['schemas']['Stop'];
+type Retention = components['schemas']['Retention'];
 
 // the author area's pages, by the last segment of each path:
 // `web-app/pages/author/README.md`
@@ -10,6 +11,29 @@ export const AUTHOR_PAGES: Record<string, string> = {
   generation: 'Generation',
   workflow: 'Workflow',
 };
+
+export const PRODUCT_TITLE = 'Product';
+export const DAYS = 'Days';
+export const DAY = 'Day';
+export const LEARNERS = 'learners';
+export const SITTINGS = 'sittings';
+export const ATTEMPTS = 'attempts';
+export const ANSWERS = 'answers';
+
+export function usersLine(invited: number, signedIn: number, active: number, days: number): string {
+  return `${invited} invited · ${signedIn} signed in · ${active} active in the last ${days} days`;
+}
+
+export const retentionLabel = (days: number) => `Retention at ${days} days`;
+
+/** `m of n` and the share, or `none yet` before any user is old enough to count. */
+export function retentionCells(one: Retention): [string, string] {
+  if (!one.counted) return ['none yet', ''];
+  return [`${one.retained} of ${one.counted}`, `${Math.round((100 * one.retained) / one.counted)}%`];
+}
+
+// `2026-11-23` reads as `11-23`: the table spans 30 days, never a year
+export const dayLabel = (day: string) => day.slice(5);
 
 export const GENERATION_TITLE = 'Generation';
 export const STOPPED_BY = 'Stopped by';

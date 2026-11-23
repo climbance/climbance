@@ -285,6 +285,8 @@ ignore_names = [
     "card_id",
     # the generation page reads the period and a held writing's state, and no module does
     "period_days", "held_at",
+    # the product page names the window its active count spans, and no module does
+    "active_days",
     # a card's recall state says when a form was last reproduced, which the page
     # reads and no module does
     "last_at",

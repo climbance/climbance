@@ -4,11 +4,12 @@ check of its own."""
 
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
+from climb.api.product_figures import ProductFigures, product_figures
 from climb.cards import CardStore
 from climb.drafts import DraftStore
 from climb.matches import MatchLog
@@ -19,7 +20,7 @@ from climb.solutions import SolutionLog
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
 # the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = ["generation"]
+PAGES: list[str] = ["product", "generation"]
 
 
 class AuthorArea(BaseModel):
@@ -29,6 +30,11 @@ class AuthorArea(BaseModel):
 @router.get("")
 def area() -> AuthorArea:
     return AuthorArea(pages=PAGES)
+
+
+@router.get("/product")
+def product(request: Request, root: Root) -> ProductFigures:
+    return product_figures(root, now=datetime.now(UTC), dev_user=request.app.state.dev_user)
 
 
 @router.get("/generation")

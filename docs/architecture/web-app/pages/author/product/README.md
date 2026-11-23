@@ -12,13 +12,19 @@ who reaches it, and why the page counts across users and lists none.
   change are not acts, since neither is practice.
 - **A user with the author role is left out of every figure.** The author's
   own log is the eval set's, and it would otherwise count as the most active
-  learner.
+  learner. The dev login's user and the author's own invitation are left out
+  too, for the same reason.
 - **The users read as three counts**: invitations held, users who signed in
-  at least once, and active learners. An active learner is a user with an
+  at least once, and active learners. A user who signed in is a row of
+  `users`, which the first sign-in mints. An active learner is a user with an
   act in the last 7 days.
-- **The days read as one row per day for the last 30 days**: the sittings,
-  the attempts and the answers that day, and the users with an act that day.
-  A day with no act still reads a row of zeros, so a gap reads as a gap.
+- **An act is dated by when the learner acted.** An answer carries the
+  client's `at`, and a phone may sync it days later, so the answer counts on
+  the day `at` names rather than the day it reached the engine.
+- **The days read as one row per UTC day for the last 30 days**: the
+  sittings, the attempts and the answers that day, and the users with an act
+  that day. A day with no act still reads a row of zeros, so a gap reads as a
+  gap. UTC makes a day the same on the local engine and the hosted one.
 - **Retention at 7 days is the share of users who acted again 7 days or more
   after their first act**, counted over the users whose first act is at
   least 7 days old. Retention at 30 days reads the same at 30. Each reads as

@@ -33,6 +33,7 @@ WEB = {
     "PRIVACY": "The privacy policy",
     "gallery": "The gallery",
     "author": "The author pages",
+    "author/product": "The author pages",
     "author/generation": "The author pages",
 }
 # routes that serve no row: the page answering a path nothing else does
