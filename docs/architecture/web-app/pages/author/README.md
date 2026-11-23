@@ -89,8 +89,8 @@ traces, goes unseen.
   is private, and `../../../concepts/log-records.md` keeps each reader to one
   user's records. The product page's queries return counts grouped by day,
   and never a row of one user's log. Feedback and retirement requests are
-  notes addressed to the author, so the workflow page lists them whole, as
-  `climb feedback` does today.
+  notes addressed to the author, so the workflow page lists each one whole,
+  naming no sender.
 - **Every figure is computed from the store on each load, and none is stored.**
   The figures are counts and sums over append-only tables, and a stored copy
   would need a rule for when it goes stale.
