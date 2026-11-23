@@ -628,6 +628,18 @@ tables = [
 ]
 
 [[element]]
+id = "author-reads"
+kind = "component"
+container = "api"
+name = "Author reads"
+role = "Answers the author pages' figures under /api/author, read from the store, and refuses a user without the author role."
+doc = "web-app/pages/author/README.md"
+section = "Who sees them"
+src = [
+    "src/climb/api/author.py",
+]
+
+[[element]]
 id = "app-tokens"
 kind = "component"
 container = "api"
@@ -1092,6 +1104,17 @@ src = [
     "web/src/pages/NotFoundPage.tsx",
     "web/src/lib/theme.ts",
     "web/src/lib/reported.ts",
+]
+
+[[element]]
+id = "web-author"
+kind = "component"
+container = "web-app"
+name = "Web author pages"
+role = "The author area: the product, generation and workflow pages, and the content browser, for a user with the author role."
+doc = "web-app/pages/author/README.md"
+src = [
+    "web/src/pages/AuthorPage.tsx",
 ]
 
 [[element]]
@@ -1937,6 +1960,18 @@ from = "feedback"
 to = "database"
 label = "appends each note"
 access = "writes"
+
+[[relation]]
+from = "web-author"
+to = "author-reads"
+label = "reads each author page's figures"
+access = "reads"
+
+[[relation]]
+from = "author-reads"
+to = "database"
+label = "counts and lists the store's records"
+access = "reads"
 
 [[relation]]
 from = "diagnoser"

@@ -86,8 +86,10 @@ The Web app's components, and what each reads and writes.
 flowchart TB
     core_package["Shared core<br/>packages/core: the knowledge module's rules, each screen's labels and acts, and each technique's knowledge reading from the device's copy of the log, imported by both clients."]
     shared_editor["Shared editor<br/>packages/editor: the CodeMirror setup for editing Python, imported by both clients."]
+    api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
     subgraph web_app["Web app"]
         web_shell["Web shell<br/>The navigation, the account menu, the signed-in devices, the error screen, the settings and the pages under no section."]
+        web_author["Web author pages<br/>The author area: the product, generation and workflow pages, and the content browser, for a user with the author role."]
         web_design_system["Web design system<br/>The tokens, the shadcn components and the shared shapes every web page is built from, shown in the gallery."]
         web_areas["Web page areas<br/>The header, the body, the act, the panels and the section bar a web page is laid out in."]
         web_practice["Web practice pages<br/>The board, a technique's problems, the guide and the problem listing."]
@@ -96,6 +98,7 @@ flowchart TB
         web_knowledge["Web knowledge pages<br/>The knowledge home, a module, a subtopic, a queue, an exam, the lessons and the certifications."]
         web_knowledge_store["Web knowledge store<br/>Keeps the browser's copy of the content and the user's log in IndexedDB, and runs the sync loop."]
     end
+    web_author -.->|"reads each author page's figures"| api
     web_knowledge -.->|"draws what each knowledge screen says; runs a queue or an exam; draws the review forecast"| core_package
     web_knowledge -.->|"reads the copy and starts a sync"| web_knowledge_store
     web_knowledge_store -.->|"runs the sync over the browser's copy"| core_package
@@ -232,6 +235,7 @@ flowchart TB
         retirement_requests["Retirement requests<br/>Stores a user's request that a problem be retired, for the author to read."]
         feedback["Feedback<br/>Stores a user's note to the author, naming the client and the page."]
         sign_in["Sign-in<br/>Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."]
+        author_reads["Author reads<br/>Answers the author pages' figures under /api/author, read from the store, and refuses a user without the author role."]
         app_tokens["App tokens<br/>Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."]
     end
     sign_in -.->|"runs the sign-in flow [OpenID Connect, OAuth]"| identity_providers
@@ -287,6 +291,8 @@ flowchart TB
     retirement_requests -->|"appends each request"| database
     web_app -->|"sends a note to the author"| feedback
     feedback -->|"appends each note"| database
+    web_app -.->|"reads each author page's figures"| author_reads
+    author_reads -.->|"counts and lists the store's records"| database
     web_app -->|"signs in and out"| sign_in
     native_app -->|"signs in, exchanging a one-time code for a token"| app_tokens
     app_tokens -->|"passes the same provider callback"| sign_in
