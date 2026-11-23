@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from climb.graduation import Next, NextKind
 from climb.knowledge.schedule import Review
 from climb.ladder import CardState, Rung, next_rung
-from climb.schema import Act, Attempt, Card, CardRun, FailureMode, Problem, Rank
+from climb.schema import Act, Attempt, Card, CardRun, Cause, FailureMode, Problem, Rank
 from climb.template_schedule import recall_probability
 
 CAP = 2  # cards in flight
@@ -54,8 +54,9 @@ def pick(
     attempts: Iterable[Attempt],
     labels: Mapping[str, FailureMode],
     now: datetime,
+    diagnosed: Mapping[str, Cause] | None = None,
 ) -> Pick | None:
-    found = offers(readings, reviews, problems, attempts, labels, now)
+    found = offers(readings, reviews, problems, attempts, labels, now, diagnosed)
     return found[0] if found else None
 
 
@@ -66,9 +67,11 @@ def offers(
     attempts: Iterable[Attempt],
     labels: Mapping[str, FailureMode],
     now: datetime,
+    diagnosed: Mapping[str, Cause] | None = None,
 ) -> list[Pick]:
-    """Every offer, first served first. `labels` holds each attempt's
-    standing self-label, by attempt id."""
+    """Every offer, first served first. By attempt id, `labels` holds each
+    standing self-label and `diagnosed` each measured diagnosis."""
+    diagnosed = diagnosed or {}
     readings, problems, attempts = list(readings), list(problems), list(attempts)
     offered: list[tuple[tuple[int, float, int, float, str], Pick]] = []
 
@@ -107,7 +110,9 @@ def offers(
             offer(rank, reading, Act.RECALL, template_id=upcoming.template_id)
         elif state is CardState.GRADUATED and upcoming is not None and now >= upcoming.opens:
             template = upcoming.template_id
-            aimed = _missed(template, reviews.get(template, []), problems, attempts, labels)
+            aimed = _missed(
+                template, reviews.get(template, []), problems, attempts, labels, diagnosed
+            )
             problem = None if aimed else _unsolved(template, problems, attempts)
             act = Act.SITTING if problem else Act.RECALL
             offer(Rank.DUE_REVIEW, reading, act, template_id=template, problem_id=problem)
@@ -136,6 +141,7 @@ def _missed(
     problems: Iterable[Problem],
     attempts: Iterable[Attempt],
     labels: Mapping[str, FailureMode],
+    diagnosed: Mapping[str, Cause],
 ) -> bool:
     """Whether the template's last review is a failed sitting that missed the
     form, which aims a recall before the next problem."""
@@ -159,7 +165,10 @@ def _missed(
         (one for one in attempts if one.sitting_id == first.sitting_id),
         key=lambda one: one.finished_at,
     )
-    return labels.get(ended.id) not in HELD
+    # the user's label stands over the machine's diagnosis
+    if ended.id in labels:
+        return labels[ended.id] not in HELD
+    return diagnosed.get(ended.id) is not Cause.SLIP
 
 
 def _solved(attempts: Iterable[Attempt]) -> set[str]:

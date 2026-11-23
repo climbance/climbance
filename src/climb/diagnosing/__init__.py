@@ -1,3 +1,4 @@
+from climb.diagnosing.causes import measured_causes
 from climb.diagnosing.run import SAMPLE, Result, diagnose_attempts, diagnose_mutants, sample
 from climb.diagnosing.score import MINIMUM, Row, scored, unscored
 from climb.diagnosing.slips import slip_mutants
@@ -11,6 +12,7 @@ __all__ = [
     "Tasks",
     "diagnose_attempts",
     "diagnose_mutants",
+    "measured_causes",
     "sample",
     "scored",
     "slip_mutants",

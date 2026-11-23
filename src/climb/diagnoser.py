@@ -3,6 +3,7 @@
 import json
 from dataclasses import dataclass
 from enum import StrEnum
+from hashlib import sha256
 
 from climb.calls import CallLog, Transport, ask, prompt_hash
 from climb.schema import Call, Cause, Configuration
@@ -46,6 +47,19 @@ SCHEMA = {
     "required": ["cause", "evidence"],
     "additionalProperties": False,
 }
+
+
+# the configurations whose baseline call read 10 or more slip verdicts, each
+# with the digest of the system prompt it read: `api/pick.md`
+MEASURED: dict[Configuration, str] = {
+    Configuration(
+        model="google/gemma-4-31b-it", effort="medium", pin="coreweave/fp4", temperature=0.0
+    ): "6f42a5792b681418792853ad58ef4d320bcb2180de816ca31df17307dcf3f2d1",
+}
+
+
+def system_digest() -> str:
+    return sha256(SYSTEM.encode()).hexdigest()
 
 
 class Tool(StrEnum):

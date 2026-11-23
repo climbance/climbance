@@ -201,7 +201,8 @@ src = [
 code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
-    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.difficulty", "climb.drafts",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.diagnoser",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts",
     "climb.feedback",
     "climb.glicko", "climb.measured", "climb.projected",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
@@ -1759,6 +1760,12 @@ access = "reads"
 from = "pick"
 to = "mastery"
 label = "reads each technique's mastery"
+access = "reads"
+
+[[relation]]
+from = "pick"
+to = "diagnoser"
+label = "reads each failed sitting's measured diagnosis"
 access = "reads"
 
 [[relation]]

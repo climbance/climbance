@@ -27,6 +27,9 @@ re-diagnosed and compared.
   moves the wrong way is the form coming back in pieces, which a self-label
   calls `rust`. The call is told the problem's target template, so it can
   judge whether the fault sits inside that template's form.
+- **The pick reads a diagnosis where no self-label stands, once the
+  configuration that wrote it is measured**, as `../api/pick.md` gives. A
+  `slip` diagnosis then aims no recall at the form.
 
 ## The call
 

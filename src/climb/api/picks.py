@@ -13,6 +13,7 @@ from climb.attempt_claims import standing_attempt_claims
 from climb.board import execution as executed
 from climb.cards import CardStore
 from climb.cards.graph import depths
+from climb.diagnosing import measured_causes
 from climb.graduation import reading
 from climb.ids import new_id
 from climb.knowledge.schedule import Review
@@ -113,7 +114,9 @@ def _gathered(root: Root, user_id: str) -> Gathered:
         )
     found_reviews = reviews(recalls, attempts, by_id)
     now = datetime.now(UTC)
-    chosen = pick(readings, found_reviews, problems, attempts, labels, now)
+    templates = {one.id: one for card in cards for one in card.templates}
+    diagnosed = measured_causes(by_id, templates, attempts, log.diagnoses(user_id))
+    chosen = pick(readings, found_reviews, problems, attempts, labels, now, diagnosed)
     return Gathered(chosen, cards, by_id, attempts, runs, found_reviews, read, now)
 
 

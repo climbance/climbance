@@ -7,7 +7,7 @@ from climb.graduation import Next, NextKind
 from climb.knowledge.schedule import Review
 from climb.ladder import CardState, Rung
 from climb.pick import Act, CardReading, Rank, offers, pick
-from climb.schema import Attempt, Card, CardRun, FailureMode, Probe, Selector, Template
+from climb.schema import Attempt, Card, CardRun, Cause, FailureMode, Probe, Selector, Template
 
 NOW = datetime(2026, 3, 1, 9, tzinfo=UTC)
 DAY = timedelta(days=1)
@@ -126,6 +126,24 @@ def test_a_failure_labelled_syntax_aims_nothing():
     labels = {attempt.id: FailureMode.SYNTAX}
     first = pick([KEPT], found, PROBLEMS, [attempt], labels, NOW)
     assert first is not None and first.act is Act.SITTING
+
+
+def test_a_form_and_a_slip_diagnosis_of_one_failure_pick_apart():
+    """A measured `slip` keeps the review a sitting; `form` aims the recall."""
+    attempt, found = failed_sitting()
+    acts = [
+        pick([KEPT], found, PROBLEMS, [attempt], {}, NOW, {attempt.id: cause})
+        for cause in (Cause.FORM, Cause.SLIP)
+    ]
+    assert [one.act if one else None for one in acts] == [Act.RECALL, Act.SITTING]
+
+
+def test_a_self_label_stands_over_the_diagnosis():
+    """The user's `gap` aims the recall though the machine said `slip`."""
+    attempt, found = failed_sitting()
+    labels, diagnosed = {attempt.id: FailureMode.GAP}, {attempt.id: Cause.SLIP}
+    first = pick([KEPT], found, PROBLEMS, [attempt], labels, NOW, diagnosed)
+    assert first is not None and first.act is Act.RECALL
 
 
 def test_two_cards_in_flight_hold_back_a_new_card():

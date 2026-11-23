@@ -51,8 +51,6 @@ flowchart LR
     end
     subgraph g2["Command line"]
         climb_cli["cli"]
-        climb_diagnoser["diagnoser"]
-        climb_diagnosing["diagnosing"]
         climb_generation["generation"]
         climb_verifications["verifications"]
     end
@@ -64,6 +62,8 @@ flowchart LR
         climb_cards["cards"]
         climb_cases["cases"]
         climb_classifier["classifier"]
+        climb_diagnoser["diagnoser"]
+        climb_diagnosing["diagnosing"]
         climb_difficulty["difficulty"]
         climb_drafts["drafts"]
         climb_glicko["glicko"]
@@ -97,13 +97,12 @@ flowchart LR
         climb_runner["runner"]
     end
     climb_api --> climb_cold
+    climb_api --> climb_diagnosing
     climb_api --> climb_difficulty
     climb_api --> climb_drafts
     climb_api --> climb_feedback
     climb_api --> climb_judgements
-    climb_api --> climb_judging
     climb_api --> climb_keylines
-    climb_api --> climb_mutant_diagnoses
     climb_api --> climb_outcomes
     climb_api --> climb_pick
     climb_api --> climb_projected

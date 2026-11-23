@@ -27,6 +27,21 @@ gives what each pick stores as the user takes it.
 - **A failed sitting labelled `syntax` or `speed` aims nothing.** Each label
   says the solver held the form. The Again still enters FSRS, since the
   rating reads the attempts alone, as `template-schedule.md` gives.
+- **A failed sitting with no self-label reads its diagnosis instead.** A
+  diagnosis naming `slip` aims nothing, as a `syntax` label does not. A
+  diagnosis naming `form`, or no diagnosis, aims the pick at the form. A
+  self-label stands over a diagnosis of the same attempt, as a user record
+  stands over a machine record.
+- **The pick reads a diagnosis only from a measured configuration, at the
+  baseline prompt.** A configuration is measured once its baseline column in
+  `climb diagnose score` reads 10 verdicts on the `syntax` row or the slip
+  mutants. `MEASURED` in `climb.diagnoser` names each measured configuration
+  with the digest of the system prompt it was measured on. A pick acting on an
+  unmeasured cause would aim practice on a guess. A tool's column is measured
+  apart, so a verdict given a tool is not read.
+- **On 2026-11-24 the default configuration was measured.** Its baseline named
+  `slip` on 78% [63–89%] of 37 slip mutants, and `form` on 90% [84–94%] of 125
+  labelled mutants, over the local store.
 - **Ties break on the lowest recall probability, then the shallowest card,
   then the lowest execution reading, then the slug.** Recall probability ranks
   the form closest to being lost. Depth then serves a form other forms build

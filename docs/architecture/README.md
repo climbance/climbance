@@ -78,6 +78,7 @@ flowchart TB
     cli -.->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys [docker pull by digest]"| api
     database -->|"is dumped on a schedule and copied off the server [pg_dump]"| offsite_dumps
+    api -.->|"reads each failed sitting's measured diagnosis"| cli
 ```
 
 The Web app's components, and what each reads and writes.
@@ -212,6 +213,7 @@ flowchart TB
     native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
     broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
+    cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."]
     subgraph api["API"]
         sitting["Sitting<br/>Times one session on one problem, minted at the first clock press or submission, and ended where next read."]
         submission["Submission<br/>Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."]
@@ -265,6 +267,7 @@ flowchart TB
     pick -.->|"reads each template's FSRS state"| template_schedule
     pick -.->|"reads each card's state and next check"| card_states
     pick -.->|"reads each technique's mastery"| mastery
+    pick -.->|"reads each failed sitting's measured diagnosis"| cli
     pick -->|"stores what the pick expected"| predictions
     attempt_log -->|"appends to the user's log"| database
     sitting -->|"revises the sitting in place"| database
@@ -315,6 +318,7 @@ The Command line's components, and what each reads and writes.
 flowchart TB
     model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
     content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
+    api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
     subgraph cli["Command line"]
         classifier["Classifier<br/>Reads an attempt's code and claims the techniques it used, filling what no user claimed."]
@@ -329,6 +333,7 @@ flowchart TB
     end
     seed -.->|"seeds cards and modules from content/"| content_repo
     seed -->|"refreshes the content tables"| database
+    api -.->|"reads each failed sitting's measured diagnosis"| diagnoser
     classifier -->|"asks which techniques the code used"| calls
     classifier -->|"appends a machine attempt claim"| database
     eval_set -->|"scores a configuration's claims against the set"| classifier
