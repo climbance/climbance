@@ -222,7 +222,7 @@ flowchart TB
         self_labels["Self-labels<br/>Stores the user's verdict on why an attempt went the way it did, as a failure mode."]
         template_schedule["Template schedule<br/>Replays each template's FSRS state from its reviews: recall attempts and sittings on problems written for it."]
         card_states["Card states<br/>Derives each card's state, from not started to graduated or lapsed, from the log on every read."]
-        mastery["Mastery<br/>Computes each technique's recognition and execution from the log on every read."]
+        mastery["Mastery<br/>Computes each technique's recognition, execution and chance to solve from the log on every read."]
         pick["Pick<br/>Names the next item: a template and the act that reviews it, read from the three folds."]
         rating["Rating<br/>Replays a user's cold sittings by Glicko-1 into the chance to solve a problem, and the rating with its deviation."]
         predictions["Predictions<br/>Stores what each pick expected, from FSRS and from mastery, before the user acts on it."]
@@ -256,6 +256,9 @@ flowchart TB
     mastery -.->|"scores execution per sitting"| attempt_log
     mastery -.->|"credits the techniques an attempt used"| attempt_claims
     mastery -.->|"reads the failure mode"| self_labels
+    mastery -.->|"reads each problem's standing score"| problems
+    mastery -.->|"reads which sittings were cold"| sitting
+    mastery -.->|"starts each ability at the measured rating"| rating
     web_app -->|"asks for the next item"| pick
     pick -.->|"reads each template's FSRS state"| template_schedule
     pick -.->|"reads each card's state and next check"| card_states

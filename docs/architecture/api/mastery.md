@@ -1,8 +1,9 @@
 # Mastery
 
-How well a user knows one technique. The engine computes mastery from the log
-each time it is asked, and never stores it. So the rules below are the whole
-model of mastery.
+How well a user knows one technique, and the chance the user solves a problem
+in it under test conditions. The engine computes mastery from the log each
+time it is asked, and never stores it. So the rules below are the whole model
+of mastery.
 
 ## The three parts
 
@@ -71,6 +72,86 @@ model of mastery.
 - **A solve labelled `speed` counts as a full solve**, until the timed
   sittings say how slow a solve has to be to count less.
 
+## The chance to solve
+
+- **Mastery gives, per technique, the chance to solve a problem of a given
+  score under the conditions of a cold sitting.** The contest projection is
+  built from these chances, one per technique and score.
+  `rating.md` gives the conditions.
+- **The chance is a logistic curve on the contest scale.** The chance is
+  `1 / (1 + 10^((score - ability) / 400))`, where `ability` is the user's
+  ability in the technique on the contest scale. The measured rating reads a
+  cold sitting on the same curve, so the two readings share one scale.
+- **Each ability carries a deviation on the contest scale**, as a problem's
+  score does. A reader of the chance needs to know how sure it is, and a
+  technique with two sittings is far less sure than one with forty.
+- **The ability is replayed from the log on every read, and never stored.**
+  The replay is Glicko-1 over the technique's sittings, a rating period per
+  UTC day as `rating.md` gives for the measured rating. Each sitting is a game
+  against an opponent rated at its problem's standing score. Execution is
+  replayed the same way, so a new formula changes no record.
+- **A practice sitting scores as execution scores it.** It scores 1, 0.5,
+  0.25 or 0 by the rules under `## Execution`. Glicko accepts a fractional
+  game result, so the self-label and the failed submissions reach the ability.
+- **A sitting on a problem with no score counts for no ability.** A game
+  needs an opponent rating, and a problem labelled by the generator alone has
+  none. Execution still counts the sitting.
+- **A cold sitting counts for every technique its problem carries**, and for
+  each technique's parents. Its result is solved or not solved, as `rating.md`
+  gives. The user's claim is not read, since the user claims after the
+  sitting ends and has then seen the techniques.
+- **An ability starts at the user's measured rating, with deviation 350.**
+  A user's skill in an unpractised technique is better guessed from the
+  user's general rating than from nothing. With no cold sitting, the start is
+  Glicko-1's default of 1500. The cold sittings then count twice, once in the
+  start and once as the technique's games. The wide deviation keeps the start
+  a weak prior.
+- **A problem's chance is the chance of its weakest technique.** A solver
+  missing one technique a problem needs fails the problem. The product of the
+  chances, which treats each technique as a separate hurdle, is the
+  alternative the log-loss compares.
+- **The chance combines the ability's deviation with the score's**, by
+  Glicko's predictive formula, as the measured rating's chance does. The
+  engine returns the chance, the ability, its deviation and the count of
+  games behind it.
+- **Recalls and short exercises do not enter the ability**, for the reasons
+  under `## What counts for nothing`. Whether a template's recall probability
+  adds to the chance is measured by the pick's predictions, as
+  [`predictions.md`](predictions.md) gives.
+
+## The practice gap
+
+- **A practice sitting is easier than a cold sitting.** The page names the
+  technique before the statement, so recognition is given for free. A failed
+  submission shows the failing case whole, and the clock pauses. Each of these
+  raises the chance to solve above the chance a contest gives.
+- **The practice gap is a number of points on the contest scale.** A practice
+  sitting is read as a game against an opponent rated at the problem's score
+  minus the gap. A cold sitting is read against the score itself. The
+  ability is then the ability under cold conditions, learned from both kinds
+  of sitting.
+- **The gap is fitted on cold sittings alone.** For each cold sitting, the
+  replay computes the chance from the log before the sitting began, at a
+  candidate gap. The gap kept is the one with the lowest log-loss over every
+  cold sitting. Practice sittings cannot measure the gap, since every one of
+  them carries it.
+- **The gap is one number for every user and every technique at first.** One
+  user's cold sittings are a few a week, spread over many techniques. A gap per
+  user or per technique would be fitted on a handful of games each.
+- **The gap starts at 200 points and moves only on the cold sittings'
+  log-loss.** The candidates run from 0 to 500 in steps of 50, and a tie
+  keeps the candidate nearest 200. The value 200 is a starting guess, since no
+  cold sitting existed to fit it.
+- **The chance's log-loss is read held out**, in nats, by `climb
+  chance-loss`. Each cold sitting is scored at the gap fitted on the other
+  cold sittings. A score read on the sittings the gap was fitted to would
+  understate the error.
+- **Measured on 2026-11-23: no score, over 0 cold sittings.** The local
+  store and the server's store held no cold sitting yet.
+- **No record stores a chance.** The score replays each chance from the log
+  before its cold sitting. Whether a `Prediction` carries the chance, and
+  under which settings hash, is decided with the projection.
+
 ## Recognition
 
 - **Recognition is counted only from recognition drills.** The problem page
@@ -111,5 +192,8 @@ Deferred, since only use answers each:
   whether a technique's judgement rates predict its execution.
 - The scores and the evidence bound beyond their starting values.
 - Whether a solve labelled `speed` counts less than a full solve.
+- A gap per user, per technique, or per practice condition such as an
+  untimed sitting, once the cold sittings are enough to fit each one.
+- Whether recognition drills narrow the gap for the techniques they test.
 - How a module outside the technique vocabulary, such as Python, enters
   mastery. Its questions carry no technique for a reading to be kept on.

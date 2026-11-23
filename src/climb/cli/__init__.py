@@ -11,6 +11,7 @@ from climb.classifier import DEFAULT
 from climb.cli.bench import SITES
 from climb.cli.board import board
 from climb.cli.card import card
+from climb.cli.chance_loss import chance_loss_printed
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
@@ -346,6 +347,7 @@ def main() -> None:
     invite_action.add_parser("list", help="every email invited")
 
     command(sub, "feedback", "every user's feedback, newest first")
+    command(sub, "chance-loss", "the chance to solve scored by log-loss on the cold sittings")
 
     diagnose_parser = command(sub, "diagnose", "where a failed solution's fault lies")
     diagnosed = diagnose_parser.add_subparsers(dest="subject", required=True)
@@ -526,6 +528,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "library": lambda args, parser, _root: library(args, parser),
     "invite": invitation,
     "feedback": lambda _args, _parser, root: feedback_listed(root),
+    "chance-loss": lambda _args, _parser, root: chance_loss_printed(root),
     "diagnose": diagnose,
     "spot": lambda args, parser, _root: spot(args, parser),
 }

@@ -279,9 +279,9 @@ code = ["climb.cli"]
 runs = [
     "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps", "climb.cards",
     "climb.cases", "climb.classifier", "climb.cli", "climb.diagnoser",
-    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.generation",
+    "climb.diagnosing", "climb.difficulty", "climb.drafts", "climb.generation", "climb.glicko",
     "climb.ids", "climb.judgements", "climb.judging", "climb.keylines",
-    "climb.knowledge", "climb.log", "climb.matches", "climb.mint",
+    "climb.knowledge", "climb.log", "climb.matches", "climb.measured", "climb.mint",
     "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.problems",
     "climb.ratings", "climb.runner", "climb.runs", "climb.schema", "climb.scorer", "climb.sitting",
     "climb.solution_claims", "climb.solutions", "climb.standing", "climb.statement",
@@ -422,14 +422,16 @@ id = "mastery"
 kind = "component"
 container = "api"
 name = "Mastery"
-role = "Computes each technique's recognition and execution from the log on every read."
+role = "Computes each technique's recognition, execution and chance to solve from the log on every read."
 doc = "api/mastery.md"
 src = [
     "src/climb/board/__init__.py",
+    "src/climb/board/ability.py",
     "src/climb/board/execution.py",
     "src/climb/board/judged.py",
     "src/climb/board/view.py",
     "src/climb/cli/board.py",
+    "src/climb/cli/chance_loss.py",
 ]
 
 [[element]]
@@ -1690,6 +1692,24 @@ access = "reads"
 from = "mastery"
 to = "self-labels"
 label = "reads the failure mode"
+access = "reads"
+
+[[relation]]
+from = "mastery"
+to = "problems"
+label = "reads each problem's standing score"
+access = "reads"
+
+[[relation]]
+from = "mastery"
+to = "sitting"
+label = "reads which sittings were cold"
+access = "reads"
+
+[[relation]]
+from = "mastery"
+to = "rating"
+label = "starts each ability at the measured rating"
 access = "reads"
 
 [[relation]]

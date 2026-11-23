@@ -38,10 +38,8 @@ flowchart LR
         climb_api["api"]
         climb_cold["cold"]
         climb_feedback["feedback"]
-        climb_glicko["glicko"]
         climb_graduation["graduation"]
         climb_ladder["ladder"]
-        climb_measured["measured"]
         climb_pick["pick"]
         climb_recall["recall"]
         climb_retirement["retirement"]
@@ -67,6 +65,7 @@ flowchart LR
         climb_classifier["classifier"]
         climb_difficulty["difficulty"]
         climb_drafts["drafts"]
+        climb_glicko["glicko"]
         climb_ids["ids"]
         climb_judgements["judgements"]
         climb_judging["judging"]
@@ -74,6 +73,7 @@ flowchart LR
         climb_knowledge["knowledge"]
         climb_log["log"]
         climb_matches["matches"]
+        climb_measured["measured"]
         climb_mint["mint"]
         climb_mutant_diagnoses["mutant_diagnoses"]
         climb_mutation["mutation"]
@@ -115,17 +115,17 @@ flowchart LR
     climb_attempt_claims --> climb_runs
     climb_attempt_claims --> climb_scorer
     climb_board --> climb_attempt_claims
+    climb_board --> climb_glicko
     climb_cards --> climb_mutation
     climb_cards --> climb_techniques
     climb_classifier --> climb_calls
     climb_classifier --> climb_techniques
-    climb_cli --> climb_board
     climb_cli --> climb_diagnosing
     climb_cli --> climb_difficulty
     climb_cli --> climb_generation
     climb_cli --> climb_judgements
     climb_cli --> climb_keylines
-    climb_cli --> climb_solution_claims
+    climb_cli --> climb_measured
     climb_cli --> climb_trials
     climb_cold --> climb_sitting
     climb_cold --> climb_solution_claims
@@ -159,9 +159,9 @@ flowchart LR
     climb_matches --> climb_calls
     climb_matches --> climb_mint
     climb_matches --> climb_runs
-    climb_measured --> climb_glicko
-    climb_measured --> climb_ratings
+    climb_measured --> climb_board
     climb_measured --> climb_sitting
+    climb_measured --> climb_solution_claims
     climb_mint --> climb_techniques
     climb_mutation --> climb_runner
     climb_pick --> climb_graduation

@@ -2,7 +2,9 @@
 `api/rating.md` gives the periods, the start and why the deviations combine."""
 
 import math
-from collections.abc import Sequence
+from collections import defaultdict
+from collections.abc import Iterable, Sequence
+from datetime import UTC, date, datetime
 
 from pydantic import BaseModel, ConfigDict
 
@@ -59,3 +61,24 @@ def updated(player: Rated, games: Sequence[Game]) -> Rated:
 def _one_sided(player: Rated, opponent: Rated) -> float:
     # the update reads the opponent's deviation alone, as Glickman's step 2 does
     return 1 / (1 + 10 ** (-_g(opponent.deviation) * (player.rating - opponent.rating) / 400))
+
+
+def replayed(
+    games: Iterable[tuple[date, Game]],
+    at: datetime,
+    start: Rated | None = None,
+) -> Rated:
+    """The rating at `at`: a period per UTC day, the deviation grown to `at`."""
+    by_day: dict[date, list[Game]] = defaultdict(list)
+    for day, game in games:
+        by_day[day].append(game)
+    player = start or Rated(rating=START, deviation=START_DEVIATION)
+    last: date | None = None
+    for day in sorted(by_day):
+        if last is not None:
+            player = grown(player, (day - last).days)
+        player = updated(player, by_day[day])
+        last = day
+    if last is None:
+        return player
+    return grown(player, max((at.astimezone(UTC).date() - last).days, 0))

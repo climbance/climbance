@@ -138,6 +138,13 @@ sittings, claims, labels, card runs, recalls and mastery. Every file in
   Counted from sittings.
 - **Knowledge**: recalling the facts a technique rests on. Counted from
   answers to the questions the technique carries.
+- **Chance to solve** (chance): the probability that a user solves a problem
+  of a given score in one technique under the conditions of a cold sitting.
+  Read from the technique's ability on the contest scale, never stored.
+- **Ability**: a user's skill in one technique as a rating on the contest
+  scale, with its deviation, replayed from the user's sittings.
+- **Practice gap** (gap): how much easier a practice sitting is than a cold
+  sitting, in points on the contest scale. Fitted on cold sittings.
 - **Recognition drill**: a problem shown without its technique, where the user
   describes the approach in words and runs no code.
 - **Framing judge**: the model call grading a recognition drill's description
