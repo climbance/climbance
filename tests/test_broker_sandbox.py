@@ -60,6 +60,8 @@ PROCESSES = (
 
 KILLS_ENTRY = "import os\n\n\ndef solve():\n    os.kill(os.getppid(), 9)\n"
 
+EXITS = "import os\n\n\ndef solve(n):\n    if n == 0:\n        os._exit(0)\n    return n\n"
+
 SLEEPS = "import time\n\n\ndef solve():\n    time.sleep(60)\n"
 
 
@@ -143,6 +145,17 @@ def test_a_solution_killing_its_entry_process_leaves_every_case_answered(
     assert response.status_code == 200, response.text
     assert [each["outcome"] for each in response.json()["cases"]] == ["crashed", "crashed"]
     assert all("PermissionError" in each["error"] for each in response.json()["cases"])
+
+
+def test_a_solution_ending_its_own_process_leaves_every_case_answered(sandbox: TestClient):
+    """Exit 0 with no result line is the case's crash, not the container's
+    fault."""
+    response = sandbox.post("/run", json={"code": EXITS, "args": [[0], [1]], "cap_ms": 3000})
+
+    assert response.status_code == 200, response.text
+    exited, after = response.json()["cases"]
+    assert exited["error"] == "exited 0 without a result"
+    assert json.loads(after["value"]) == 1
 
 
 def test_a_run_past_the_broker_s_deadline_times_out_and_leaves_no_container(

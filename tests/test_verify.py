@@ -52,6 +52,16 @@ def test_a_case_that_yielded_no_value_is_that_outcome():
     assert verify(slow, cases(([], 1)), cap_ms=200)[0].outcome is CaseOutcome.TIMEOUT
 
 
+def test_a_solution_ending_its_own_process_crashed_and_the_next_case_runs():
+    """The local runner answers it as the entry process does, so a verdict is
+    the same wherever the run went."""
+    exits = "import os\n\n\ndef solve(n):\n    if n == 0:\n        os._exit(3)\n    return n * 2\n"
+
+    results = verify(exits, cases(([0], 0), ([1], 2)), cap_ms=3000)
+
+    assert [each.outcome for each in results] == [CaseOutcome.CRASHED, CaseOutcome.PASSED]
+
+
 def test_a_verdict_carries_what_the_child_measured():
     """The speedup search reads those numbers, so a result holding only the
     outcome would make every search re-run the whole set."""

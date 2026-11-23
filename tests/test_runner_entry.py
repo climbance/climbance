@@ -116,6 +116,22 @@ def test_a_case_killed_by_a_signal_crashed():
     assert result["error"] == "killed by signal 9"
 
 
+def test_a_solution_ending_its_own_process_crashed_and_the_next_case_runs():
+    """The child writes no result, and the entry process answers the case
+    rather than ending the run."""
+    code = "import os\n\n\ndef solve(n):\n    if n == 0:\n        os._exit(3)\n    return n\n"
+
+    first, second = lines(code, [[0], [1]])
+
+    assert first == {
+        "outcome": "crashed",
+        "value": None,
+        "elapsed_ms": None,
+        "error": "exited 3 without a result",
+    }
+    assert second["value"] == "1"
+
+
 def test_stop_early_stops_at_the_first_case_that_yielded_nothing():
     code = "def solve(n):\n    if n == 2:\n        raise ValueError('no')\n    return n\n"
 

@@ -242,7 +242,9 @@ def forked(code: str, args: list[Any], cap_ms: int, repeats: int) -> dict[str, A
     exitcode = os.waitstatus_to_exitcode(status)
     if exitcode < 0:
         return crashed(None, f"killed by signal {-exitcode}")
-    raise RuntimeError(f"the child wrote no result and exited {exitcode}")
+    # `os._exit` in the solution lands here. A bug in this script would too, and
+    # reads as a crash rather than as a fault of the run
+    return crashed(None, f"exited {exitcode} without a result")
 
 
 def _limit() -> None:

@@ -204,9 +204,9 @@ def _reported(path: Path, returncode: int) -> CaseRun:
     try:
         reported = json.loads(path.read_text())
     except FileNotFoundError, json.JSONDecodeError:
-        # a signal is where a segfault and an OOM kill land; anything else is
-        # the runner's own fault
+        # a signal is where a segfault and an OOM kill land, and `os._exit` in
+        # the solution is the rest: as the entry process answers it
         if returncode < 0:
             return CaseRun(RunOutcome.CRASHED, error=f"killed by signal {-returncode}")
-        raise RunnerError(f"the child wrote no result and exited {returncode}") from None
+        return CaseRun(RunOutcome.CRASHED, error=f"exited {returncode} without a result")
     return _reads(reported)

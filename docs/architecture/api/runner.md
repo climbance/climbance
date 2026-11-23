@@ -36,8 +36,9 @@ fixed here rather than by whatever executed it.
   judged by. The parent runs a slack timer of its own, which the runner owns.
 - **A child reporting nothing is read from how it died.** The parent's timer
   firing is `TIMEOUT`. A signal is `CRASHED`, and a segfault and a kill under
-  memory pressure both land there. Anything else is the runner's own fault and
-  is raised, since it says nothing about the solution.
+  memory pressure both land there. An exit with no result is `CRASHED` too,
+  since a solution calling `os._exit` ends its child that way. Raising it as
+  the runner's fault would let a solution end the whole run.
 
 ## What a case result keeps
 
