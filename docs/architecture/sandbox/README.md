@@ -27,6 +27,14 @@ capabilities. Limits on memory, processes and time hold it.
   case reaching the container's limit ends the sandbox itself. The process
   limit counts every process of a user, so the entry process sets it only where
   the broker marks the container as the run's alone.
+- **Each case's child installs a seccomp filter that refuses every signal the
+  child sends outside its own process group.** A solution that killed or
+  stopped the entry process would end the run, and every later case would go
+  unanswered. The filter also refuses tracing another process, reading or
+  writing another process's memory, and aiming SIGIO at another process with
+  `F_SETOWN`. Every process the solution starts inherits the filter. A user per
+  case was rejected, since switching users needs a capability the container
+  drops.
 - **gVisor mounts a tmpfs over `/tmp` inside the container, so a solution
   writes there however read-only the root filesystem is.** That tmpfs is
   removed with the container, and what it holds counts against the container's

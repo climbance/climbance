@@ -8,7 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from climb.broker import create_app
-from climb.broker.container import IMAGE, kill, remove_leftovers
+from climb.broker.container import IMAGE, Finished, docker, kill, remove_leftovers
 
 DOUBLE = "def solve(n):\n    return n * 2\n"
 
@@ -58,8 +58,9 @@ PROCESSES = (
     "    return 'answered'\n"
 )
 
-# stops the entry process, so no timer inside the container ever fires
-STOPS_ENTRY = "import os, signal\n\n\ndef solve():\n    os.kill(os.getppid(), signal.SIGSTOP)\n"
+KILLS_ENTRY = "import os\n\n\ndef solve():\n    os.kill(os.getppid(), 9)\n"
+
+SLEEPS = "import time\n\n\ndef solve():\n    time.sleep(60)\n"
 
 
 @pytest.fixture(scope="module")
@@ -132,20 +133,36 @@ def test_a_case_that_spawns_without_bound_fails_alone(sandbox: TestClient):
     assert json.loads(after["value"]) == "answered"
 
 
-def test_a_run_whose_entry_stops_answering_times_out_and_leaves_no_container(
+def test_a_solution_killing_its_entry_process_leaves_every_case_answered(
     sandbox: TestClient,
 ):
-    """Every timer inside the container waits on the stopped entry process, so
-    only the broker's own timer and a kill by name end the run."""
+    """The case's seccomp filter refuses the signal, so the entry process lives
+    to run the next case."""
+    response = sandbox.post("/run", json={"code": KILLS_ENTRY, "args": [[], []], "cap_ms": 3000})
+
+    assert response.status_code == 200, response.text
+    assert [each["outcome"] for each in response.json()["cases"]] == ["crashed", "crashed"]
+    assert all("PermissionError" in each["error"] for each in response.json()["cases"])
+
+
+def test_a_run_past_the_broker_s_deadline_times_out_and_leaves_no_container(
+    sandbox: TestClient,
+):
+    """A deadline shorter than the case's own cap stands in for a child stuck
+    outside Python, so only the broker's timer and a kill by name end the
+    run."""
     stopped: list[str] = []
 
     def stop(name: str) -> None:
         stopped.append(name)
         kill(name)
 
-    run = {"code": STOPS_ENTRY, "args": [[], []], "cap_ms": 100}
+    def short(argv: list[str], stdin: bytes, limit: int, _seconds: float) -> Finished:
+        return docker(argv, stdin, limit, 5.0)
 
-    response = TestClient(create_app(stop=stop)).post("/run", json=run)
+    run = {"code": SLEEPS, "args": [[], []], "cap_ms": 30_000}
+
+    response = TestClient(create_app(execute=short, stop=stop)).post("/run", json=run)
 
     assert response.status_code == 200, response.text
     assert [each["outcome"] for each in response.json()["cases"]] == ["timeout", "timeout"]

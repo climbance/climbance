@@ -6,6 +6,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from climb.runner import child
 
 DOUBLE = "def solve(n):\n    return n * 2\n"
@@ -150,6 +152,37 @@ def test_a_process_the_solution_leaves_behind_neither_holds_the_run_nor_outlives
             break
         time.sleep(0.05)
     assert not _alive(pid)
+
+
+# a case per way to end the entry process, and a case after them asking for
+# nothing
+ENDS_ENTRY = (
+    "import fcntl, os, signal\n"
+    "\n"
+    "\n"
+    "def solve(how):\n"
+    "    try:\n"
+    "        if how == 'kill':\n"
+    "            os.kill(os.getppid(), signal.SIGKILL)\n"
+    "        if how == 'stop':\n"
+    "            os.kill(os.getppid(), signal.SIGSTOP)\n"
+    "        if how == 'everyone':\n"
+    "            os.kill(-1, signal.SIGKILL)\n"
+    "        if how == 'sigio':\n"
+    "            read, write = os.pipe()\n"
+    "            fcntl.fcntl(read, fcntl.F_SETOWN, os.getppid())\n"
+    "    except PermissionError:\n"
+    "        return 'refused'\n"
+    "    return 'allowed'\n"
+)
+
+
+@pytest.mark.skipif(sys.platform != "linux", reason="seccomp is Linux's")
+def test_a_case_cannot_end_the_entry_process():
+    """The filter as the kernel installs it, outside any container."""
+    results = lines(ENDS_ENTRY, [["kill"], ["stop"], ["everyone"], ["sigio"], ["after"]])
+
+    assert [each["value"] for each in results] == ['"refused"'] * 4 + ['"allowed"']
 
 
 def _alive(pid: int) -> bool:

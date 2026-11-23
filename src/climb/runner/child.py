@@ -5,6 +5,7 @@ container, and `main` is that container's entry process.
 """
 
 import contextlib
+import ctypes
 import json
 import linecache
 import os
@@ -42,6 +43,34 @@ CASE_PROCESSES = 32
 # set on a run's container by the broker. The process limit counts every
 # process of a user, so it holds only where that user owns the run alone
 SANDBOX = "CLIMB_SANDBOX"
+
+# the system calls by which a case reaches a process outside its own: a signal,
+# a trace, another's memory, and a SIGIO aimed by F_SETOWN or FIOSETOWN. Each
+# number is per architecture, with the audit value the filter checks first
+SYSCALLS = {
+    "x86_64": {
+        "audit": 0xC000003E,
+        "kill": 62, "tkill": 200, "tgkill": 234, "rt_sigqueueinfo": 129,
+        "rt_tgsigqueueinfo": 297, "pidfd_send_signal": 424, "ptrace": 101,
+        "process_vm_readv": 310, "process_vm_writev": 311, "fcntl": 72, "ioctl": 16,
+    },
+    "aarch64": {
+        "audit": 0xC00000B7,
+        "kill": 129, "tkill": 130, "tgkill": 131, "rt_sigqueueinfo": 138,
+        "rt_tgsigqueueinfo": 240, "pidfd_send_signal": 424, "ptrace": 117,
+        "process_vm_readv": 270, "process_vm_writev": 271, "fcntl": 25, "ioctl": 29,
+    },
+}  # fmt: skip
+F_SETOWN, F_SETOWN_EX = 8, 15
+FIOSETOWN, SIOCSPGRP = 0x8901, 0x8902
+PR_SET_NO_NEW_PRIVS, PR_SET_SECCOMP, SECCOMP_MODE_FILTER = 38, 22, 2
+# classic BPF's opcodes, and the offsets into `struct seccomp_data`
+BPF_LOAD, BPF_EQUAL, BPF_AT_LEAST, BPF_RETURN = 0x20, 0x15, 0x35, 0x06
+NR_OFFSET, ARCH_OFFSET, ARGS_OFFSET = 0, 4, 16
+X32_BIT = 0x40000000
+# allow, fail with EPERM, and kill the process: a call from another
+# architecture's table could reach what the numbers above refuse
+RET_ALLOW, RET_REFUSE, RET_KILL = 0x7FFF0000, 0x00050001, 0x80000000
 
 
 class Expired(Exception):
@@ -185,6 +214,8 @@ def forked(code: str, args: list[Any], cap_ms: int, repeats: int) -> dict[str, A
             os.close(read)
             _isolate()
             _limit()
+            if sys.platform == "linux":
+                _confine(os.getpid())
             result = answered(code, args, cap_ms, repeats)
             with os.fdopen(write, "w") as channel:
                 channel.write(json.dumps(result) + "\n")
@@ -223,6 +254,90 @@ def _limit() -> None:
     for kind, most in limits:
         with contextlib.suppress(OSError, ValueError):
             resource.setrlimit(kind, (most, most))
+
+
+def _confine(own: int) -> None:
+    """Installs `seccomp_program`, which every process the solution starts
+    inherits. A refusal raises, so no case runs unconfined."""
+    resolved = seccomp_program(os.uname().machine, own)
+
+    class Instruction(ctypes.Structure):
+        _fields_ = [
+            ("code", ctypes.c_ushort),
+            ("jt", ctypes.c_ubyte),
+            ("jf", ctypes.c_ubyte),
+            ("k", ctypes.c_uint),
+        ]
+
+    class Program(ctypes.Structure):
+        _fields_ = [("len", ctypes.c_ushort), ("filter", ctypes.POINTER(Instruction))]
+
+    program = Program(len(resolved), (Instruction * len(resolved))(*resolved))
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) or libc.prctl(
+        PR_SET_SECCOMP, SECCOMP_MODE_FILTER, ctypes.byref(program), 0, 0
+    ):
+        raise OSError(ctypes.get_errno(), "the kernel refused the case's seccomp filter")
+
+
+def seccomp_program(machine: str, own: int) -> list[tuple[int, int, int, int]]:
+    """A classic BPF program refusing each call that reaches a process outside
+    the case's own process group, as `(code, jt, jf, k)`."""
+    calls = SYSCALLS[machine]
+    # by the target's id: kill(0) and kill(-own) are the case's own group,
+    # since `_isolate` made the case a session leader
+    guarded = {
+        "kill": [0, own, -own],
+        "tkill": [own],
+        "tgkill": [own],
+        "rt_sigqueueinfo": [own],
+        "rt_tgsigqueueinfo": [own],
+    }
+    refused = ("pidfd_send_signal", "ptrace", "process_vm_readv", "process_vm_writev")
+    # by the command: each aims SIGIO, whose default action ends a process
+    commands = {"fcntl": [F_SETOWN, F_SETOWN_EX], "ioctl": [FIOSETOWN, SIOCSPGRP]}
+
+    program: list[tuple[int, int, str | None, str | None]] = []
+    labels: dict[str, int] = {}
+
+    def op(code: int, k: int, yes: str | None = None, no: str | None = None) -> None:
+        program.append((code, k, yes, no))
+
+    op(BPF_LOAD, ARCH_OFFSET)
+    op(BPF_EQUAL, calls["audit"], no="kill process")
+    op(BPF_LOAD, NR_OFFSET)
+    if machine == "x86_64":
+        # the x32 numbers reach the same calls under numbers of their own
+        op(BPF_AT_LEAST, X32_BIT, yes="kill process")
+    for name in [*guarded, *commands]:
+        op(BPF_EQUAL, calls[name], yes=name)
+    for name in refused:
+        op(BPF_EQUAL, calls[name], yes="refuse")
+    op(BPF_RETURN, RET_ALLOW)
+    # an argument's low 32 bits alone: pid_t and the commands are 32 bits
+    # wide, and the kernel ignores the rest of the register
+    for name, allowed in guarded.items():
+        labels[name] = len(program)
+        op(BPF_LOAD, ARGS_OFFSET)
+        for value in allowed:
+            op(BPF_EQUAL, value & 0xFFFFFFFF, yes="allow")
+        op(BPF_RETURN, RET_REFUSE)
+    for name, denied in commands.items():
+        labels[name] = len(program)
+        op(BPF_LOAD, ARGS_OFFSET + 8)
+        for value in denied:
+            op(BPF_EQUAL, value, yes="refuse")
+        op(BPF_RETURN, RET_ALLOW)
+    # a space in each label here, so no call's name collides with one
+    ends = (("allow", RET_ALLOW), ("refuse", RET_REFUSE), ("kill process", RET_KILL))
+    for label, verdict in ends:
+        labels[label] = len(program)
+        op(BPF_RETURN, verdict)
+
+    def jump(label: str | None, at: int) -> int:
+        return 0 if label is None else labels[label] - at - 1
+
+    return [(code, jump(yes, at), jump(no, at), k) for at, (code, k, yes, no) in enumerate(program)]
 
 
 def _line(fd: int, deadline: float) -> bytes | None:
