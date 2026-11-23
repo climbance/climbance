@@ -448,7 +448,7 @@ id = "rating"
 kind = "component"
 container = "api"
 name = "Rating"
-role = "Reads a user's measured rating from the user's cold sittings: what each served, how it was held and whether it was solved."
+role = "Replays a user's cold sittings by Glicko-1 into the chance to solve a problem, and the rating with its deviation."
 doc = "api/rating.md"
 
 [[element]]

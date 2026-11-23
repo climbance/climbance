@@ -2,8 +2,8 @@
 
 A user's measured rating: one number on the contest scale, with its
 deviation, read from the user's cold sittings. This file gives what a cold
-sitting serves, how it is held, and when it counts as solved. The replay
-that turns the outcomes into the rating is not specified yet.
+sitting serves, how it is held, when it counts as solved, and the replay that
+turns the outcomes into the rating.
 
 ## The conditions
 
@@ -110,3 +110,61 @@ that turns the outcomes into the rating is not specified yet.
   may lose the pauses. The rating rests on these two fields, so they are kept.
   A cold sitting with no submission has no attempt to carry them instead.
 
+## The interface
+
+- **The rating answers one question: the chance a user solves a problem at a
+  moment.** The projection and the log-loss read this chance alone. The
+  rating and its deviation are read beside it, for display.
+- **The algorithm behind the chance is replaceable.** Glicko-1 answers first.
+  A later method, such as Whole-History Rating, replaces it behind the same
+  question, and it is kept only if it lowers the log-loss.
+
+## The replay
+
+- **The rating is replayed from the user's cold sittings on every read, and
+  never stored.** The sittings and their attempts hold every outcome, so a
+  stored rating would be a copy that a recalibration of the problems leaves
+  wrong.
+- **Each ended cold sitting is one game**, against an opponent rated at the
+  problem's score, with the score's deviation as the opponent's. The outcome
+  is 1 when solved and 0 when not. A cold sitting still running is no game
+  yet, since its outcome is not decided.
+- **One scale holds both.** Glicko-1's expected score is the logistic curve on
+  the contest scale, so a problem's score is directly an opponent's rating.
+- **A rating period is one UTC calendar day.** Glicko-1 updates every game of
+  a period from the rating at the period's start. A user plays a few cold
+  sittings a day, and a shorter period changes little.
+- **A rating with no deviation is read as deviation zero.** A by-hand rating
+  carries none, as `../cli/difficulty/README.md` gives, and its deviation is
+  deferred there.
+- **A new user starts at Glicko-1's defaults, 1500 with deviation 350.** The
+  deviation grows by a constant per period without a game, so an unused
+  rating widens again. The starting value of that constant lets a deviation
+  of 50 return to 350 over a year of days. Each value is kept only if the
+  log-loss does not rise without it.
+- **The chance combines both deviations**, by Glicko's predictive formula. The
+  user's deviation is grown to the moment asked about. A wide deviation pulls
+  the chance towards one half.
+
+## Problem ratings as they stand now
+
+- **A replay reads each problem's standing score now, not the score that
+  stood when the sitting was held.** A problem is never edited, so a later
+  rating of the same problem corrects an error in the earlier one. The game
+  was played against the problem as it is, so the corrected score describes
+  it better.
+- **A recalibration therefore moves a user's past rating.** That cost is
+  accepted. The rating is replayed on every read already, and the move is the
+  correction reaching the user's rating.
+- **A measurement that cites a rating names the ratings it read.** A log-loss
+  written down names the correction each judge rating came from. Two
+  measurements on different corrections are then not compared as one.
+
+## Scoring the chance
+
+- **The chance for each cold sitting is read from the replay up to the period
+  before it.** The outcome of a sitting is never in the rating that predicted
+  it.
+- **The metric is the log-loss of those chances over the user's cold
+  sittings.** It is the metric the difficulty calibration uses on the
+  anchors, so an improvement to either part is judged by one number.
