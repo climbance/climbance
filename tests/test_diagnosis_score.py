@@ -2,7 +2,7 @@ from dataclasses import replace
 
 from helpers import PROVENANCE_FIELDS, T0, make_problem
 
-from climb.cli.diagnose import cell
+from climb.cli.diagnose import cell, score_sets
 from climb.diagnoser import Tool, request_hash
 from climb.diagnosing import MINIMUM, Tasks, scored, unscored
 from climb.diagnosing.run import code_hash
@@ -186,6 +186,39 @@ def test_a_printed_share_carries_its_interval():
     diagnoses = [diagnosis(f"a{n}", Cause.SLIP if n < 7 else Cause.FORM) for n in range(MINIMUM)]
 
     assert cell(rows(AT, labels, diagnoses)["syntax"]) == "70% [40–89%] of 10"
+
+
+def test_a_tool_column_prints_its_gain_over_the_baseline():
+    """8 of 10 beside the baseline's 7 of 10 gains 10 points."""
+    labels = [label(f"a{n}", FailureMode.SYNTAX) for n in range(MINIMUM)]
+    base = [diagnosis(f"a{n}", Cause.SLIP if n < 7 else Cause.FORM) for n in range(MINIMUM)]
+    tool = [diagnosis(f"a{n}", Cause.SLIP if n < 8 else Cause.FORM) for n in range(MINIMUM)]
+    baseline = rows(AT, labels, base)["syntax"]
+
+    assert cell(rows(AT, labels, tool)["syntax"], baseline) == "80% [49–94%] of 10, +10"
+    assert cell(baseline, baseline) == "70% [40–89%] of 10"
+
+
+def test_no_gain_is_printed_beside_a_withheld_baseline():
+    """A baseline under the minimum has no share to subtract."""
+    labels = [label(f"a{n}", FailureMode.SYNTAX) for n in range(MINIMUM)]
+    tool = [diagnosis(f"a{n}", Cause.SLIP) for n in range(MINIMUM)]
+    baseline = rows(AT, labels[:1], tool[:1])["syntax"]
+
+    assert cell(rows(AT, labels, tool)["syntax"], baseline) == "100% [72–100%] of 10"
+
+
+def test_the_score_stacks_every_tool_after_each_alone():
+    """Two tools give four columns: none, each alone, both."""
+    both = frozenset(Tool)
+
+    assert score_sets(both) == [
+        frozenset(),
+        frozenset({Tool.DIVERGENCE}),
+        frozenset({Tool.FORM_CODE}),
+        both,
+    ]
+    assert score_sets(frozenset({Tool.DIVERGENCE})) == [frozenset(), frozenset({Tool.DIVERGENCE})]
 
 
 def test_the_spot_check_reads_the_verdicts_no_self_label_scores():

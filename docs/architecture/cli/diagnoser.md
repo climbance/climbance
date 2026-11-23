@@ -60,8 +60,14 @@ re-diagnosed and compared.
   matched on the prompt hash its item would be sent under that tool set, so a
   tool's verdicts never stand in the baseline's column. The prompt hash
   already records which tools a verdict saw, so no record names them.
-- **`climb diagnose score --tool divergence` prints the baseline beside the
-  tool.** The tool's gain is its column's share less the baseline's.
+- **`climb diagnose score` prints the baseline, each `--tool` alone, and every
+  named tool together.** A stack whose share one tool alone matches needs only
+  that tool, and only the stacked column beside the single ones shows that.
+- **Each tool column prints its gain beside each share, in points over the
+  baseline's share on the same row.** A row where either share is withheld
+  prints no gain.
+- **The stack with the form-code tool reads no labelled mutant**, as the
+  form-code column does not. Its mutant rows read `unread`.
 
 ## Scoring
 

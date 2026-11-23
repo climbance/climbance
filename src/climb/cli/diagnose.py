@@ -42,12 +42,7 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
         parser.exit(2, "diagnose verdicts: one configuration at a time\n")
     asked: list[str] = args.tool or []
     tools = frozenset(Tool(one) for one in asked)
-    # `score` reads the baseline beside each tool; a run reads them together
-    sets: list[frozenset[Tool]] = (
-        [frozenset(), *(frozenset({one}) for one in sorted(tools))]
-        if args.subject == "score"
-        else [tools]
-    )
+    sets = score_sets(tools) if args.subject == "score" else [tools]
     # no credentials asked of a run that makes no call
     stored = args.subject == "verdicts" or (args.subject == "score" and args.stored)
     log, mutant_log, calls = AttemptLog(root), MutantDiagnosisLog(root), CallLog(root)
@@ -109,13 +104,21 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
     if args.subject == "score":
         attempts = log.attempts(user)
         labels, diagnoses, read = log.self_labels(user), log.diagnoses(user), mutant_log.all()
+        scores = [
+            scored(one, tasks, attempts, labels, diagnoses, mutants, read) for one, tasks in columns
+        ]
         table(
             [f"{one.model.split('/')[-1]}{label(tasks.tools)}" for one, tasks in columns],
-            [
-                scored(one, tasks, attempts, labels, diagnoses, mutants, read)
-                for one, tasks in columns
-            ],
+            scores,
+            # each configuration's first column is its baseline
+            [scores[index - index % len(sets)] for index in range(len(scores))],
         )
+
+
+def score_sets(tools: frozenset[Tool]) -> list[frozenset[Tool]]:
+    """The baseline, each tool alone, then every tool together."""
+    alone = [frozenset({one}) for one in sorted(tools)]
+    return [frozenset(), *alone, *([tools] if len(alone) > 1 else [])]
 
 
 def slips(root: Database, base: Tasks) -> list[LabelledMutant]:
@@ -142,19 +145,26 @@ def report(on: str, subject: str, result: Result) -> None:
         print(f"failed: {one}")
 
 
-def table(headers: list[str], scores: list[list[Row]]) -> None:
+def table(headers: list[str], scores: list[list[Row]], baselines: list[list[Row]]) -> None:
     """A row per label mode, a column per configuration and tool set."""
     print()
-    print(f"{'':<14}{'implies':<9}" + "".join(f"{one[-30:]:>32}" for one in headers))
+    width = max(32, *(len(one) + 2 for one in headers))
+    print(f"{'':<14}{'implies':<9}" + "".join(f"{one:>{width}}" for one in headers))
     for index, row in enumerate(scores[0]):
-        cells = "".join(f"{cell(rows[index]):>32}" for rows in scores)
+        cells = "".join(
+            f"{cell(rows[index], base[index]):>{width}}"
+            for rows, base in zip(scores, baselines, strict=True)
+        )
         print(f"{row.label:<14}{row.implied:<9}{cells}")
 
 
-def cell(row: Row) -> str:
+def cell(row: Row, baseline: Row | None = None) -> str:
     if row.read == 0:
         return "unread"
     # under the minimum only the count shows: `1/1` is a share by another name
-    return (
-        f"n={row.read}" if row.share is None else f"{percent(row.matched, row.read)} of {row.read}"
-    )
+    if row.share is None:
+        return f"n={row.read}"
+    shown = f"{percent(row.matched, row.read)} of {row.read}"
+    if baseline is None or baseline is row or baseline.share is None:
+        return shown
+    return f"{shown}, {round((row.share - baseline.share) * 100):+d}"
