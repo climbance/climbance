@@ -211,6 +211,7 @@ runs = [
     "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
     "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
     "climb.statement", "climb.storage", "climb.techniques", "climb.template_schedule", "climb.trials",
+    "climb.verifications",
 ]
 
 [[element]]
@@ -653,6 +654,7 @@ doc = "web-app/pages/author/README.md"
 section = "Who sees them"
 src = [
     "src/climb/api/author.py",
+    "src/climb/api/author_content.py",
     "src/climb/api/generation_figures.py",
     "src/climb/api/product_figures.py",
     "src/climb/api/workflow_figures.py",
@@ -1037,6 +1039,7 @@ src = [
     "packages/core/src/author.*",
     "packages/core/src/bank.*",
     "packages/core/src/lessonbank.*",
+    "packages/core/src/contentbank.*",
 ]
 
 [[element]]
@@ -1144,6 +1147,9 @@ src = [
     "web/src/pages/AuthorWorkflowPage.tsx",
     "web/src/pages/AuthorQuestionsPage.tsx",
     "web/src/pages/AuthorLessonsPage.tsx",
+    "web/src/pages/AuthorCardsPage.tsx",
+    "web/src/pages/AuthorProblemsPage.tsx",
+    "web/src/lib/openRows.ts",
     "web/src/components/Chips.tsx",
     "web/src/components/AuthorBar.tsx",
     "web/src/components/FigureTable.tsx",

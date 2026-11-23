@@ -23,6 +23,9 @@ the rules this page shares with the other browser pages.
   `?technique=`, `?difficulty=`, `?status=` and `?template=`. A card's ladder
   links here with `?template=`, so every problem written for one form is one
   link.
+- **The template filter offers only the template the URL names.** The corpus
+  targets over a hundred templates, and a chip for each would push the rows
+  below the fold. A card's ladder and its templates link to the filter.
 - **The status filter reads `served` until the author picks another**, and
   offers `retired` and every retirement reason. A retired problem stays in the
   corpus, so the author can still read why it was retired.
@@ -35,9 +38,11 @@ the rules this page shares with the other browser pages.
   names its reason. `climb problem --retire` takes the id's prefix, as the
   workflow page's requests give it.
 - **The rows read newest first.** The author reads what the last generation
-  run landed first.
-- **The row names how many retirement requests the problem carries**, each a
-  link to the request on the workflow page.
+  run landed first. A problem record stores no time, so a row is
+  dated by its first solution's `created_at`, which landing writes.
+- **The row names how many retirement requests the problem carries.** An
+  opened row links the count to the workflow page's requests. A link inside
+  the closed row would nest one press inside the row's own press.
 
 ## An opened row
 

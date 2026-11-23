@@ -39,6 +39,8 @@ WEB = {
     "author/workflow": "The author pages",
     "author/questions": "The author pages",
     "author/lessons": "The author pages",
+    "author/cards": "The author pages",
+    "author/problems": "The author pages",
 }
 # routes that serve no row: the page answering a path nothing else does
 WEB_UNLISTED = {"*"}

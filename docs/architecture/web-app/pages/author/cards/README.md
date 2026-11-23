@@ -24,9 +24,16 @@ browser pages. `../../../../content-repo/cards.md` gives the card.
   trigger, the brief, and every template with its trigger, its code shown and
   its notes. The author reviews every form at once, so no template waits for a
   reveal.
+  The template panel draws no recall press there, since a recall writes a
+  log record and the browser only reads.
+- **An opened row names the subtopics paired with the card**, as the card
+  page does: every subtopic naming the card's technique, the primary module's
+  first. The pairing is read from the snapshot, as
+  `../../../../content-repo/cards-and-subtopics.md` gives it.
 - **Each template names its counts**: its cases, its served judgement items
   and its served key-line items. A template with none of a kind is named, since
-  `climb judge build` and `climb fill build` build them.
+  `climb judge build` and `climb fill build` build them. Each template links to
+  the problems page filtered to the problems written for it.
 - **An opened row names the card's requirements and the cards requiring
   it.** Each edge names the required card, its template and the template that
   uses the form, as links to those cards' rows. The author then checks each

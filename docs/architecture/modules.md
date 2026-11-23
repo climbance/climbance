@@ -52,7 +52,6 @@ flowchart LR
     subgraph g2["Command line"]
         climb_cli["cli"]
         climb_generation["generation"]
-        climb_verifications["verifications"]
     end
     subgraph g3["API and Command line"]
         climb_attempt_claims["attempt_claims"]
@@ -92,6 +91,7 @@ flowchart LR
         climb_storage["storage"]
         climb_techniques["techniques"]
         climb_trials["trials"]
+        climb_verifications["verifications"]
     end
     subgraph g4["API, Sandbox and Command line"]
         climb_runner["runner"]
@@ -109,6 +109,7 @@ flowchart LR
     climb_api --> climb_recall
     climb_api --> climb_retirement
     climb_api --> climb_trials
+    climb_api --> climb_verifications
     climb_attempt_claims --> climb_classifier
     climb_attempt_claims --> climb_log
     climb_attempt_claims --> climb_mint

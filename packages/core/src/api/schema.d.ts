@@ -879,6 +879,57 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Cards */
+    get: operations['cards_api_author_cards_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/author/problems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Problems */
+    get: operations['problems_api_author_problems_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/author/problems/{problem_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Problem */
+    get: operations['problem_api_author_problems__problem_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1042,10 +1093,126 @@ export interface components {
       /** Pages */
       pages: string[];
     };
+    /** AuthorCard */
+    AuthorCard: {
+      card: components['schemas']['Card'];
+      /** Depth */
+      depth: number;
+      /** Counts */
+      counts: components['schemas']['TemplateCounts'][];
+      /** Required By */
+      required_by: components['schemas']['RequiredBy'][];
+      /** Rungs */
+      rungs: components['schemas']['AuthorRung'][];
+      /** Gaps */
+      gaps: string[];
+    };
+    /** AuthorCards */
+    AuthorCards: {
+      /** Cards */
+      cards: components['schemas']['AuthorCard'][];
+    };
+    /** AuthorCase */
+    AuthorCase: {
+      /** Args */
+      args: unknown[];
+      /** Expected */
+      expected: unknown;
+      /** Round */
+      round: number | null;
+      /** Repeats */
+      repeats: number;
+    };
     /** AuthorConcepts */
     AuthorConcepts: {
       /** Concepts */
       concepts: components['schemas']['Concept'][];
+    };
+    /** AuthorProblem */
+    AuthorProblem: {
+      /** Problem Id */
+      problem_id: string;
+      /** Statement */
+      statement: string;
+      /** Signature */
+      signature: string | null;
+      generator: components['schemas']['ProblemDifficulty'] | null;
+      /** Solutions */
+      solutions: components['schemas']['AuthorSolution'][];
+      /** Cases */
+      cases: components['schemas']['AuthorCase'][];
+      /** Ratings */
+      ratings: components['schemas']['AuthorRating'][];
+    };
+    /** AuthorProblemRow */
+    AuthorProblemRow: {
+      /** Problem Id */
+      problem_id: string;
+      /** Title */
+      title: string;
+      /** Target Template */
+      target_template: string | null;
+      /** Target Technique */
+      target_technique: string | null;
+      difficulty: components['schemas']['ProblemDifficulty'] | null;
+      /** Score */
+      score: number | null;
+      /** Techniques */
+      techniques: string[];
+      /** Cases */
+      cases: number;
+      /** Roles */
+      roles: components['schemas']['SolutionRole'][];
+      retired_reason: components['schemas']['RetirementReason'] | null;
+      /** Requests */
+      requests: number;
+      /** Landed At */
+      landed_at: string | null;
+    };
+    /** AuthorProblems */
+    AuthorProblems: {
+      /** Problems */
+      problems: components['schemas']['AuthorProblemRow'][];
+    };
+    /** AuthorRating */
+    AuthorRating: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Score */
+      score: number;
+      /** Deviation */
+      deviation: number | null;
+      source: components['schemas']['RatingSource'];
+      /** Standing */
+      standing: boolean;
+    };
+    /** AuthorRung */
+    AuthorRung: {
+      /** Problem Id */
+      problem_id: string;
+      /** Title */
+      title: string;
+      /** Templates */
+      templates: string[];
+      difficulty: components['schemas']['ProblemDifficulty'] | null;
+      /** Score */
+      score: number | null;
+      /** Required */
+      required: boolean;
+    };
+    /** AuthorSolution */
+    AuthorSolution: {
+      role: components['schemas']['SolutionRole'];
+      /** Code */
+      code: string;
+      outcome: components['schemas']['CaseOutcome'] | null;
+      /** Displays */
+      displays: string[];
+      /** Claims */
+      claims: string[];
     };
     /** Begin */
     Begin: {
@@ -2279,6 +2446,11 @@ export interface components {
      */
     Rank: 1 | 2 | 3 | 4 | 5;
     /**
+     * RatingSource
+     * @enum {string}
+     */
+    RatingSource: 'user' | 'judge';
+    /**
      * RecallAttempt
      * @description A form typed into a blank file and run against the template's cases.
      */
@@ -2359,6 +2531,15 @@ export interface components {
       note: string;
       /** Waits */
       waits: boolean;
+    };
+    /** RequiredBy */
+    RequiredBy: {
+      /** Card */
+      card: string;
+      /** Template */
+      template: string;
+      /** Used By */
+      used_by: string;
     };
     /**
      * Requirement
@@ -2637,6 +2818,12 @@ export interface components {
       /** Time Limit Sec */
       time_limit_sec?: number | null;
     };
+    /**
+     * SolutionRole
+     * @description Stored rather than inferred: all three pass the same cases.
+     * @enum {string}
+     */
+    SolutionRole: 'canonical' | 'reference' | 'naive';
     /** SpendRow */
     SpendRow: {
       /** Part */
@@ -2868,6 +3055,17 @@ export interface components {
       args?: unknown[];
       /** Expected */
       expected: unknown;
+    };
+    /** TemplateCounts */
+    TemplateCounts: {
+      /** Template Id */
+      template_id: string;
+      /** Cases */
+      cases: number;
+      /** Judgement Items */
+      judgement_items: number;
+      /** Keyline Items */
+      keyline_items: number;
     };
     /**
      * TemplateKind
@@ -4520,6 +4718,77 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuthorConcepts'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  cards_api_author_cards_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthorCards'];
+        };
+      };
+    };
+  };
+  problems_api_author_problems_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthorProblems'];
+        };
+      };
+    };
+  };
+  problem_api_author_problems__problem_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        problem_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthorProblem'];
         };
       };
       /** @description Validation Error */

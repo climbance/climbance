@@ -5,9 +5,17 @@ check of its own."""
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
+from climb.api.author_content import (
+    AuthorCards,
+    AuthorProblem,
+    AuthorProblems,
+    author_cards,
+    author_problem,
+    author_problems,
+)
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
 from climb.api.product_figures import ProductFigures, product_figures
@@ -24,7 +32,15 @@ from climb.solutions import SolutionLog
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
 # the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = ["product", "generation", "workflow", "questions", "lessons"]
+PAGES: list[str] = [
+    "product",
+    "generation",
+    "workflow",
+    "questions",
+    "lessons",
+    "cards",
+    "problems",
+]
 
 
 class AuthorArea(BaseModel):
@@ -66,3 +82,21 @@ def workflow(root: Root, user_id: Annotated[str, Depends(author_id)]) -> Workflo
 @router.get("/concepts")
 def concepts(root: Root, module: str) -> AuthorConcepts:
     return AuthorConcepts(concepts=seeded_concepts(module, root=root))
+
+
+@router.get("/cards")
+def cards(root: Root) -> AuthorCards:
+    return author_cards(root)
+
+
+@router.get("/problems")
+def problems(root: Root) -> AuthorProblems:
+    return author_problems(root)
+
+
+@router.get("/problems/{problem_id}")
+def problem(root: Root, problem_id: str) -> AuthorProblem:
+    found = author_problem(root, problem_id)
+    if found is None:
+        raise HTTPException(status_code=404, detail=f"no problem {problem_id}")
+    return found

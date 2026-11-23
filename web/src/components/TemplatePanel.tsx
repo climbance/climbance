@@ -20,13 +20,16 @@ export function TemplatePanel({
   template,
   card,
   recalled,
+  review = false,
 }: {
   template: Template
   // the card the form is taught by, which its recall is started from
   card: string
   recalled: Recalled | undefined
+  // the author's review: every form shown, and no act that writes the log
+  review?: boolean
 }) {
-  const [revealed, setRevealed] = useState(false)
+  const [revealed, setRevealed] = useState(review)
   const view = templateView(template, recalled)
   const { catalog } = useLearner()
   const cited = citedSubtopics(catalog?.courses ?? [], template.cites ?? [])
@@ -72,29 +75,31 @@ export function TemplatePanel({
 
         {revealed && template.notes && <Markdown>{template.notes}</Markdown>}
 
-        <div className="flex flex-wrap items-center gap-stack">
-          {view.recallable ? (
-            <Button variant="outline" size="sm" asChild>
-              <Link
-                to={`/cards/${encodeURIComponent(card)}/recall/${encodeURIComponent(template.slug)}`}
+        {!review && (
+          <div className="flex flex-wrap items-center gap-stack">
+            {view.recallable ? (
+              <Button variant="outline" size="sm" asChild>
+                <Link
+                  to={`/cards/${encodeURIComponent(card)}/recall/${encodeURIComponent(template.slug)}`}
+                >
+                  {RECALL_THIS}
+                </Link>
+              </Button>
+            ) : (
+              <span className="text-meta text-muted-foreground">{view.unchecked}</span>
+            )}
+            {revealed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ml-auto"
+                onClick={() => setRevealed(false)}
               >
-                {RECALL_THIS}
-              </Link>
-            </Button>
-          ) : (
-            <span className="text-meta text-muted-foreground">{view.unchecked}</span>
-          )}
-          {revealed && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-auto"
-              onClick={() => setRevealed(false)}
-            >
-              {HIDE_FORM}
-            </Button>
-          )}
-        </div>
+                {HIDE_FORM}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </PanelFrame>
   )

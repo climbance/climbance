@@ -13,6 +13,8 @@ export const AUTHOR_PAGES: Record<string, string> = {
   workflow: 'Workflow',
   questions: 'Questions',
   lessons: 'Lessons',
+  cards: 'Cards',
+  problems: 'Problems',
 };
 
 export const PRODUCT_TITLE = 'Product';

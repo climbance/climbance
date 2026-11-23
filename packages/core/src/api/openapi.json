@@ -1867,6 +1867,81 @@
           }
         }
       }
+    },
+    "/api/author/cards": {
+      "get": {
+        "summary": "Cards",
+        "operationId": "cards_api_author_cards_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorCards"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/author/problems": {
+      "get": {
+        "summary": "Problems",
+        "operationId": "problems_api_author_problems_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorProblems"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/author/problems/{problem_id}": {
+      "get": {
+        "summary": "Problem",
+        "operationId": "problem_api_author_problems__problem_id__get",
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Problem Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorProblem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2314,6 +2389,106 @@
         ],
         "title": "AuthorArea"
       },
+      "AuthorCard": {
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "counts": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateCounts"
+            },
+            "type": "array",
+            "title": "Counts"
+          },
+          "required_by": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredBy"
+            },
+            "type": "array",
+            "title": "Required By"
+          },
+          "rungs": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorRung"
+            },
+            "type": "array",
+            "title": "Rungs"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card",
+          "depth",
+          "counts",
+          "required_by",
+          "rungs",
+          "gaps"
+        ],
+        "title": "AuthorCard"
+      },
+      "AuthorCards": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorCard"
+            },
+            "type": "array",
+            "title": "Cards"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cards"
+        ],
+        "title": "AuthorCards"
+      },
+      "AuthorCase": {
+        "properties": {
+          "args": {
+            "items": {},
+            "type": "array",
+            "title": "Args"
+          },
+          "expected": {
+            "title": "Expected"
+          },
+          "round": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Round"
+          },
+          "repeats": {
+            "type": "integer",
+            "title": "Repeats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "args",
+          "expected",
+          "round",
+          "repeats"
+        ],
+        "title": "AuthorCase"
+      },
       "AuthorConcepts": {
         "properties": {
           "concepts": {
@@ -2329,6 +2504,340 @@
           "concepts"
         ],
         "title": "AuthorConcepts"
+      },
+      "AuthorProblem": {
+        "properties": {
+          "problem_id": {
+            "type": "string",
+            "title": "Problem Id"
+          },
+          "statement": {
+            "type": "string",
+            "title": "Statement"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          },
+          "generator": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProblemDifficulty"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "solutions": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorSolution"
+            },
+            "type": "array",
+            "title": "Solutions"
+          },
+          "cases": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorCase"
+            },
+            "type": "array",
+            "title": "Cases"
+          },
+          "ratings": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorRating"
+            },
+            "type": "array",
+            "title": "Ratings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "problem_id",
+          "statement",
+          "signature",
+          "generator",
+          "solutions",
+          "cases",
+          "ratings"
+        ],
+        "title": "AuthorProblem"
+      },
+      "AuthorProblemRow": {
+        "properties": {
+          "problem_id": {
+            "type": "string",
+            "title": "Problem Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "target_template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Template"
+          },
+          "target_technique": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Technique"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProblemDifficulty"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "techniques": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Techniques"
+          },
+          "cases": {
+            "type": "integer",
+            "title": "Cases"
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/SolutionRole"
+            },
+            "type": "array",
+            "title": "Roles"
+          },
+          "retired_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RetirementReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requests": {
+            "type": "integer",
+            "title": "Requests"
+          },
+          "landed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Landed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "problem_id",
+          "title",
+          "target_template",
+          "target_technique",
+          "difficulty",
+          "score",
+          "techniques",
+          "cases",
+          "roles",
+          "retired_reason",
+          "requests",
+          "landed_at"
+        ],
+        "title": "AuthorProblemRow"
+      },
+      "AuthorProblems": {
+        "properties": {
+          "problems": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorProblemRow"
+            },
+            "type": "array",
+            "title": "Problems"
+          }
+        },
+        "type": "object",
+        "required": [
+          "problems"
+        ],
+        "title": "AuthorProblems"
+      },
+      "AuthorRating": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "deviation": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deviation"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RatingSource"
+          },
+          "standing": {
+            "type": "boolean",
+            "title": "Standing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "score",
+          "deviation",
+          "source",
+          "standing"
+        ],
+        "title": "AuthorRating"
+      },
+      "AuthorRung": {
+        "properties": {
+          "problem_id": {
+            "type": "string",
+            "title": "Problem Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "templates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Templates"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProblemDifficulty"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "problem_id",
+          "title",
+          "templates",
+          "difficulty",
+          "score",
+          "required"
+        ],
+        "title": "AuthorRung"
+      },
+      "AuthorSolution": {
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/SolutionRole"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CaseOutcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "displays": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Displays"
+          },
+          "claims": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Claims"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "code",
+          "outcome",
+          "displays",
+          "claims"
+        ],
+        "title": "AuthorSolution"
       },
       "Begin": {
         "properties": {
@@ -5617,6 +6126,14 @@
         "title": "Rank",
         "description": "The order the pick offers in: `api/pick.md`."
       },
+      "RatingSource": {
+        "type": "string",
+        "enum": [
+          "user",
+          "judge"
+        ],
+        "title": "RatingSource"
+      },
       "RecallAttempt": {
         "properties": {
           "cap_ms": {
@@ -5804,6 +6321,29 @@
           "waits"
         ],
         "title": "RequestRow"
+      },
+      "RequiredBy": {
+        "properties": {
+          "card": {
+            "type": "string",
+            "title": "Card"
+          },
+          "template": {
+            "type": "string",
+            "title": "Template"
+          },
+          "used_by": {
+            "type": "string",
+            "title": "Used By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card",
+          "template",
+          "used_by"
+        ],
+        "title": "RequiredBy"
       },
       "Requirement": {
         "properties": {
@@ -6503,6 +7043,16 @@
         ],
         "title": "Sitting"
       },
+      "SolutionRole": {
+        "type": "string",
+        "enum": [
+          "canonical",
+          "reference",
+          "naive"
+        ],
+        "title": "SolutionRole",
+        "description": "Stored rather than inferred: all three pass the same cases."
+      },
       "SpendRow": {
         "properties": {
           "part": {
@@ -7076,6 +7626,34 @@
         ],
         "title": "TemplateCase",
         "description": "One case a reproduced form is checked against. The arguments are\npositional, and `solve` is the function they call."
+      },
+      "TemplateCounts": {
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "title": "Template Id"
+          },
+          "cases": {
+            "type": "integer",
+            "title": "Cases"
+          },
+          "judgement_items": {
+            "type": "integer",
+            "title": "Judgement Items"
+          },
+          "keyline_items": {
+            "type": "integer",
+            "title": "Keyline Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id",
+          "cases",
+          "judgement_items",
+          "keyline_items"
+        ],
+        "title": "TemplateCounts"
       },
       "TemplateKind": {
         "type": "string",
