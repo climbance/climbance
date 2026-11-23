@@ -220,6 +220,7 @@ flowchart TB
         card_states["Card states<br/>Derives each card's state, from not started to graduated or lapsed, from the log on every read."]
         mastery["Mastery<br/>Computes each technique's recognition and execution from the log on every read."]
         pick["Pick<br/>Names the next item: a template and the act that reviews it, read from the three folds."]
+        rating["Rating<br/>Reads a user's measured rating from the user's cold sittings: what each served, how it was held and whether it was solved."]
         predictions["Predictions<br/>Stores what each pick expected, from FSRS and from mastery, before the user acts on it."]
         snapshot["Snapshot<br/>Serves the seeded content to both clients as one document, revalidated by its ETag."]
         knowledge_sync["Knowledge sync<br/>Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."]
@@ -291,6 +292,9 @@ flowchart TB
     app_tokens -->|"passes the same provider callback"| sign_in
     sign_in -->|"stores the identities, the invitations and the sessions"| database
     app_tokens -->|"stores each one-time code and app token"| database
+    rating -.->|"reads each cold sitting and its time limit"| sitting
+    rating -.->|"reads whether a submission passed within the limit"| attempt_log
+    rating -.->|"reads each problem's standing score"| problems
 ```
 
 The Command line's components, and what each reads and writes.

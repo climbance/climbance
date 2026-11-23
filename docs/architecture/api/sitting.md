@@ -12,6 +12,8 @@ ended, and every pause between.
 - **Serving the statement mints nothing.** A sitting minted at serving made
   every opened problem a record, and the author avoided opening problems
   because of it. A user reading a problem and leaving it has not practised it.
+- **A cold sitting is minted as its statement is served**, and its clock
+  starts then. `rating.md` gives why it departs from the rule above.
 - **An untimed submission mints a sitting too.** Mastery counts execution per
   sitting, and an untimed attempt carrying no sitting would need a second
   grouping rule for its retries.

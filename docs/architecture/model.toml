@@ -441,6 +441,14 @@ src = [
 ]
 
 [[element]]
+id = "rating"
+kind = "component"
+container = "api"
+name = "Rating"
+role = "Reads a user's measured rating from the user's cold sittings: what each served, how it was held and whether it was solved."
+doc = "api/rating.md"
+
+[[element]]
 id = "predictions"
 kind = "component"
 container = "api"
@@ -2257,6 +2265,24 @@ access = "reads"
 from = "native-design-system"
 to = "drawing"
 label = "reads how code wraps, and the shape of each table and diagram"
+access = "reads"
+
+[[relation]]
+from = "rating"
+to = "sitting"
+label = "reads each cold sitting and its time limit"
+access = "reads"
+
+[[relation]]
+from = "rating"
+to = "attempt-log"
+label = "reads whether a submission passed within the limit"
+access = "reads"
+
+[[relation]]
+from = "rating"
+to = "problems"
+label = "reads each problem's standing score"
 access = "reads"
 
 # Flows

@@ -16,6 +16,13 @@ sittings, claims, labels, card runs, recalls and mastery. Every file in
   sitting runs and kept after the sitting ends.
 - **Pause**: an interval a sitting's clock is stopped for. The elapsed time a
   sitting reports excludes every pause.
+- **Cold sitting**: a sitting served with no title, technique, card or
+  difficulty shown, under a time limit and with no pause. Its outcome is
+  solved or not solved, and the measured rating reads it, as
+  `../../api/rating.md` gives.
+- **Time limit**: the longest a cold sitting runs, from serving. Stored as
+  `time_limit_sec` on the sitting. Distinct from the cap, which limits a
+  case's `solve` calls.
 - **Clock preference**: whether a sitting's clock starts by itself when the
   statement is served. The user's last press on a clock sets it, and the
   browser keeps it.
