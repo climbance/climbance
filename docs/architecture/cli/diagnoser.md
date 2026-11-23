@@ -70,9 +70,10 @@ re-diagnosed and compared.
   `speed` and `none` imply no cause, so a self-label naming either scores no
   diagnosis.
 - **`climb diagnose score` prints one row per label mode and no overall
-  share.** The rows are `syntax`, `gap`, `rust` and the labelled mutants, and
-  each `--model` is a column. A call that always says `form` would score well
-  on a pool of form faults, and one share over the pool would hide that.
+  share.** The rows are `syntax`, `gap`, `rust`, the labelled mutants and the
+  slip mutants, and each `--model` is a column. A call that always says
+  `form` would score well on a pool of form faults, and one share over the
+  pool would hide that.
 - **A share counts one configuration's latest verdict on each item of the
   row**, and the fraction naming the implied cause. A row the configuration
   has not read prints `unread`, so it is never mistaken for 0%.
@@ -87,9 +88,9 @@ re-diagnosed and compared.
   as the text. It reads one configuration's latest verdict at one tool set, as a
   score column does. An attempt labelled `speed` or `none` stays in, since
   neither mode implies a cause.
-- **The labelled mutants are a row apart from the self-labels, split by
-  operator.** A call can catch a reversed comparison and miss a shifted
-  constant, and one mutant row would hide that.
+- **The labelled mutants and the slip mutants are each a row apart from the
+  self-labels, split by operator.** A call can catch a reversed comparison and
+  miss a shifted constant, and one mutant row would hide that.
 
 ## Labelled mutants
 
@@ -125,10 +126,10 @@ before the call reads them. A labelled mutant is one such failure.
   every configuration, and constant shifts, over half of the set, do not
   crowd out the other operators.
 - **The labelled mutants imply `form` alone.** A score over them alone would
-  reward a call that always says `form`. So the score per mode also reads the
-  self-labels, and the `syntax` self-labels alone imply `slip`. On 2026-11-17
-  the deployed store held one `syntax` self-label, so the `slip` side waits on
-  use.
+  reward a call that always says `form`. So the score also reads the
+  `syntax` self-labels and the slip mutants, which imply `slip`. On 2026-11-17
+  the deployed store held one `syntax` self-label, so the slip mutants give
+  the `slip` side its count.
 - **A labelled mutant is a template's form run against the template's cases,
   not an attempt on a problem.** The call reads a template in place of a
   statement, so a score over the labelled mutants carries over to attempts
@@ -136,3 +137,45 @@ before the call reads them. A labelled mutant is one such failure.
 - **On 2026-11-17 the local store's items gave 821 labelled mutants over 109
   templates.** 481 of them are constant shifts, 137 arithmetic, 105 negations
   and 43 boundaries, with 55 spread over the other four operators.
+
+## Slip mutants
+
+A slip mutant is a canonical of a problem written for a template, with one
+change on a line outside that template's form. The change is a slip by
+construction, as a change inside the form is a form fault.
+
+- **The form is located in the canonical by its logical lines' shapes.** A
+  shape is a line's tokens with each name numbered in its order on the line,
+  so a line the canonical renamed keeps its shape. Function and class headers
+  are left out, since their names and annotations differ and no mutant
+  changes them.
+- **A canonical gives slip mutants only where every line of the form appears
+  in it, in order.** Its other lines are outside the form. A form line
+  missing from the canonical was rewritten there, and the rewritten line
+  would sit among the outside lines. On 2026-11-23, with 90% of the form's lines
+  required, the outside lines held rewritten form lines such as a prefix-sum
+  update.
+- **A problem written for a technique gives no slip mutant.** It names no
+  form, so no line of its canonical is outside one.
+- **A slip mutant changes one shown line and fails one of the problem's
+  cases**, run at the canonical's pace under the sitting's cap. A mutant that
+  times out is dropped, since a slowdown is not read off the code. The
+  separating case is not run, since it times the canonical.
+- **A change to a line of one shape is one slip mutant, across every
+  canonical.** Seven canonicals share one tree decoder, and counting each
+  copy would weigh one construct by how many problems carry it.
+- **A slip mutant is labelled `syntax`, and so implies the cause `slip`.** Its
+  verdict is a `MutantDiagnosis`, keyed as a labelled mutant's is: the
+  template, the template's form digest and the hash of the mutant's code.
+- **The call reads a slip mutant as an attempt on its problem**: the
+  problem's statement, and the template named by title and trigger.
+- **The form-code tool reads no slip mutant.** A changed line absent from the
+  form is the label itself.
+- **Slip mutants are derived on every read and never stored**, as labelled
+  mutants are. The derivation runs each canonical's mutants, about 15 seconds
+  over the local store. `climb diagnose mutants` samples them per operator
+  as it samples the labelled mutants.
+- **On 2026-11-23 the local store gave 37 slip mutants from 5 of 133 problems
+  written for a template.** 85 canonicals hold the whole form, and most of
+  them hold nothing else a case can catch. 15 are constant shifts and 10
+  negations.

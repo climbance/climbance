@@ -55,7 +55,7 @@ def diagnosis(attempt_id: str, cause: Cause, tasks: Tasks = TASKS) -> Diagnosis:
     )
 
 
-def mutant(line: int, operator: Operator) -> LabelledMutant:
+def mutant(line: int, operator: Operator, mode: FailureMode = FailureMode.RUST) -> LabelledMutant:
     return LabelledMutant(
         template_id="t1",
         form_digest="d1",
@@ -63,7 +63,7 @@ def mutant(line: int, operator: Operator) -> LabelledMutant:
         line=line,
         change="< → <=",
         operator=operator,
-        mode=FailureMode.RUST,
+        mode=mode,
         case_args=[1],
         case_expected=1,
         outcome=CaseOutcome.WRONG,
@@ -87,7 +87,14 @@ def verdict(one: LabelledMutant, cause: Cause, tasks: Tasks = TASKS) -> MutantDi
 def rows(configuration, labels, diagnoses, mutants=(), verdicts=(), tasks=TASKS) -> dict:
     attempts = [attempt(one.attempt_id) for one in labels]
     found = scored(configuration, tasks, attempts, labels, diagnoses, mutants, verdicts)
-    return {one.label.strip(): one for one in found}
+    named, section = {}, ""
+    for one in found:
+        if one.label.startswith(" "):
+            named[f"{section}/{one.label.strip()}"] = one
+        else:
+            section = one.label
+            named[section] = one
+    return named
 
 
 def test_a_label_is_scored_against_the_cause_its_mode_implies():
@@ -126,10 +133,12 @@ def test_a_verdict_counts_only_under_the_tool_set_it_was_given():
     one = mutant(1, Operator.BOUNDARY)
     baseline = [verdict(one, Cause.FORM)]
 
-    assert rows(AT, [], [], [one], baseline)["mutants"].read == 1
-    assert rows(AT, [], [], [one], baseline, tasks=tooled)["mutants"].read == 0
+    assert rows(AT, [], [], [one], baseline)["form mutants"].read == 1
+    assert rows(AT, [], [], [one], baseline, tasks=tooled)["form mutants"].read == 0
     assert (
-        rows(AT, [], [], [one], [verdict(one, Cause.FORM, tooled)], tasks=tooled)["mutants"].read
+        rows(AT, [], [], [one], [verdict(one, Cause.FORM, tooled)], tasks=tooled)[
+            "form mutants"
+        ].read
         == 1
     )
 
@@ -141,10 +150,24 @@ def test_the_mutants_are_a_row_apart_and_split_by_operator():
 
     found = rows(AT, [], [], mutants, verdicts)
 
-    assert (found["mutants"].read, found["mutants"].matched) == (4, 3)
-    assert (found["constant"].read, found["constant"].matched) == (3, 3)
-    assert (found["boundary"].read, found["boundary"].matched) == (1, 0)
+    assert (found["form mutants"].read, found["form mutants"].matched) == (4, 3)
+    assert (found["form mutants/constant"].read, found["form mutants/constant"].matched) == (3, 3)
+    assert (found["form mutants/boundary"].read, found["form mutants/boundary"].matched) == (1, 0)
     assert found["syntax"].read == 0
+
+
+def test_the_slip_mutants_are_a_row_apart_implying_slip():
+    """The form mutants imply `form` alone, so a call always naming it would
+    score well on them."""
+    form = mutant(1, Operator.CONSTANT)
+    slip = mutant(2, Operator.CONSTANT, FailureMode.SYNTAX)
+
+    found = rows(AT, [], [], [form, slip], [verdict(form, Cause.FORM), verdict(slip, Cause.FORM)])
+
+    assert (found["form mutants"].read, found["form mutants"].matched) == (1, 1)
+    assert found["slip mutants"].implied is Cause.SLIP
+    assert (found["slip mutants"].read, found["slip mutants"].matched) == (1, 0)
+    assert found["slip mutants/constant"].read == 1
 
 
 def test_the_form_code_column_reads_no_mutant():
@@ -154,7 +177,7 @@ def test_the_form_code_column_reads_no_mutant():
 
     found = rows(AT, [], [], [one], [verdict(one, Cause.FORM, tooled)], tasks=tooled)
 
-    assert found["mutants"].read == 0
+    assert found["form mutants"].read == 0
 
 
 def test_a_printed_share_carries_its_interval():

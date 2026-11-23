@@ -115,6 +115,26 @@ def test_a_mutant_shows_the_case_it_fails_under_the_tool():
     )
 
 
+def test_a_slip_mutant_is_read_as_an_attempt_on_its_problem():
+    """A slip mutant is a canonical, written for the problem's statement."""
+    one = LabelledMutant(
+        template_id="t1",
+        form_digest="d1",
+        code="return 1\n",
+        line=1,
+        change="0 → 1",
+        operator=Operator.CONSTANT,
+        mode=FailureMode.SYNTAX,
+        case_args=[[2, 5]],
+        case_expected=5,
+        outcome=CaseOutcome.WRONG,
+        returned=2,
+        problem_id="p1",
+    )
+
+    assert tasks().mutant(one).statement == PROBLEM.statement
+
+
 def test_the_form_code_tool_shows_the_target_form_on_an_attempt():
     problem = PROBLEM.model_copy(update={"target_template_id": "t1"})
     shown = replace(tasks(Tool.FORM_CODE), problems={"p1": problem})

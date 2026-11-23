@@ -47,7 +47,7 @@ def scored(
     mutants: Sequence[LabelledMutant],
     mutant_diagnoses: Sequence[MutantDiagnosis],
 ) -> list[Row]:
-    """One row per self-label mode, then the mutants whole and per operator.
+    """One row per self-label mode, then each mutant set whole and per operator.
     A verdict counts where it answers the prompt this tool set would send."""
     mode = {one.attempt_id: one.mode for one in labels}  # in landing order: the latest wins
     cause = {
@@ -74,11 +74,15 @@ def scored(
         and one.template_id in tasks.templates
         and (key := (*_key(one), request_hash(tasks.mutant(one), one.code))) in verdicts
     ]
-    implied = IMPLIED[FailureMode.RUST]
-    rows.append(_row("mutants", implied, {_id(one): found for one, found in read}))
-    for operator in [one for one in Operator if any(m.operator is one for m in mutants)]:
-        named = {_id(one): found for one, found in read if one.operator is operator}
-        rows.append(_row(f"  {operator}", implied, named))
+    sets = (("form mutants", FailureMode.RUST), ("slip mutants", FailureMode.SYNTAX))
+    for title, labelled in sets:
+        mine = [one for one in mutants if one.mode is labelled]
+        ours = [(one, found) for one, found in read if one.mode is labelled]
+        implied = IMPLIED[labelled]
+        rows.append(_row(title, implied, {_id(one): found for one, found in ours}))
+        for operator in [one for one in Operator if any(m.operator is one for m in mine)]:
+            named = {_id(one): found for one, found in ours if one.operator is operator}
+            rows.append(_row(f"  {operator}", implied, named))
     return rows
 
 

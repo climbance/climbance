@@ -164,7 +164,7 @@ def _flaw(
 ) -> dict[str, Any] | None:
     if mutant.span is None or mutant.text is None:
         return None  # a change spanning lines cannot be shown on one
-    view = shown(_spliced(template.code, mutant.span, mutant.text), template.harness)
+    view = shown(spliced(template.code, mutant.span, mutant.text), template.harness)
     before, after = form.splitlines(), view.splitlines()
     if len(before) != len(after) or width(view) > WIDTH:
         return None
@@ -190,7 +190,7 @@ def _flaw(
     return None
 
 
-def _spliced(code: str, span: tuple[int, int, int], text: str) -> str:
+def spliced(code: str, span: tuple[int, int, int], text: str) -> str:
     """The author's code with one node replaced, its formatting kept."""
     number, start, end = span
     lines = code.splitlines(keepends=True)

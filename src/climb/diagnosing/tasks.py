@@ -83,8 +83,10 @@ class Tasks:
             json.dumps(mutant.returned),
             None,
         )
+        # a slip mutant is a canonical, read as an attempt on its problem
+        problem = self.problems.get(mutant.problem_id or "")
         return Task(
-            statement=f"Implement {template.title}.",
+            statement=problem.statement if problem else f"Implement {template.title}.",
             form=named(template),
             failed=failed if Tool.DIVERGENCE in self.tools else None,
         )

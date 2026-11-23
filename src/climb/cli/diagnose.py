@@ -20,15 +20,19 @@ from climb.diagnosing import (
     diagnose_mutants,
     sample,
     scored,
+    slip_mutants,
     unscored,
 )
 from climb.judgements import ItemStore
 from climb.judging import labelled_mutants
+from climb.judging.labelled import LabelledMutant
 from climb.keylines import KeyLineStore
 from climb.log import AttemptLog
 from climb.mutant_diagnoses import MutantDiagnosisLog
 from climb.problems import ProblemStore
+from climb.schema import SolutionRole, TestCase
 from climb.scorer import percent
+from climb.solutions import SolutionLog
 from climb.storage import Database
 
 
@@ -55,8 +59,11 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
         # later runs land later, so the latest stands
         runs={one.attempt_id: one for one in log.verifications(user)},
     )
+    per = None if args.all else args.per_operator
     found = labelled_mutants(ItemStore(root).served(), KeyLineStore(root).served())
-    mutants = sample(found, None if args.all else args.per_operator)
+    mutants = sample(found, per)
+    if args.subject in ("mutants", "score"):
+        mutants += sample(slips(root, base), per)
     columns = [(one, replace(base, tools=chosen)) for one in named for chosen in sets]
     for configuration, tasks in () if stored else columns:
         api = transport(args, parser)
@@ -109,6 +116,18 @@ def diagnose(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
                 for one, tasks in columns
             ],
         )
+
+
+def slips(root: Database, base: Tasks) -> list[LabelledMutant]:
+    """Derived on each read: every one runs a canonical's mutants."""
+    canonicals: dict[str, str] = {}
+    for one in SolutionLog(root).solutions():
+        if one.role is SolutionRole.CANONICAL:
+            canonicals.setdefault(one.problem_id, one.code)  # the first stored
+    cases: dict[str, list[TestCase]] = {}
+    for one in base.cases.values():
+        cases.setdefault(one.problem_id, []).append(one)
+    return slip_mutants(list(base.problems.values()), base.templates, canonicals, cases)
 
 
 def label(tools: frozenset[Tool]) -> str:

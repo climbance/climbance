@@ -133,10 +133,10 @@ flowchart LR
     climb_diagnoser --> climb_calls
     climb_diagnosing --> climb_diagnoser
     climb_diagnosing --> climb_judging
-    climb_diagnosing --> climb_log
     climb_diagnosing --> climb_mutant_diagnoses
     climb_diagnosing --> climb_runs
     climb_diagnosing --> climb_scorer
+    climb_diagnosing --> climb_sitting
     climb_difficulty --> climb_sitting
     climb_feedback --> climb_caps
     climb_feedback --> climb_log

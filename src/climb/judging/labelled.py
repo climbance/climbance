@@ -30,6 +30,8 @@ class LabelledMutant:
     case_expected: Any
     outcome: CaseOutcome
     returned: Any
+    # a slip mutant's problem, whose canonical was mutated; absent on a form's
+    problem_id: str | None = None
 
 
 def labelled_mutants(

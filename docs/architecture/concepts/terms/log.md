@@ -60,6 +60,10 @@ sittings, claims, labels, card runs, recalls and mastery. Every file in
 - **Labelled mutant**: a mutant of a template's form, read from a flawed
   judgement item or a key-line item's wrong choice, labelled `rust` and named
   by its operator. The diagnosis call is scored against the labelled mutants.
+- **Slip mutant**: a canonical of a problem written for a template, with one
+  change on a line outside the template's form, labelled `syntax`. The
+  diagnosis call is scored against the slip mutants as against the labelled
+  mutants.
 - **Self-label**: the user's own verdict on why an attempt went the way it
   did.
 - **Diagnosis**: the machine's verdict on why an attempt failed, naming a
