@@ -12,6 +12,7 @@ type ColdSeated = components['schemas']['ColdSeated'];
 type ColdSubmitted = components['schemas']['ColdSubmitted'];
 type Revealed = components['schemas']['Revealed'];
 type Sitting = components['schemas']['Sitting'];
+type Measured = components['schemas']['Measured'];
 
 /** The engine's reading of a cold sitting, with when the platform received it. */
 export interface ColdRead {
@@ -101,6 +102,13 @@ export function endCold(client: EngineClient, sittingId: string, now: () => numb
       ? { ok: true, value: { sitting: data.sitting, elapsedSec: data.elapsed_sec, at: now() } }
       : { ok: false, refused: described(error) };
   });
+}
+
+// no game leaves Glicko-1's default, which says nothing about the user
+export function ratingLine(measured: Measured | null): string | null {
+  if (!measured || measured.games === 0) return null;
+  const sittings = measured.games === 1 ? '1 sitting' : `${measured.games} sittings`;
+  return `Rating ${Math.round(measured.rating)} ± ${Math.round(measured.deviation)}, from ${sittings}`;
 }
 
 export const COLD_TITLE = 'Cold problem';

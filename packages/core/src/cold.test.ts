@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { coldOutcome, coldVerdict, revealedFacts, secondsLeft, timeLeft, type components } from './index';
+import { coldOutcome, coldVerdict, ratingLine, revealedFacts, secondsLeft, timeLeft, type components } from './index';
 
 type Sitting = components['schemas']['Sitting'];
 type ColdSubmitted = components['schemas']['ColdSubmitted'];
@@ -46,5 +46,19 @@ describe('the reveal', () => {
       revealedFacts({ title: 't', techniques: ['binary-search'], difficulty: 'medium', score: 1609.6 }).difficulty,
     ).toBe('medium 1610');
     expect(revealedFacts({ title: 't', techniques: [], difficulty: 'hard', score: null }).difficulty).toBe('hard');
+  });
+});
+
+describe('the rating line', () => {
+  it('reads nothing before an ended cold sitting', () => {
+    /** A rating from no games is Glicko-1's default and says nothing about the user. */
+    expect(ratingLine({ rating: 1500, deviation: 350, games: 0 })).toBeNull();
+    expect(ratingLine(null)).toBeNull();
+  });
+
+  it('reads the rating, its deviation and the sittings, rounded', () => {
+    /** The board's cold panel reads the replayed rating once a game exists. */
+    expect(ratingLine({ rating: 1579.6, deviation: 210.4, games: 3 })).toBe('Rating 1580 ± 210, from 3 sittings');
+    expect(ratingLine({ rating: 1400, deviation: 290, games: 1 })).toBe('Rating 1400 ± 290, from 1 sitting');
   });
 });

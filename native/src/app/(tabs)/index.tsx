@@ -37,6 +37,7 @@ import {
   type PickTarget,
   COLD_PANEL_NOTE,
   COLD_START,
+  ratingLine,
   COLD_TITLE,
   serveCold,
   sittingRefused,
@@ -305,6 +306,9 @@ function ColdPanel() {
   const { origin, device } = useStore().settings;
   const [serving, setServing] = useState(false);
   const [refused, setRefused] = useState<string | null>(null);
+  // a refused read leaves the line out and the press working
+  const rating = ratingLine(useEngine('/api/rating').data);
+  const theme = useTheme();
 
   async function start() {
     setServing(true);
@@ -327,7 +331,13 @@ function ColdPanel() {
               {COLD_START}
             </Button>
           }
-        />
+        >
+          {rating ? (
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+              {rating}
+            </Text>
+          ) : null}
+        </PickRow>
       </PickPanel>
       {refused ? <ErrorLine>{sittingRefused(refused)}</ErrorLine> : null}
     </>
