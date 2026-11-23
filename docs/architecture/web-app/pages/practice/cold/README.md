@@ -1,7 +1,6 @@
 # A cold sitting
 
-The page at `/cold/:sitting_id`, under Practice. The phone's Cold screen is to
-come, and `../../../../core-package/screens.md` marks it `web only` until then.
+The page at `/cold/:sitting_id`, under Practice, and the phone's Cold screen.
 The page holds one cold sitting, from serving to its end.
 `../../../../api/rating.md` gives the rules this page follows, and the reason
 for each.
@@ -71,6 +70,8 @@ at low fidelity.
 - **The code is read-only, and the verdict stays as the number of the failed
   case.** The engine answers a cold submission with no case's arguments,
   running or ended.
+- **The phone shows the ended sitting's code as text, in the Code tab.** The
+  phone's editor has no read-only mode, and the drill loop never needed one.
 - **The ended page's way back names the board.** A press opening the problem
   in the drill loop is deferred until a user asks to retry a cold problem
   there.

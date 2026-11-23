@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Button, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
@@ -35,6 +35,11 @@ import {
   pickView,
   takePick,
   type PickTarget,
+  COLD_PANEL_NOTE,
+  COLD_START,
+  COLD_TITLE,
+  serveCold,
+  sittingRefused,
 } from '@climb/core';
 import { useStore } from '@/lib/store';
 import { engine } from '@/lib/engine';
@@ -42,7 +47,7 @@ import { getToken } from '@/lib/settings';
 import { useEngine } from '@/lib/useEngine';
 import { AccountMenu } from '@/ui/account';
 import { CardPanel } from '@/ui/cards';
-import { Loaded, styles, ScreenHeader } from '@/ui/common';
+import { ErrorLine, Loaded, styles, ScreenHeader } from '@/ui/common';
 import { ContinueInPanel, ContinueNotice, useContinue } from '@/ui/continue';
 import { FocusCard } from '@/ui/focuscard';
 import { ModuleRow } from '@/ui/modules';
@@ -221,6 +226,7 @@ function BoardBody({
         <PickRow title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} onPress={() => router.push('/judge')} />
         <PickRow title={FILL_TITLE} note={FILL_NOTE} stats={[]} onPress={() => router.push('/fill')} />
       </Panel>
+      <ColdPanel />
       {next.cards.length > 0 ? (
         <>
           <Heading title={BOARD_NEXT} count={next.cards.length + next.more} />
@@ -289,6 +295,41 @@ function BoardBody({
           {foot}
         </Text>
       ) : null}
+    </>
+  );
+}
+
+// one press, serving a cold sitting or returning to the one running: the
+// engine answers a second serve with it, `web-app/pages/practice/cold/`
+function ColdPanel() {
+  const { origin, device } = useStore().settings;
+  const [serving, setServing] = useState(false);
+  const [refused, setRefused] = useState<string | null>(null);
+
+  async function start() {
+    setServing(true);
+    setRefused(null);
+    const served = await serveCold(engine(origin, await getToken()), device, () => performance.now());
+    setServing(false);
+    if (served.ok) router.push({ pathname: '/cold', params: { sitting: served.value.seated.sitting.id } });
+    else setRefused(served.refused);
+  }
+
+  return (
+    <>
+      <PickPanel>
+        <PickRow
+          title={COLD_TITLE}
+          note={COLD_PANEL_NOTE}
+          stats={[]}
+          aside={
+            <Button mode="contained" compact disabled={serving} onPress={() => void start()}>
+              {COLD_START}
+            </Button>
+          }
+        />
+      </PickPanel>
+      {refused ? <ErrorLine>{sittingRefused(refused)}</ErrorLine> : null}
     </>
   );
 }

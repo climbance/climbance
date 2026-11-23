@@ -46,6 +46,7 @@ PHONE = {
     "(tabs)/knowledge.tsx": "The knowledge home",
     "technique.tsx": "A technique's problems and cards",
     "problem.tsx": "A picked problem's record and statement",
+    "cold.tsx": "A cold sitting, running and ended",
     "card.tsx": "A card's trigger, brief and templates",
     "module.tsx": "A module",
     "quiz.tsx": "A queue",

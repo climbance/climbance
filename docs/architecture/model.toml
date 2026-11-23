@@ -1375,10 +1375,11 @@ id = "native-sitting"
 kind = "component"
 container = "native-app"
 name = "Phone sitting"
-role = "A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request."
+role = "A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request; and a cold sitting's screen."
 doc = "web-app/pages/problems/problem/README.md"
 src = [
     "native/src/app/problem.tsx",
+    "native/src/app/cold.tsx",
     "native/src/ui/claim.tsx",
     "native/src/ui/pause.tsx",
     "native/src/ui/report.tsx",

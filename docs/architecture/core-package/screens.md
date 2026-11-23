@@ -36,7 +36,7 @@ inventory is the list both clients build to. A page's own file under
 | The problem listing | `/problems` | the Problems tab | same |
 | A picked problem's record and statement | `/problems/:problem_id` | Problem | same |
 | A sitting | `/problems/:problem_id` | Problem, its Code tab | by platform |
-| A cold sitting, running and ended | `/cold/:sitting_id` | none | web only |
+| A cold sitting, running and ended | `/cold/:sitting_id` | Cold | same |
 | The cards | `/cards` | the Cards tab | same |
 | A card's trigger, brief and templates | `/cards/:slug` | Card | same |
 | A card's ladder and probes | `/cards/:slug` | Card | same |
@@ -95,8 +95,8 @@ inventory is the list both clients build to. A page's own file under
 | Type a `short` reply | the browser's keyboard | the app's keyboard | by platform |
 | Read the sync's state, and sync now | the settings page | Settings, and Home's footer | same |
 | Sign out, naming unsent records | the account menu and the settings page | the account menu and Settings | same |
-| Start a cold sitting, or return to the one running | the board's cold panel | none | web only |
-| End a cold sitting before it is solved, confirmed | a dialog from End | none | web only |
+| Start a cold sitting, or return to the one running | the board's cold panel | the Practice tab's cold panel | same |
+| End a cold sitting before it is solved, confirmed | a dialog from End | a sheet from End | same |
 | Ask for a problem's retirement | a dialog from under the statement | a sheet from under the statement | same |
 | Send feedback | a dialog from the settings page and the error screen | a sheet from Settings and the error screen | same |
 | Revoke a signed-in device | the signed-in devices | the signed-in devices | same |
@@ -127,9 +127,6 @@ inventory is the list both clients build to. A page's own file under
   the browser, since the choice is about the screen rather than the account.
 - **The device name and the reminder hour are phone only.** Each one is
   about one phone.
-- **A cold sitting is web only until the phone's Cold screen is built.** The
-  phone's task follows the web's, and reads the same rules from
-  `packages/core`.
 - **The gallery is web only.** It is a tool for whoever styles the web.
 - **The author pages are web only.** The author reads them at a desk, beside
   the terminal the commands that act on them run in.

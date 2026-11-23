@@ -125,7 +125,7 @@ flowchart TB
         native_editor["Phone editor<br/>The CodeMirror page in its WebView, and the app's own keyboard typing into it."]
         native_practice["Phone practice screens<br/>The Practice tab, a technique's problems, the guide and the Problems tab."]
         native_cards["Phone card screens<br/>The Cards tab, a card, a recall, and the judging and key-line exercises."]
-        native_sitting["Phone sitting<br/>A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request."]
+        native_sitting["Phone sitting<br/>A picked problem's screen: the statement and the Code tab, the clock, the claim and the retirement request; and a cold sitting's screen."]
         native_knowledge["Phone knowledge screens<br/>The Knowledge tab, a module, a subtopic, the quiz screen, an exam, the lessons and the certifications."]
         native_knowledge_store["Phone knowledge store<br/>Keeps the phone's copy of the content and the user's log in SQLite, and syncs it in the background."]
     end
