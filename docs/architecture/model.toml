@@ -1079,12 +1079,13 @@ id = "core-account"
 kind = "component"
 container = "core-package"
 name = "Account"
-role = "Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy."
+role = "Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy and the terms of use."
 doc = "web-app/pages/settings/README.md"
 src = [
     "packages/core/src/account.*",
     "packages/core/src/feedback.*",
     "packages/core/src/privacy.*",
+    "packages/core/src/terms.*",
 ]
 
 [[element]]
@@ -1121,6 +1122,7 @@ src = [
     "web/src/pages/SettingsPage.tsx",
     "web/src/pages/LoginPage.tsx",
     "web/src/pages/PrivacyPage.tsx",
+    "web/src/pages/TermsPage.tsx",
     "web/src/pages/NotFoundPage.tsx",
     "web/src/lib/theme.ts",
     "web/src/lib/reported.ts",
@@ -1309,6 +1311,7 @@ src = [
     "native/src/app/devices.tsx",
     "native/src/app/settings.tsx",
     "native/src/app/privacy.tsx",
+    "native/src/app/terms.tsx",
     "native/src/ui/account.tsx",
     "native/src/ui/signout.tsx",
     "native/src/ui/broke.tsx",

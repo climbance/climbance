@@ -62,5 +62,6 @@ export * from './guide';
 export * from './baseline';
 export * from './delayed';
 export * from './privacy';
+export * from './terms';
 export * from './filling';
 export * from './judging';

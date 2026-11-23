@@ -136,6 +136,7 @@ flowchart LR
         core_syncstate["syncstate"]
         core_table["table"]
         core_target["target"]
+        core_terms["terms"]
         core_types["types"]
         core_words["words"]
     end
@@ -228,6 +229,7 @@ flowchart LR
     core_sync --> core_records
     core_sync --> core_synced
     core_target --> core_forecast
+    core_terms --> core_privacy
     core_types --> core_certs
     core_types --> core_diagram
     core_types --> core_graph

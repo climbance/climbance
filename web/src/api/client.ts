@@ -5,6 +5,8 @@ export const LOGIN = '/login'
 // sends no request, so a person with no account reads it; Google's consent
 // screen links here
 export const PRIVACY = '/privacy'
+// beside the privacy policy, and as open
+export const TERMS = '/terms'
 
 // relative: the page and the API share one origin, and the session is a cookie.
 // A request with no session sends the browser to the login, by a full load

@@ -106,6 +106,7 @@ Author        the product, the generation, the workflow, on the web alone
 | `/settings` | reads the account, sets the daily limit and the exam size, syncs, restores an archived module, sends feedback, exports the record and deletes the account | none | [`settings`](pages/settings/README.md) |
 | `/login` | signs in | none | [`login`](pages/login/README.md) |
 | `/privacy` | reads the privacy policy | none | [`privacy`](pages/privacy/README.md) |
+| `/terms` | reads the terms of use | none | [`terms`](pages/terms/README.md) |
 | any other path | reads that no page is there | none | [`not-found`](pages/not-found/README.md) |
 | `/gallery` | reads the design system, in development alone | none | [`gallery`](pages/gallery/README.md) |
 | `/author` | opens an author page, with the author role alone | none | [`author`](pages/author/README.md) |

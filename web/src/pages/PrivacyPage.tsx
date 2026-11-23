@@ -1,4 +1,4 @@
-import { privacyPolicy, privacyUpdated, BACK_SIGN_IN } from '@climb/core'
+import { privacyPolicy, lastUpdated, BACK_SIGN_IN } from '@climb/core'
 
 import { LOGIN } from '@/api/client'
 import { Markdown } from '@/components/Markdown'
@@ -14,7 +14,7 @@ export function PrivacyPage() {
       <PageHeader
         back={{ to: LOGIN, label: BACK_SIGN_IN }}
         title={POLICY.title}
-        note={POLICY.updated && privacyUpdated(POLICY.updated)}
+        note={POLICY.updated && lastUpdated(POLICY.updated)}
       />
       <Markdown>{POLICY.body}</Markdown>
     </article>

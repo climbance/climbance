@@ -2,7 +2,7 @@ import { ScrollView, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { privacyPolicy, privacyUpdated } from '@climb/core';
+import { privacyPolicy, lastUpdated } from '@climb/core';
 import { styles, ScreenHeader } from '@/ui/common';
 import { Markdown } from '@/ui/markdown';
 
@@ -18,7 +18,7 @@ export default function PrivacyScreen() {
       <ScrollView contentContainerStyle={[styles.page, { paddingBottom: insets.bottom + 24 }]}>
         {POLICY.updated ? (
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-            {privacyUpdated(POLICY.updated)}
+            {lastUpdated(POLICY.updated)}
           </Text>
         ) : null}
         <Markdown>{POLICY.body}</Markdown>

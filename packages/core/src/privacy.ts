@@ -165,16 +165,17 @@ This page changes when what the app stores changes, and the date at the top
 says when it last changed.
 `;
 
-export interface PrivacyPolicy {
+// a served legal text: the privacy policy, and the terms of use beside it
+export interface ServedDocument {
   title: string;
   updated: string | null;
   // the prose, with the title and the date taken off: both read in the header
   body: string;
 }
 
-export function privacyPolicy(text: string = POLICY): PrivacyPolicy {
+export function readDocument(text: string, fallbackTitle: string): ServedDocument {
   return {
-    title: /^#\s+(.+)$/m.exec(text)?.[1] ?? 'Privacy policy',
+    title: /^#\s+(.+)$/m.exec(text)?.[1] ?? fallbackTitle,
     updated: /^Last updated:\s*(.+)$/m.exec(text)?.[1] ?? null,
     body: text
       .replace(/^#\s+.+$/m, '')
@@ -183,4 +184,6 @@ export function privacyPolicy(text: string = POLICY): PrivacyPolicy {
   };
 }
 
-export const privacyUpdated = (updated: string) => `Last updated ${updated}`;
+export const privacyPolicy = (text: string = POLICY): ServedDocument => readDocument(text, 'Privacy policy');
+
+export const lastUpdated = (updated: string) => `Last updated ${updated}`;

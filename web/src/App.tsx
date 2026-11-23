@@ -2,7 +2,7 @@ import { Fragment, lazy, Suspense } from 'react'
 import { Route, Routes, useMatch } from 'react-router'
 
 import { LOADING } from '@climb/core'
-import { LOGIN, PRIVACY } from '@/api/client'
+import { LOGIN, PRIVACY, TERMS } from '@/api/client'
 import { Broke } from '@/components/Broke'
 import { NavMenu } from '@/components/NavMenu'
 import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
@@ -51,6 +51,7 @@ const AuthorQuestionsPage = lazy(() =>
 const PrivacyPage = lazy(() =>
   import('@/pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage })),
 )
+const TermsPage = lazy(() => import('@/pages/TermsPage').then((m) => ({ default: m.TermsPage })))
 // the ternary folds in a production build, so the gallery and every example it
 // renders leave the bundle
 const GalleryPage = import.meta.env.DEV
@@ -63,17 +64,18 @@ function App() {
   const sitting = useMatch('/problems/:problemId') !== null
   const cold = useMatch('/cold/:sittingId') !== null
   const wide = sitting || cold
-  // nothing in the menu is reachable before signing in, and both pages open
-  // without a session
+  // nothing in the menu is reachable before signing in, and the three pages
+  // open without a session
   const signingIn = useMatch(LOGIN) !== null
   const readingPolicy = useMatch(PRIVACY) !== null
+  const readingTerms = useMatch(TERMS) !== null
 
-  // the copy is kept for a session alone: both pages open without one
-  const Session = signingIn || readingPolicy ? Fragment : KnowledgeProvider
+  // the copy is kept for a session alone: the three pages open without one
+  const Session = signingIn || readingPolicy || readingTerms ? Fragment : KnowledgeProvider
 
   return (
     <Session>
-      {!signingIn && !readingPolicy && <NavMenu wide={wide} />}
+      {!signingIn && !readingPolicy && !readingTerms && <NavMenu wide={wide} />}
       <main className={cn('mx-auto p-gutter', wide ? 'max-w-wide' : 'max-w-reading')}>
         <Broke>
           <Suspense fallback={<p className="text-meta text-muted-foreground">{LOADING}</p>}>
@@ -110,6 +112,7 @@ function App() {
               <Route path="author/questions" element={<AuthorQuestionsPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
+              <Route path={TERMS} element={<TermsPage />} />
               {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

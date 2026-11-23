@@ -162,7 +162,7 @@ flowchart TB
         core_sitting["Sitting controller<br/>Drives a sitting: the requests minting it, moving its clock and submitting to it, then the claim and the label."]
         core_recall["Recall trainer<br/>Draws the template a recall reproduces, and offers its hints in order."]
         core_exercises["Exercise screens<br/>Serves the judging and the key-line items one at a time, and reads each answer back."]
-        core_account["Account<br/>Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy."]
+        core_account["Account<br/>Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy and the terms of use."]
         drawing["Code and diagrams<br/>Wraps code to a width, and shapes the tables and the diagrams authored prose holds."]
     end
     web_app -.->|"draws the author pages' labels; draws the board, the guide and the listing; draws the cards and their ladders; reads a page's readings and its sections"| practice_screens

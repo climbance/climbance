@@ -63,6 +63,7 @@ inventory is the list both clients build to. A page's own file under
 | The signed-in devices | a dialog from the account menu | a screen from the account menu | same |
 | The login | `/login` | Login | same |
 | The privacy policy | `/privacy` | Privacy, from Login and Settings | same |
+| The terms of use | `/terms` | Terms | same |
 | The gallery | `/gallery`, in development | none | web only |
 | The author pages | `/author` and the pages under it | none | web only |
 | The error screen | in place of a page that threw | in place of a screen that threw | by platform |
