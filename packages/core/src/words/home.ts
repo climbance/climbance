@@ -52,6 +52,8 @@ export const YOUR_ACCOUNT = 'Your account';
 export const SETTINGS = 'Settings';
 export const SIGNED_IN_DEVICES = 'Signed-in devices';
 export const SIGN_OUT = 'Sign out';
+// shown to a user with the author role alone: `web-app/pages/author/README.md`
+export const AUTHOR_LINK = 'Author pages';
 // the address the provider verified, and the engine's own id where no provider linked one
 export const named = (me: { email: string | null; user_id: string } | undefined) =>
   me === undefined ? 'Signed in' : (me.email ?? me.user_id);

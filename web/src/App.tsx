@@ -7,6 +7,7 @@ import { Broke } from '@/components/Broke'
 import { NavMenu } from '@/components/NavMenu'
 import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
 import { cn } from '@/lib/utils'
+import { AuthorPage } from '@/pages/AuthorPage'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
 import { FillPage } from '@/pages/FillPage'
@@ -91,6 +92,7 @@ function App() {
               <Route path="knowledge/exam" element={<ExamPage />} />
               <Route path="start" element={<GuidePage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="author" element={<AuthorPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
               {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}

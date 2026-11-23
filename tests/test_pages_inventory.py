@@ -31,6 +31,7 @@ WEB = {
     "LOGIN": "The login",
     "PRIVACY": "The privacy policy",
     "gallery": "The gallery",
+    "author": "The author pages",
 }
 # routes that serve no row: the page answering a path nothing else does
 WEB_UNLISTED = {"*"}

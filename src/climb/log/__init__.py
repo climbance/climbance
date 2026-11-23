@@ -2,7 +2,7 @@ from climb.log.apps import app_revoked, app_user_of, exchanged, issued
 from climb.log.devices import DeviceKind, SignedInDevice, device_revoked, signed_in_devices
 from climb.log.feedback import FeedbackLog
 from climb.log.fills import FillLog
-from climb.log.invitations import invitations_held, invite, invited, withdraw
+from climb.log.invitations import authored, invitations_held, invite, invited, withdraw
 from climb.log.judgements import JudgementLog
 from climb.log.latest import latest_by_attempt
 from climb.log.owned import UserLog, account_deleted, erased, whole_log
@@ -14,7 +14,7 @@ from climb.log.runs import CardRunLog
 from climb.log.sessions import LIFETIME, hashed, opened, revoked, user_of
 from climb.log.sittings import SittingStore
 from climb.log.store import AttemptLog
-from climb.log.table import Provider
+from climb.log.table import Provider, Role
 from climb.log.users import email_of, named, signed_in
 
 __all__ = [
@@ -30,6 +30,7 @@ __all__ = [
     "Provider",
     "RecallLog",
     "RetirementRequestLog",
+    "Role",
     "RunFaultLog",
     "SignedInDevice",
     "SittingStore",
@@ -37,6 +38,7 @@ __all__ = [
     "account_deleted",
     "app_revoked",
     "app_user_of",
+    "authored",
     "device_revoked",
     "email_of",
     "erased",

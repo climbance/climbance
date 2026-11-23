@@ -1738,6 +1738,24 @@
           }
         }
       }
+    },
+    "/api/author": {
+      "get": {
+        "summary": "Area",
+        "operationId": "area_api_author_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorArea"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2168,6 +2186,22 @@
         ],
         "title": "AttemptVerification",
         "description": "Private to the user, where a solution's run is product data:\n`api/attempt-log.md`."
+      },
+      "AuthorArea": {
+        "properties": {
+          "pages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pages"
+        ],
+        "title": "AuthorArea"
       },
       "Begin": {
         "properties": {
@@ -4266,12 +4300,17 @@
               }
             ],
             "title": "Email"
+          },
+          "author": {
+            "type": "boolean",
+            "title": "Author"
           }
         },
         "type": "object",
         "required": [
           "user_id",
-          "email"
+          "email",
+          "author"
         ],
         "title": "Me",
         "description": "Who the session signs in as. The engine mints the id, and the address is\nthe provider's, so a user reached by the dev login carries none."

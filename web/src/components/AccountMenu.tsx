@@ -1,8 +1,9 @@
-import { BookOpen, LogOut, Menu, Settings, Smartphone } from 'lucide-react'
+import { BookOpen, ChartColumn, LogOut, Menu, Settings, Smartphone } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
 import {
+  AUTHOR_LINK,
   GUIDE_LINK,
   meLine,
   named,
@@ -68,6 +69,14 @@ export function AccountMenu() {
                   {SETTINGS}
                 </Link>
               </DropdownMenuItem>
+              {me.data?.author && (
+                <DropdownMenuItem asChild>
+                  <Link to="/author">
+                    <ChartColumn />
+                    {AUTHOR_LINK}
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onSelect={() => setApps(true)}>
                 <Smartphone />
                 {SIGNED_IN_DEVICES}

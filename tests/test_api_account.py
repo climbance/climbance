@@ -38,13 +38,13 @@ def test_the_session_says_who_it_signs_in_as(database):
 
     me = browsing(database, user_id).get("/api/me").json()
 
-    assert me == {"user_id": user_id, "email": "solver@example.com"}
+    assert me == {"user_id": user_id, "email": "solver@example.com", "author": False}
 
 
 def test_a_user_no_provider_linked_carries_no_address(database):
     me = browsing(database, USER).get("/api/me").json()
 
-    assert me == {"user_id": USER, "email": None}
+    assert me == {"user_id": USER, "email": None, "author": False}
 
 
 def test_who_the_session_signs_in_as_needs_a_session(database):

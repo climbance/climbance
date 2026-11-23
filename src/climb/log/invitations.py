@@ -1,19 +1,21 @@
-"""The emails allowed to sign in, matched lowercased as an identity's are."""
+"""The emails allowed to sign in, matched lowercased as an identity's are, and
+the role each one lets its user reach."""
 
 from sqlalchemy import delete, func, select
 from sqlalchemy.dialects.postgresql import insert
 
-from climb.log.table import invitations
+from climb.log.table import Role, identities, invitations
 from climb.storage import Database
 
 
-def invite(root: Database, email: str) -> None:
-    """Lets the email sign in. Inviting it again changes nothing."""
+def invite(root: Database, email: str, role: Role = Role.LEARNER) -> None:
+    """Lets the email sign in with the role. Inviting it again sets the role."""
+    statement = insert(invitations).values(email=email.lower(), created_at=func.now(), role=role)
     with root.begin() as conn:
         conn.execute(
-            insert(invitations)
-            .values(email=email.lower(), created_at=func.now())
-            .on_conflict_do_nothing()
+            statement.on_conflict_do_update(
+                index_elements=[invitations.c.email], set_={"role": statement.excluded.role}
+            )
         )
 
 
@@ -30,7 +32,19 @@ def invited(root: Database, email: str) -> bool:
         return conn.execute(query).first() is not None
 
 
-def invitations_held(root: Database) -> list[str]:
-    query = select(invitations.c.email).order_by(invitations.c.email)
+def invitations_held(root: Database) -> list[tuple[str, Role]]:
+    query = select(invitations.c.email, invitations.c.role).order_by(invitations.c.email)
     with root.connect() as conn:
-        return list(conn.execute(query).scalars())
+        return [(email, role) for email, role in conn.execute(query)]
+
+
+def authored(root: Database, user_id: str) -> bool:
+    """Whether an email of the user's identities holds an author invitation."""
+    query = (
+        select(identities.c.user_id)
+        .join(invitations, invitations.c.email == identities.c.email)
+        .where(identities.c.user_id == user_id, invitations.c.role == Role.AUTHOR)
+        .limit(1)
+    )
+    with root.connect() as conn:
+        return conn.execute(query).first() is not None

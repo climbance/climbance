@@ -64,6 +64,14 @@ identities = Table(
     CheckConstraint("email = lower(email) AND email <> ''", name="email_lowercased"),
 )
 
+
+class Role(StrEnum):
+    """What an invitation lets its user reach: `api/sign-in.md`."""
+
+    LEARNER = "learner"
+    AUTHOR = "author"
+
+
 # an email allowed to sign in, whichever provider verified it. Sign-in is by
 # invitation alone: `api/sign-in.md`
 invitations = Table(
@@ -71,6 +79,7 @@ invitations = Table(
     metadata,
     Column("email", Text, primary_key=True),
     Column("created_at", timestamp(), nullable=False),
+    Column("role", enumerated(Role), nullable=False, server_default=Role.LEARNER.value),
     CheckConstraint("email = lower(email) AND email <> ''", name="email_lowercased"),
 )
 

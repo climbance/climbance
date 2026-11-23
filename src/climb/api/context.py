@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 
-from climb.log import app_user_of, user_of
+from climb.log import app_user_of, authored, user_of
 from climb.storage import Database
 
 # the cookie a signed-in browser carries its session's token in
@@ -37,3 +37,15 @@ def _user_id(request: Request, root: Root) -> str:
 
 
 UserId = Annotated[str, Depends(_user_id)]
+
+
+def author(request: Request, root: Database, user_id: str) -> bool:
+    # the dev login answers on loopback alone, and refuses to start beside a
+    # provider, so its user is the local engine's author
+    return user_id == request.app.state.dev_user or authored(root, user_id)
+
+
+def author_id(request: Request, root: Root, user_id: UserId) -> str:
+    if not author(request, root, user_id):
+        raise HTTPException(403, "the author pages need the author role")
+    return user_id

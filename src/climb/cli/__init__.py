@@ -337,8 +337,12 @@ def main() -> None:
 
     invite_parser = command(sub, "invite", "the emails allowed to sign in")
     invite_action = invite_parser.add_subparsers(dest="action", required=True)
-    for name, help in (("add", "let the email sign in"), ("remove", "stop the email signing in")):
-        invite_action.add_parser(name, help=help).add_argument("email")
+    invite_add = invite_action.add_parser("add", help="let the email sign in, or set its role")
+    invite_add.add_argument("email")
+    invite_add.add_argument(
+        "--author", action="store_true", help="let it reach the author pages; a learner otherwise"
+    )
+    invite_action.add_parser("remove", help="stop the email signing in").add_argument("email")
     invite_action.add_parser("list", help="every email invited")
 
     command(sub, "feedback", "every user's feedback, newest first")

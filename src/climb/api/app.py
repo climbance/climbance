@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from climb.api.account import router as account
 from climb.api.apps import router as apps
+from climb.api.author import router as author
 from climb.api.cold import router as cold
 from climb.api.devlogin import router as dev_login_router
 from climb.api.feedback import router as feedback
@@ -60,6 +61,7 @@ def create_app(
     app.include_router(picks, prefix=PREFIX)
     app.include_router(apps, prefix=PREFIX)
     app.include_router(feedback, prefix=PREFIX)
+    app.include_router(author, prefix=PREFIX)
     if sign_in is not None:
         install(app, sign_in, PREFIX)
     if dev_login is not None:

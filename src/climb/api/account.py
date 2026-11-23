@@ -5,7 +5,7 @@ carries."""
 from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel
 
-from climb.api.context import SESSION_COOKIE, Root, UserId, bearer_of
+from climb.api.context import SESSION_COOKIE, Root, UserId, author, bearer_of
 from climb.log import (
     DeviceKind,
     Provider,
@@ -41,11 +41,12 @@ class Me(BaseModel):
 
     user_id: str
     email: str | None
+    author: bool  # whether the author pages answer the user
 
 
 @router.get("/me")
-def me(root: Root, user_id: UserId) -> Me:
-    return Me(user_id=user_id, email=email_of(root, user_id))
+def me(request: Request, root: Root, user_id: UserId) -> Me:
+    return Me(user_id=user_id, email=email_of(root, user_id), author=author(request, root, user_id))
 
 
 @router.delete("/session", status_code=204)
