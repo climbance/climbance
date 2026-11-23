@@ -63,6 +63,7 @@ inventory is the list both clients build to. A page's own file under
 | The login | `/login` | Login | same |
 | The privacy policy | `/privacy` | Privacy, from Login and Settings | same |
 | The gallery | `/gallery`, in development | none | web only |
+| The author pages | `/author` and the pages under it | none | web only |
 | The error screen | in place of a page that threw | in place of a screen that threw | by platform |
 
 ## Acts
@@ -124,6 +125,8 @@ inventory is the list both clients build to. A page's own file under
 - **The device name and the reminder hour are phone only.** Each one is
   about one phone.
 - **The gallery is web only.** It is a tool for whoever styles the web.
+- **The author pages are web only.** The author reads them at a desk, beside
+  the terminal the commands that act on them run in.
 
 ## What the phone reads from the engine
 

@@ -34,6 +34,15 @@ credential handling is the engine's own.
 - **An invitation is added, withdrawn and listed by `climb invite`.** A
   withdrawn invitation stops the next sign-in. The dev login is never gated,
   since it answers on loopback alone.
+- **An invitation carries a `role`, `learner` by default or `author`.** The
+  author pages are open to a user one of whose identities' emails holds an
+  `author` invitation. The role is read from the invitation at each request,
+  so a withdrawn invitation removes it at once.
+  `../web-app/pages/author/README.md` gives the pages and how the role is set.
+- **An author signs in as any user does, and keeps one log.** The author is
+  also a learner, and the eval set and the by-hand passes read the author's
+  own log. A separate account for authoring would split that log from the
+  pages reading it, and would duplicate the sign-in.
 
 ## Sessions
 

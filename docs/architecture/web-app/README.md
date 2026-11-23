@@ -33,6 +33,7 @@ Knowledge     the home
                 the lessons, a lesson
                 the certifications, a certification's conditions
 Account       the guide, the settings, the signed-in devices, the sign-out
+Author        the product, the generation, the workflow, on the web alone
 ```
 
 - **The four sections are the destinations both clients name.** The web
@@ -43,6 +44,9 @@ Account       the guide, the settings, the signed-in devices, the sign-out
   from the account menu, and the phone from its top bar. Account holds the
   guide, the settings, the signed-in devices and the sign-out, since none of
   the four is a place to practise.
+- **The author area sits apart from the sections too, on the web alone.** The
+  account menu opens it for a user with the author role, as
+  `pages/author/README.md` gives.
 - **A section's root is the only page the navigation reaches.** Every other
   page is a step down with one way back. A shortcut from the navigation to a
   page deeper in the tree would give that page two ways in, and the way back
@@ -101,6 +105,10 @@ Account       the guide, the settings, the signed-in devices, the sign-out
 | `/privacy` | reads the privacy policy | none | [`privacy`](pages/privacy/README.md) |
 | any other path | reads that no page is there | none | [`not-found`](pages/not-found/README.md) |
 | `/gallery` | reads the design system, in development alone | none | [`gallery`](pages/gallery/README.md) |
+| `/author` | opens an author page, with the author role alone | none | [`author`](pages/author/README.md) |
+| `/author/product` | reads the learners, the acts per day and the retention | none | [`author/product`](pages/author/product/README.md) |
+| `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | none | [`author/generation`](pages/author/generation/README.md) |
+| `/author/workflow` | reads the by-hand passes, the requests, the feedback, the run faults and the spend | none | [`author/workflow`](pages/author/workflow/README.md) |
 
 ## Paths
 
