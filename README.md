@@ -1,439 +1,269 @@
 # Climbance
 
-AI coaching layer for deliberate practice of algorithmic problem-solving:
-spaced repetition over a technique-mastery model, on a problem corpus the
-engine writes and owns.
+Climbance is a platform for the deliberate practice of algorithmic problem
+solving. It is built for engineers who were once fluent and want their speed,
+their recognition of techniques and their missing knowledge back. It covers
+three kinds of practice as one system:
 
-**The corpus is the target state.** A problem is generated for one form of one
-technique. It carries the test cases that decide it, a canonical solution that
-passed them, and a reference solution that agreed with the canonical on every
-case. The engine then serves the problem, times the sitting and judges the
-submission against those cases. The engine fetches nothing from a platform, so
-every verdict is the engine's own rather than a status string copied from a
-platform.
+- **Learn**: knowledge modules of short questions, reviewed on a spaced
+  schedule.
+- **Drill**: short exercises and templates recalled from memory, sized for a
+  phone.
+- **Solve**: timed sittings on problems, judged by running the code.
 
-Most practice tools schedule *problems*. Climbance models mastery of
-*techniques*. A model reads the techniques a solution used from its code,
-rather than inferring them from a problem's tags. Scheduling will target the
-weakest technique rather than the oldest problem. The spaced repetition is over
-procedural skill rather than facts: built for experienced engineers restoring
-fluency, not beginners learning concepts.
+The engine writes every problem it serves. Each problem carries the test cases
+that decide it, and the engine runs each submission against those cases in a
+sandbox. The engine contacts no external problem platform, so every verdict is
+the engine's own.
 
-The design is in how the log treats what the model said, not in the fact that a
-model is in the loop: every reading is stored with the configuration that
-produced it, scored against user claims, and outranked by the user's own record
-forever.
+The engine runs as a web app and a phone app over one learner model. Access is
+by invitation.
 
-Built and measured: the technique vocabulary, the attribution classifier, cards
-and template matching. Problem generation is built and has written no corpus
-yet. The numbers below were therefore taken on the archived corpus that
-generation replaces, described in
-[The archived corpus](#the-archived-corpus).
+## The method
 
-## Where the model sits
+### Practice targets techniques, not problems
 
-Four places, and nothing is trained anywhere in the engine:
+A **technique** is one entry in a fixed vocabulary of skills, such as
+`monotonic-stack` or `knapsack`. Each technique carries a written criterion for
+when code uses it. Progress, mastery and scheduling are kept per technique,
+since a problem is solved once and a technique is used across hundreds.
 
-- **Generation**: a statement, its test cases and a canonical solution,
-  written together for one form, then three more calls that test what the
-  first call wrote. [How a problem gets written](#how-a-problem-gets-written)
-  gives the shape.
-- **Attribution**: a prompted classifier reads the *solution* and names the
-  techniques it used, choosing among the problem's own candidates. No training
-  data exists for that label. Public corpora tag problems, not solutions, so a
-  trained model would predict the fallback it is meant to improve on. The same
-  reader, given the whole vocabulary instead, reads each canonical the engine
-  wrote, and a problem's own techniques are folded from those claims.
-- **Template matching**: which of a card's forms a *solution* displays, read
-  from the code with the statement beside it for what the code leaves implicit.
-  A technique says what a problem is *about*, not which form solves it, so the
-  verdict is keyed to the solution rather than to the problem.
-- **Card authoring**: a skill turns notes into structured cards. Every code
-  template is checked against a brute force before it lands.
+A **card** is the study material for one technique:
 
-And three rules on top of them:
+- **Trigger**: when to reach for the technique.
+- **Brief**: what to read before solving.
+- **Templates**: the forms of the technique, each reproduced from memory.
+- **Selector**: the technique and the filters the card's problems are drawn
+  by.
 
-- **The user's record stands over the machine's**, whichever was written later.
-  A machine reading of an attempt the user already claimed is kept and scored,
-  never promoted.
-- **Every reading is identified by its configuration**: model, effort, the
-  endpoint it was pinned to, the temperature, the hash of the exact prompt
-  that attempt was sent, and the call that sent it. Two configurations are
-  compared over the attempts *both* read, never each over its own.
-- **Machine records are greedy, and the noise floor is measured.** Repeating a
-  configuration flips 0.5–2.2% of decisions. A one- or two-attempt gap between
-  models is therefore unreadable, and is not read.
+A card names no problem. Its **ladder** of problems is derived from the
+selector and from which templates each stored solution displays. Every core
+template gets a rung, so the ladder exercises every form the card teaches. A
+core template no solution displays is reported as a gap.
 
-Models are reached through [OpenRouter](https://openrouter.ai) as the single
-transport. Every provider is reached in one chat-completions shape. A
-schema-enforcing endpoint is required rather than optional. Fallbacks are off,
-so a model id resolves to one backend, and the serving provider is recorded on
-the call. Adding a model is a string. Adding a provider is a base URL.
+Cards form a directed acyclic graph. A card requires another card when one of
+its templates builds on a form the other card teaches. A card stays locked
+until each card it requires is met.
 
-## What it looks like
+### Mastery has three parts
 
-Per-technique progress over the archived corpus of 1,785 attempts. The board
-stores nothing: every column is computed from the append-only log on read.
+The engine computes each technique's mastery from the user's log on every read
+and stores none of it. Mastery has three parts, kept apart because each one
+calls for a different kind of practice:
 
-```
-$ climb board
+- **Recognition**: seeing that a problem needs the technique when nobody named
+  it. A user weak here gets recognition drills.
+- **Execution**: writing a correct solution once the technique is known. A user
+  weak here gets the card's ladder and the recall trainer.
+- **Knowledge**: recalling the facts the technique rests on. A user weak here
+  gets the module's questions.
 
-technique             attempts  solved   last               labels
-backtracking          144       110/144  2026-07-22 (28d)
-binary-search         198       105/198  2026-07-19 (31d)
-binary-search-tree    45        28/45    2025-10-10 (312d)
-dynamic-programming   367       226/367  2026-07-28 (22d)
-greedy                80        42/80    2026-06-30 (50d)
-monotonic-stack       83        47/83    2026-07-28 (22d)
-shortest-path         18        12/18    2026-06-24 (56d)
-string-matching       8         6/8      2025-01-16 (580d)
-...
-101 attempts grouped nowhere — no technique resolved
-```
+Execution is read as an **ability** on the contest scale, the rating scale of
+public programming contests. From the ability and a problem's difficulty score,
+the engine reads the user's chance to solve that problem.
 
-Several classifiers at once against the hand-claimed eval set, scored over the
-attempts all of them read, with every divergence printed rather than averaged
-away.
+### Reviews are scheduled per template
 
-```
-$ climb score --stored --model openai/gpt-oss-120b ... --model moonshotai/kimi-k3 ...
+The unit of recall is the template, not the card. A card's forms are learned
+and forgotten separately, and a card-level number would average them together.
 
-61 of 62 hand-claimed attempts read by all
+FSRS, a spaced-repetition scheduler, replays each template's reviews into its
+recall probability. A recall attempt is a review, and so is a sitting on a
+problem written for the template. The board serves one **pick**, the next act
+the schedule names:
 
-                    gpt-oss-120b     gemma-4-31b-it   glm-5.2          kimi-k3
-exact               55/61 (90%)      60/61 (98%)      57/61 (93%)      59/61 (97%)
-per decision        167/173 (96.5%)  172/173 (99.4%)  169/173 (97.7%)  171/173 (98.8%)
-read/reused         0/62             0/61             0/62             0/61
-named no candidate  0                1                0                1
+- A recall of the template closest to being forgotten.
+- A sitting on an unseen problem written for a template already learned.
+- After a failed sitting, the recall of the form it missed, and then a new
+  problem for that form.
 
-5cf707249a5e427b9322e6b62c067526
-  you:            sorting union-find
-  gpt-oss-120b:   hashing sorting union-find
-  gemma-4-31b-it: sorting union-find
-  glm-5.2:        sorting union-find
-  kimi-k3:        sorting union-find
-```
+Each pick stores what it expected from FSRS and from mastery before the user
+acts. A later formula can therefore be scored against what an earlier formula
+predicted.
 
-## Early evaluation
+### A card moves through states
 
-Measured on the archived corpus, where the attempts carrying code were. The
-reset cost the *set*: every claim keys to a problem the engine no longer holds.
-Everything the set was used to build survives the reset: the criteria the
-classifier reads, the classifier itself, the transport and the call log beneath
-it, the scoring method, and the adjudication procedure. A set rebuilt by hand
-on generated problems is scored the same way.
+A started card is **acquiring** until each required rung is solved. It is then
+**consolidating** until a spaced check passes, a recall of its templates served
+when their recall probability has fallen. A card that passes is **graduated**.
+A graduated card **lapses** when one of its templates is later rated Again.
 
-The eval set is 62 attempts. They were claimed by hand blind, then read by a
-frontier model as a scored configuration. Every divergence was resolved one at
-a time, by editing the criterion or by editing the claim, until the frontier
-disagreed with nothing. That stopping signal makes the set a reference two
-readers reached rather than one reader's consistency.
+Reproducing a form on cue is not recognising it unprompted. Each card run
+therefore assigns **probes**: unseen problems, solved with no card in view.
 
-Classifiers against it, greedy, each pinned to one endpoint. The adjudicator is
-listed first and is not a candidate. Its 100% is construction, since the gold
-is its own labels wherever the hand pass did not overturn them.
+### Knowledge is learned by retrieval
 
-| Classifier | Pinned endpoint | Tokens in→out | $/1M in→out | Exact set match | Per decision | $ per 1k decisions |
-|---|---|---|---|---|---|---|
-| `anthropic/claude-opus-5` *(adjudicator)* | `anthropic` | 1,410 → 77 | 5.00 → 25.00 | 60/60 (100%) | 171/171 (100.0%) | 3.15 |
-| `google/gemma-4-31b-it` | `coreweave/bf16` | 884 → 713 | 0.10 → 0.34 | 59/60 (98%) | 170/171 (99.4%) | 0.12 |
-| `moonshotai/kimi-k3` | `deepinfra/bf16` | 1,006 → 54 | 2.85 → 14.25 | 58/60 (97%) | 169/171 (98.8%) | 1.28 |
-| `z-ai/glm-5.2` | `gmicloud/fp8` | 923 → 186 | 0.74 → 2.33 | 56/60 (93%) | 167/171 (97.7%) | 0.39 |
-| `openai/gpt-oss-120b` | `deepinfra/bf16` | 864 → 406 | 0.04 → 0.17 | 54/60 (90%) | 165/171 (96.5%) | 0.04 |
-| `anthropic/claude-sonnet-5` | `anthropic` | 1,409 → 56 | 2.00 → 10.00 | 51/60 (85%) | 162/171 (94.7%) | 1.19 |
+A knowledge module holds topics and subtopics, each subtopic at four levels from
+Foundation to Expert. Its questions are multiple choice, short answer, or open.
+An open question is graded by the user, who ticks the points of its key they
+recalled. FSRS schedules every question.
 
-Tokens are the measured mean per attempt on this set, from the call log. Prices
-are the pinned endpoint's on OpenRouter, read 2026-08-20. A full pass over the
-62-attempt set costs $0.56 on the adjudicator, $0.02 on `gemma-4-31b-it` and
-$0.006 on `gpt-oss-120b`.
+- **Gating** opens a subtopic's questions at a level once the lower levels and
+  the prerequisite subtopics are done.
+- **Lessons** are short texts read before a group's new questions. A pretest
+  lets a few questions be met before the lesson.
+- **Certifications** cover a topic or a whole module at one level. Each is
+  earned on coverage, on retention over weeks and on an exam.
+- **A baseline test** samples a topic's questions before its first lesson. The
+  same questions come back as a delayed test four weeks or more later. The
+  difference in score is the measured learning gain.
 
-Two results. The second result justifies keeping the table:
+The scheduling rules live in one TypeScript package that both apps import. The
+phone app therefore runs its queues offline and syncs later.
 
-- **`gemma-4-31b-it` lands within 0.6 points of the adjudicator's per-decision
-  agreement at a twenty-sixth of the price.** That result decides which
-  classifier the engine runs.
-- **Size does not order this task.** A mid-tier frontier model places last,
-  nine attempts behind a 31B open one and well outside the noise floor.
-  Reading which technique a solution used is applying written criteria. A
-  model that applies them as written beats one that reasons around them.
+### Short exercises train the parts of a solve
 
-Read honestly, and with the caveats the tool prints:
+- **Judging**: a template's code, clean or carrying one change that fails a
+  case. The user says whether it is correct, then taps the flawed line.
+- **Key line**: a template with one line blanked, and a choice between the
+  form's own line and mutants of it that fail a case.
 
-- **n = 60**, the attempts every configuration in the table read at the current
-  criteria text. The score command computes that denominator rather than
-  letting each model be graded on its own sample. A criteria edit changes the
-  prompt hash of the attempts it reaches, so a reading taken before it is
-  stale, and is re-asked rather than quietly counted.
-- **The endpoint is part of the reading.** A model id resolves to as many
-  builds as there are endpoints serving it, and quantization changes the
-  weights. So a configuration is pinned, and the same model on two endpoints is
-  two columns rather than one mixed key.
-- **Adjacent rows are inside the noise floor.** Repeating one configuration
-  flips 0.5–2.2% of decisions, so a one- or two-attempt difference is not a
-  ranking. The span between the best and the worst candidate is eight attempts,
-  which clears the floor by a wide margin.
-- **Two numbers, because one number would hide a failure mode.** Set equality
-  per attempt catches the classifier that names every candidate. Per-decision
-  agreement credits correctly declining a code, and keeps a per-candidate error
-  from compounding over the candidate count.
-- **The set cannot show a classifier right where the frontier was wrong.** That
-  is the cost of a fixed reference, and it is accepted.
+Each mutant is checked by execution before it is served, so a flawed item is
+known to fail.
 
-For scale, on the calibration set: that pass helped write the criteria, so it
-measures applicability rather than quality. Four sizes of frontier model
-laddered 90/95/98/99% per decision, with the top three within one label of each
-other. The cheap models above land in that upper band on the frozen set, so the
-engine runs them rather than the frontier.
+### Ratings are read from cold sittings
 
-## Where it stands
+A **cold sitting** serves an unseen problem with no title, technique, card or
+difficulty shown, under a time limit and with no pause. Those are the
+conditions a problem's difficulty score assumes. The engine replays the user's
+cold sittings with Glicko-1 into a measured rating and its deviation.
 
-| | |
+A **projected rating** reads every sitting instead, through each technique's
+ability. It predicts the rating the user would reach on a contest made of one
+year of rated public contest problems. Only that contest's aggregate is stored:
+each problem's rating and needed techniques, and no statement.
+
+## How a problem is written
+
+`climb generate` writes a problem for one template across six model calls. Each
+step can reject what the steps before it wrote, and a problem lands only when
+every gate has passed.
+
+1. One call writes the statement, a canonical solution and the first test
+   cases. The canonical must reproduce the outputs that call declared.
+2. A screen rejects a draft reusing the example, the values or the wording of a
+   published problem.
+3. A reference solution is written from the statement alone. The reference
+   computes each case's expected return, and it must agree with the canonical
+   on every case. A reference shown the canonical would inherit its reading of
+   the statement. Written blind, agreement shows the statement has one
+   reading.
+4. A call writes code that builds an input of any size. For a template that is
+   faster than the naive approach, another call writes that naive solution.
+   The engine then searches for the smallest input on which the naive solution
+   runs over the time cap and the canonical does not, and stores it as a case.
+5. Mutants of the canonical, each one semantic change on its syntax tree, run
+   against the cases and then against built inputs. A last call is asked for
+   cases that kill the mutants still surviving. Only a case that killed a
+   mutant is kept.
+
+No model is asked whether the cases are good enough, since a model asked that
+about its own cases says yes. The mutants measure it instead. A draft that
+stops on a missing answer is held and resumes at the first step whose prompt
+or model changed.
+
+After landing, a difficulty judge reads each statement and answers the
+contest rating it expects. A line fitted on external anchor problems corrects
+that answer onto the contest scale. The anchors are never served, and never
+stored with the corpus or in git.
+
+## Where models sit, and the rules over them
+
+Models write problems, read which techniques a solution used, match solutions
+to card templates, judge difficulty and name why a failed solution failed. No
+model is trained or fine-tuned anywhere in the engine.
+
+- **The user's record stands over the machine's**, whichever was written
+  later. A machine reading of an attempt the user already claimed is kept and
+  scored, and never replaces the user's claim.
+- **Every machine record carries its provenance**: the model, the effort, the
+  endpoint it was pinned to, the temperature, the hash of the exact prompt and
+  the call that sent it. A record whose prompt hash differs from the current
+  prompt is stale and is asked again.
+- **Every call is logged whole**, with its prompt, its response, its tokens
+  and its timings. The call log is domain-free, so a new kind of reading
+  reuses it unchanged.
+- **Each reader is scored against a hand-made reference.** The classifier is
+  scored against hand-claimed attempts, the matcher against a hand pass, and
+  the diagnosis call against labelled mutants. Configurations are compared
+  over the items every one of them read.
+
+## Architecture
+
+| Part | What it does |
 |---|---|
-| Technique vocabulary | 27 codes, each with what earns it and the near miss it is confused with |
-| Cards | 9 authored, 45 templates between them |
-| Attribution | 85–98% exact set match across five classifiers (n=60), at $0.04–3.15 per 1k decisions |
-| Store | empty of problems and attempts; generation refills it |
+| API | Python and FastAPI: serves JSON under `/api` and the web app's files, signs users in and records the log |
+| Web app | Vite, React and TypeScript, built to static files |
+| Phone app | React Native for Android and iOS, offline-first for the knowledge queues |
+| Shared core | `packages/core`: the rules and each screen's data, imported by both apps |
+| Broker | Holds the container runtime's socket and admits one run at a time |
+| Sandbox | One container per run under gVisor, with no network and a read-only root |
+| Postgres | The one store: the corpus, the content, every user's log and the call log |
+| Command line | `climb`, run off the server: generation, the hand passes, seeding and invitations |
 
-## The archived corpus
+Sign-in goes through Google or GitHub, and the engine stores no password.
+[`docs/architecture/`](docs/architecture/README.md) holds the design: each
+part's boundary, the records, the invariants and the reasons behind each
+choice. On any difference between the docs and the code, the docs describe the
+target.
 
-Practice used to arrive through a push API: problems and attempts from a
-third-party platform, ingested and read. That corpus is archived under
-`data/old/` and nothing on the run path reads it.
+The invariants the rest depends on:
 
-| | |
-|---|---|
-| Attempts | 1,785, over 117 practice days |
-| Problems | ~4k, each carrying the statement matching reads |
-| User claims | 138 over 100 attempts, the adjudicated eval set |
-| Machine claims | 6,523 attempt claims |
-| Model calls | 7,644, each with its prompt, provenance and timings |
+- **The log is append-only.** A user's attempts, claims, labels and answers
+  are never revised in place. Erasing a user's whole log is a separate act.
+- **Every reference in the log is minted by the engine**, so the log stays
+  readable without anything outside the engine.
+- **Aggregates are derived on read**: the board, a card's ladder and state,
+  mastery and both ratings.
+- **No third-party problem statement or test case is in git**, in any
+  repository.
 
-**Why it went.** A scraped statement cannot ship, so a corpus built from
-scraped statements caps the product at what a single user already solved. The
-corpus also carries no test cases, which is the harder problem. With nothing to
-run a submission against, the engine can only copy a platform's verdict, and an
-attempt on such a problem can never be verified. Generation answers both, so
-the second origin was no longer worth the branch it cost in every record.
+## Your data
 
-**Why it is kept.** For one deferred measurement. A generated problem must not
-give its own form away: if a matcher names the form from the statement alone,
-the problem teaches recognition of nothing. Deciding that needs a baseline rate
-from a corpus no generator wrote, and this archive is the only one there will
-be. "The corpus gated" in the roadmap.
+The code and the record schema are public. Each user's log lives in Postgres
+and is private to that user, who can export it or erase it. The authored cards
+and knowledge modules live under `content/`, a private repository of their own
+that this repository ignores.
 
-## Core loop
+## Running it
 
-```mermaid
-flowchart LR
-  L[("append-only log")] --> B["board<br/>by staleness"]
-  B --> T["pick a technique"] --> P["pick a problem"]
-  P --> S["serve the statement,<br/>time the sitting"]
-  S --> V["run the submission against<br/>the problem's own test cases"]
-  V --> C["claim the techniques used<br/>label why it went that way"]
-  C --> L
-```
-
-The engine serves, times and judges. Everything the loop reads is local to the
-engine: the problem, the test cases that decide it, and the log. The engine
-fetches nothing from an external platform, and no third-party client sits in
-the loop.
-
-The board, the user's claim and the classifier ran daily over the archived
-corpus. Writing the problems is built. Serving one, judging it and asking for
-the label are next, and the loop above is whole then.
-
-## How a problem gets written
-
-The corpus feeding that loop is the engine's own. A problem is written for a
-target: a template naming the exact form, or a technique naming only the skill.
-Four calls write one. No problem lands half-verified, since every step after
-the first can reject what came before it.
-
-```mermaid
-flowchart LR
-  T["a target<br/><i>a template naming the form,<br/>or a technique naming the skill</i>"] --> W
-
-  subgraph W["four calls, each able to reject what came before"]
-    direction LR
-    G["<b>generate</b><br/>the statement, a canonical<br/>and the first test cases"] --> R["<b>reference</b><br/>a second solution, written<br/>from the statement alone"]
-    R --> B["<b>build inputs</b><br/>code that builds one<br/>at any size"]
-    B --> M["<b>harden</b><br/>mutate the canonical, ask for<br/>the cases that kill the survivors"]
-  end
-
-  W --> L(["<b>landed</b><br/><i>the statement, the cases that decide it<br/>and both solutions</i>"])
-  W -.-> X(["<b>rejected</b><br/><i>a gate refused an answer; the gate, the<br/>configuration behind it and the calls are kept</i>"])
-  W ==> H(["<b>held</b><br/><i>a step had no answer; a resume re-pays<br/>only the calls whose prompt or model moved</i>"])
-```
-
-- **The reference is written blind.** Shown the canonical, the reference would
-  inherit that solution's reading of the statement, and agreement would then
-  show only that one model is consistent. Written from the prose alone,
-  agreement is evidence that the prose has one reading. The reference, never
-  the canonical, also computes what each case returns, since a case the
-  canonical produced passes by construction.
-- **No model is asked whether the cases are good enough.** A model asked that
-  about its own cases says yes. So a tree walk enumerates mutants of the
-  canonical instead. Built inputs kill what the cases already catch, and a
-  call is paid only for the survivors. A proposed case that killed nothing
-  does not land.
-- **A step with no answer holds the draft where it stopped.** The calls before
-  it are stored, so a fixed prompt resumes from the step that moved rather than
-  paying for the whole problem again. A rejected draft is kept too: which gate
-  refused which configuration is readable nowhere else.
-
-Each state and every exit is in
-[`docs/architecture/cli/generation/states.md`](docs/architecture/cli/generation/states.md).
-
-**Built so far:** the four calls, the gates between them and the draft store,
-and they have written problems end to end. Not yet measured: the rejection rate
-per gate over a run of ten.
-
-## Cards: how a technique gets studied
-
-The board says which technique is weak. A card says what to do about it. A card
-is one technique's study unit: the trigger that should fire, what to read, the
-forms to reproduce from memory, and a selector the problems to solve are drawn
-by. A card is not an ability estimate and not a problem list.
+Requires Python 3.15, `uv`, Node with npm, `just` and a Postgres server.
 
 ```
-monotonic-stack                                  9 cards authored
-  trigger   next/previous greater element, or a span bounded by a neighbour
-  brief     what to read before solving
-  templates next-greater · accumulate while popping ·
-            stack plus DP over subarrays · histogram rectangle with a sentinel
-  selector  technique=monotonic-stack, difficulty=[medium, hard], size=7
+uv sync
+npm install
+just migrate
+just app
 ```
 
-**A card names no problem.** It carries the selector, and the ladder of
-problems is resolved against whatever corpus the engine holds. So a card ships
-anywhere, and the same card teaches from your backlog or someone else's.
-
-```mermaid
-flowchart LR
-  C["card<br/>templates + selector"] --> M["template matching<br/><i>which solutions display which form</i>"]
-  P["the problem corpus"] --> M
-  M --> L["ladder<br/><i>a rung per core template,<br/>the selector fills the rest</i>"]
-  C --> R["recall<br/><i>per template, blank-filled cold</i>"]
-  P --> PR["probes<br/><i>unseen problems: is the form<br/>recognised unprompted?</i>"]
-```
-
-Why it is shaped this way:
-
-- **The unit of recall is the template, not the card.** A card's forms are
-  learned and lost separately, and a card-level number would average them
-  together and show neither. A hinted pass is recorded as hinted, or a decaying
-  form scores the same as a fluent one.
-- **Coverage is derived, not authored.** The ladder must exercise every core
-  form, and a technique says what a problem is *about*, not which form solves
-  it. So which template a solution displays is read from its code and stored
-  per pair, negatives included, and a rung is filled by the problem that
-  solution answers. A core form no solution displays is a reported gap, never a
-  quietly shorter ladder.
-- **Recall fluency is not solving fluency.** Reproducing a form cold is not
-  recognising it unprompted. A probe, an unseen problem with no card in view,
-  asks the second question. The gap between recall and recognition is exactly
-  the false fluency that blocked practice trains.
-
-## Design
-
-[`docs/architecture/`](docs/architecture/) is the primary design document: the
-concepts, boundaries and invariants, and the reasons behind them.
-[`README.md`](docs/architecture/README.md) is its map.
-
-The records keyed to an attempt, and who may write each:
-
-```mermaid
-flowchart LR
-  U(["user"]) --> SL["SelfLabel<br/><i>why the sitting went that way</i>"]
-  U -->|"stands on read"| TC["AttemptClaim<br/><i>which techniques the solution used</i>"]
-  M(["machine"]) -.->|"kept and scored, never promoted"| TC
-  M --> DG["Diagnosis<br/><i>why it failed, inferred</i>"]
-  SL --- A["Attempt<br/><i>engine-minted id, append-only</i>"]
-  TC --- A
-  DG --- A
-```
-
-The load-bearing invariants:
-
-- **[The log is append-only.](docs/architecture/concepts/invariants.md)** No
-  record is revised or removed in place. Component boundaries can therefore be
-  refactored, and the record schema cannot. The schema is designed a phase
-  ahead of the features on purpose.
-- **[Identity is the engine's.](docs/architecture/concepts/invariants.md)**
-  Every reference in an append-only record is one the engine minted, so the log
-  stays readable on its own.
-- **[The user's record stands over the
-  machine's](docs/architecture/api/attempt-claims.md)** answer to the same
-  question, whichever was written later. The machine's record is kept and
-  scored, never deleted and never promoted.
-- **[Aggregates are derived views](docs/architecture/concepts/invariants.md)**,
-  never stored truth: the board, a card's ladder, mastery.
-- **[No third-party problem statements or test cases in
-  git](docs/architecture/concepts/invariants.md)**, in any repo. The engine
-  contacts no external platform, and no platform client lives here.
-
-If you read one section, read **[technique
-claims](docs/architecture/api/attempt-claims.md)**: what a reading is, why
-it is stored even when it can never stand, and what identifies one. Then
-**[template matches](docs/architecture/cli/matcher.md)**, which
-makes the same argument for a corpus that grows.
-
-## Commands
+`.env` names the database in `DATABASE_URL`. For a local login without a
+sign-in provider, set `CLIMB_DEV_LOGIN=local`. `just app` runs the API and the
+Vite dev server together, and the page is at the address Vite prints.
 
 ```
-uv run climb <command>
+uv run pytest      # the Python suite, integration tests need TEST_DATABASE_URL
+just web-check     # the web app's type check, lint and tests
+just native-test   # the shared core's and the phone app's tests
+uv run climb --help
 ```
 
-| Command | What it does |
-|---|---|
-| `seed` | seed authored cards into the store |
-| `board` | per-technique progress: attempts, solved, recency, labels |
-| `claim attempts` | name the techniques a stored attempt used: the classifier, or the user with `--by-hand` |
-| `claim solutions` | name the techniques each stored canonical used |
-| `match` | which problems exercise a card's templates: the matcher, or the user with `--by-hand` |
-| `problem` | read one stored problem, or list the corpus |
-| `generate` | write problems for one of a card's templates |
-| `score` | the classifier against the user's claims, per technique |
-| `movement` | how far the classifier's claims move the board off the fallback |
+[`CLAUDE.md`](CLAUDE.md) holds the conventions. Enable the git hooks once with
+`git config core.hooksPath .githooks`.
 
 ## Where things are
 
 ```
-src/climb/schema/          the record contracts — the public part
-src/climb/techniques/      the vocabulary: 27 codes, each with its criterion
-src/climb/attempt_claims/  the attribution classifier and its scoring
-src/climb/matches/         which solutions display which card template
-src/climb/calls/           the model transport (OpenRouter) and the call log
-src/climb/board/           the per-technique view, derived on read
-src/climb/generation/      the four calls that write a problem, and its gates
-src/climb/drafts/          one writing, held as it goes
-src/climb/outcomes/        what each call site left on one such writing
-src/climb/mutation/        the mutants a case set has to kill
-src/climb/runner/          running a solution against a problem's cases
-src/climb/{log,cards,problems,cases,solutions,solution_claims,verifications}/
-native/                         the native app: the knowledge modules' queues on a phone
-packages/core/                  the knowledge rules and screen data, shared by the web and the app
-docs/architecture/              concepts, boundaries, invariants, flows
-.claude/skills/card-author/  the skill that authors cards
-content/                     cards and knowledge modules — a private repo of its own
-data/old/                    the archived corpus: calibration, not a store
+src/climb/         the engine: the API, the command line, generation, the log
+packages/core/     the rules and screen data both apps share
+packages/editor/   the code editor setup both apps share
+web/               the web app
+native/            the phone app
+migrations/        the store's migrations
+deploy/            the image's compose file and its proxy
+docs/architecture/ the design
+content/           the authored cards and modules, a private repository
 ```
 
-## Your data stays yours
+## Licence
 
-Attempt logs and solutions live in Postgres, and card content under
-`content/`, which is gitignored. The schema is public. The data is not.
-
-## Development
-
-```
-uv sync
-uv run pytest
-```
-
-Conventions in [`CLAUDE.md`](CLAUDE.md). Git hooks in `.githooks/`, enabled once
-with `git config core.hooksPath .githooks`.
-
-## License
-
-Apache-2.0.
+Apache-2.0, in [`LICENSE`](LICENSE).
