@@ -1,0 +1,47 @@
+{
+  "description": "A concept as the content browser reads it: `cli/seed.md`. Replaced\nwhole on each seed, so it carries no retirement.",
+  "properties": {
+    "claim": {
+      "minLength": 1,
+      "title": "Claim",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "level": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Level",
+      "type": "integer"
+    },
+    "module_id": {
+      "title": "Module Id",
+      "type": "string"
+    },
+    "slug": {
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "title": "Slug",
+      "type": "string"
+    },
+    "source": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "module_id",
+    "slug",
+    "level",
+    "claim",
+    "source"
+  ],
+  "title": "Concept",
+  "type": "object"
+}

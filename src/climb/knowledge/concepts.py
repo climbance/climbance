@@ -5,6 +5,8 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+from climb.schema import Concept
+
 DERIVED = ("lesson", "level", "detail", "misconception_text")
 HEADING = re.compile(r"^##\s+(.+?)\s*$", re.M)
 
@@ -77,6 +79,19 @@ def owner(ref: str, name: str) -> tuple[str, str]:
 
 def texts(concept: dict[str, Any]) -> list[str]:
     return [m["text"] for m in concept["misconceptions"]]
+
+
+def stored(raw: dict[str, Any], *, id: str, module_id: str) -> Concept:
+    return Concept.model_validate(
+        {
+            "id": id,
+            "module_id": module_id,
+            "slug": raw.get("id"),
+            "level": raw.get("level"),
+            "claim": raw.get("claim"),
+            "source": sources(raw),
+        }
+    )
 
 
 def sources(concept: dict[str, Any]) -> list[str]:

@@ -126,6 +126,7 @@ flowchart LR
             card_requirements
             card_templates
             cards
+            concepts
             diagrams
             lessons
             modules
@@ -150,6 +151,7 @@ flowchart LR
     card_templates --> cards
     certification_exams --> modules
     certification_exams --> topics
+    concepts --> modules
     diagnoses --> attempts
     difficulty_draws --> problems
     difficulty_rating_draws --> difficulty_draws
@@ -219,6 +221,7 @@ flowchart LR
 | `card_templates` | Seed | `card_id` → `cards` |
 | `cards` | Seed |  |
 | `certification_exams` | Knowledge log | `module_id` → `modules`, `topic_id` → `topics`, `user_id` → `users` |
+| `concepts` | Seed | `module_id` → `modules` |
 | `diagnoses` | Diagnoser | `attempt_id` → `attempts`, `call_id` → `calls` |
 | `diagrams` | Seed |  |
 | `difficulty_corrections` | Difficulty |  |

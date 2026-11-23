@@ -5,11 +5,12 @@ from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel
-from sqlalchemy import ColumnElement, Connection, Table, insert, select, update
+from sqlalchemy import ColumnElement, Connection, Table, delete, insert, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from climb.ids import new_id
 from climb.knowledge.check import COLUMNS, refusals
+from climb.knowledge.concepts import stored
 from climb.knowledge.diagrams import (
     Drawer,
     DrawError,
@@ -19,8 +20,8 @@ from climb.knowledge.diagrams import (
     undrawn,
 )
 from climb.knowledge.files import ModuleSource
-from climb.knowledge.table import lessons, modules, questions, subtopics, topics
-from climb.schema import Module, Question
+from climb.knowledge.table import concepts, lessons, modules, questions, subtopics, topics
+from climb.schema import Concept, Module, Question
 from climb.storage import Database
 
 
@@ -29,6 +30,7 @@ class ModuleSeedResult(BaseModel):
     subtopics: int = 0
     questions: int = 0
     lessons: int = 0
+    concepts: int = 0
     diagrams: int = 0  # drawn by this seed, the rest drawn before
     retired: int = 0
     refused: list[str] = []
@@ -83,6 +85,8 @@ def seed_module(
         progress("questions", result.questions)
         result.lessons = _lessons(conn, source, module_id, result)
         progress("lessons", result.lessons)
+        result.concepts = _concepts(conn, source, module_id)
+        progress("concepts", result.concepts)
     return result
 
 
@@ -235,6 +239,17 @@ def _lessons(
     return len(authored)
 
 
+def _concepts(conn: Connection, source: ModuleSource, module_id: str) -> int:
+    conn.execute(delete(concepts).where(concepts.c.module_id == module_id))
+    rows = [
+        stored(raw, id=new_id(), module_id=module_id).model_dump()
+        for raw in source.concepts.values()
+    ]
+    if rows:
+        conn.execute(insert(concepts), rows)
+    return len(rows)
+
+
 def _rows(conn: Connection, table: Table, condition: ColumnElement[bool]) -> list[dict[str, Any]]:
     return [dict(row) for row in conn.execute(select(table).where(condition)).mappings()]
 
@@ -289,6 +304,7 @@ def retire_module(slug: str, *, root: Database) -> int:
         found = conn.execute(select(modules.c.id).where(modules.c.slug == slug)).scalar()
         if found is None:
             raise LookupError(f"no module '{slug}'")
+        conn.execute(delete(concepts).where(concepts.c.module_id == found))
         held = select(topics.c.id).where(topics.c.module_id == found)
         subs = select(subtopics.c.id).where(subtopics.c.topic_id.in_(held))
         return sum(
@@ -321,3 +337,15 @@ def seeded_subtopics(*, root: Database) -> set[str]:
     )
     with root.connect() as conn:
         return {"/".join(row) for row in conn.execute(live)}
+
+
+def seeded_concepts(module: str, *, root: Database) -> list[Concept]:
+    """A live module's concepts, by level then slug. None for an unknown one."""
+    live = (
+        select(concepts)
+        .join(modules, concepts.c.module_id == modules.c.id)
+        .where(modules.c.slug == module, modules.c.retired_at.is_(None))
+        .order_by(concepts.c.level, concepts.c.slug)
+    )
+    with root.connect() as conn:
+        return [Concept.model_validate(dict(row)) for row in conn.execute(live).mappings()]

@@ -170,6 +170,18 @@ class Lesson(Seeded):
     needs: list[str] = Field(default_factory=list[str])
 
 
+class Concept(BaseModel):
+    """A concept as the content browser reads it: `cli/seed.md`. Replaced
+    whole on each seed, so it carries no retirement."""
+
+    id: str
+    module_id: str
+    slug: Slug
+    level: int = Field(ge=0, le=3)
+    claim: str = Field(min_length=1)
+    source: list[str] = Field(min_length=1)
+
+
 class Diagram(BaseModel):
     """One Mermaid source drawn to SVG in both schemes, by the drawing tool's
     version: `content-repo/modules.md`."""

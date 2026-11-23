@@ -6,6 +6,7 @@ from commands import connected, run_cli
 from sqlalchemy import event, select
 
 from climb.knowledge import read_module, refusals, retire_module, seed_module, snapshot
+from climb.knowledge.seed import seeded_concepts
 from climb.knowledge.table import lessons, modules, questions, subtopics, topics
 
 COURSE = """\
@@ -244,7 +245,7 @@ def test_the_terminal_prints_each_stage_to_stderr(database, tmp_path, monkeypatc
     run_cli(monkeypatch, "seed", "knowledge", str(authored(tmp_path)))
 
     lines = capsys.readouterr().err.splitlines()
-    assert [line.split()[1] for line in lines] == ["subtopics", "questions", "lessons"]
+    assert [line.split()[1] for line in lines] == ["subtopics", "questions", "lessons", "concepts"]
     assert "seed: questions 3" in lines
 
 
@@ -419,3 +420,68 @@ def test_a_topic_gone_from_the_files_retires_its_subtopics(database, tmp_path):
     stored = {row["slug"]: row for row in rows(database, subtopics)}
     assert stored["more"]["retired_at"] is not None
     assert stored["types"]["retired_at"] is None
+
+
+CONCEPT = """\
+[[concept]]
+id = "{slug}"
+level = 1
+claim = "A list is mutated through its references."
+source = "https://docs.python.org/3/library/stdtypes.html#lists"
+misconceptions = []
+taught_by = "names#binding"
+"""
+
+
+def with_concepts(base: Path, *slugs: str) -> Path:
+    (base / "concepts" / "core").mkdir(parents=True, exist_ok=True)
+    text = "\n".join(CONCEPT.format(slug=slug) for slug in slugs)
+    (base / "concepts" / "core" / "types.toml").write_text(text)
+    return base
+
+
+def test_the_seed_stores_each_concept(database, tmp_path):
+    seed_module(read_module(with_concepts(authored(tmp_path), "list-mutable")), root=database)
+
+    [concept] = seeded_concepts("python", root=database)
+    assert (concept.slug, concept.level, concept.source) == (
+        "list-mutable",
+        1,
+        ["https://docs.python.org/3/library/stdtypes.html#lists"],
+    )
+
+
+def test_a_re_seed_replaces_a_module_s_concepts_whole(database, tmp_path):
+    """A concept gone from the files is deleted: no log record names one."""
+    base = with_concepts(authored(tmp_path), "list-mutable", "tuple-fixed")
+    seed_module(read_module(base), root=database)
+
+    seed_module(read_module(with_concepts(base, "tuple-fixed")), root=database)
+
+    assert [c.slug for c in seeded_concepts("python", root=database)] == ["tuple-fixed"]
+
+
+def test_a_concept_without_its_claim_is_refused(tmp_path):
+    base = with_concepts(authored(tmp_path), "list-mutable")
+    path = base / "concepts" / "core" / "types.toml"
+    lines = path.read_text().splitlines(keepends=True)
+    path.write_text("".join(line for line in lines if not line.startswith("claim")))
+
+    assert refusals(read_module(base)) == [
+        "concept list-mutable: claim: Input should be a valid string"
+    ]
+
+
+def test_the_snapshot_carries_no_concept(database, tmp_path):
+    """The concepts are the author's; a phone would download every claim."""
+    seed_module(read_module(with_concepts(authored(tmp_path), "list-mutable")), root=database)
+
+    assert "A list is mutated through its references." not in json.dumps(snapshot(database))
+
+
+def test_a_retired_module_serves_no_concept(database, tmp_path):
+    seed_module(read_module(with_concepts(authored(tmp_path), "list-mutable")), root=database)
+
+    retire_module("python", root=database)
+
+    assert seeded_concepts("python", root=database) == []

@@ -113,6 +113,22 @@ lessons = Table(
     CheckConstraint("minutes >= 1", name="minutes_counted"),
 )
 
+# no log record references a concept, so a re-seed replaces a module's whole
+concepts = Table(
+    "concepts",
+    metadata,
+    Column("id", Text, primary_key=True),
+    Column("module_id", Text, ForeignKey("modules.id"), nullable=False),
+    Column("slug", Text, nullable=False),
+    Column("level", Integer, nullable=False),
+    Column("claim", Text, nullable=False),
+    Column("source", ARRAY(Text), nullable=False),
+    UniqueConstraint("module_id", "slug"),
+    CheckConstraint(f"slug ~ {SLUG}", name="slug_spelled"),
+    CheckConstraint(f"level {LEVEL}", name="level_in_range"),
+    CheckConstraint("claim <> ''", name="claim_written"),
+)
+
 
 # a drawing per Mermaid source, redrawn when the tool's version moves; no log
 # record references one: `content-repo/modules.md`

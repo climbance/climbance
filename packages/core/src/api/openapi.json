@@ -1828,6 +1828,45 @@
           }
         }
       }
+    },
+    "/api/author/concepts": {
+      "get": {
+        "summary": "Concepts",
+        "operationId": "concepts_api_author_concepts_get",
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Module"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorConcepts"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2274,6 +2313,22 @@
           "pages"
         ],
         "title": "AuthorArea"
+      },
+      "AuthorConcepts": {
+        "properties": {
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/Concept"
+            },
+            "type": "array",
+            "title": "Concepts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concepts"
+        ],
+        "title": "AuthorConcepts"
       },
       "Begin": {
         "properties": {
@@ -3265,6 +3320,53 @@
           "failure"
         ],
         "title": "ColdSubmitted"
+      },
+      "Concept": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "module_id": {
+            "type": "string",
+            "title": "Module Id"
+          },
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "title": "Slug"
+          },
+          "level": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Level"
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Claim"
+          },
+          "source": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "module_id",
+          "slug",
+          "level",
+          "claim",
+          "source"
+        ],
+        "title": "Concept",
+        "description": "A concept as the content browser reads it: `cli/seed.md`. Replaced\nwhole on each seed, so it carries no retirement."
       },
       "Confidence": {
         "type": "string",

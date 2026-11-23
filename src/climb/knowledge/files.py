@@ -22,6 +22,7 @@ class ModuleSource(BaseModel):
     graph: dict[str, Any] | None
     certifications: dict[str, Any] | None
     lesson_texts: dict[str, str]  # lesson slug to its Markdown, for the files found
+    concepts: dict[str, dict[str, Any]]  # by slug, as authored
     # what reading alone could already tell is wrong: a bank the course does
     # not list, a file that does not parse, a lesson whose file is missing
     unread: list[str]
@@ -62,6 +63,7 @@ def read_module(base: Path) -> ModuleSource:
         graph=graph,
         certifications=_optional(base / "certs.toml"),
         lesson_texts=texts,
+        concepts=concepts,
         unread=unread,
     )
 

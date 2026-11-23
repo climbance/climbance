@@ -38,6 +38,7 @@ from climb.keylines.table import key_line_choices, key_line_items
 from climb.knowledge.table import (
     answers,
     certification_exams,
+    concepts,
     diagrams,
     focuses,
     lesson_marks,
@@ -97,6 +98,7 @@ from climb.schema import (
     CaseResult,
     CertificationExam,
     ClaimSource,
+    Concept,
     Diagnosis,
     Diagram,
     DifficultyCorrection,
@@ -242,6 +244,7 @@ STORED: list[Stored] = [
     Stored(Subtopic, subtopics),
     Stored(Question, questions),
     Stored(Lesson, lessons),
+    Stored(Concept, concepts),
     Stored(Diagram, diagrams),
     Stored(Answer, answers),
     Stored(Stint, stints),

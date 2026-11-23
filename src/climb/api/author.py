@@ -14,8 +14,10 @@ from climb.api.product_figures import ProductFigures, product_figures
 from climb.api.workflow_figures import WorkflowFigures, workflow_figures
 from climb.cards import CardStore
 from climb.drafts import DraftStore
+from climb.knowledge.seed import seeded_concepts
 from climb.matches import MatchLog
 from climb.outcomes import OutcomeLog
+from climb.schema import Concept
 from climb.solution_claims import load_problems
 from climb.solutions import SolutionLog
 
@@ -27,6 +29,10 @@ PAGES: list[str] = ["product", "generation", "workflow"]
 
 class AuthorArea(BaseModel):
     pages: list[str]
+
+
+class AuthorConcepts(BaseModel):
+    concepts: list[Concept]
 
 
 @router.get("")
@@ -55,3 +61,8 @@ def generation(root: Root) -> GenerationFigures:
 @router.get("/workflow")
 def workflow(root: Root, user_id: Annotated[str, Depends(author_id)]) -> WorkflowFigures:
     return workflow_figures(root, user_id, now=datetime.now(UTC))
+
+
+@router.get("/concepts")
+def concepts(root: Root, module: str) -> AuthorConcepts:
+    return AuthorConcepts(concepts=seeded_concepts(module, root=root))

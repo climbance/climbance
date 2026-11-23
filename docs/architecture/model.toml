@@ -798,7 +798,7 @@ src = [
     "src/climb/schema/seed.py",
 ]
 tables = [
-    "card_requirements", "card_templates", "cards", "diagrams", "lessons", "modules",
+    "card_requirements", "card_templates", "cards", "concepts", "diagrams", "lessons", "modules",
     "questions", "subtopics", "template_cases", "topics",
 ]
 

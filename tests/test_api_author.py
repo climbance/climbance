@@ -1,8 +1,10 @@
 import pytest
 from fastapi.testclient import TestClient
 from helpers import browsing
+from test_seed_knowledge import authored, with_concepts
 
 from climb.api import create_app
+from climb.knowledge import read_module, seed_module
 from climb.log import Provider, Role, invite, signed_in, withdraw
 from climb.storage import Database
 
@@ -78,3 +80,16 @@ def test_the_generation_page_reads_an_empty_store(database):
 
     assert (read["writings"], read["landed"], read["spend_per_landed"]) == (0, 0, None)
     assert read["stops"] == [] and read["drafts"] == []
+
+
+def test_the_concepts_route_reads_one_module_s_concepts(database, tmp_path):
+    """The hosted engine holds no `content/` to read a concept from."""
+    base = with_concepts(authored(tmp_path), "list-mutable")
+    seed_module(read_module(base), root=database)
+    client = browsing(database, "local")
+    client.app.state.dev_user = "local"
+
+    read = client.get("/api/author/concepts", params={"module": "python"}).json()
+
+    assert [c["claim"] for c in read["concepts"]] == ["A list is mutated through its references."]
+    assert client.get("/api/author/concepts", params={"module": "algo"}).json()["concepts"] == []

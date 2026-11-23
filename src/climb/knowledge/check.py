@@ -8,6 +8,7 @@ from typing import Any, cast
 
 from pydantic import ValidationError
 
+from climb.knowledge.concepts import stored
 from climb.knowledge.files import ModuleSource
 from climb.schema import BODIES, CertificationSettings, GraphSettings, QuestionFormat
 from climb.schema.authored import LEVEL_NAMES, LEVELS
@@ -27,6 +28,7 @@ HEADING = re.compile(r"#{2,3}\s+(.+?)\s*#*\s*$")
 
 def refusals(source: ModuleSource) -> list[str]:
     found = list(source.unread) + _settings(source) + _sub_titles(source) + _sub_techniques(source)
+    found += _concepts(source)
     course = source.course
     kinds, code_kinds = course.get("kinds", []), course.get("code_kinds", [])
     with_lessons = bool((source.graph or {}).get("lesson"))
@@ -97,6 +99,18 @@ def _message(error: Mapping[str, Any]) -> str:
     where = ".".join(str(part) for part in error["loc"])
     text = error["msg"].removeprefix("Value error, ")
     return f"{where}: {text}" if where else text
+
+
+def _concepts(source: ModuleSource) -> list[str]:
+    """Each concept's stored columns, typed. `climb module check` holds the
+    rest."""
+    found: list[str] = []
+    for slug, raw in source.concepts.items():
+        try:
+            stored(raw, id="-", module_id="-")
+        except ValidationError as error:
+            found += [f"concept {slug}: {_message(one)}" for one in error.errors()]
+    return found
 
 
 def _settings(source: ModuleSource) -> list[str]:
