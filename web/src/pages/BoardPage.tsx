@@ -33,6 +33,7 @@ import { Link } from 'react-router'
 import { api, type TechniqueRow } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { CardPanel } from '@/components/CardPanel'
+import { ColdPanel } from '@/components/ColdPanel'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
 import { PageSection } from '@/components/PageSection'
@@ -112,6 +113,9 @@ export function BoardPage() {
                 <PickRow to="/judge" title={JUDGE_TITLE} note={JUDGE_NOTE} stats={[]} />
                 <PickRow to="/fill" title={FILL_TITLE} note={FILL_NOTE} stats={[]} />
               </PickPanel>
+
+              {/* a measurement, apart from the practice above it: `web-app/pages/practice/cold/` */}
+              <ColdPanel />
 
               {/* what the card graph opens next, the shallowest first */}
               {next.cards.length > 0 && (

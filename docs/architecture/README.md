@@ -94,7 +94,7 @@ flowchart TB
         web_areas["Web page areas<br/>The header, the body, the act, the panels and the section bar a web page is laid out in."]
         web_practice["Web practice pages<br/>The board, a technique's problems, the guide and the problem listing."]
         web_cards["Web card pages<br/>The cards, a card's ladder and templates, a recall, and the judging and key-line exercises."]
-        web_sitting["Web sitting<br/>A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request."]
+        web_sitting["Web sitting<br/>A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request; and a cold sitting's page."]
         web_knowledge["Web knowledge pages<br/>The knowledge home, a module, a subtopic, a queue, an exam, the lessons and the certifications."]
         web_knowledge_store["Web knowledge store<br/>Keeps the browser's copy of the content and the user's log in IndexedDB, and runs the sync loop."]
     end

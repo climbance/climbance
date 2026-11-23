@@ -37,6 +37,12 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | | One line of the form is blank. Pick the line that ...  |             |
 | +--------------------------------------------------------+             |
 |                                                                        |
+| +--------------------------------------------------------+             |
+| | Cold problem                           [ Start cold ]  |             |
+| | An unseen problem with nothing named, 60 minutes, no   |             |
+| | pause. It measures your rating.                        |             |
+| +--------------------------------------------------------+             |
+|                                                                        |
 | Cards to start  3                                                      |
 | +--------------------------------------------------------+             |
 | | Two pointers      two-pointers          root           |             |
@@ -77,5 +83,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
   technique stays on offer below it. The pick then reads the open runs, so it
   can name a card's next rung beside the cards in progress.
 - The two short exercises, judging and filling, follow the cards in progress.
+  The cold sitting's panel follows them, and its press serves a cold sitting
+  or returns to the one running.
   The unlocked cards not yet started follow them, five at most, without the
   card the pick names.

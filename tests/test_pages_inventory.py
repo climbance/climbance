@@ -18,6 +18,7 @@ WEB = {
     "cards/:slug/recall/:template": "A recall",
     "techniques/:technique": "A technique's problems and cards",
     "problems/:problemId": "A picked problem's record and statement",
+    "cold/:sittingId": "A cold sitting, running and ended",
     "knowledge": "The knowledge home",
     "knowledge/queue": "A queue",
     "knowledge/modules/:module": "A module",

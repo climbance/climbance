@@ -19,6 +19,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { ModulePage } from '@/pages/ModulePage'
 import { SubtopicPage } from '@/pages/SubtopicPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { ColdPage } from '@/pages/ColdPage'
 import { ProblemPage } from '@/pages/ProblemPage'
 import { ProblemsPage } from '@/pages/ProblemsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
@@ -53,7 +54,9 @@ const GalleryPage = import.meta.env.DEV
 function App() {
   // the statement and the editor sit side by side, which a reading column is
   // too narrow for. The problem's page holds them
-  const wide = useMatch('/problems/:problemId') !== null
+  const sitting = useMatch('/problems/:problemId') !== null
+  const cold = useMatch('/cold/:sittingId') !== null
+  const wide = sitting || cold
   // nothing in the menu is reachable before signing in, and both pages open
   // without a session
   const signingIn = useMatch(LOGIN) !== null
@@ -83,6 +86,7 @@ function App() {
               {/* the path names the problem, and `?technique=` names where the
                 pick came from: Phase 11 opens the same page from a ladder */}
               <Route path="problems/:problemId" element={<ProblemPage />} />
+              <Route path="cold/:sittingId" element={<ColdPage />} />
               <Route path="knowledge" element={<KnowledgePage />} />
               <Route path="knowledge/queue" element={<QueuePage />} />
               <Route path="knowledge/modules/:module" element={<ModulePage />} />

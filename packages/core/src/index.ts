@@ -55,6 +55,7 @@ export * from './listing';
 export * from './recall';
 export * from './sitting';
 export * from './sittingrun';
+export * from './cold';
 export * from './claim';
 export * from './guide';
 export * from './baseline';

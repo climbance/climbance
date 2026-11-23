@@ -43,6 +43,8 @@ draw the page's screens at low fidelity.
   - The list leaves out the card the pick names. On a new account the pick
     offers the first card to start, and the board would otherwise name that
     card twice.
+- **The board offers a cold sitting in a panel of its own**, below the short
+  exercises. `../cold/README.md` gives the panel and the page it opens.
 
 ## The knowledge study
 

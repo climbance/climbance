@@ -1030,6 +1030,7 @@ doc = "flows/drill-loop.md"
 src = [
     "packages/core/src/sitting.*",
     "packages/core/src/sittingrun.*",
+    "packages/core/src/cold.*",
     "packages/core/src/claim.*",
 ]
 
@@ -1178,6 +1179,7 @@ role = "The board, a technique's problems, the guide and the problem listing."
 doc = "web-app/pages/practice/board/README.md"
 src = [
     "web/src/pages/BoardPage.tsx",
+    "web/src/components/ColdPanel.tsx",
     "web/src/pages/TechniquePage.tsx",
     "web/src/pages/GuidePage.tsx",
     "web/src/pages/ProblemsPage.tsx",
@@ -1210,11 +1212,13 @@ id = "web-sitting"
 kind = "component"
 container = "web-app"
 name = "Web sitting"
-role = "A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request."
+role = "A picked problem's page: its record, the statement, the editor, the clock, the verdict, the claim and the retirement request; and a cold sitting's page."
 doc = "web-app/pages/problems/problem/README.md"
 src = [
     "web/src/pages/ProblemPage.tsx",
     "web/src/components/SittingView.tsx",
+    "web/src/pages/ColdPage.tsx",
+    "web/src/components/ColdSittingView.tsx",
     "web/src/components/ElapsedClock.tsx",
     "web/src/components/CodeEditor.tsx",
     "web/src/components/ClaimPrompt.tsx",

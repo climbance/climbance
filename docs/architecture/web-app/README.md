@@ -23,7 +23,8 @@ Both clients hold one tree of sections and pages. A platform draws the tree
 its own way, and holds the same pages under the same sections.
 
 ```
-Practice      the board, a technique, a picked problem, a sitting
+Practice      the board, a technique, a picked problem, a sitting,
+                a cold sitting
 Problems      the listing, a picked problem
 Cards         the list, a card, a recall
 Knowledge     the home
@@ -86,6 +87,7 @@ Author        the product, the generation, the workflow, on the web alone
 | `/problems` | picks a problem across every technique | Problems | [`problems/listing`](pages/problems/listing/README.md) |
 | `/techniques/:technique` | picks a problem | Practice | [`practice/technique`](pages/practice/technique/README.md) |
 | `/problems/:problem_id` | reads the statement, solves, submits and claims, or reads a retired problem | Practice | [`problems/problem`](pages/problems/problem/README.md) |
+| `/cold/:sitting_id` | solves an unseen problem with nothing named, under a time limit | Practice | [`practice/cold`](pages/practice/cold/README.md) |
 | `/judge` | judges one solution at a time, clean or flawed, and taps the wrong line | Practice | [`cards/judging`](pages/cards/judging/README.md) |
 | `/fill` | picks the line a form's blank needs, one form at a time | Practice | [`cards/key-line`](pages/cards/key-line/README.md) |
 | `/cards` | reads where each card stands, and picks one | Cards | [`cards/cards`](pages/cards/cards/README.md) |

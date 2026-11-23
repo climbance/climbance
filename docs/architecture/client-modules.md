@@ -76,6 +76,7 @@ flowchart LR
     end
     subgraph g1["Shared core: Web app"]
         core_author["author"]
+        core_cold["cold"]
     end
     subgraph g2["Shared core: Web app and Native app"]
         core_account["account"]
@@ -158,6 +159,7 @@ flowchart LR
     core_certview --> core_order
     core_certview --> core_screens
     core_claim --> core_sitting
+    core_cold --> core_sittingrun
     core_courses --> core_types
     core_delayed --> core_exam
     core_delayed --> core_words
