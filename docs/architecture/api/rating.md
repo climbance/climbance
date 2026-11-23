@@ -142,6 +142,12 @@ turns the outcomes into the rating.
   rating widens again. The starting value of that constant lets a deviation
   of 50 return to 350 over a year of days. Each value is kept only if the
   log-loss does not rise without it.
+- **The rating at a moment reads every cold sitting ended by that moment.**
+  The moment's own day counts as a period so far, so a solve moves the
+  rating the user reads at once.
+- **`GET /api/rating` returns the rating, its deviation and the count of
+  games.** The chance has no route yet, since the projection reads it inside
+  the engine.
 - **The chance combines both deviations**, by Glicko's predictive formula. The
   user's deviation is grown to the moment asked about. A wide deviation pulls
   the chance towards one half.
@@ -163,8 +169,8 @@ turns the outcomes into the rating.
 ## Scoring the chance
 
 - **The chance for each cold sitting is read from the replay up to the period
-  before it.** The outcome of a sitting is never in the rating that predicted
-  it.
+  before it**, by asking at the start of the sitting's day. The outcome of a
+  sitting is then never in the rating that predicted it.
 - **The metric is the log-loss of those chances over the user's cold
   sittings.** It is the metric the difficulty calibration uses on the
   anchors, so an improvement to either part is judged by one number.

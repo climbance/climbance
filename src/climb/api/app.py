@@ -14,6 +14,7 @@ from climb.api.judging import router as judging
 from climb.api.knowledge import router as knowledge
 from climb.api.pages import Pages
 from climb.api.picks import router as picks
+from climb.api.rating import router as rating
 from climb.api.reads import router as reads
 from climb.api.signin import SignIn, install
 from climb.api.writes import router as writes
@@ -51,6 +52,7 @@ def create_app(
     app.include_router(reads, prefix=PREFIX)
     app.include_router(writes, prefix=PREFIX)
     app.include_router(cold, prefix=PREFIX)
+    app.include_router(rating, prefix=PREFIX)
     app.include_router(account, prefix=PREFIX)
     app.include_router(knowledge, prefix=PREFIX)
     app.include_router(judging, prefix=PREFIX)

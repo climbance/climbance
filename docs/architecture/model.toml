@@ -202,6 +202,7 @@ code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
     "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.feedback",
+    "climb.glicko", "climb.measured",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
     "climb.mint", "climb.mutation", "climb.pick", "climb.problems", "climb.ratings",
@@ -450,6 +451,11 @@ container = "api"
 name = "Rating"
 role = "Replays a user's cold sittings by Glicko-1 into the chance to solve a problem, and the rating with its deviation."
 doc = "api/rating.md"
+src = [
+    "src/climb/glicko.py",
+    "src/climb/measured.py",
+    "src/climb/api/rating.py",
+]
 
 [[element]]
 id = "predictions"

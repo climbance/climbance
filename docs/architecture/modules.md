@@ -38,8 +38,10 @@ flowchart LR
         climb_api["api"]
         climb_cold["cold"]
         climb_feedback["feedback"]
+        climb_glicko["glicko"]
         climb_graduation["graduation"]
         climb_ladder["ladder"]
+        climb_measured["measured"]
         climb_pick["pick"]
         climb_recall["recall"]
         climb_retirement["retirement"]
@@ -98,6 +100,7 @@ flowchart LR
     climb_api --> climb_judgements
     climb_api --> climb_judging
     climb_api --> climb_keylines
+    climb_api --> climb_measured
     climb_api --> climb_pick
     climb_api --> climb_recall
     climb_api --> climb_retirement
@@ -151,6 +154,9 @@ flowchart LR
     climb_matches --> climb_calls
     climb_matches --> climb_mint
     climb_matches --> climb_runs
+    climb_measured --> climb_glicko
+    climb_measured --> climb_ratings
+    climb_measured --> climb_sitting
     climb_mint --> climb_techniques
     climb_mutation --> climb_runner
     climb_pick --> climb_graduation

@@ -1183,6 +1183,24 @@
         }
       }
     },
+    "/api/rating": {
+      "get": {
+        "summary": "Rating",
+        "operationId": "rating_api_rating_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Measured"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sign-in": {
       "get": {
         "summary": "Offered",
@@ -4266,6 +4284,29 @@
         ],
         "title": "Measure",
         "description": "The test an answer was given in:\n`core-package/knowledge/baseline-tests.md`."
+      },
+      "Measured": {
+        "properties": {
+          "rating": {
+            "type": "number",
+            "title": "Rating"
+          },
+          "deviation": {
+            "type": "number",
+            "title": "Deviation"
+          },
+          "games": {
+            "type": "integer",
+            "title": "Games"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating",
+          "deviation",
+          "games"
+        ],
+        "title": "Measured"
       },
       "ModuleOrder": {
         "properties": {

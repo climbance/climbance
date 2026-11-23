@@ -468,6 +468,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/rating': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Rating */
+    get: operations['rating_api_rating_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/sign-in': {
     parameters: {
       query?: never;
@@ -1693,6 +1710,15 @@ export interface components {
      * @enum {string}
      */
     Measure: 'baseline' | 'delayed';
+    /** Measured */
+    Measured: {
+      /** Rating */
+      rating: number;
+      /** Deviation */
+      deviation: number;
+      /** Games */
+      games: number;
+    };
     /** ModuleOrder */
     ModuleOrder: {
       /** Id */
@@ -3521,6 +3547,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  rating_api_rating_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Measured'];
         };
       };
     };
