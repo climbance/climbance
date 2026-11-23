@@ -22,6 +22,14 @@ at low fidelity.
   The engine answers a second serve with the running sitting, as
   `../../../../api/rating.md` gives. The press therefore reads the same in
   both cases, and the board makes no call to learn which case holds.
+- **The panel reads the user's measured rating once a cold sitting has
+  ended**: `Rating 1580 ± 210, from 3 sittings`, rounded to whole points. The
+  panel reads it from `GET /api/rating`, and the count is the games that route
+  returns. With no game the panel shows no rating line. A rating from no games
+  is Glicko-1's default, 1500 ± 350, and says nothing about the user.
+- **A refused rating read leaves the line out, and the press still works.**
+  The rating is a reading beside the press, and a failed read must not block
+  starting a sitting.
 - **The page's path names the sitting, not the problem.** The routes under
   `/api/cold-sittings` read a cold sitting by its id. `/problems/:problem_id`
   draws the problem's record line, which names what a cold sitting withholds.

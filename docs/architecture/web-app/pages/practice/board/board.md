@@ -41,6 +41,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | | Cold problem                           [ Start cold ]  |             |
 | | An unseen problem with nothing named, 60 minutes, no   |             |
 | | pause. It measures your rating.                        |             |
+| | Rating 1580 ± 210, from 3 sittings                     |             |
 | +--------------------------------------------------------+             |
 |                                                                        |
 | Cards to start  3                                                      |
@@ -84,6 +85,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
   can name a card's next rung beside the cards in progress.
 - The two short exercises, judging and filling, follow the cards in progress.
   The cold sitting's panel follows them, and its press serves a cold sitting
-  or returns to the one running.
+  or returns to the one running. Its rating line shows once a cold sitting
+  has ended.
   The unlocked cards not yet started follow them, five at most, without the
   card the pick names.
