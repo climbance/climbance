@@ -12,6 +12,7 @@ export const AUTHOR_PAGES: Record<string, string> = {
   generation: 'Generation',
   workflow: 'Workflow',
   questions: 'Questions',
+  lessons: 'Lessons',
 };
 
 export const PRODUCT_TITLE = 'Product';

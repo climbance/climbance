@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useSearchParams } from 'react-router'
 
 import {
@@ -20,7 +20,6 @@ import {
   codeLength,
   conceptLine,
   loadSnapshot,
-  type BankChip,
   type BankFilter,
   type BankRow,
   type Course,
@@ -30,11 +29,11 @@ import {
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { AuthorBar } from '@/components/AuthorBar'
+import { Chips } from '@/components/Chips'
 import { Inline } from '@/components/Inline'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
 import { SectionHeading } from '@/components/SectionHeading'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Answered } from '@/knowledge/Ask'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
 import { cn } from '@/lib/utils'
@@ -104,6 +103,10 @@ function Bank({
   // a link to `#<slug>` opens that row; the open rows stay out of the URL
   const { hash } = useLocation()
   const [open, setOpen] = useState(() => new Set(hash ? [decodeURIComponent(hash.slice(1))] : []))
+  // the row is laid out only once the snapshot loads, after the browser's own scroll
+  useEffect(() => {
+    if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
+  }, [hash])
   const bySlug = useMemo(() => new Map(concepts.map((c) => [c.slug, c])), [concepts])
   const shown = view.groups.flatMap((g) => g.rows.map((row) => row.q.id))
   const flip = (id: string) =>
@@ -183,42 +186,6 @@ function Bank({
 }
 
 const link = 'underline-offset-4 hover:underline'
-
-function Chips(props: {
-  label: string
-  chips: BankChip[]
-  counted: boolean
-  onPress: (value: string | number) => void
-}) {
-  return (
-    <div className="flex items-baseline gap-3">
-      <span className="w-20 shrink-0 text-meta text-muted-foreground">{props.label}</span>
-      {/* the filters are toggles, drawn as the problem listing's are */}
-      <ToggleGroup
-        type="single"
-        variant="outline"
-        size="sm"
-        className="w-auto flex-wrap"
-        value={String(props.chips.find((chip) => chip.on)?.value ?? '')}
-      >
-        {props.chips.map((chip) => (
-          <ToggleGroupItem
-            key={chip.value}
-            value={String(chip.value)}
-            onClick={() => props.onPress(chip.value)}
-          >
-            {chip.label}
-            {props.counted && (
-              <span className="inline-block min-w-[2ch] text-right text-muted-foreground tabular-nums">
-                {chip.count}
-              </span>
-            )}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-    </div>
-  )
-}
 
 function Row(props: {
   row: BankRow

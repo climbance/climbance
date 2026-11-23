@@ -1035,6 +1035,7 @@ src = [
     "packages/core/src/words/pages.*",
     "packages/core/src/author.*",
     "packages/core/src/bank.*",
+    "packages/core/src/lessonbank.*",
 ]
 
 [[element]]
@@ -1141,6 +1142,8 @@ src = [
     "web/src/pages/AuthorProductPage.tsx",
     "web/src/pages/AuthorWorkflowPage.tsx",
     "web/src/pages/AuthorQuestionsPage.tsx",
+    "web/src/pages/AuthorLessonsPage.tsx",
+    "web/src/components/Chips.tsx",
     "web/src/components/AuthorBar.tsx",
     "web/src/components/FigureTable.tsx",
 ]

@@ -38,6 +38,7 @@ WEB = {
     "author/generation": "The author pages",
     "author/workflow": "The author pages",
     "author/questions": "The author pages",
+    "author/lessons": "The author pages",
 }
 # routes that serve no row: the page answering a path nothing else does
 WEB_UNLISTED = {"*"}

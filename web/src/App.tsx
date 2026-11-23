@@ -48,6 +48,9 @@ const DrawnRecallPage = lazy(() =>
 const AuthorQuestionsPage = lazy(() =>
   import('@/pages/AuthorQuestionsPage').then((m) => ({ default: m.AuthorQuestionsPage })),
 )
+const AuthorLessonsPage = lazy(() =>
+  import('@/pages/AuthorLessonsPage').then((m) => ({ default: m.AuthorLessonsPage })),
+)
 const PrivacyPage = lazy(() =>
   import('@/pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage })),
 )
@@ -110,6 +113,7 @@ function App() {
               <Route path="author/generation" element={<AuthorGenerationPage />} />
               <Route path="author/workflow" element={<AuthorWorkflowPage />} />
               <Route path="author/questions" element={<AuthorQuestionsPage />} />
+              <Route path="author/lessons" element={<AuthorLessonsPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
               <Route path={TERMS} element={<TermsPage />} />
