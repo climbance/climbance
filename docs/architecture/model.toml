@@ -203,7 +203,7 @@ runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
     "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.difficulty", "climb.drafts",
     "climb.feedback",
-    "climb.glicko", "climb.measured",
+    "climb.glicko", "climb.measured", "climb.projected",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
     "climb.mint", "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings",
@@ -458,6 +458,19 @@ src = [
     "src/climb/glicko.py",
     "src/climb/measured.py",
     "src/climb/api/rating.py",
+]
+
+[[element]]
+id = "projection"
+kind = "component"
+container = "api"
+name = "Projection"
+role = "Projects a user's contest rating and its deviation from each technique's chance to solve over a representative contest."
+doc = "api/projection.md"
+src = [
+    "src/climb/contest.json",
+    "src/climb/projected.py",
+    "src/climb/api/projection.py",
 ]
 
 [[element]]
@@ -1708,6 +1721,12 @@ access = "reads"
 from = "mastery"
 to = "rating"
 label = "starts each ability at the measured rating"
+access = "reads"
+
+[[relation]]
+from = "projection"
+to = "mastery"
+label = "reads each technique's ability and its deviation"
 access = "reads"
 
 [[relation]]

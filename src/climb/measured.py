@@ -155,6 +155,22 @@ def _read(
 def _chance(
     read: _Read, techniques: Iterable[str], score: Rated, at: datetime, gap: float
 ) -> Chance | None:
+    held, start = _abilities(read, at, gap)
+    return weakest(held, start, techniques, score)
+
+
+def technique_abilities(
+    root: Database, user_id: str, at: datetime | None = None
+) -> tuple[dict[str, tuple[Rated, int]], Rated]:
+    """Each technique's ability and games under cold conditions, and the start
+    a technique no sitting reached is held at."""
+    at = at or datetime.now(UTC)
+    stands = standing_ratings(RatingLog(root).ratings())
+    problems = {one.id: one for one in load_problems(root)}
+    return _abilities(_read(root, user_id, stands, problems), at, GAP)
+
+
+def _abilities(read: _Read, at: datetime, gap: float) -> tuple[dict[str, tuple[Rated, int]], Rated]:
     cold = played(read.sittings, read.attempts, read.stands, at)
     general = replayed(cold, at)
     # a wide deviation, so the technique's own sittings soon outweigh the start
@@ -182,8 +198,7 @@ def _chance(
         key: Rated(rating=one.score, deviation=one.deviation or 0.0)
         for key, one in read.stands.items()
     }
-    held = abilities(sat, scores, start, at, gap)
-    return weakest(held, start, techniques, score)
+    return abilities(sat, scores, start, at, gap), start
 
 
 class ChanceLoss(BaseModel):

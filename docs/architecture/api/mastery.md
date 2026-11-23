@@ -149,8 +149,8 @@ of mastery.
 - **Measured on 2026-11-23: no score, over 0 cold sittings.** The local
   store and the server's store held no cold sitting yet.
 - **No record stores a chance.** The score replays each chance from the log
-  before its cold sitting. Whether a `Prediction` carries the chance, and
-  under which settings hash, is decided with the projection.
+  before its cold sitting. Whether a `Prediction` carries the chance waits
+  on scoring the projection, as [`projection.md`](projection.md) gives.
 
 ## Recognition
 

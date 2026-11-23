@@ -485,6 +485,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/projection': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Projection */
+    get: operations['projection_api_projection_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/sign-in': {
     parameters: {
       query?: never;
@@ -2180,6 +2197,13 @@ export interface components {
       /** Days */
       days: components['schemas']['ProductDay'][];
     };
+    /** Projected */
+    Projected: {
+      /** Rating */
+      rating: number;
+      /** Deviation */
+      deviation: number;
+    };
     /**
      * Prompted
      * @description What the trainer shows: the template it asks for, its trigger, the
@@ -3870,6 +3894,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['Measured'];
+        };
+      };
+    };
+  };
+  projection_api_projection_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Projected'];
         };
       };
     };

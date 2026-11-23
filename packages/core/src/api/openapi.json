@@ -1201,6 +1201,24 @@
         }
       }
     },
+    "/api/projection": {
+      "get": {
+        "summary": "Projection",
+        "operationId": "projection_api_projection_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projected"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sign-in": {
       "get": {
         "summary": "Offered",
@@ -5415,6 +5433,24 @@
           "days"
         ],
         "title": "ProductFigures"
+      },
+      "Projected": {
+        "properties": {
+          "rating": {
+            "type": "number",
+            "title": "Rating"
+          },
+          "deviation": {
+            "type": "number",
+            "title": "Deviation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating",
+          "deviation"
+        ],
+        "title": "Projected"
       },
       "Prompted": {
         "properties": {

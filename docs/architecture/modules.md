@@ -41,6 +41,7 @@ flowchart LR
         climb_graduation["graduation"]
         climb_ladder["ladder"]
         climb_pick["pick"]
+        climb_projected["projected"]
         climb_recall["recall"]
         climb_retirement["retirement"]
         climb_template_schedule["template_schedule"]
@@ -102,10 +103,10 @@ flowchart LR
     climb_api --> climb_judgements
     climb_api --> climb_judging
     climb_api --> climb_keylines
-    climb_api --> climb_measured
     climb_api --> climb_mutant_diagnoses
     climb_api --> climb_outcomes
     climb_api --> climb_pick
+    climb_api --> climb_projected
     climb_api --> climb_recall
     climb_api --> climb_retirement
     climb_api --> climb_trials
@@ -165,6 +166,7 @@ flowchart LR
     climb_mint --> climb_techniques
     climb_mutation --> climb_runner
     climb_pick --> climb_graduation
+    climb_projected --> climb_measured
     climb_recall --> climb_sitting
     climb_retirement --> climb_sitting
     climb_sitting --> climb_caps

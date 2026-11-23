@@ -225,6 +225,7 @@ flowchart TB
         mastery["Mastery<br/>Computes each technique's recognition, execution and chance to solve from the log on every read."]
         pick["Pick<br/>Names the next item: a template and the act that reviews it, read from the three folds."]
         rating["Rating<br/>Replays a user's cold sittings by Glicko-1 into the chance to solve a problem, and the rating with its deviation."]
+        projection["Projection<br/>Projects a user's contest rating and its deviation from each technique's chance to solve over a representative contest."]
         predictions["Predictions<br/>Stores what each pick expected, from FSRS and from mastery, before the user acts on it."]
         snapshot["Snapshot<br/>Serves the seeded content to both clients as one document, revalidated by its ETag."]
         knowledge_sync["Knowledge sync<br/>Stores a client's sync lines, refusing each line that names unknown content, and returns the user's records since a cursor."]
@@ -259,6 +260,7 @@ flowchart TB
     mastery -.->|"reads each problem's standing score"| problems
     mastery -.->|"reads which sittings were cold"| sitting
     mastery -.->|"starts each ability at the measured rating"| rating
+    projection -.->|"reads each technique's ability and its deviation"| mastery
     web_app -->|"asks for the next item"| pick
     pick -.->|"reads each template's FSRS state"| template_schedule
     pick -.->|"reads each card's state and next check"| card_states
