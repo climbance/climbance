@@ -2203,6 +2203,8 @@ export interface components {
       rating: number;
       /** Deviation */
       deviation: number;
+      /** Techniques */
+      techniques: number;
     };
     /**
      * Prompted

@@ -1,4 +1,12 @@
-import { COLD_PANEL_NOTE, COLD_START, COLD_TITLE, ratingLine, serveCold, sittingRefused } from '@climb/core'
+import {
+  COLD_PANEL_NOTE,
+  COLD_START,
+  COLD_TITLE,
+  projectedLine,
+  ratingLine,
+  serveCold,
+  sittingRefused,
+} from '@climb/core'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -16,7 +24,12 @@ export function ColdPanel() {
   const [serving, setServing] = useState(false)
   const [refused, setRefused] = useState<string | null>(null)
   // a refused read leaves the line out and the press working
-  const rating = ratingLine(useLoaded((signal) => api.GET('/api/rating', { signal }), 'rating').data ?? null)
+  const rating = ratingLine(
+    useLoaded((signal) => api.GET('/api/rating', { signal }), 'rating').data ?? null,
+  )
+  const projected = projectedLine(
+    useLoaded((signal) => api.GET('/api/projection', { signal }), 'projection').data ?? null,
+  )
 
   async function start() {
     setServing(true)
@@ -40,7 +53,14 @@ export function ColdPanel() {
             </Button>
           }
         >
-          {rating && <span className="mt-1 block text-meta text-muted-foreground">{rating}</span>}
+          {[rating, projected].map(
+            (line) =>
+              line && (
+                <span key={line} className="mt-1 block text-meta text-muted-foreground">
+                  {line}
+                </span>
+              ),
+          )}
         </PickRow>
       </PickPanel>
       {refused && <ErrorLine>{sittingRefused(refused)}</ErrorLine>}

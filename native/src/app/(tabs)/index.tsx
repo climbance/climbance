@@ -37,6 +37,7 @@ import {
   type PickTarget,
   COLD_PANEL_NOTE,
   COLD_START,
+  projectedLine,
   ratingLine,
   COLD_TITLE,
   serveCold,
@@ -308,6 +309,7 @@ function ColdPanel() {
   const [refused, setRefused] = useState<string | null>(null);
   // a refused read leaves the line out and the press working
   const rating = ratingLine(useEngine('/api/rating').data);
+  const projected = projectedLine(useEngine('/api/projection').data);
   const theme = useTheme();
 
   async function start() {
@@ -332,11 +334,13 @@ function ColdPanel() {
             </Button>
           }
         >
-          {rating ? (
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-              {rating}
-            </Text>
-          ) : null}
+          {[rating, projected].map((line) =>
+            line ? (
+              <Text key={line} variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                {line}
+              </Text>
+            ) : null,
+          )}
         </PickRow>
       </PickPanel>
       {refused ? <ErrorLine>{sittingRefused(refused)}</ErrorLine> : null}

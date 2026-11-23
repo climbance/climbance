@@ -27,9 +27,20 @@ at low fidelity.
   panel reads it from `GET /api/rating`, and the count is the games that route
   returns. With no game the panel shows no rating line. A rating from no games
   is Glicko-1's default, 1500 ± 350, and says nothing about the user.
-- **A refused rating read leaves the line out, and the press still works.**
-  The rating is a reading beside the press, and a failed read must not block
-  starting a sitting.
+- **The panel reads the projected rating under the measured one**:
+  `Projected 1642 ± 180, from 4 techniques practised`, rounded to whole
+  points. The panel reads it from `GET /api/projection`, and the count is the
+  techniques that route returns: the techniques a sitting reached among those
+  the contest needs. With no such technique the panel shows no projected
+  line. That projection is the start, the measured rating, and says nothing
+  the measured line does not.
+- **The projected line shows without a cold sitting.** Practice sittings
+  move the abilities the projection reads. A user who never sat cold still
+  reads a prediction, and the measured line joins it after the first cold
+  sitting.
+- **A refused rating read leaves its line out, and the press still works.**
+  The measured and the projected rating are each a reading beside the press,
+  and a failed read must not block starting a sitting.
 - **The page's path names the sitting, not the problem.** The routes under
   `/api/cold-sittings` read a cold sitting by its id. `/problems/:problem_id`
   draws the problem's record line, which names what a cold sitting withholds.

@@ -38,6 +38,8 @@ class Projected(BaseModel):
 
     rating: float
     deviation: float
+    # the contest's techniques a sitting reached
+    techniques: int
 
 
 @cache
@@ -63,7 +65,8 @@ def project(
         # every technique no sitting reached is the start, so shares its draw
         begun = draw.gauss(start.rating, start.deviation)
         spread.append(_performance(_held(held, begun, names, draw), begun, problems))
-    return Projected(rating=rating, deviation=statistics.pstdev(spread))
+    reached = len(held.keys() & set(names))
+    return Projected(rating=rating, deviation=statistics.pstdev(spread), techniques=reached)
 
 
 def _held(

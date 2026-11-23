@@ -5443,12 +5443,17 @@
           "deviation": {
             "type": "number",
             "title": "Deviation"
+          },
+          "techniques": {
+            "type": "integer",
+            "title": "Techniques"
           }
         },
         "type": "object",
         "required": [
           "rating",
-          "deviation"
+          "deviation",
+          "techniques"
         ],
         "title": "Projected"
       },

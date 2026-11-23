@@ -42,6 +42,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | | An unseen problem with nothing named, 60 minutes, no   |             |
 | | pause. It measures your rating.                        |             |
 | | Rating 1580 ± 210, from 3 sittings                     |             |
+| | Projected 1642 ± 180, from 4 techniques practised      |             |
 | +--------------------------------------------------------+             |
 |                                                                        |
 | Cards to start  3                                                      |

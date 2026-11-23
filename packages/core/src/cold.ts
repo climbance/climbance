@@ -13,6 +13,7 @@ type ColdSubmitted = components['schemas']['ColdSubmitted'];
 type Revealed = components['schemas']['Revealed'];
 type Sitting = components['schemas']['Sitting'];
 type Measured = components['schemas']['Measured'];
+type Projected = components['schemas']['Projected'];
 
 /** The engine's reading of a cold sitting, with when the platform received it. */
 export interface ColdRead {
@@ -109,6 +110,13 @@ export function ratingLine(measured: Measured | null): string | null {
   if (!measured || measured.games === 0) return null;
   const sittings = measured.games === 1 ? '1 sitting' : `${measured.games} sittings`;
   return `Rating ${Math.round(measured.rating)} ± ${Math.round(measured.deviation)}, from ${sittings}`;
+}
+
+// with no technique reached, the projection is the start and says nothing: `api/projection.md`
+export function projectedLine(projected: Projected | null): string | null {
+  if (!projected || projected.techniques === 0) return null;
+  const techniques = projected.techniques === 1 ? '1 technique' : `${projected.techniques} techniques`;
+  return `Projected ${Math.round(projected.rating)} ± ${Math.round(projected.deviation)}, from ${techniques} practised`;
 }
 
 export const COLD_TITLE = 'Cold problem';

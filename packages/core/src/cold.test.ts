@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { coldOutcome, coldVerdict, ratingLine, revealedFacts, secondsLeft, timeLeft, type components } from './index';
+import {
+  coldOutcome,
+  coldVerdict,
+  projectedLine,
+  ratingLine,
+  revealedFacts,
+  secondsLeft,
+  timeLeft,
+  type components,
+} from './index';
 
 type Sitting = components['schemas']['Sitting'];
 type ColdSubmitted = components['schemas']['ColdSubmitted'];
@@ -60,5 +69,23 @@ describe('the rating line', () => {
     /** The board's cold panel reads the replayed rating once a game exists. */
     expect(ratingLine({ rating: 1579.6, deviation: 210.4, games: 3 })).toBe('Rating 1580 ± 210, from 3 sittings');
     expect(ratingLine({ rating: 1400, deviation: 290, games: 1 })).toBe('Rating 1400 ± 290, from 1 sitting');
+  });
+});
+
+describe('the projected line', () => {
+  it('reads nothing before a sitting reaches a technique', () => {
+    /** With no technique reached, the projection is the start and says nothing about the user. */
+    expect(projectedLine({ rating: 1500, deviation: 350, techniques: 0 })).toBeNull();
+    expect(projectedLine(null)).toBeNull();
+  });
+
+  it('reads the projection, its deviation and the techniques, rounded', () => {
+    /** The board reads the projected rating beside the measured one. */
+    expect(projectedLine({ rating: 1641.5, deviation: 180.2, techniques: 4 })).toBe(
+      'Projected 1642 ± 180, from 4 techniques practised',
+    );
+    expect(projectedLine({ rating: 1500, deviation: 330, techniques: 1 })).toBe(
+      'Projected 1500 ± 330, from 1 technique practised',
+    );
   });
 });

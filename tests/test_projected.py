@@ -90,6 +90,7 @@ def test_a_new_user_projects_the_start(database):
 
     assert found.rating == pytest.approx(START, abs=0.01)
     assert found.deviation == pytest.approx(START_DEVIATION, rel=0.1)
+    assert found.techniques == 0
 
 
 def test_a_cold_solve_raises_the_projection(database):
@@ -100,6 +101,7 @@ def test_a_cold_solve_raises_the_projection(database):
     found = projected(database, USER, T0 + timedelta(hours=1))
 
     assert found.rating > START
+    assert found.techniques >= 1
 
 
 def test_the_route_returns_the_projection_and_its_deviation(database):
@@ -108,3 +110,10 @@ def test_the_route_returns_the_projection_and_its_deviation(database):
 
     assert found["rating"] == pytest.approx(START, abs=0.01)
     assert found["deviation"] > 0
+
+
+def test_the_techniques_count_those_the_contest_needs():
+    """A technique no contest problem needs moves nothing, so is not counted."""
+    found = project({"greedy": sure(1600), "knapsack-unused": sure(1600)}, SURE, CONTEST)
+
+    assert found.techniques == 1

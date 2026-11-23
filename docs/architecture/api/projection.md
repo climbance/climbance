@@ -69,8 +69,10 @@ projection is read over, the expected solves, and the conversion to a rating.
 
 ## The interface
 
-- **`GET /api/projection` returns the rating and its deviation.** The board
-  shows the projected rating beside the measured one. A projection above the
+- **`GET /api/projection` returns the rating, its deviation and the count of
+  techniques it read**: the techniques a sitting reached among those the
+  contest needs. The board's cold panel shows the projected rating under the
+  measured one, as `../web-app/pages/practice/cold/README.md` gives. A projection above the
   measured rating says the user knows the material and loses time under the
   clock, and a projection below it says the reverse.
 - **The projection is replayed from the log on every read, and never
