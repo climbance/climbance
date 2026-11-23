@@ -1,7 +1,8 @@
 # The author pages
 
 The pages the author reads the running engine from: how learners use the
-product, how problem generation goes, and what waits for the author's hand.
+product, how problem generation goes, what waits for the author's hand, and
+every piece of content.
 The author is the person who generates and reviews the corpus, authors the
 content and deploys the engine. These pages sit under no section, in an
 author area of their own, on the web alone.
@@ -12,9 +13,45 @@ author area of their own, on the web alone.
 | `/author/product` | reads how many learners use the product, how much and how long they stay | [`product`](product/README.md) |
 | `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | [`generation`](generation/README.md) |
 | `/author/workflow` | reads what waits in each by-hand pass and queue, the run faults and the spend by part | [`workflow`](workflow/README.md) |
+| `/author/questions` | reads one module's questions at once, each as answered, with its concept | [`questions`](questions/README.md) |
+| `/author/lessons` | reads one module's lessons, each whole, with the questions it teaches | [`lessons`](lessons/README.md) |
+| `/author/cards` | reads every card with its templates revealed, its requirements and its ladder | [`cards`](cards/README.md) |
+| `/author/problems` | reads every problem, served or retired, with its statement, solutions and cases | [`problems`](problems/README.md) |
 
-The content browser's pages, which list the questions, the cards and the
-problems, join this area under `/author` too.
+## The content browser
+
+The content browser is the four pages listing content: the questions, the
+lessons, the cards and the problems. The author reads a whole bank there at
+once, as a learner would see each item. A question is otherwise reviewed one
+at a time in a queue, where a rule broken across a bank, such as long hand
+traces, goes unseen.
+
+- **The browser's pages are built in this order: the questions, the lessons,
+  the cards, then the problems.** The questions are the largest bank and the
+  one reviewed only in a queue today. The lessons read from the same snapshot,
+  so the lessons page reuses the questions page's filters.
+- **Each page reads the content of the engine serving it.** The questions and
+  the lessons come from the snapshot, which the seed builds from the store.
+  The cards and the problems come from `/api/author/`. The hosted engine then
+  shows prod's content and `just app` shows the local store's.
+- **Each item is drawn with the component a learner's page draws it with.** A
+  question uses the queue's answered question, a lesson the lesson page's, a
+  card the card page's, and a statement the sitting's. A component of the
+  browser's own could show an item differently from what a learner reads.
+- **The browser only reads.** A change to a question, a lesson or a card is an
+  edit in the content repository, then a seed. A problem is never edited and
+  is retired with `climb problem --retire`. No press writes a log record,
+  so a review leaves the author's own schedule and board unchanged.
+- **A page lists every matching row in one scroll, each row closed.** A
+  closed row reads on one or two lines, and a press opens it in place. The
+  author scans the closed rows for a pattern, then opens the rows that show
+  one.
+- **A row's anchor is its slug, or a problem's id prefix**, as `#<slug>`. A
+  link to the anchor opens that row, so the pages link to each other's rows: a
+  lesson to its questions, a card to its rungs.
+- **The filters live in the URL, and each chip counts what pressing it would
+  leave**, as on the problem listing. A filtered view is then a link the author
+  keeps.
 
 ## Who sees them
 

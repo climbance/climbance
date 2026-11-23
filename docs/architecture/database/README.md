@@ -13,7 +13,7 @@ class links to the file that specifies the record.
 |---|---|---|---|---|
 | [Techniques](../concepts/techniques.md) | product | global | read-only at runtime | this repo, in git |
 | [Cards](../content-repo/cards.md) | product | global | read-only at runtime | the store, seeded from `content/` |
-| [Modules and questions](../content-repo/modules.md) | product | global | refreshed by the seed | the store, seeded from `content/` |
+| [Modules, questions and concepts](../content-repo/modules.md) | product | global | refreshed by the seed | the store, seeded from `content/` |
 | [Drafts](../cli/generation/README.md) | product | global | revised in place | the store |
 | [Problems](../cli/generation/problem.md) | product | global | created once; only its status moves | the store |
 | [Test cases](../cli/generation/test-cases.md) | product | global | written with the problem | the store |

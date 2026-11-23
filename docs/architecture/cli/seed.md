@@ -22,3 +22,10 @@ already made.
   answers to whatever question took it.
 - **The author decides which of the two an edit is.** The seed sees changed
   text and cannot tell a clearer wording from a different question.
+- **The seed stores each concept of a module written by concept**: its slug,
+  its level, its claim and its source, in the `concepts` table. The content
+  browser shows a question's concept beside it, and the hosted engine holds no
+  copy of `content/` to read the concept from. The snapshot leaves the
+  concepts out, since no learner reads one.
+- **A re-seed replaces a module's concepts whole.** No log record references a
+  concept, so a concept removed from the files has nothing left to keep.
