@@ -234,21 +234,6 @@ def test_a_copy_is_retired_under_its_own_reason(root, monkeypatch, capsys):
     assert not retired.defective
 
 
-def test_the_requests_list_beside_how_each_problem_stands(root, monkeypatch, capsys):
-    """The author reads every request in the terminal, where retiring is."""
-    stored = landed(root, monkeypatch)
-    browsing(root, "u-4f9c2a").post(
-        f"/api/problems/{stored.id}/retirement-requests",
-        json={"reason": "copied", "note": "This retells a published problem."},
-    ).raise_for_status()
-
-    shown(monkeypatch, "--requests")
-
-    out = capsys.readouterr().out
-    assert f"{stored.id}  created" in out
-    assert "u-4f9c2a  copied: This retells a published problem." in out
-
-
 def test_retiring_shows_the_problem_s_requests_before_the_question(root, monkeypatch, capsys):
     stored = landed(root, monkeypatch)
     browsing(root, "u-4f9c2a").post(

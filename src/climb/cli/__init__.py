@@ -17,7 +17,6 @@ from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
 from climb.cli.diagnose import diagnose
 from climb.cli.difficulty import difficulty
-from climb.cli.feedback import feedback_listed
 from climb.cli.fill import fill
 from climb.cli.flags import (
     Defaults,
@@ -27,7 +26,6 @@ from climb.cli.flags import (
     run_arguments,
     user_argument,
 )
-from climb.cli.gaps import gaps
 from climb.cli.generate import generate
 from climb.cli.hand_match import hand_match
 from climb.cli.invite import invitation
@@ -244,11 +242,6 @@ def main() -> None:
         help="why --retire retires it: defective leaves mastery, copied stays in it",
     )
     problem_parser.add_argument(
-        "--requests",
-        action="store_true",
-        help="every user's request to retire a problem, the latest first",
-    )
-    problem_parser.add_argument(
         "--rate",
         type=float,
         metavar="SCORE",
@@ -297,11 +290,6 @@ def main() -> None:
         "--write", action="store_true", help="store the draws and the ratings"
     )
 
-    gaps_parser = command(sub, "gaps", "core templates no stored solution displays")
-    gaps_parser.add_argument(
-        "--all", action="store_true", help="every core template; only the gaps otherwise"
-    )
-
     command(
         sub, "retime", "every served canonical at the drill cap, and its cases past a tenth of it"
     )
@@ -346,7 +334,6 @@ def main() -> None:
     invite_action.add_parser("remove", help="stop the email signing in").add_argument("email")
     invite_action.add_parser("list", help="every email invited")
 
-    command(sub, "feedback", "every user's feedback, newest first")
     command(sub, "chance-loss", "the chance to solve scored by log-loss on the cold sittings")
 
     diagnose_parser = command(sub, "diagnose", "where a failed solution's fault lies")
@@ -512,7 +499,6 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     )(args, parser, root),
     "problem": problem,
     "difficulty": difficulty,
-    "gaps": lambda args, _parser, root: gaps(args, root),
     "retime": lambda _args, _parser, root: retime(root),
     "generate": generate,
     "match": lambda args, parser, root: (hand_match if args.by_hand else match)(args, parser, root),
@@ -527,7 +513,6 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     ),
     "library": lambda args, parser, _root: library(args, parser),
     "invite": invitation,
-    "feedback": lambda _args, _parser, root: feedback_listed(root),
     "chance-loss": lambda _args, _parser, root: chance_loss_printed(root),
     "diagnose": diagnose,
     "spot": lambda args, parser, _root: spot(args, parser),

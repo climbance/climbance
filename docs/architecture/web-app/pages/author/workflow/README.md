@@ -19,12 +19,13 @@ cost. `../README.md` gives who reaches it.
     template's current code, which are the templates the build would rebuild.
   - `fill build`: the same count for the key-line items.
 - **The retirement requests read newest first, waiting ones on top.** A
-  request waits while its problem is still served. A row names the problem,
-  the retirement reason and the note, and no user, since the author acts on
-  the problem.
+  request waits while its problem is still served. A row names the problem
+  by the first eight characters of its id and by its title, then the
+  retirement reason and the note. `climb problem --retire` takes that prefix.
+  A row names no user, since the author acts on the problem.
 - **The feedback reads newest first**, each note with the client and the page
-  it was sent from, as `climb feedback` prints it today. A note is addressed
-  to the author, so the page shows it whole.
+  it was sent from. A note is addressed to the author, so the page shows the
+  note whole, and names no user.
 - **The run faults read as a count per day and run kind for the last 30
   days**, then the latest faults with their detail. A fault is private to its
   user, so a row names no user. The detail is the runner's own message,

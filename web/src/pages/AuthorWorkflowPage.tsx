@@ -21,6 +21,7 @@ import {
   dayLabel,
   periodTitle,
   requestsWaitingLine,
+  shortId,
   timeLabel,
   uncostedCallsLine,
   waitingLine,
@@ -80,11 +81,12 @@ function Workflow({ read }: { read: WorkflowFigures }) {
           <>
             <p className={quiet}>{requestsWaitingLine(read.requests)}</p>
             <FigureTable
-              head={[DAY, '', '', '', '']}
+              head={[DAY, '', '', '', '', '']}
               rows={read.requests.map((one, i) => ({
                 key: `${one.problem_id}-${i}`,
                 cells: [
                   dateLabel(one.created_at),
+                  <code key="i">{shortId(one.problem_id)}</code>,
                   one.title,
                   one.reason,
                   <span key="n" className="whitespace-pre-wrap">{one.note}</span>,

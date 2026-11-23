@@ -30,6 +30,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | two-pointers / same direction    2        1      0         1           |
 | sliding-window / fixed size      0        0      0         -   gap     |
 | ...                                                                    |
+| 1 of 24 core templates carry no solution                               |
 +------------------------------------------------------------------------+
 ```
 

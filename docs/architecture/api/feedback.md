@@ -10,8 +10,8 @@ client it was sent from, the path of the page it was sent from, and the note.
 - **A user's feedback is capped as a run is**, at 10 a minute and 60 an hour.
   Each note is a row the author reads, and the cap is counted over the user's
   own records.
-- **The author reads the feedback in the terminal.** `climb feedback` lists
-  every note, newest first.
+- **The author reads the feedback on the workflow page**, every note newest
+  first, as `../web-app/pages/author/workflow/README.md` gives.
 - **Feedback is private to the user**, exported and erased with the rest of
   the log. The author reads it as the operator, as the author reads the rest
   of the store.

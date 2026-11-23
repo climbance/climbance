@@ -8,7 +8,6 @@ from helpers import browsing
 from climb.api.app import create_app
 from climb.api.feedback import ERRORS_PER_MINUTE, _reported
 from climb.caps import RUNS_PER_MINUTE
-from climb.cli.feedback import feedback_listed
 from climb.log import FeedbackLog, account_deleted, erased, whole_log
 from climb.schema import Client
 
@@ -103,16 +102,3 @@ def test_an_error_report_needs_a_session(database):
     anonymous = TestClient(create_app(database), headers={"content-type": "application/json"})
 
     assert anonymous.post("/api/errors", json=REPORT).status_code == 401
-
-
-def test_the_author_lists_feedback_newest_first(client, database, capsys):
-    """The author reads feedback in the terminal, as the retirement requests."""
-    sending(client, note="first")
-    sending(client, note="second")
-
-    feedback_listed(database)
-
-    lines = capsys.readouterr().out.splitlines()
-    assert [line.split(": ", 1)[-1] for line in lines[:2]] == ["second", "first"]
-    assert f"{USER}  native /settings" in lines[0]
-    assert lines[-1] == "2 notes of feedback"

@@ -36,8 +36,6 @@ def problem(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Dat
     stored = corpus.problems.all()
     if not stored:
         parser.exit(0, "problem: no problem is stored\n")
-    if args.requests:
-        return requests_listed(stored, root)
     if args.retire:
         return retired_by_hand(args, parser, stored, corpus, root)
     if args.rate:
@@ -98,15 +96,6 @@ def labelled(one: Problem, root: Database) -> str:
     if stands is None:
         return str(one.difficulty)
     return f"{stands.label} ({stands.score:g}, generator: {one.difficulty})"
-
-
-def requests_listed(stored: list[Problem], root: Database) -> None:
-    """Every request, the latest first, beside how its problem stands now."""
-    standings = {one.id: standing(one) for one in stored}
-    requests = RetirementRequestLog(root).all()
-    for request in reversed(requests):
-        print(f"{request.problem_id}  {standings[request.problem_id]:<20}  {request_line(request)}")
-    print(f"{len(requests)} request(s)")
 
 
 def request_line(request: RetirementRequest) -> str:

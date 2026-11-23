@@ -1,4 +1,4 @@
-from climb.matches.gaps import Coverage, core, coverage, uncovered
+from climb.matches.gaps import core, coverage, uncovered
 from climb.matches.hand import hand_match
 from climb.matches.matcher import (
     DEFAULT,
@@ -19,7 +19,6 @@ __all__ = [
     "DEFAULT",
     "EFFORT",
     "MODEL",
-    "Coverage",
     "MatchLog",
     "MatcherError",
     "Progress",

@@ -601,7 +601,6 @@ src = [
     "src/climb/feedback.py",
     "src/climb/api/feedback.py",
     "src/climb/log/feedback.py",
-    "src/climb/cli/feedback.py",
     "src/climb/schema/feedback.py",
 ]
 tables = [
@@ -819,7 +818,6 @@ doc = "cli/matcher.md"
 src = [
     "src/climb/matches/**",
     "src/climb/cli/match.py",
-    "src/climb/cli/gaps.py",
     "src/climb/cli/hand_match.py",
     "src/climb/cli/hand_matching.py",
     "src/climb/schema/match.py",

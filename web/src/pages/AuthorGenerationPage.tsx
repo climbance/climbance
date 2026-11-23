@@ -16,6 +16,7 @@ import {
   UNLABELLED,
   WRITINGS,
   ageLine,
+  gapsLine,
   periodLine,
   spendLine,
   stopLabel,
@@ -119,6 +120,9 @@ function Generation({ read }: { read: GenerationFigures }) {
           />
         ) : (
           <p className="text-meta text-muted-foreground">{NO_CARD}</p>
+        )}
+        {read.corpus.length > 0 && (
+          <p className="text-meta text-muted-foreground">{gapsLine(read.corpus)}</p>
         )}
         {untemplated && <p className="text-meta text-muted-foreground">{untemplated}</p>}
       </PageSection>

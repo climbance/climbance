@@ -40,7 +40,8 @@ matches. `../README.md` gives who reaches it.
   card's template, and a cell counts the problems written for it whose
   standing difficulty falls in the band. A retired problem is counted apart,
   since it is no longer served. A core template no solution displays reads
-  as a gap on its row, as `climb gaps` reports it today. A served problem
+  as a gap on its row. Under the table, the page counts the gaps over the
+  core templates. A served problem
   with neither a rating nor the generator's label is counted as unlabelled,
   in a column shown only when one exists. The page names how many problems
   were written for a technique, since those sit on no template's row.

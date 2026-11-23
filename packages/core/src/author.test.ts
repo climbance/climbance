@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   NO_CORRECTION,
   dayLabel,
+  gapsLine,
   retentionCells,
   stopLabel,
   timeLabel,
@@ -64,5 +65,16 @@ describe('waitingLine', () => {
 describe('timeLabel', () => {
   it('reads the UTC month, day and minute', () => {
     expect(timeLabel('2026-11-20T14:02:31Z')).toBe('11-20 14:02');
+  });
+});
+
+describe('gapsLine', () => {
+  it('counts the gaps over the core templates alone', () => {
+    const rows = [
+      { optional: false, gap: true },
+      { optional: false, gap: false },
+      { optional: true, gap: false },
+    ];
+    expect(gapsLine(rows)).toBe('1 of 2 core templates carry no solution');
   });
 });

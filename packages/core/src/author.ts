@@ -75,6 +75,16 @@ export function stopLabel(stop: Stop): string {
   return 'stopped before a draft';
 }
 
+/** The total `climb gaps` ended on: the core templates no solution displays. */
+export function gapsLine(rows: { optional: boolean; gap: boolean }[]): string {
+  const core = rows.filter((row) => !row.optional);
+  const gaps = core.filter((row) => row.gap).length;
+  return `${gaps} of ${counted(core.length, 'core template')} carry no solution`;
+}
+
+// a prefix `climb problem --retire` takes, as the commands print an id
+export const shortId = (id: string) => id.slice(0, 8);
+
 export const ageLine = (days: number) => (days === 0 ? 'today' : counted(days, 'day'));
 
 export function untemplatedLine(n: number): string | null {

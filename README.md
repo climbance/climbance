@@ -393,7 +393,6 @@ uv run climb <command>
 | `match` | which problems exercise a card's templates: the matcher, or the user with `--by-hand` |
 | `problem` | read one stored problem, or list the corpus |
 | `generate` | write problems for one of a card's templates |
-| `gaps` | core templates no stored solution displays |
 | `score` | the classifier against the user's claims, per technique |
 | `movement` | how far the classifier's claims move the board off the fallback |
 

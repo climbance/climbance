@@ -20,8 +20,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 |                          current code                                  |
 |                                                                        |
 | Retirement requests                                     2 waiting      |
-| 11-22  Pair sums under a cap   defective   "case 4 expects ..."  waits |
-| 11-09  Longest calm stretch    defective   "the statement ..."  retired|
+| 11-22  3f9a2c71  Pair sums under a cap  defective  "case 4 ..."  waits |
+| 11-09  b04e18d2  Longest calm stretch   defective  "the st..." retired |
 |                                                                        |
 | Feedback                                                               |
 | 11-21  web . /knowledge/queue   "The timer kept running after ..."     |

@@ -63,7 +63,7 @@ problems, join this area under `/author` too.
 
 ## The reads each page replaces
 
-| Read today | Moves to | Then |
+| Read before the pages | Moves to | Then |
 |---|---|---|
 | Ad hoc queries over users, sittings, attempts and answers | product | gone |
 | Ad hoc queries over drafts, site outcomes and the call log's cost | generation | gone |
