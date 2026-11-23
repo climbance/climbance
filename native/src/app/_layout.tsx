@@ -3,7 +3,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { MD3DarkTheme, MD3LightTheme, PaperProvider, useTheme } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider, Portal, useTheme } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -51,11 +51,15 @@ function Themed() {
           <PaperProvider theme={paper}>
             <ThemeProvider value={nav}>
               <StoreProvider>
-                <StatusBar style={dark ? 'light' : 'dark'} />
-                <Broke>
-                  <Stack screenOptions={{ headerShown: false }} />
-                </Broke>
-                <NavigationScrim />
+                {/* a sheet's portal renders here, inside the store: PaperProvider's
+                    own host sits above it, where a sheet reading the store throws */}
+                <Portal.Host>
+                  <StatusBar style={dark ? 'light' : 'dark'} />
+                  <Broke>
+                    <Stack screenOptions={{ headerShown: false }} />
+                  </Broke>
+                  <NavigationScrim />
+                </Portal.Host>
               </StoreProvider>
             </ThemeProvider>
           </PaperProvider>
