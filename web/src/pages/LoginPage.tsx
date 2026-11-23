@@ -8,11 +8,12 @@ import {
   refusal,
   PRIVACY_LINK,
   PRIVACY_NOTE,
+  TERMS_LINK,
   SIGN_IN_TITLE,
   OF,
 } from '@climb/core'
 
-import { api, PRIVACY } from '@/api/client'
+import { api, PRIVACY, TERMS } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { ErrorLine } from '@/components/ErrorLine'
 import { Loaded } from '@/components/Loaded'
@@ -68,6 +69,10 @@ export function LoginPage() {
         {PRIVACY_NOTE}{' '}
         <Link to={PRIVACY} className="text-foreground underline underline-offset-4">
           {PRIVACY_LINK}
+        </Link>
+        {' · '}
+        <Link to={TERMS} className="text-foreground underline underline-offset-4">
+          {TERMS_LINK}
         </Link>
       </p>
     </section>

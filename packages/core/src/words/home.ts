@@ -143,9 +143,10 @@ const REFUSALS: Record<string, string> = {
 };
 export const refusal = (code: string) => REFUSALS[code] ?? REFUSALS.incomplete;
 
-// the privacy policy, linked from both clients' login
+// the privacy policy and the terms of use, linked from both clients' login
 export const PRIVACY_NOTE = 'The app stores what you attempt and what a model says about it.';
 export const PRIVACY_LINK = 'Privacy policy';
+export const TERMS_LINK = 'Terms of use';
 
 // the review forecast
 export const FORECAST_HEADING = 'Reviews ahead';

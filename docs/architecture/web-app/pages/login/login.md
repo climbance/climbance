@@ -28,7 +28,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 |   +-------------------------------------------+                        |
 |   ---------------------------------------------                        |
 |   The app stores what you attempt and what a model says about it.      |
-|   Privacy policy                                                       |
+|   Privacy policy · Terms of use                                        |
 +------------------------------------------------------------------------+
 ```
 
@@ -41,4 +41,5 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
   dev login is the only way in.
 - A refused sign-in returns to this page and names its reason, on a strip of
   its own above the presses.
-- The last line says what the app stores, and the policy is linked from it.
+- The last line says what the app stores, and links the privacy policy and
+  the terms of use.

@@ -14,6 +14,7 @@ import {
   signInUnread,
   PRIVACY_LINK,
   PRIVACY_NOTE,
+  TERMS_LINK,
   DEV_LOGIN_INTRO,
   validOrigin,
 } from '@climb/core';
@@ -120,7 +121,7 @@ export default function LoginScreen() {
         ))
       )}
       {error ? <HelperText type="error">{error}</HelperText> : null}
-      {/* the policy the web's login links, held in the app */}
+      {/* the policy and the terms the web's login links, held in the app */}
       <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
         {PRIVACY_NOTE}{' '}
         <Text
@@ -130,6 +131,15 @@ export default function LoginScreen() {
           onPress={() => router.push('/privacy')}
         >
           {PRIVACY_LINK}
+        </Text>
+        {' · '}
+        <Text
+          variant="bodySmall"
+          accessibilityRole="link"
+          style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}
+          onPress={() => router.push('/terms')}
+        >
+          {TERMS_LINK}
         </Text>
       </Text>
     </View>

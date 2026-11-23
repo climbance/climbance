@@ -24,6 +24,7 @@ import {
   SYNC_NOW,
   waitingToSend,
   PRIVACY_LINK,
+  TERMS_LINK,
   DEVICE_NAME,
   DEVICE_NAME_RULE,
   REMINDER_HOUR,
@@ -170,6 +171,14 @@ export default function SettingsScreen() {
           onPress={() => router.push('/privacy')}
         >
           {PRIVACY_LINK}
+        </Button>
+        <Button
+          mode="text"
+          icon="file-document-outline"
+          style={{ alignSelf: 'flex-start' }}
+          onPress={() => router.push('/terms')}
+        >
+          {TERMS_LINK}
         </Button>
         {field('device', DEVICE_NAME)}
         {!deviceOk ? <HelperText type="error">{DEVICE_NAME_RULE}</HelperText> : null}
