@@ -60,6 +60,22 @@ PROCESSES = (
 
 KILLS_ENTRY = "import os\n\n\ndef solve():\n    os.kill(os.getppid(), 9)\n"
 
+# opens another process's memory for writing, which seccomp cannot refuse: it
+# reads no path. The entry process and the container's init run as the case's
+# user, so only the ptrace access check stands between them
+WRITES_MEMORY = (
+    "import os\n"
+    "\n"
+    "\n"
+    "def solve(target):\n"
+    "    pid = os.getppid() if target == 'entry' else 1\n"
+    "    try:\n"
+    "        open(f'/proc/{pid}/mem', 'r+b').close()\n"
+    "    except OSError:\n"
+    "        return 'refused'\n"
+    "    return 'allowed'\n"
+)
+
 EXITS = "import os\n\n\ndef solve(n):\n    if n == 0:\n        os._exit(0)\n    return n\n"
 
 SLEEPS = "import time\n\n\ndef solve():\n    time.sleep(60)\n"
@@ -145,6 +161,17 @@ def test_a_solution_killing_its_entry_process_leaves_every_case_answered(
     assert response.status_code == 200, response.text
     assert [each["outcome"] for each in response.json()["cases"]] == ["crashed", "crashed"]
     assert all("PermissionError" in each["error"] for each in response.json()["cases"])
+
+
+def test_a_case_cannot_write_the_memory_of_the_entry_process_or_init(sandbox: TestClient):
+    """gVisor's ptrace scope lets a process reach only its own descendants, and
+    both targets are the case's ancestors."""
+    run = {"code": WRITES_MEMORY, "args": [["entry"], ["init"]], "cap_ms": 3000}
+
+    response = sandbox.post("/run", json=run)
+
+    assert response.status_code == 200, response.text
+    assert [json.loads(each["value"]) for each in response.json()["cases"]] == ["refused"] * 2
 
 
 def test_a_solution_ending_its_own_process_leaves_every_case_answered(sandbox: TestClient):
