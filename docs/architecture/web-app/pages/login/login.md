@@ -9,11 +9,11 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 |                                                                        |
 |   Climbance                                                            |
 |   Sign in                                                              |
-|   Deliberate practice of algorithmic problem-solving. Access is by     |
-|   invitation.                                                          |
+|   Deliberate practice of algorithmic problem-solving.                  |
 |                                                                        |
 |   +-------------------------------------------+  the refusal, where    |
-|   | That address has no invitation.           |  one returned          |
+|   | Today's places are taken. Come back       |  one returned          |
+|   | tomorrow.                                 |                        |
 |   +-------------------------------------------+                        |
 |                                                                        |
 |   +-------------------------------------------+                        |

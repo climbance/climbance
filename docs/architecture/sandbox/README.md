@@ -55,8 +55,10 @@ capabilities. Limits on memory, processes and time hold it.
   there. Installing gVisor after that measurement would spend it twice. Under
   gVisor at the sitting's cap, the 50 served problems' canonicals ran all 506
   of their cases, and none took over a tenth of the cap.
-- **A virtual machine per submission is deferred until access is opened beyond
-  invitations.** gVisor's KVM platform needs `/dev/kvm`, which this server does
-  not offer, so the step is a microVM service rather than a flag.
+- **A virtual machine per submission is deferred until the users reach the
+  sign-up ceiling, 200, which `../api/sign-in.md` gives.** The paced sign-up
+  bounds how many strangers can submit code before that point. gVisor's KVM
+  platform needs `/dev/kvm`, which this server does not offer, so the step is
+  a microVM service rather than a flag.
 - **The sandbox moves to a server of its own at the same point.** An escape
   then crosses a network before it reaches Postgres.

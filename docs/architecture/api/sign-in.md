@@ -25,15 +25,33 @@ credential handling is the engine's own.
   managed provider or a company's own sign-in would each be one more provider
   an `identities` row names.
 
-## Invitations
+## Sign-up
 
-- **Sign-in is by invitation.** The callback refuses a verified email the
-  `invitations` table does not hold, before any user, identity or session is
-  stored. A signed-in user's code runs on the engine, so open registration is
-  an abuse surface with no upside at this size.
-- **An invitation is added, withdrawn and listed by `climb invite`.** A
-  withdrawn invitation stops the next sign-in. The dev login is never gated,
-  since it answers on loopback alone.
+- **Anyone may sign up, at a pace of 20 new users a day and up to 200 users
+  in all.** The callback mints a user for a verified email no account holds
+  while fewer than 20 users were minted in the last 24 hours and fewer than
+  200 exist. A signed-in user's code runs on the engine, so the pace bounds
+  how many strangers can reach the sandbox before its hardening is proven.
+- **The limits gate only the minting of a user.** An existing user signs in
+  past them, and so does a new identity joining an existing user by its
+  email. Every user counts toward both limits, an invited one included.
+- **Past either limit, the callback stores no user, identity or session, and
+  the login page says today's places are taken.** A person refused comes back
+  on a later day. A waitlist was rejected: letting a listed person in later
+  needs an email to tell them, and the engine sends no email.
+- **An email the `invitations` table holds is admitted past both limits.** An
+  invitation is added, withdrawn and listed by `climb invite`. Withdrawing one
+  no longer stops a sign-in, since an email with no invitation signs up too.
+- **The author blocks an abusive account by deleting it with `climb`.** A
+  block that keeps the email from signing up again is deferred until one
+  account needs it.
+- **The two limits are constants in the sign-in code, raised by a commit.**
+  The ceiling of 200 is the trigger for the sandbox's further isolation, as
+  `../sandbox/README.md` gives. The dev login is never limited, since it
+  answers on loopback alone.
+
+## The author role
+
 - **An invitation carries a `role`, `learner` by default or `author`.** The
   author pages are open to a user one of whose identities' emails holds an
   `author` invitation. The role is read from the invitation at each request,
@@ -94,13 +112,14 @@ credential handling is the engine's own.
 - **Deleting the account erases the log, then deletes the user in the same
   transaction.** The user's identities, sessions, app codes and app tokens go
   with it, and so do the invitations of the identities' emails. The user asked
-  to leave, so no email of theirs stays stored. Signing in again needs a new
-  invitation, and mints a new user.
-- **The record and the account are kept until the user deletes the account.**
-  The engine expires neither by itself, since the board and the schedule read
-  the record. A rule deleting an account left unused is deferred until
-  access is opened beyond invitations. The privacy policy states this period,
-  the backups' 30 days and the logs' 14 days.
+  to leave, so no email of theirs stays stored. Signing in again is a new
+  sign-up under the pace, and mints a new user.
+- **The engine deletes an account no session or app token has signed a
+  request in for 12 months, as the user's own deletion does.** Open sign-up
+  leaves accounts nobody returns to, each holding an email and a log. Short
+  of that period the record is kept, since the board and the schedule read
+  it. An account holding an invitation is never deleted this way. The privacy
+  policy states this period, the backups' 30 days and the logs' 14 days.
 - **The deletion asks for the account's name typed back, and the engine checks
   it.** The name is the one the account menu shows: the verified email, or the
   user id where no provider linked one. The client signs out after the

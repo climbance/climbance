@@ -236,7 +236,7 @@ flowchart TB
         short_exercises["Short exercises<br/>Serves the judgement and key-line items, and stores each judgement and fill."]
         retirement_requests["Retirement requests<br/>Stores a user's request that a problem be retired, for the author to read."]
         feedback["Feedback<br/>Stores a user's note to the author, naming the client and the page."]
-        sign_in["Sign-in<br/>Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."]
+        sign_in["Sign-in<br/>Runs the provider flow, admits a new user under the daily pace and the ceiling, and keeps each browser's session."]
         author_reads["Author reads<br/>Answers the author pages' figures under /api/author, read from the store, and refuses a user without the author role."]
         app_tokens["App tokens<br/>Ends the native app's provider flow in a one-time code, and exchanges it for the app's token."]
     end

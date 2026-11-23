@@ -625,7 +625,7 @@ id = "sign-in"
 kind = "component"
 container = "api"
 name = "Sign-in"
-role = "Runs the provider flow, refuses an email no invitation holds, and keeps each browser's session."
+role = "Runs the provider flow, admits a new user under the daily pace and the ceiling, and keeps each browser's session."
 doc = "api/sign-in.md"
 src = [
     "src/climb/api/account.py",

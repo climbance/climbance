@@ -17,7 +17,7 @@ a token for the app instead.
   verifier it cannot redeem it.
 - **The providers see only the engine's own callback, as they do for the
   pages.** Supporting the app adds no redirect address to a provider's console.
-- **The invitation gate, the email check and the linking of identities run
+- **The sign-up pace, the email check and the linking of identities run
   unchanged, since the app's flow passes the same callback.**
 
 ## The token
