@@ -24,7 +24,7 @@ from climb.solutions import SolutionLog
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
 # the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = ["product", "generation", "workflow"]
+PAGES: list[str] = ["product", "generation", "workflow", "questions"]
 
 
 class AuthorArea(BaseModel):

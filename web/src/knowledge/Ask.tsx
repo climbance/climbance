@@ -8,8 +8,13 @@ import {
   taughtBy,
   verdictView,
   yourAnswer,
+  type AnswerRow,
+  answeredRight,
+  bankAnswer,
+  BANK_ANSWER,
   type Course,
   type Question,
+  type YourAnswer,
   type Result,
   ASK_ANSWER,
   ASK_GUESSING,
@@ -117,29 +122,7 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
       {q.code && <PythonCode code={q.code} />}
 
       {q.format === 'choice' && (
-        <div className="space-y-2" role={multi ? 'group' : 'radiogroup'}>
-          {multi && <p className="text-meta text-muted-foreground">{askChoose(q.answer.length)}</p>}
-          {order.map((i, pos) => {
-            const on = picked.includes(pos)
-            return (
-              <button
-                key={pos}
-                type="button"
-                role={multi ? 'checkbox' : 'radio'}
-                aria-checked={on}
-                disabled={!!result}
-                onClick={() => toggle(pos)}
-                className={cn(optionTile(on), 'w-full items-baseline')}
-              >
-                <span className="font-medium">{LETTERS[pos]}</span>
-                <span className="flex-1 whitespace-pre-wrap">
-                  <Inline text={q.choices[i]} />
-                </span>
-                <span className="text-meta text-muted-foreground">{pos + 1}</span>
-              </button>
-            )
-          })}
-        </div>
+        <Choices q={q} order={order} picked={picked} disabled={!!result} onToggle={toggle} />
       )}
 
       {q.format === 'short' && (
@@ -229,6 +212,66 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
   )
 }
 
+function Choices({
+  q,
+  order,
+  picked,
+  disabled,
+  onToggle,
+}: {
+  q: Question
+  order: number[]
+  picked: number[]
+  disabled: boolean
+  onToggle?: (pos: number) => void
+}) {
+  const multi = q.answer.length > 1
+  return (
+    <div className="space-y-2" role={multi ? 'group' : 'radiogroup'}>
+      {multi && <p className="text-meta text-muted-foreground">{askChoose(q.answer.length)}</p>}
+      {order.map((i, pos) => {
+        const on = picked.includes(pos)
+        return (
+          <button
+            key={pos}
+            type="button"
+            role={multi ? 'checkbox' : 'radio'}
+            aria-checked={on}
+            disabled={disabled}
+            onClick={() => onToggle?.(pos)}
+            className={cn(optionTile(on), 'w-full items-baseline')}
+          >
+            <span className="font-medium">{LETTERS[pos]}</span>
+            <span className="flex-1 whitespace-pre-wrap">
+              <Inline text={q.choices[i]} />
+            </span>
+            <span className="text-meta text-muted-foreground">{pos + 1}</span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * A question as the queue draws it once answered right, its detail open, for
+ * the author's questions page: `web-app/pages/author/questions/`.
+ */
+export function Answered({ q, course }: { q: Question; course: Course | undefined }) {
+  const r = answeredRight(q)
+  return (
+    <div className="space-y-stack">
+      <p className="text-heading whitespace-pre-wrap">
+        <Inline text={block(q.prompt)} />
+      </p>
+      {q.code && <PythonCode code={q.code} />}
+      {q.format === 'choice' && <Choices q={q} order={r.order} picked={r.picked} disabled />}
+      <Verdict r={r} />
+      <Details r={r} course={course} answered={{ title: BANK_ANSWER, rows: bankAnswer(q) }} />
+    </div>
+  )
+}
+
 function Tick(props: {
   label: string
   hint?: string
@@ -287,19 +330,22 @@ export function Details({
   r,
   course,
   onLesson,
+  answered,
 }: {
   r: Result
   course: Course | undefined
   onLesson?: (course: string, slug: string, anchor: string) => void
+  // the author's reading in place of the learner's own answer: `bankAnswer`
+  answered?: { title: string; rows: AnswerRow[] }
 }) {
-  const answer = yourAnswer(r)
+  const answer: YourAnswer = answered ? { kind: 'rows', rows: answered.rows } : yourAnswer(r)
   const sections = detailSections(r.q)
   const { catalog } = useLearner()
   const lessons = taughtBy(r.q, course, catalog?.lessonsDone)
   return (
     <Panel>
       {answer && (
-        <Section title={DETAIL_YOUR_ANSWER}>
+        <Section title={answered?.title ?? DETAIL_YOUR_ANSWER}>
           {answer.kind === 'rows' ? (
             answer.rows.map((row) => (
               <div key={row.key} className={cn('rounded-md px-2 py-1', row.yours && 'bg-muted')}>

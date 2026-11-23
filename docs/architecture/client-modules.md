@@ -76,6 +76,7 @@ flowchart LR
     end
     subgraph g1["Shared core: Web app"]
         core_author["author"]
+        core_bank["bank"]
     end
     subgraph g2["Shared core: Web app and Native app"]
         core_account["account"]
@@ -153,6 +154,7 @@ flowchart LR
     core_ask --> core_words
     core_author --> core_api
     core_author --> core_screens
+    core_bank --> core_answer
     core_baseline --> core_exam
     core_baseline --> core_words
     core_certs --> core_schedule

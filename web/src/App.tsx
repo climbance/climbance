@@ -44,6 +44,10 @@ const RecallPage = lazy(() => import('@/pages/RecallPage').then((m) => ({ defaul
 const DrawnRecallPage = lazy(() =>
   import('@/pages/RecallPage').then((m) => ({ default: m.DrawnRecallPage })),
 )
+// lazy, as the queue is: each row draws the queue's answered question
+const AuthorQuestionsPage = lazy(() =>
+  import('@/pages/AuthorQuestionsPage').then((m) => ({ default: m.AuthorQuestionsPage })),
+)
 const PrivacyPage = lazy(() =>
   import('@/pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage })),
 )
@@ -103,6 +107,7 @@ function App() {
               <Route path="author/product" element={<AuthorProductPage />} />
               <Route path="author/generation" element={<AuthorGenerationPage />} />
               <Route path="author/workflow" element={<AuthorWorkflowPage />} />
+              <Route path="author/questions" element={<AuthorQuestionsPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
               {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}
