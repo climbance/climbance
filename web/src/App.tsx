@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { AuthorGenerationPage } from '@/pages/AuthorGenerationPage'
 import { AuthorPage } from '@/pages/AuthorPage'
 import { AuthorProductPage } from '@/pages/AuthorProductPage'
+import { AuthorWorkflowPage } from '@/pages/AuthorWorkflowPage'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
 import { FillPage } from '@/pages/FillPage'
@@ -101,6 +102,7 @@ function App() {
               <Route path="author" element={<AuthorPage />} />
               <Route path="author/product" element={<AuthorProductPage />} />
               <Route path="author/generation" element={<AuthorGenerationPage />} />
+              <Route path="author/workflow" element={<AuthorWorkflowPage />} />
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
               {GalleryPage && <Route path="gallery" element={<GalleryPage />} />}

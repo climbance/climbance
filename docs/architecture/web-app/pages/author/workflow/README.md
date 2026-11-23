@@ -12,7 +12,12 @@ cost. `../README.md` gives who reaches it.
   - `claim --by-hand`: the signed-in author's attempts that carry no user
     claim. The pass reads the author's own log, so the page reads it too.
   - `match --by-hand`: the canonicals that carry no user template match.
-  - `difficulty`: the served problems that carry no difficulty rating.
+  - `difficulty judge`: the served problems that carry no rating under the
+    standing correction, which are the problems the command would rate. With
+    no standing correction the command cannot run, and the row says so.
+  - `judge build`: the templates whose judgement items are not served at the
+    template's current code, which are the templates the build would rebuild.
+  - `fill build`: the same count for the key-line items.
 - **The retirement requests read newest first, waiting ones on top.** A
   request waits while its problem is still served. A row names the problem,
   the retirement reason and the note, and no user, since the author acts on

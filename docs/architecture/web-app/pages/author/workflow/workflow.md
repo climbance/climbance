@@ -12,7 +12,12 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | Waiting                                                                |
 | claim --by-hand       14 of your attempts carry no claim of yours      |
 | match --by-hand        6 canonicals carry no match of yours            |
-| difficulty             3 served problems carry no rating               |
+| difficulty judge       3 served problems carry no rating under the     |
+|                          standing correction                           |
+| judge build            2 templates' judgement items are not at their   |
+|                          current code                                  |
+| fill build             2 templates' key-line items are not at their    |
+|                          current code                                  |
 |                                                                        |
 | Retirement requests                                     2 waiting      |
 | 11-22  Pair sums under a cap   defective   "case 4 expects ..."  waits |

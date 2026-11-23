@@ -828,6 +828,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/workflow': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Workflow */
+    get: operations['workflow_api_author_workflow_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1426,6 +1443,29 @@ export interface components {
      * @enum {string}
      */
     FailureMode: 'speed' | 'rust' | 'gap' | 'syntax' | 'none';
+    /** FaultDay */
+    FaultDay: {
+      /**
+       * Day
+       * Format: date
+       */
+      day: string;
+      /** Counts */
+      counts: {
+        [key: string]: number;
+      };
+    };
+    /** FaultRow */
+    FaultRow: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      kind: components['schemas']['RunKind'];
+      /** Detail */
+      detail: string;
+    };
     /**
      * Feedback
      * @description One user's feedback on the engine: `api/feedback.md`.
@@ -1440,6 +1480,19 @@ export interface components {
       created_at: string;
       /** User Id */
       user_id: string;
+      client: components['schemas']['Client'];
+      /** Page */
+      page: string;
+      /** Note */
+      note: string;
+    };
+    /** FeedbackRow */
+    FeedbackRow: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
       client: components['schemas']['Client'];
       /** Page */
       page: string;
@@ -1946,6 +1999,12 @@ export interface components {
      * @enum {string}
      */
     OpenGrade: 'k' | 'p' | 'n';
+    /**
+     * Pass
+     * @description The command that clears what waits, as the author runs it.
+     * @enum {string}
+     */
+    Pass: 'claim --by-hand' | 'match --by-hand' | 'difficulty judge' | 'judge build' | 'fill build';
     /** Pause */
     Pause: {
       /**
@@ -2216,6 +2275,23 @@ export interface components {
        * @default []
        */
       hints: components['schemas']['Hint'][];
+    };
+    /** RequestRow */
+    RequestRow: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Problem Id */
+      problem_id: string;
+      /** Title */
+      title: string;
+      reason: components['schemas']['RetirementReason'];
+      /** Note */
+      note: string;
+      /** Waits */
+      waits: boolean;
     };
     /**
      * Requirement
@@ -2493,6 +2569,15 @@ export interface components {
       cold: boolean;
       /** Time Limit Sec */
       time_limit_sec?: number | null;
+    };
+    /** SpendRow */
+    SpendRow: {
+      /** Part */
+      part: string;
+      /** Calls */
+      calls: number;
+      /** Cost */
+      cost: number;
     };
     /** Stint */
     Stint: {
@@ -2844,6 +2929,31 @@ export interface components {
       slug: string;
       /** Title */
       title: string;
+    };
+    /** WaitingPass */
+    WaitingPass: {
+      command: components['schemas']['Pass'];
+      /** Count */
+      count: number | null;
+    };
+    /** WorkflowFigures */
+    WorkflowFigures: {
+      /** Period Days */
+      period_days: number;
+      /** Waiting */
+      waiting: components['schemas']['WaitingPass'][];
+      /** Requests */
+      requests: components['schemas']['RequestRow'][];
+      /** Feedback */
+      feedback: components['schemas']['FeedbackRow'][];
+      /** Fault Days */
+      fault_days: components['schemas']['FaultDay'][];
+      /** Faults */
+      faults: components['schemas']['FaultRow'][];
+      /** Spend */
+      spend: components['schemas']['SpendRow'][];
+      /** Uncosted */
+      uncosted: number;
     };
     /**
      * WritingState
@@ -4281,6 +4391,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['GenerationFigures'];
+        };
+      };
+    };
+  };
+  workflow_api_author_workflow_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WorkflowFigures'];
         };
       };
     };

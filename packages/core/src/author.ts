@@ -3,6 +3,7 @@ import { counted } from './screens';
 
 type Stop = components['schemas']['Stop'];
 type Retention = components['schemas']['Retention'];
+type WaitingPass = components['schemas']['WaitingPass'];
 
 // the author area's pages, by the last segment of each path:
 // `web-app/pages/author/README.md`
@@ -79,3 +80,57 @@ export const ageLine = (days: number) => (days === 0 ? 'today' : counted(days, '
 export function untemplatedLine(n: number): string | null {
   return n ? `${counted(n, 'problem')} written for a technique, on no template's row` : null;
 }
+
+export const WORKFLOW_TITLE = 'Workflow';
+export const WAITING = 'Waiting';
+export const RETIREMENT_REQUESTS = 'Retirement requests';
+export const RUN_FAULTS = 'Run faults';
+export const SPEND = 'Spend';
+export const CALLS = 'calls';
+export const COST = 'cost';
+export const WAITS = 'waits';
+export const RETIRED_STATE = 'retired';
+export const NO_REQUEST = 'No retirement request is stored.';
+export const NO_FEEDBACK = 'No feedback is stored.';
+export const NO_FAULT = 'No run faulted in the period.';
+export const NO_CALL = 'No model call in the period.';
+export const NO_CORRECTION = 'no correction stands; run difficulty correct first';
+
+// what each pass would ask about now, said in the pass's own terms
+const WAITING_WHAT: Record<WaitingPass['command'], [string, string]> = {
+  'claim --by-hand': ['of your attempts carries no claim of yours', 'of your attempts carry no claim of yours'],
+  'match --by-hand': ['canonical carries no match of yours', 'canonicals carry no match of yours'],
+  'difficulty judge': [
+    'served problem carries no rating under the standing correction',
+    'served problems carry no rating under the standing correction',
+  ],
+  'judge build': [
+    "template's judgement items are not at its current code",
+    "templates' judgement items are not at their current code",
+  ],
+  'fill build': [
+    "template's key-line items are not at its current code",
+    "templates' key-line items are not at their current code",
+  ],
+};
+
+export function waitingLine(one: WaitingPass): string {
+  if (one.count == null) return NO_CORRECTION;
+  const [single, many] = WAITING_WHAT[one.command];
+  return `${one.count} ${one.count === 1 ? single : many}`;
+}
+
+export const requestsWaitingLine = (requests: { waits: boolean }[]) =>
+  `${requests.filter((one) => one.waits).length} waiting`;
+
+export const periodTitle = (title: string, days: number) => `${title}, last ${days} days`;
+
+export const costLabel = (cost: number) => `$${cost.toFixed(2)}`;
+
+export function uncostedCallsLine(n: number): string | null {
+  return n ? `${counted(n, 'call')} ${n === 1 ? 'carries' : 'carry'} no cost` : null;
+}
+
+// an ISO time read as `11-20` or `11-20 14:02`, in UTC as the days are
+export const dateLabel = (at: string) => at.slice(5, 10);
+export const timeLabel = (at: string) => `${at.slice(5, 10)} ${at.slice(11, 16)}`;

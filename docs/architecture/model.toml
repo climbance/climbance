@@ -201,14 +201,15 @@ src = [
 code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
-    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.drafts", "climb.feedback",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.difficulty", "climb.drafts",
+    "climb.feedback",
     "climb.glicko", "climb.measured",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
-    "climb.mint", "climb.mutation", "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings",
+    "climb.mint", "climb.mutant_diagnoses", "climb.mutation", "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings",
     "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
     "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
-    "climb.statement", "climb.storage", "climb.techniques", "climb.template_schedule",
+    "climb.statement", "climb.storage", "climb.techniques", "climb.template_schedule", "climb.trials",
 ]
 
 [[element]]
@@ -639,6 +640,7 @@ src = [
     "src/climb/api/author.py",
     "src/climb/api/generation_figures.py",
     "src/climb/api/product_figures.py",
+    "src/climb/api/workflow_figures.py",
 ]
 
 [[element]]
@@ -1121,6 +1123,7 @@ src = [
     "web/src/pages/AuthorPage.tsx",
     "web/src/pages/AuthorGenerationPage.tsx",
     "web/src/pages/AuthorProductPage.tsx",
+    "web/src/pages/AuthorWorkflowPage.tsx",
     "web/src/components/AuthorBar.tsx",
     "web/src/components/FigureTable.tsx",
 ]

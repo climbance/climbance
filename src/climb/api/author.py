@@ -3,6 +3,7 @@ router's dependency guards every route on it, so a route added here needs no
 check of its own."""
 
 from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
@@ -10,6 +11,7 @@ from pydantic import BaseModel
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
 from climb.api.product_figures import ProductFigures, product_figures
+from climb.api.workflow_figures import WorkflowFigures, workflow_figures
 from climb.cards import CardStore
 from climb.drafts import DraftStore
 from climb.matches import MatchLog
@@ -20,7 +22,7 @@ from climb.solutions import SolutionLog
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
 # the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = ["product", "generation"]
+PAGES: list[str] = ["product", "generation", "workflow"]
 
 
 class AuthorArea(BaseModel):
@@ -48,3 +50,8 @@ def generation(root: Root) -> GenerationFigures:
         CardStore(root).all(),
         now=datetime.now(UTC),
     )
+
+
+@router.get("/workflow")
+def workflow(root: Root, user_id: Annotated[str, Depends(author_id)]) -> WorkflowFigures:
+    return workflow_figures(root, user_id, now=datetime.now(UTC))

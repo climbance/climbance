@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any
 
 from climb.ids import new_id
-from climb.judging.build import digest, flaws, rebuild, servable, spread
+from climb.judging.build import digest, flaws, rebuild, servable, spread, stale
 from climb.schema import Card, KeyLineChoice, KeyLineItem, Template
 
 # a wrong choice per mutant, beside the form's own line: four choices at most
@@ -47,6 +47,10 @@ def build_key_lines(
     cards: Sequence[Card], held: Sequence[KeyLineItem], *, now: datetime
 ) -> tuple[list[KeyLineItem], list[str]]:
     return rebuild(cards, held, lambda template: key_lines(template, now=now), whole)
+
+
+def stale_key_lines(cards: Sequence[Card], held: Sequence[KeyLineItem]) -> list[Template]:
+    return stale(cards, held, whole)
 
 
 def statements(code: str) -> dict[int, tuple[int, int]]:

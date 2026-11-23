@@ -92,24 +92,41 @@ def rebuild[T: Built](
     make: Callable[[Template], list[T]],
     current_shape: Callable[[T], bool] = lambda _: True,
 ) -> tuple[list[T], list[str]]:
-    """The items to add and the ids to retire: a template already served at its
-    current code, in the current shape, is left alone."""
+    """The items to add and the ids to retire."""
+    served = _served(held)
+    added: list[T] = []
+    retired: list[str] = []
+    for template in stale(cards, held, current_shape):
+        retired += [one.id for one in served.get(template.id, [])]
+        added += make(template)
+    return added, retired
+
+
+def stale[T: Built](
+    cards: Sequence[Card], held: Sequence[T], current_shape: Callable[[T], bool] = lambda _: True
+) -> list[Template]:
+    """The templates a build would rebuild: every one but those already served
+    at their current code, in the current shape."""
+    served = _served(held)
+    return [
+        template
+        for card in cards
+        for template in card.templates
+        if not (
+            (current := served.get(template.id))
+            and all(
+                one.form_digest == digest(template.code) and current_shape(one) for one in current
+            )
+        )
+    ]
+
+
+def _served[T: Built](held: Sequence[T]) -> dict[str, list[T]]:
     served: dict[str, list[T]] = {}
     for one in held:
         if one.status is ItemStatus.SERVED:
             served.setdefault(one.template_id, []).append(one)
-    added: list[T] = []
-    retired: list[str] = []
-    for card in cards:
-        for template in card.templates:
-            current = served.get(template.id, [])
-            if current and all(
-                one.form_digest == digest(template.code) and current_shape(one) for one in current
-            ):
-                continue
-            retired += [one.id for one in current]
-            added += make(template)
-    return added, retired
+    return served
 
 
 def flaws(template: Template, form: str) -> list[dict[str, Any]]:

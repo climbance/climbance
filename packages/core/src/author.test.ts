@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { dayLabel, retentionCells, stopLabel, uncostedLine, usersLine, writingsLine } from './author';
+import {
+  NO_CORRECTION,
+  dayLabel,
+  retentionCells,
+  stopLabel,
+  timeLabel,
+  uncostedLine,
+  usersLine,
+  waitingLine,
+  writingsLine,
+} from './author';
 
 describe('writingsLine', () => {
   it('rounds the rate and names none over no writing', () => {
@@ -40,5 +50,19 @@ describe('usersLine', () => {
 describe('dayLabel', () => {
   it('drops the year', () => {
     expect(dayLabel('2026-11-23')).toBe('11-23');
+  });
+});
+
+describe('waitingLine', () => {
+  it("counts in the pass's terms, and names a missing correction", () => {
+    expect(waitingLine({ command: 'claim --by-hand', count: 14 })).toBe('14 of your attempts carry no claim of yours');
+    expect(waitingLine({ command: 'match --by-hand', count: 1 })).toBe('1 canonical carries no match of yours');
+    expect(waitingLine({ command: 'difficulty judge', count: null })).toBe(NO_CORRECTION);
+  });
+});
+
+describe('timeLabel', () => {
+  it('reads the UTC month, day and minute', () => {
+    expect(timeLabel('2026-11-20T14:02:31Z')).toBe('11-20 14:02');
   });
 });

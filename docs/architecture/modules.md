@@ -54,10 +54,7 @@ flowchart LR
         climb_cli["cli"]
         climb_diagnoser["diagnoser"]
         climb_diagnosing["diagnosing"]
-        climb_difficulty["difficulty"]
         climb_generation["generation"]
-        climb_mutant_diagnoses["mutant_diagnoses"]
-        climb_trials["trials"]
         climb_verifications["verifications"]
     end
     subgraph g3["API and Command line"]
@@ -68,6 +65,7 @@ flowchart LR
         climb_cards["cards"]
         climb_cases["cases"]
         climb_classifier["classifier"]
+        climb_difficulty["difficulty"]
         climb_drafts["drafts"]
         climb_ids["ids"]
         climb_judgements["judgements"]
@@ -77,6 +75,7 @@ flowchart LR
         climb_log["log"]
         climb_matches["matches"]
         climb_mint["mint"]
+        climb_mutant_diagnoses["mutant_diagnoses"]
         climb_mutation["mutation"]
         climb_outcomes["outcomes"]
         climb_problems["problems"]
@@ -91,21 +90,25 @@ flowchart LR
         climb_statement["statement"]
         climb_storage["storage"]
         climb_techniques["techniques"]
+        climb_trials["trials"]
     end
     subgraph g4["API, Sandbox and Command line"]
         climb_runner["runner"]
     end
     climb_api --> climb_cold
+    climb_api --> climb_difficulty
     climb_api --> climb_drafts
     climb_api --> climb_feedback
     climb_api --> climb_judgements
     climb_api --> climb_judging
     climb_api --> climb_keylines
     climb_api --> climb_measured
+    climb_api --> climb_mutant_diagnoses
     climb_api --> climb_outcomes
     climb_api --> climb_pick
     climb_api --> climb_recall
     climb_api --> climb_retirement
+    climb_api --> climb_trials
     climb_attempt_claims --> climb_classifier
     climb_attempt_claims --> climb_log
     climb_attempt_claims --> climb_mint

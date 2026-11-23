@@ -1,6 +1,6 @@
 from climb.judging.answer import Place, Verdict, filled, next_item, places, verdict
-from climb.judging.build import build, digest, items, shown
-from climb.judging.keylines import blank, build_key_lines, key_lines
+from climb.judging.build import build, digest, items, shown, stale
+from climb.judging.keylines import blank, build_key_lines, key_lines, stale_key_lines
 from climb.judging.labelled import labelled_mutants
 
 __all__ = [
@@ -17,5 +17,7 @@ __all__ = [
     "next_item",
     "places",
     "shown",
+    "stale",
+    "stale_key_lines",
     "verdict",
 ]
