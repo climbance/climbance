@@ -92,6 +92,7 @@ export class Board {
   readonly explicit: boolean; // one course was selected by the learner
   readonly include: string | null; // served even if paused: the focus course
   readonly tested: ReadonlySet<string>; // `course:topic` of each baseline test taken
+  readonly measured: ReadonlySet<string>; // qkey of each question a baseline test asked
 
   constructor(
     catalog: Catalog,
@@ -100,9 +101,11 @@ export class Board {
     explicit = false,
     include: string | null = null,
     tested: ReadonlySet<string> = new Set(),
+    measured: ReadonlySet<string> = new Set(),
   ) {
     this.catalog = catalog;
     this.tested = tested;
+    this.measured = measured;
     this.courses = courses;
     this.hist = hist;
     this.explicit = explicit;
@@ -119,7 +122,14 @@ export class Board {
 
   static build(catalog: Catalog, records: AttemptRecord[], only?: string | null, include: string | null = null): Board {
     const courses = only ? catalog.courses.filter((c) => c.slug === only) : catalog.courses;
-    return new Board(catalog, courses, buildHistory(records), !!only, include, testedTopics(catalog, records));
+    const measured = new Set(records.filter((r) => r.measure === 'baseline').map(qkey));
+    return new Board(catalog, courses, buildHistory(records), !!only, include, testedTopics(catalog, records), measured);
+  }
+
+  /** The new questions a queue serves first: those no baseline test asked, while any is left. */
+  untested(qs: Question[]): Question[] {
+    const rest = qs.filter((q) => !this.measured.has(qkey(q)));
+    return rest.length ? rest : qs;
   }
 
   /** Courses served by `next` and `exam`: paused ones only when selected explicitly. */

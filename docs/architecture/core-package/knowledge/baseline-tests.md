@@ -61,6 +61,9 @@ A lesson's pretest is a different thing, as
   queue would serve them before their lesson is read.
 - **The rule exists in Python and in `packages/core`**, held together by the
   shared fixtures, as `../README.md` gives for the schedule.
+- **The queues order the tested questions last.** A question the test asked
+  stays unseen, and a queue serves it as new only once its group has no
+  other new question left, as `queues.md` gives.
 - **The baseline's questions are read from its answers**, never stored as a
   list. A topic has one baseline test, so the answers measuring `baseline` on
   that topic's questions are the test.

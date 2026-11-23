@@ -206,6 +206,21 @@ describe('a baseline test in a queue run', () => {
     expect(r.current && 'q' in r.current).toBe(true);
   });
 
+  it('serves a question the test asked after the rest of its group', () => {
+    const t = '2026-11-01T12:00:00+00:00';
+    const stint = { t, mode: 'baseline', score: 1, n: 2, course: 'c', topic: 't', level: 0 } as SessionRecord;
+    const measured = ['a', 'b'].map((id) => ({ t, course: 'c', id, ok: id === 'a', measure: 'baseline' as const }));
+    const src = { catalog, attempts: measured, sessions: [stint] };
+    const r = new QueueRun(nextQueue(Board.build(catalog, measured), 10), 'next', null, null, src);
+    const served: string[] = [];
+    for (; r.current && 'q' in r.current && served.length < 4; r.next(src)) {
+      served.push(r.current.q.id);
+      r.answer(result(r.current.q, true));
+    }
+    expect(served.slice(0, 2).sort()).toEqual(['o', 's']);
+    expect(served.slice(2).sort()).toEqual(['a', 'b']);
+  });
+
   it('is not offered on a topic already answered in', () => {
     const old = [{ t: '2026-11-01T12:00:00+00:00', course: 'c', id: 'a', ok: true }];
     const r = new QueueRun(nextQueue(Board.build(catalog, old), 10), 'next', null, null, { catalog, attempts: old });

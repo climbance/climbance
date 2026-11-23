@@ -145,11 +145,11 @@ export class Queue {
     if (this.kind !== 'mix') {
       // A focus's new questions follow the ladder; a drill is explicit and may go past it.
       const ladder = this.kind === 'focus';
-      return (
-        (this.newScope ?? this.scope).find(
-          (q) => !b.attempts(q).length && !this.withholds(q) && (!ladder || (b.unlocked(q) && !b.held(q))),
-        ) ?? null
+      const unseen = (this.newScope ?? this.scope).filter(
+        (q) => !b.attempts(q).length && !this.withholds(q) && (!ladder || (b.unlocked(q) && !b.held(q))),
       );
+      const g = unseen.length ? groupKey(unseen[0]) : null;
+      return b.untested(unseen.filter((q) => groupKey(q) === g))[0] ?? null;
     }
     // Frontier order per course, courses round-robin so none starves the others.
     const cs = b.served;
@@ -163,7 +163,9 @@ export class Queue {
         );
         if (!unseen.length) continue;
         if (take) this.lastCourse = k;
-        return unseen[Math.floor(rng() * unseen.length)];
+        // a question the topic's baseline test asked comes last: `core-package/knowledge/queues.md`
+        const pool = b.untested(unseen);
+        return pool[Math.floor(rng() * pool.length)];
       }
     }
     return null;
