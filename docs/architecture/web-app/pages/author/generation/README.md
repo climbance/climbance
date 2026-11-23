@@ -31,11 +31,19 @@ matches. `../README.md` gives who reaches it.
   The cost is the `cost` on each site outcome, as the router charged it. The
   page names how many site outcomes carry no cost, since a sum over a missing
   value reads lower than the truth.
-- **The spend leaves out the first of two discrimination rounds.** The
-  discrimination outcome cites the last round's call, and the call log names
-  no writing. A writing that ran two rounds therefore reads cheaper than it
-  was. Recording each round's call is deferred until the spend is read
-  against the router's own bill.
+- **The spend leaves out the first of two discrimination rounds, about 3%.**
+  The discrimination outcome cites the last round's call, and the call log
+  names no writing. On 2026-11-23, prod's last 30 days held 159 writings and
+  a spend of $10.09. 13 of the writings ran two rounds, and their first-round
+  calls cost $0.30, so the page read 2.9% under the calls the writings made.
+  Over 108 landed writings, the page showed $0.09 a landed problem against
+  $0.096 paid. Recording each round's call needs a list of calls on the site
+  outcome, a schema change. The change is deferred until the gap passes 10%
+  of the spend.
+- **The spend is read against the call log, not the router's bill.** Each
+  call's `cost` is the charge the router reported for that response. The
+  router account also bills calls made outside the engine, so its monthly
+  total exceeds the engine's call log and cannot check the page.
 - **The corpus reads as a table of templates by difficulty band.** A row is a
   card's template, and a cell counts the problems written for it whose
   standing difficulty falls in the band. A retired problem is counted apart,
