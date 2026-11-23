@@ -16,7 +16,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | Stopped by                                                writings     |
 | screen . copied                                                 9      |
 | blind . disagreed                                               8      |
-| discrimination . unexercised                                    5      |
+| generator . no_value                                            5      |
+| unexercised                                                     4      |
 | held at paced                                                   3      |
 |                                                                        |
 | Drafts now                                   drafts     oldest         |
