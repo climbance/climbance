@@ -283,6 +283,8 @@ ignore_names = [
     "handle_*",
     # a result record names the pair that failed; the report reads only the reason
     "card_id",
+    # the generation page reads the period and a held writing's state, and no module does
+    "period_days", "held_at",
     # a card's recall state says when a form was last reproduced, which the page
     # reads and no module does
     "last_at",

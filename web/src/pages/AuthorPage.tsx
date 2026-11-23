@@ -1,4 +1,4 @@
-import { AUTHOR_NONE, AUTHOR_TITLE, BACK_BOARD, OF } from '@climb/core'
+import { AUTHOR_NONE, AUTHOR_PAGES, AUTHOR_TITLE, BACK_BOARD, OF } from '@climb/core'
 import { Link } from 'react-router'
 
 import { api } from '@/api/client'
@@ -26,7 +26,7 @@ export function AuthorPage() {
           <ul className="space-y-stack">
             {pages.map((page) => (
               <li key={page}>
-                <Link to={`/author/${page}`}>{page}</Link>
+                <Link to={`/author/${page}`}>{AUTHOR_PAGES[page] ?? page}</Link>
               </li>
             ))}
           </ul>

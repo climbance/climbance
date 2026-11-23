@@ -38,6 +38,7 @@ export * from './syncstate';
 export * from './account';
 export * from './retirement';
 export * from './feedback';
+export * from './author';
 // the engine's API, generated from its OpenAPI schema by `just types`
 export type { components, paths } from './api/schema';
 export * from './screens';

@@ -48,3 +48,4 @@ export function candidates(technique: string, signal: AbortSignal) {
     signal,
   })
 }
+export type GenerationFigures = components['schemas']['GenerationFigures']

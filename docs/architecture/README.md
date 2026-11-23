@@ -99,6 +99,7 @@ flowchart TB
         web_knowledge_store["Web knowledge store<br/>Keeps the browser's copy of the content and the user's log in IndexedDB, and runs the sync loop."]
     end
     web_author -.->|"reads each author page's figures"| api
+    web_author -.->|"draws the author pages' labels"| core_package
     web_knowledge -.->|"draws what each knowledge screen says; runs a queue or an exam; draws the review forecast"| core_package
     web_knowledge -.->|"reads the copy and starts a sync"| web_knowledge_store
     web_knowledge_store -.->|"runs the sync over the browser's copy"| core_package
@@ -157,13 +158,14 @@ flowchart TB
         client_store["Store and sync<br/>Names the records a client keeps, folds them into the learner, and syncs the outbox with the engine."]
         answering["Answering<br/>Runs a queue or an exam one question at a time: the reply, its grade, and the result each answer shows."]
         knowledge_screens["Knowledge screens<br/>Computes what the knowledge home, a module, its map, a subtopic, the lessons and the certifications say."]
-        practice_screens["Practice screens<br/>Computes what the board, the cards, the listing and the guide say, and each page's readings and sections."]
+        practice_screens["Practice screens<br/>Computes what the board, the cards, the listing and the guide say, each page's readings and sections, and the author pages' labels."]
         core_sitting["Sitting controller<br/>Drives a sitting: the requests minting it, moving its clock and submitting to it, then the claim and the label."]
         core_recall["Recall trainer<br/>Draws the template a recall reproduces, and offers its hints in order."]
         core_exercises["Exercise screens<br/>Serves the judging and the key-line items one at a time, and reads each answer back."]
         core_account["Account<br/>Names the signed-in devices, exports the record, deletes the account, sends feedback, and holds the privacy policy."]
         drawing["Code and diagrams<br/>Wraps code to a width, and shapes the tables and the diagrams authored prose holds."]
     end
+    web_app -.->|"draws the author pages' labels; draws the board, the guide and the listing; draws the cards and their ladders; reads a page's readings and its sections"| practice_screens
     queues -.->|"reads each question's state"| knowledge_schedule
     queues -.->|"reads the open groups"| gating
     certifications -.->|"reads which questions are retained"| knowledge_schedule
@@ -184,7 +186,6 @@ flowchart TB
     web_app -.->|"runs a queue or an exam"| answering
     web_app -.->|"draws the review forecast"| projections
     web_app -.->|"runs the sync over the browser's copy"| client_store
-    web_app -.->|"draws the board, the guide and the listing; draws the cards and their ladders; reads a page's readings and its sections"| practice_screens
     web_app -.->|"runs a recall"| core_recall
     web_app -.->|"runs a judging or a key-line exercise"| core_exercises
     web_app -.->|"runs the sitting's clock and submissions"| core_sitting

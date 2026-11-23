@@ -1756,6 +1756,24 @@
           }
         }
       }
+    },
+    "/api/author/generation": {
+      "get": {
+        "summary": "Generation",
+        "operationId": "generation_api_author_generation_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerationFigures"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2532,6 +2550,19 @@
         ],
         "title": "Call"
       },
+      "CallSite": {
+        "type": "string",
+        "enum": [
+          "generator",
+          "screen",
+          "blind",
+          "discrimination",
+          "inputs",
+          "naive"
+        ],
+        "title": "CallSite",
+        "description": "The calls writing a problem takes. `Bench` names one configuration per\nentry, and a test pins the two lists together."
+      },
       "Candidate": {
         "properties": {
           "problem_id": {
@@ -3190,6 +3221,55 @@
         ],
         "title": "Confidence"
       },
+      "CorpusRow": {
+        "properties": {
+          "card_slug": {
+            "type": "string",
+            "title": "Card Slug"
+          },
+          "template_slug": {
+            "type": "string",
+            "title": "Template Slug"
+          },
+          "optional": {
+            "type": "boolean",
+            "title": "Optional"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/ProblemDifficulty"
+            },
+            "type": "object",
+            "title": "Counts"
+          },
+          "unlabelled": {
+            "type": "integer",
+            "title": "Unlabelled"
+          },
+          "retired": {
+            "type": "integer",
+            "title": "Retired"
+          },
+          "gap": {
+            "type": "boolean",
+            "title": "Gap"
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_slug",
+          "template_slug",
+          "optional",
+          "counts",
+          "unlabelled",
+          "retired",
+          "gap"
+        ],
+        "title": "CorpusRow"
+      },
       "Deleting": {
         "properties": {
           "confirm": {
@@ -3332,6 +3412,35 @@
         ],
         "title": "Diagnosis",
         "description": "Why an attempt failed, inferred. The machine counterpart of\n`SelfLabel`."
+      },
+      "DraftCount": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/WritingState"
+          },
+          "drafts": {
+            "type": "integer",
+            "title": "Drafts"
+          },
+          "oldest_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oldest Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "drafts",
+          "oldest_days"
+        ],
+        "title": "DraftCount"
       },
       "ErrorReport": {
         "properties": {
@@ -3763,6 +3872,99 @@
         ],
         "title": "Gap",
         "description": "A core template no solution displays, named as the card names it.\n\nThe card claims to teach the form, so the ladder reports the gap rather\nthan substituting another problem for the rung. The next generation run is\naimed at what this names."
+      },
+      "Gate": {
+        "type": "string",
+        "enum": [
+          "no_value",
+          "copied",
+          "misdeclared",
+          "untested",
+          "disagreed",
+          "unexercised"
+        ],
+        "title": "Gate"
+      },
+      "GenerationFigures": {
+        "properties": {
+          "period_days": {
+            "type": "integer",
+            "title": "Period Days"
+          },
+          "writings": {
+            "type": "integer",
+            "title": "Writings"
+          },
+          "landed": {
+            "type": "integer",
+            "title": "Landed"
+          },
+          "spend": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spend"
+          },
+          "spend_per_landed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spend Per Landed"
+          },
+          "uncosted": {
+            "type": "integer",
+            "title": "Uncosted"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "type": "array",
+            "title": "Stops"
+          },
+          "drafts": {
+            "items": {
+              "$ref": "#/components/schemas/DraftCount"
+            },
+            "type": "array",
+            "title": "Drafts"
+          },
+          "corpus": {
+            "items": {
+              "$ref": "#/components/schemas/CorpusRow"
+            },
+            "type": "array",
+            "title": "Corpus"
+          },
+          "untemplated": {
+            "type": "integer",
+            "title": "Untemplated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_days",
+          "writings",
+          "landed",
+          "spend",
+          "spend_per_landed",
+          "uncosted",
+          "stops",
+          "drafts",
+          "corpus",
+          "untemplated"
+        ],
+        "title": "GenerationFigures"
       },
       "HTTPValidationError": {
         "properties": {
@@ -6008,6 +6210,53 @@
         ],
         "title": "StintMode"
       },
+      "Stop": {
+        "properties": {
+          "site": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CallSite"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Gate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "held_at": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WritingState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "writings": {
+            "type": "integer",
+            "title": "Writings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "site",
+          "gate",
+          "held_at",
+          "writings"
+        ],
+        "title": "Stop",
+        "description": "Where the period's writings that did not land stopped: a site's gate, a\ngate no site answered for, or the state a held draft waits at."
+      },
       "Studied": {
         "properties": {
           "card": {
@@ -6758,6 +7007,24 @@
         ],
         "title": "Waiting",
         "description": "A required card a locked card waits on, named as its page names it."
+      },
+      "WritingState": {
+        "type": "string",
+        "enum": [
+          "drafted",
+          "checked",
+          "screened",
+          "referenced",
+          "agreed",
+          "built",
+          "paced",
+          "searched",
+          "hardened",
+          "landed",
+          "rejected"
+        ],
+        "title": "WritingState",
+        "description": "How far a problem has been written. One state per step that can fail,\nin the order `cli/generation/states.md` gives; `landed` is where\n`ProblemStatus` starts."
       }
     }
   }

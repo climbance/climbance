@@ -794,6 +794,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/generation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Generation */
+    get: operations['generation_api_author_generation_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1044,6 +1061,13 @@ export interface components {
       request_ms?: number | null;
     };
     /**
+     * CallSite
+     * @description The calls writing a problem takes. `Bench` names one configuration per
+     *     entry, and a test pins the two lists together.
+     * @enum {string}
+     */
+    CallSite: 'generator' | 'screen' | 'blind' | 'discrimination' | 'inputs' | 'naive';
+    /**
      * Candidate
      * @description A problem offered for a drill. The statement is left out: the clock
      *     starts when it is served.
@@ -1269,6 +1293,25 @@ export interface components {
      * @enum {string}
      */
     Confidence: 'guess' | 'leaning' | 'sure';
+    /** CorpusRow */
+    CorpusRow: {
+      /** Card Slug */
+      card_slug: string;
+      /** Template Slug */
+      template_slug: string;
+      /** Optional */
+      optional: boolean;
+      /** Counts */
+      counts: {
+        [key: string]: number;
+      };
+      /** Unlabelled */
+      unlabelled: number;
+      /** Retired */
+      retired: number;
+      /** Gap */
+      gap: boolean;
+    };
     /** Deleting */
     Deleting: {
       /** Confirm */
@@ -1313,6 +1356,14 @@ export interface components {
       cause: components['schemas']['Cause'];
       /** Evidence */
       evidence: string;
+    };
+    /** DraftCount */
+    DraftCount: {
+      state: components['schemas']['WritingState'];
+      /** Drafts */
+      drafts: number;
+      /** Oldest Days */
+      oldest_days: number | null;
     };
     /**
      * ErrorReport
@@ -1495,6 +1546,34 @@ export interface components {
       slug: string;
       /** Title */
       title: string;
+    };
+    /**
+     * Gate
+     * @enum {string}
+     */
+    Gate: 'no_value' | 'copied' | 'misdeclared' | 'untested' | 'disagreed' | 'unexercised';
+    /** GenerationFigures */
+    GenerationFigures: {
+      /** Period Days */
+      period_days: number;
+      /** Writings */
+      writings: number;
+      /** Landed */
+      landed: number;
+      /** Spend */
+      spend: number | null;
+      /** Spend Per Landed */
+      spend_per_landed: number | null;
+      /** Uncosted */
+      uncosted: number;
+      /** Stops */
+      stops: components['schemas']['Stop'][];
+      /** Drafts */
+      drafts: components['schemas']['DraftCount'][];
+      /** Corpus */
+      corpus: components['schemas']['CorpusRow'][];
+      /** Untemplated */
+      untemplated: number;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -2396,6 +2475,18 @@ export interface components {
      */
     StintMode: 'next' | 'review' | 'filtered' | 'exam' | 'baseline' | 'delayed';
     /**
+     * Stop
+     * @description Where the period's writings that did not land stopped: a site's gate, a
+     *     gate no site answered for, or the state a held draft waits at.
+     */
+    Stop: {
+      site: components['schemas']['CallSite'] | null;
+      gate: components['schemas']['Gate'] | null;
+      held_at: components['schemas']['WritingState'] | null;
+      /** Writings */
+      writings: number;
+    };
+    /**
      * Studied
      * @description A card as its page reads it. The ladder, the progress and the recall
      *     state are folds, and `content-repo/cards.md` gives why none is stored.
@@ -2695,6 +2786,25 @@ export interface components {
       /** Title */
       title: string;
     };
+    /**
+     * WritingState
+     * @description How far a problem has been written. One state per step that can fail,
+     *     in the order `cli/generation/states.md` gives; `landed` is where
+     *     `ProblemStatus` starts.
+     * @enum {string}
+     */
+    WritingState:
+      | 'drafted'
+      | 'checked'
+      | 'screened'
+      | 'referenced'
+      | 'agreed'
+      | 'built'
+      | 'paced'
+      | 'searched'
+      | 'hardened'
+      | 'landed'
+      | 'rejected';
   };
   responses: never;
   parameters: never;
@@ -4072,6 +4182,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuthorArea'];
+        };
+      };
+    };
+  };
+  generation_api_author_generation_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GenerationFigures'];
         };
       };
     };

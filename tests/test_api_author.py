@@ -67,3 +67,14 @@ def test_the_dev_login_is_the_author(database):
 
     assert client.get("/api/author").status_code == 200
     assert client.get("/api/me").json()["author"]
+
+
+def test_the_generation_page_reads_an_empty_store(database):
+    """Every figure answers on a store no run has written to."""
+    client = browsing(database, "local")
+    client.app.state.dev_user = "local"
+
+    read = client.get("/api/author/generation").json()
+
+    assert (read["writings"], read["landed"], read["spend_per_landed"]) == (0, 0, None)
+    assert read["stops"] == [] and read["drafts"] == []

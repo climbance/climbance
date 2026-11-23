@@ -201,11 +201,11 @@ src = [
 code = ["climb.api", "climb.api.__main__"]
 runs = [
     "climb.api", "climb.attempt_claims", "climb.board", "climb.calls", "climb.caps",
-    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.feedback",
+    "climb.cards", "climb.cases", "climb.classifier", "climb.cold", "climb.drafts", "climb.feedback",
     "climb.glicko", "climb.measured",
     "climb.graduation", "climb.ids", "climb.judgements", "climb.judging",
     "climb.keylines", "climb.knowledge", "climb.ladder", "climb.log", "climb.matches",
-    "climb.mint", "climb.mutation", "climb.pick", "climb.problems", "climb.ratings",
+    "climb.mint", "climb.mutation", "climb.outcomes", "climb.pick", "climb.problems", "climb.ratings",
     "climb.recall", "climb.retirement", "climb.runner", "climb.runs", "climb.schema", "climb.scorer",
     "climb.sitting", "climb.solution_claims", "climb.solutions", "climb.standing",
     "climb.statement", "climb.storage", "climb.techniques", "climb.template_schedule",
@@ -637,6 +637,7 @@ doc = "web-app/pages/author/README.md"
 section = "Who sees them"
 src = [
     "src/climb/api/author.py",
+    "src/climb/api/generation_figures.py",
 ]
 
 [[element]]
@@ -1006,7 +1007,7 @@ id = "practice-screens"
 kind = "component"
 container = "core-package"
 name = "Practice screens"
-role = "Computes what the board, the cards, the listing and the guide say, and each page's readings and sections."
+role = "Computes what the board, the cards, the listing and the guide say, each page's readings and sections, and the author pages' labels."
 doc = "web-app/pages/practice/board/README.md"
 src = [
     "packages/core/src/practice.*",
@@ -1016,6 +1017,7 @@ src = [
     "packages/core/src/sections.*",
     "packages/core/src/retirement.*",
     "packages/core/src/words/pages.*",
+    "packages/core/src/author.*",
 ]
 
 [[element]]
@@ -1115,6 +1117,9 @@ role = "The author area: the product, generation and workflow pages, and the con
 doc = "web-app/pages/author/README.md"
 src = [
     "web/src/pages/AuthorPage.tsx",
+    "web/src/pages/AuthorGenerationPage.tsx",
+    "web/src/components/AuthorBar.tsx",
+    "web/src/components/FigureTable.tsx",
 ]
 
 [[element]]
@@ -1965,6 +1970,12 @@ access = "writes"
 from = "web-author"
 to = "author-reads"
 label = "reads each author page's figures"
+access = "reads"
+
+[[relation]]
+from = "web-author"
+to = "practice-screens"
+label = "draws the author pages' labels"
 access = "reads"
 
 [[relation]]

@@ -2,15 +2,24 @@
 router's dependency guards every route on it, so a route added here needs no
 check of its own."""
 
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from climb.api.context import author_id
+from climb.api.context import Root, author_id
+from climb.api.generation_figures import GenerationFigures, generation_figures
+from climb.cards import CardStore
+from climb.drafts import DraftStore
+from climb.matches import MatchLog
+from climb.outcomes import OutcomeLog
+from climb.solution_claims import load_problems
+from climb.solutions import SolutionLog
 
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
 # the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = []
+PAGES: list[str] = ["generation"]
 
 
 class AuthorArea(BaseModel):
@@ -20,3 +29,16 @@ class AuthorArea(BaseModel):
 @router.get("")
 def area() -> AuthorArea:
     return AuthorArea(pages=PAGES)
+
+
+@router.get("/generation")
+def generation(root: Root) -> GenerationFigures:
+    return generation_figures(
+        OutcomeLog(root).outcomes(),
+        DraftStore(root).all(),
+        load_problems(root),
+        SolutionLog(root).solutions(),
+        MatchLog(root).matches(),
+        CardStore(root).all(),
+        now=datetime.now(UTC),
+    )

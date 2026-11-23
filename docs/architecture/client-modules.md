@@ -74,7 +74,10 @@ flowchart LR
     subgraph g0["Shared core: Native app"]
         core_reminder["reminder"]
     end
-    subgraph g1["Shared core: Web app and Native app"]
+    subgraph g1["Shared core: Web app"]
+        core_author["author"]
+    end
+    subgraph g2["Shared core: Web app and Native app"]
         core_account["account"]
         core_answer["answer"]
         core_api["api"]
@@ -134,12 +137,12 @@ flowchart LR
         core_types["types"]
         core_words["words"]
     end
-    subgraph g2["Shared editor: Native app"]
+    subgraph g3["Shared editor: Native app"]
         editor_keys["keys"]
         editor_names["names"]
         editor_narrow["narrow"]
     end
-    subgraph g3["Shared editor: Web app and Native app"]
+    subgraph g4["Shared editor: Web app and Native app"]
         editor_python["python"]
         editor_setup["setup"]
     end
@@ -147,6 +150,8 @@ flowchart LR
     core_answer --> core_result
     core_ask --> core_answer
     core_ask --> core_words
+    core_author --> core_api
+    core_author --> core_screens
     core_baseline --> core_exam
     core_baseline --> core_words
     core_certs --> core_schedule
