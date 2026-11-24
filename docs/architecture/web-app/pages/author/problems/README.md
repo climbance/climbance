@@ -113,13 +113,23 @@ the author decides, and no flag retires a problem.
 - **`j` and `k` open the next and the previous row, and Escape closes the
   panel.** The anchor in the URL follows the opened row. Reviewing a batch of
   20 problems is then 20 presses of one key.
+## The opened problem
+
+The panel reads, in order, the head, the statement, the solutions, the
+cases, the difficulty, the site outcomes and the foot.
+
 - **The panel's head names the problem**: its title, the first eight
   characters of its id, its status and its flags. A press on the id copies
   it.
+- **The head names the configuration that wrote the problem**: the model,
+  the effort, the temperature, the prompt hash and the pin. A temperature
+  nobody set reads `default`. A resume compares the configuration and the
+  prompt hash, so the author can see which bench wrote a problem judged weak.
 - **The panel draws the statement with the sitting's own component**, as a
   learner is served it. The author reviews the exact text a solver reads.
 - **Each solution reads by role: the canonical, the reference, then the
-  naive**, with its code and its latest verification. A canonical names the
+  naive**, with its code, its latest verification and the configuration that
+  wrote it, read as the head reads the problem's. A canonical names the
   templates it displays, from the standing template matches, and the
   techniques its standing solution claim names.
 - **The cases read in the order they were appended**, each argument and the
@@ -129,6 +139,13 @@ the author decides, and no flag retires a problem.
 - **The difficulty reads as each rating's score and deviation, latest first**,
   with the standing one marked and the generator's label beside them. The
   author then sees how the served score was reached.
+- **The site outcomes read after the difficulty, in the order written**: each
+  site's name and model, the gate and its detail where one rejected the
+  site's answer, and each counter that is not zero. The separating size reads
+  with its repeat count, and the bound beside it. A separating size read
+  without the bound says nothing about how far the search had left to look.
+  A resumed step writes a second outcome, so a site can read twice. A problem
+  landed before site outcomes were stored reads `no site outcome`.
 - **The panel names the retirement requests the problem carries**, each with
   its reason and note, and links them to the inbox.
 - **The panel's foot copies the commands acting on the problem**: retiring it

@@ -17,11 +17,15 @@ from climb.keylines import KeyLineStore
 from climb.ladder import ladder
 from climb.log import RetirementRequestLog
 from climb.matches import MatchLog, standing_matches
+from climb.outcomes import OutcomeLog
 from climb.problems import ProblemStore
 from climb.ratings import RatingLog, standing_ratings
 from climb.schema import (
+    CallSite,
     Card,
     CaseOutcome,
+    Gate,
+    MachineProvenance,
     ProblemDifficulty,
     RatingSource,
     RetirementReason,
@@ -187,8 +191,45 @@ def author_problems(root: Database) -> AuthorProblems:
     return AuthorProblems(problems=rows[::-1])
 
 
+class AuthorConfiguration(BaseModel):
+    model: str | None
+    effort: str | None
+    temperature: float | None  # absent where nobody set one
+    prompt_hash: str | None
+    pin: str | None
+
+
+def _configuration(one: MachineProvenance) -> AuthorConfiguration:
+    return AuthorConfiguration(
+        model=one.model,
+        effort=one.effort,
+        temperature=one.temperature,
+        prompt_hash=one.prompt_hash,
+        pin=one.pin,
+    )
+
+
+class AuthorSite(BaseModel):
+    site: CallSite
+    model: str | None
+    gate: Gate | None
+    detail: str
+    mutants: int
+    survived: int
+    killed: int
+    won: int
+    proposed: int
+    misdeclared: int
+    rounds: list[int]
+    separating: int | None
+    repeats: int
+    unseparated: str | None
+    largest: int | None  # the bound
+
+
 class AuthorSolution(BaseModel):
     role: SolutionRole
+    written_by: AuthorConfiguration
     code: str
     outcome: CaseOutcome | None  # its latest verification's; absent where none ran
     displays: list[str]  # template slugs, from the standing matches
@@ -251,12 +292,14 @@ class AuthorRating(BaseModel):
 
 class AuthorProblem(BaseModel):
     problem_id: str
+    written_by: AuthorConfiguration
     statement: str  # the prose, as the sitting serves it
     signature: str | None
     generator: ProblemDifficulty | None  # the label the generator wrote
     solutions: list[AuthorSolution]
     cases: list[AuthorCase]
     ratings: list[AuthorRating]  # latest first
+    sites: list[AuthorSite]  # in the order written
 
 
 def _latest_outcome(verifications: VerificationLog, solution_id: str) -> CaseOutcome | None:
@@ -286,12 +329,14 @@ def author_problem(root: Database, problem_id: str) -> AuthorProblem | None:
     order = list(SolutionRole)
     return AuthorProblem(
         problem_id=problem.id,
+        written_by=_configuration(stored),
         statement=prose,
         signature=signature,
         generator=stored.difficulty,
         solutions=[
             AuthorSolution(
                 role=one.role,
+                written_by=_configuration(one),
                 code=one.code,
                 outcome=_latest_outcome(verifications, one.id),
                 displays=sorted(displays.get(one.id, [])),
@@ -309,5 +354,11 @@ def author_problem(root: Database, problem_id: str) -> AuthorProblem | None:
                 standing=stands is not None and one.id == stands.id,
             )
             for one in reversed(ratings)
+        ],
+        sites=[
+            AuthorSite(**one.model_dump(include=set(AuthorSite.model_fields)))
+            for one in sorted(
+                OutcomeLog(root).for_problem(problem_id), key=lambda one: one.created_at
+            )
         ],
     )

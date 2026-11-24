@@ -11,6 +11,7 @@ import {
   DIFFICULTY,
   NO_CASE,
   NO_RATING,
+  NO_SITE,
   NO_SOLUTION,
   OF,
   PROBLEM_BANK_NONE,
@@ -20,6 +21,7 @@ import {
   argsText,
   caseNote,
   counted,
+  configurationLabel,
   cutLine,
   difficultyLabel,
   expectedText,
@@ -34,6 +36,8 @@ import {
   problemStatus,
   ratingLabel,
   shortId,
+  siteLabel,
+  SITES,
   solutionLine,
   targetLabel,
   techniquesLabel,
@@ -312,6 +316,7 @@ function Panel({ one, inPlace = false }: { one: AuthorProblemRow; inPlace?: bool
 function Problem({ problem }: { problem: AuthorProblem }) {
   return (
     <>
+      <p className="text-meta text-muted-foreground">{configurationLabel(problem.written_by)}</p>
       {/* the statement as the sitting serves it */}
       <div className="space-y-stack rounded-xl border p-4">
         <Markdown>{problem.statement}</Markdown>
@@ -327,6 +332,7 @@ function Problem({ problem }: { problem: AuthorProblem }) {
             title={one.role}
             aside={<span className="text-meta text-muted-foreground">{solutionLine(one)}</span>}
           />
+          <p className="text-meta text-muted-foreground">{configurationLabel(one.written_by)}</p>
           <PythonCode code={one.code} />
         </section>
       ))}
@@ -352,6 +358,23 @@ function Problem({ problem }: { problem: AuthorProblem }) {
         ))}
         <span className="text-muted-foreground">{generatorLabel(problem.generator)}</span>
       </p>
+      <section className="space-y-1">
+        <SectionHeading sub title={SITES} count={problem.sites.length} />
+        {problem.sites.length === 0 ? (
+          <p className="text-meta text-muted-foreground">{NO_SITE}</p>
+        ) : (
+          <ol className="space-y-0.5 text-meta">
+            {/* a resumed step wrote a second outcome, so a site may read twice */}
+            {problem.sites.map((one, i) => (
+              <li key={i} className="flex items-baseline gap-3">
+                <span className="w-28 shrink-0">{one.site}</span>
+                <span className="w-40 shrink-0 truncate text-muted-foreground">{one.model}</span>
+                <span className="min-w-0 flex-1">{siteLabel(one)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
     </>
   )
 }

@@ -2618,11 +2618,82 @@
         ],
         "title": "AuthorConcepts"
       },
+      "AuthorConfiguration": {
+        "properties": {
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "prompt_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Hash"
+          },
+          "pin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "effort",
+          "temperature",
+          "prompt_hash",
+          "pin"
+        ],
+        "title": "AuthorConfiguration"
+      },
       "AuthorProblem": {
         "properties": {
           "problem_id": {
             "type": "string",
             "title": "Problem Id"
+          },
+          "written_by": {
+            "$ref": "#/components/schemas/AuthorConfiguration"
           },
           "statement": {
             "type": "string",
@@ -2669,17 +2740,26 @@
             },
             "type": "array",
             "title": "Ratings"
+          },
+          "sites": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorSite"
+            },
+            "type": "array",
+            "title": "Sites"
           }
         },
         "type": "object",
         "required": [
           "problem_id",
+          "written_by",
           "statement",
           "signature",
           "generator",
           "solutions",
           "cases",
-          "ratings"
+          "ratings",
+          "sites"
         ],
         "title": "AuthorProblem"
       },
@@ -2920,10 +3000,132 @@
         ],
         "title": "AuthorRung"
       },
+      "AuthorSite": {
+        "properties": {
+          "site": {
+            "$ref": "#/components/schemas/CallSite"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "gate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Gate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "mutants": {
+            "type": "integer",
+            "title": "Mutants"
+          },
+          "survived": {
+            "type": "integer",
+            "title": "Survived"
+          },
+          "killed": {
+            "type": "integer",
+            "title": "Killed"
+          },
+          "won": {
+            "type": "integer",
+            "title": "Won"
+          },
+          "proposed": {
+            "type": "integer",
+            "title": "Proposed"
+          },
+          "misdeclared": {
+            "type": "integer",
+            "title": "Misdeclared"
+          },
+          "rounds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Rounds"
+          },
+          "separating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Separating"
+          },
+          "repeats": {
+            "type": "integer",
+            "title": "Repeats"
+          },
+          "unseparated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unseparated"
+          },
+          "largest": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Largest"
+          }
+        },
+        "type": "object",
+        "required": [
+          "site",
+          "model",
+          "gate",
+          "detail",
+          "mutants",
+          "survived",
+          "killed",
+          "won",
+          "proposed",
+          "misdeclared",
+          "rounds",
+          "separating",
+          "repeats",
+          "unseparated",
+          "largest"
+        ],
+        "title": "AuthorSite"
+      },
       "AuthorSolution": {
         "properties": {
           "role": {
             "$ref": "#/components/schemas/SolutionRole"
+          },
+          "written_by": {
+            "$ref": "#/components/schemas/AuthorConfiguration"
           },
           "code": {
             "type": "string",
@@ -2957,6 +3159,7 @@
         "type": "object",
         "required": [
           "role",
+          "written_by",
           "code",
           "outcome",
           "displays",

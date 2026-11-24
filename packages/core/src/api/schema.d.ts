@@ -1180,10 +1180,24 @@ export interface components {
       /** Concepts */
       concepts: components['schemas']['Concept'][];
     };
+    /** AuthorConfiguration */
+    AuthorConfiguration: {
+      /** Model */
+      model: string | null;
+      /** Effort */
+      effort: string | null;
+      /** Temperature */
+      temperature: number | null;
+      /** Prompt Hash */
+      prompt_hash: string | null;
+      /** Pin */
+      pin: string | null;
+    };
     /** AuthorProblem */
     AuthorProblem: {
       /** Problem Id */
       problem_id: string;
+      written_by: components['schemas']['AuthorConfiguration'];
       /** Statement */
       statement: string;
       /** Signature */
@@ -1195,6 +1209,8 @@ export interface components {
       cases: components['schemas']['AuthorCase'][];
       /** Ratings */
       ratings: components['schemas']['AuthorRating'][];
+      /** Sites */
+      sites: components['schemas']['AuthorSite'][];
     };
     /** AuthorProblemRow */
     AuthorProblemRow: {
@@ -1257,9 +1273,41 @@ export interface components {
       /** Required */
       required: boolean;
     };
+    /** AuthorSite */
+    AuthorSite: {
+      site: components['schemas']['CallSite'];
+      /** Model */
+      model: string | null;
+      gate: components['schemas']['Gate'] | null;
+      /** Detail */
+      detail: string;
+      /** Mutants */
+      mutants: number;
+      /** Survived */
+      survived: number;
+      /** Killed */
+      killed: number;
+      /** Won */
+      won: number;
+      /** Proposed */
+      proposed: number;
+      /** Misdeclared */
+      misdeclared: number;
+      /** Rounds */
+      rounds: number[];
+      /** Separating */
+      separating: number | null;
+      /** Repeats */
+      repeats: number;
+      /** Unseparated */
+      unseparated: string | null;
+      /** Largest */
+      largest: number | null;
+    };
     /** AuthorSolution */
     AuthorSolution: {
       role: components['schemas']['SolutionRole'];
+      written_by: components['schemas']['AuthorConfiguration'];
       /** Code */
       code: string;
       outcome: components['schemas']['CaseOutcome'] | null;

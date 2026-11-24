@@ -4,6 +4,7 @@ import {
   cardBankView,
   cardFilter,
   cardShapeLine,
+  configurationLabel,
   difficultyLabel,
   flagCount,
   problemCommands,
@@ -13,6 +14,7 @@ import {
   problemPicked,
   problemQuery,
   problemStatus,
+  siteLabel,
   type AuthorCard,
   type AuthorProblemRow,
 } from './index';
@@ -250,5 +252,34 @@ describe('the problems page', () => {
     expect(problemCommands(row(id, { retired_reason: 'copied', score: null })).map((one) => one.command)).toEqual([
       `climb problem ${id} --rate `,
     ]);
+  });
+});
+
+describe('the provenance of an opened problem', () => {
+  it('reads an unset temperature as default', () => {
+    expect(
+      configurationLabel({ model: 'm', effort: 'high', temperature: null, prompt_hash: 'h', pin: 'p' }),
+    ).toBe('m, high @default, h @ p');
+  });
+
+  it('reads a site by its gate and the counters that are not zero', () => {
+    const site = {
+      site: 'naive' as const,
+      model: 'm',
+      gate: null,
+      detail: '',
+      mutants: 0,
+      survived: 0,
+      killed: 4,
+      won: 0,
+      proposed: 0,
+      misdeclared: 0,
+      rounds: [],
+      separating: 4096,
+      repeats: 3,
+      unseparated: null,
+      largest: 100000,
+    };
+    expect(siteLabel(site)).toBe('killed 4 · separating at 4096 × 3 · up to 100000');
   });
 });

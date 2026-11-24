@@ -11,10 +11,12 @@ from climb.cases import CaseLog
 from climb.difficulty import DRAWS, correct, rating
 from climb.log import RetirementRequestLog
 from climb.matches import MatchLog
-from climb.mint import case
+from climb.mint import case, site_outcome
+from climb.outcomes import OutcomeLog
 from climb.problems import ProblemStore
 from climb.ratings import CorrectionLog, DrawLog, RatingLog
 from climb.schema import (
+    CallSite,
     DifficultyRating,
     MatchSource,
     Requirement,
@@ -177,3 +179,31 @@ def test_an_opened_problem_cuts_each_case_and_a_pressed_one_reads_whole(database
     assert len(one["args"]) == 120
     assert whole.json() == {"args": heavy.args, "expected": 1}
     assert author.get("/api/author/problems/p2/cases/" + one["id"]).status_code == 404
+
+
+def test_an_opened_problem_reads_its_configurations_and_site_outcomes(database, author):
+    """The sites read in the order written, each with its gate and counters."""
+    seed_problem(database, id="p1", techniques=["greedy"])
+    for at, (site, fields) in enumerate(
+        [
+            (CallSite.GENERATOR, {"mutants": 12, "killed": 9}),
+            (CallSite.NAIVE, {"separating": 4096, "repeats": 3, "largest": 100_000}),
+        ]
+    ):
+        one = site_outcome(
+            site, "w1", provenance=PROVENANCE, target_technique="greedy", problem_id="p1", **fields
+        )
+        OutcomeLog(database).append(
+            one.model_copy(update={"created_at": T0 + timedelta(minutes=at)})
+        )
+
+    read = author.get("/api/author/problems/p1").json()
+
+    assert read["written_by"]["model"] == read["solutions"][0]["written_by"]["model"] == "a-model"
+    assert read["written_by"]["temperature"] is None
+    assert [
+        (one["site"], one["killed"], one["separating"], one["largest"]) for one in read["sites"]
+    ] == [
+        ("generator", 9, None, None),
+        ("naive", 0, 4096, 100_000),
+    ]

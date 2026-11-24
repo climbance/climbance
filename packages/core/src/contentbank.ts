@@ -33,6 +33,8 @@ export const STANDING = 'standing';
 export const NO_RATING = 'no rating';
 export const NO_SOLUTION = 'No solution is stored.';
 export const NO_CASE = 'No case is stored.';
+export const SITES = 'Sites';
+export const NO_SITE = 'no site outcome';
 export const WRITTEN_FOR = 'problems written for it';
 
 // ---- the cards
@@ -374,6 +376,30 @@ export function solutionLine(one: AuthorProblem['solutions'][number]): string {
 export function ratingLabel(one: AuthorProblem['ratings'][number]): string {
   const deviation = one.deviation != null ? ` ± ${Math.round(one.deviation)}` : '';
   return `${Math.round(one.score)}${deviation} ${one.source}${one.standing ? ` · ${STANDING}` : ''}`;
+}
+
+// as `climb` printed it: a temperature nobody set reads `default`
+export function configurationLabel(one: AuthorProblem['written_by']): string {
+  const at = one.temperature == null ? 'default' : String(one.temperature);
+  return `${one.model ?? 'no model'}, ${one.effort ?? 'no effort'} @${at}, ${one.prompt_hash ?? 'no hash'} @ ${one.pin ?? 'no pin'}`;
+}
+
+const COUNTERS = ['mutants', 'survived', 'killed', 'won', 'proposed', 'misdeclared'] as const;
+
+// a counter reads only where it is not zero: most sites carry none
+export function siteLabel(one: AuthorProblem['sites'][number]): string {
+  return [
+    one.gate ? `gate ${one.gate}${one.detail ? `: ${one.detail}` : ''}` : null,
+    ...COUNTERS.map((name) => (one[name] ? `${name} ${one[name]}` : null)),
+    one.rounds.length ? `rounds ${one.rounds.join(', ')}` : null,
+    one.separating != null
+      ? `separating at ${one.separating}${one.repeats > 1 ? ` × ${one.repeats}` : ''}`
+      : null,
+    one.unseparated ? `unseparated: ${one.unseparated}` : null,
+    one.largest != null ? `up to ${one.largest}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export const generatorLabel = (label: string | null | undefined) => `generator ${label ?? 'unlabelled'}`;
