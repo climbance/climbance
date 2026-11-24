@@ -657,6 +657,7 @@ src = [
     "src/climb/api/author_content.py",
     "src/climb/api/generation_figures.py",
     "src/climb/api/product_figures.py",
+    "src/climb/api/spend_figures.py",
     "src/climb/api/workflow_figures.py",
 ]
 
@@ -1144,6 +1145,7 @@ src = [
     "web/src/pages/AuthorPage.tsx",
     "web/src/pages/AuthorGenerationPage.tsx",
     "web/src/pages/AuthorProductPage.tsx",
+    "web/src/pages/AuthorSpendPage.tsx",
     "web/src/pages/AuthorWorkflowPage.tsx",
     "web/src/pages/AuthorQuestionsPage.tsx",
     "web/src/pages/AuthorLessonsPage.tsx",

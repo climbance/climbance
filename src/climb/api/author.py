@@ -21,6 +21,7 @@ from climb.api.author_content import (
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
 from climb.api.product_figures import ProductFigures, product_figures
+from climb.api.spend_figures import SpendFigures, spend_figures
 from climb.api.workflow_figures import WorkflowFigures, workflow_figures
 from climb.cards import CardStore
 from climb.drafts import DraftStore
@@ -37,6 +38,7 @@ router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 PAGES: list[str] = [
     "product",
     "generation",
+    "spend",
     "workflow",
     "questions",
     "lessons",
@@ -74,6 +76,11 @@ def generation(root: Root) -> GenerationFigures:
         CardStore(root).all(),
         now=datetime.now(UTC),
     )
+
+
+@router.get("/spend")
+def spend(root: Root) -> SpendFigures:
+    return spend_figures(root, now=datetime.now(UTC))
 
 
 @router.get("/workflow")

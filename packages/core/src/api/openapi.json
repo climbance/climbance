@@ -1811,6 +1811,24 @@
         }
       }
     },
+    "/api/author/spend": {
+      "get": {
+        "summary": "Spend",
+        "operationId": "spend_api_author_spend_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendFigures"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/author/workflow": {
       "get": {
         "summary": "Workflow",
@@ -7140,6 +7158,32 @@
         "title": "SolutionRole",
         "description": "Stored rather than inferred: all three pass the same cases."
       },
+      "SpendFigures": {
+        "properties": {
+          "period_days": {
+            "type": "integer",
+            "title": "Period Days"
+          },
+          "spend": {
+            "items": {
+              "$ref": "#/components/schemas/SpendRow"
+            },
+            "type": "array",
+            "title": "Spend"
+          },
+          "uncosted": {
+            "type": "integer",
+            "title": "Uncosted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_days",
+          "spend",
+          "uncosted"
+        ],
+        "title": "SpendFigures"
+      },
       "SpendRow": {
         "properties": {
           "part": {
@@ -8171,17 +8215,6 @@
             },
             "type": "array",
             "title": "Faults"
-          },
-          "spend": {
-            "items": {
-              "$ref": "#/components/schemas/SpendRow"
-            },
-            "type": "array",
-            "title": "Spend"
-          },
-          "uncosted": {
-            "type": "integer",
-            "title": "Uncosted"
           }
         },
         "type": "object",
@@ -8191,9 +8224,7 @@
           "requests",
           "feedback",
           "fault_days",
-          "faults",
-          "spend",
-          "uncosted"
+          "faults"
         ],
         "title": "WorkflowFigures"
       },

@@ -1,10 +1,7 @@
 import {
   AUTHOR_TITLE,
-  CALLS,
-  COST,
   DAY,
   FEEDBACK,
-  NO_CALL,
   NO_FAULT,
   NO_FEEDBACK,
   NO_REQUEST,
@@ -12,18 +9,15 @@ import {
   RETIRED_STATE,
   RETIREMENT_REQUESTS,
   RUN_FAULTS,
-  SPEND,
   WAITING,
   WAITS,
   WORKFLOW_TITLE,
-  costLabel,
   dateLabel,
   dayLabel,
   periodTitle,
   requestsWaitingLine,
   shortId,
   timeLabel,
-  uncostedCallsLine,
   waitingLine,
 } from '@climb/core'
 import { api, type WorkflowFigures } from '@/api/client'
@@ -63,7 +57,6 @@ export function AuthorWorkflowPage() {
 const quiet = 'text-meta text-muted-foreground'
 
 function Workflow({ read }: { read: WorkflowFigures }) {
-  const uncosted = uncostedCallsLine(read.uncosted)
   return (
     <>
       <PageSection id="waiting" title={WAITING} body="bare">
@@ -145,20 +138,6 @@ function Workflow({ read }: { read: WorkflowFigures }) {
         )}
       </PageSection>
 
-      <PageSection id="spend" title={periodTitle(SPEND, read.period_days)} body="bare">
-        {read.spend.length ? (
-          <FigureTable
-            head={['', CALLS, COST]}
-            rows={read.spend.map((one) => ({
-              key: one.part,
-              cells: [one.part, one.calls, costLabel(one.cost)],
-            }))}
-          />
-        ) : (
-          <p className={quiet}>{NO_CALL}</p>
-        )}
-        {uncosted && <p className={quiet}>{uncosted}</p>}
-      </PageSection>
     </>
   )
 }

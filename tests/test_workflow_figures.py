@@ -1,13 +1,11 @@
 from datetime import UTC, date, datetime, timedelta
 
-from helpers import a_call, attempt, browsing, seed_problem, stored_problem, stored_template
+from helpers import attempt, browsing, seed_problem, stored_problem, stored_template
 from sqlalchemy import insert, text
 
-from climb.api.workflow_figures import UNCITED, Pass, workflow_figures
-from climb.calls import CallLog
+from climb.api.workflow_figures import Pass, workflow_figures
 from climb.log import AttemptLog, FeedbackLog, RetirementRequestLog, named
-from climb.log.table import diagnoses, run_faults
-from climb.ratings.table import difficulty_draws
+from climb.log.table import run_faults
 from climb.schema import (
     Client,
     Feedback,
@@ -45,7 +43,7 @@ def test_an_empty_store_waits_on_nothing(database):
         Pass.JUDGE: 0,
         Pass.FILL: 0,
     }
-    assert read.requests == read.feedback == read.faults == read.spend == []
+    assert read.requests == read.feedback == read.faults == []
 
 
 def test_the_claim_pass_counts_the_authors_attempts_alone(database):
@@ -142,40 +140,6 @@ def test_faults_count_per_day_and_kind_over_the_period(database):
         (date(2026, 11, 22), {RunKind.SUBMISSION: 0, RunKind.RECALL: 1}),
     ]
     assert [one.detail for one in read.faults] == ["f1", "f2", "f3"]
-
-
-def test_spend_reads_by_the_part_citing_each_call(database):
-    """An uncited call reads as uncited, and a call with no cost is counted."""
-    calls = CallLog(database)
-    at = NOW - timedelta(days=1)
-    for id, cost in (("c-judge", 0.5), ("c-judge-2", 0.25), ("c-diag", None), ("c-lost", 0.08)):
-        calls.append(a_call(id, created_at=at, cost=cost))
-    draw = {"created_at": at, "problem_id": "p", "judged": 1500}
-    replica(
-        database,
-        (difficulty_draws, draw | {"id": "d1", "call_id": "c-judge"}),
-        (difficulty_draws, draw | {"id": "d2", "call_id": "c-judge-2"}),
-        (
-            diagnoses,
-            {
-                "id": "g1",
-                "created_at": at,
-                "attempt_id": "a",
-                "cause": "slip",
-                "evidence": "e",
-                "call_id": "c-diag",
-            },
-        ),
-    )
-
-    read = workflow_figures(database, AUTHOR, NOW)
-
-    assert [(one.part, one.calls, one.cost) for one in read.spend] == [
-        ("difficulty · judge", 2, 0.75),
-        ("diagnoser", 1, 0.0),
-        (UNCITED, 1, 0.08),
-    ]
-    assert read.uncosted == 1
 
 
 def test_the_route_names_no_user(database):

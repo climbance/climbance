@@ -845,6 +845,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/spend': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Spend */
+    get: operations['spend_api_author_spend_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/author/workflow': {
     parameters: {
       query?: never;
@@ -2854,6 +2871,15 @@ export interface components {
      * @enum {string}
      */
     SolutionRole: 'canonical' | 'reference' | 'naive';
+    /** SpendFigures */
+    SpendFigures: {
+      /** Period Days */
+      period_days: number;
+      /** Spend */
+      spend: components['schemas']['SpendRow'][];
+      /** Uncosted */
+      uncosted: number;
+    };
     /** SpendRow */
     SpendRow: {
       /** Part */
@@ -3245,10 +3271,6 @@ export interface components {
       fault_days: components['schemas']['FaultDay'][];
       /** Faults */
       faults: components['schemas']['FaultRow'][];
-      /** Spend */
-      spend: components['schemas']['SpendRow'][];
-      /** Uncosted */
-      uncosted: number;
     };
     /**
      * WritingState
@@ -4706,6 +4728,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['GenerationFigures'];
+        };
+      };
+    };
+  };
+  spend_api_author_spend_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SpendFigures'];
         };
       };
     };

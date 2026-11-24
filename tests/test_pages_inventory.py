@@ -36,6 +36,7 @@ WEB = {
     "author": "The author pages",
     "author/product": "The author pages",
     "author/generation": "The author pages",
+    "author/spend": "The author pages",
     "author/workflow": "The author pages",
     "author/questions": "The author pages",
     "author/lessons": "The author pages",

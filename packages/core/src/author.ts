@@ -10,6 +10,7 @@ type WaitingPass = components['schemas']['WaitingPass'];
 export const AUTHOR_PAGES: Record<string, string> = {
   product: 'Product',
   generation: 'Generation',
+  spend: 'Spend',
   workflow: 'Workflow',
   questions: 'Questions',
   lessons: 'Lessons',
@@ -100,7 +101,6 @@ export const WAITING = 'Waiting';
 export const RETIREMENT_REQUESTS = 'Retirement requests';
 export const RUN_FAULTS = 'Run faults';
 export const SPEND = 'Spend';
-export const CALLS = 'calls';
 export const COST = 'cost';
 export const WAITS = 'waits';
 export const RETIRED_STATE = 'retired';
