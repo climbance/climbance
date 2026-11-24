@@ -1,5 +1,5 @@
 import { Copy } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 
 import {
@@ -58,6 +58,7 @@ import { SectionHeading } from '@/components/SectionHeading'
 import { Button } from '@/components/ui/button'
 import { useMedia } from '@/lib/media'
 import { link } from '@/lib/openRows'
+import { stepKey, useStepKeys } from '@/lib/stepRows'
 import { cn } from '@/lib/utils'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -118,11 +119,24 @@ function Shelf({
     const next = shortId(one.problem_id)
     navigate({ search: location.search, hash: next === anchor ? '' : next }, { replace: true })
   }
-  // a link to `#<id>` scrolls to its row on arrival, and a press leaves the scroll
+  // true on arrival and after a step, the two moves that scroll to the row
+  const scrolls = useRef(true)
+  useStepKeys(
+    (by) => {
+      const next = stepKey(view.rows.map((one) => shortId(one.problem_id)), opened ? anchor : null, by)
+      if (next === undefined) return
+      scrolls.current = true
+      navigate({ search: location.search, hash: next }, { replace: true })
+    },
+    () => navigate({ search: location.search, hash: '' }, { replace: true }),
+  )
+  // a link to `#<id>` scrolls to its row on arrival, and so does a step; a press leaves the scroll
   useEffect(() => {
-    if (anchor) document.getElementById(anchor)?.scrollIntoView({ block: 'nearest' })
+    if (!scrolls.current) return
+    scrolls.current = false
+    if (anchor) document.getElementById(anchor)?.scrollIntoView({ block: beside ? 'nearest' : 'start' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [anchor])
   const narrowed = beside && opened !== undefined
   return (
     <div className="space-y-section">

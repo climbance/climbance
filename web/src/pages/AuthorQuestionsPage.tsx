@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useSearchParams } from 'react-router'
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router'
 
 import {
   AUTHOR_TITLE,
@@ -36,6 +36,7 @@ import { PageHeader } from '@/components/PageHeader'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Answered } from '@/knowledge/Ask'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
+import { link, useOpenRows } from '@/lib/openRows'
 import { cn } from '@/lib/utils'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -100,22 +101,9 @@ function Bank({
   concepts: Concept[]
   go: (next: BankFilter) => void
 }) {
-  // a link to `#<slug>` opens that row; the open rows stay out of the URL
-  const { hash } = useLocation()
-  const [open, setOpen] = useState(() => new Set(hash ? [decodeURIComponent(hash.slice(1))] : []))
-  // the row is laid out only once the snapshot loads, after the browser's own scroll
-  useEffect(() => {
-    if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
-  }, [hash])
   const bySlug = useMemo(() => new Map(concepts.map((c) => [c.slug, c])), [concepts])
   const shown = view.groups.flatMap((g) => g.rows.map((row) => row.q.id))
-  const flip = (id: string) =>
-    setOpen((now) => {
-      const next = new Set(now)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+  const { open, setOpen, flip } = useOpenRows(shown)
 
   const rows = [
     ['module', view.modules],
@@ -184,8 +172,6 @@ function Bank({
     </div>
   )
 }
-
-const link = 'underline-offset-4 hover:underline'
 
 function Row(props: {
   row: BankRow

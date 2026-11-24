@@ -95,7 +95,7 @@ function Shelf({
   go: (next: CardFilter) => void
 }) {
   const view = cardBankView(cards, filter)
-  const { open, setOpen, flip } = useOpenRows()
+  const { open, setOpen, flip } = useOpenRows(view.rows.map((one) => one.card.slug))
   return (
     <div className="space-y-section">
       <section className="space-y-2">

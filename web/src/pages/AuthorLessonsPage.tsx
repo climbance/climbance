@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import { useMemo } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 
 import {
   AUTHOR_TITLE,
@@ -43,6 +43,7 @@ import { PageHeader } from '@/components/PageHeader'
 import { SectionHeading } from '@/components/SectionHeading'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
 import { LessonText } from '@/knowledge/LessonText'
+import { link, useOpenRows } from '@/lib/openRows'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 // one module's lessons at once, each drawn as the lesson page draws it:
@@ -91,25 +92,8 @@ function Shelf({
   view: LessonBankView
   go: (next: BankFilter) => void
 }) {
-  // a link to `#<slug>` opens that row, on arrival and on a link within the page
-  const { hash } = useLocation()
-  const [open, setOpen] = useState(() => new Set<string>())
-  const [seen, setSeen] = useState('')
-  if (hash !== seen) {
-    setSeen(hash)
-    if (hash) setOpen((now) => new Set(now).add(decodeURIComponent(hash.slice(1))))
-  }
-  useEffect(() => {
-    if (hash) document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
-  }, [hash])
   const shown = view.groups.flatMap((g) => g.rows.map((row) => row.x.slug))
-  const flip = (slug: string) =>
-    setOpen((now) => {
-      const next = new Set(now)
-      if (next.has(slug)) next.delete(slug)
-      else next.add(slug)
-      return next
-    })
+  const { open, setOpen, flip } = useOpenRows([...new Set(shown)])
   // a lesson under several subtopics anchors at its first row alone
   const anchored = new Set<string>()
 
@@ -184,8 +168,6 @@ function Shelf({
     </div>
   )
 }
-
-const link = 'underline-offset-4 hover:underline'
 
 function Row(props: {
   row: LessonBankRow
