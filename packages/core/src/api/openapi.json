@@ -2736,6 +2736,17 @@
             ],
             "title": "Score"
           },
+          "deviation": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deviation"
+          },
           "techniques": {
             "items": {
               "type": "string"
@@ -2746,13 +2757,6 @@
           "cases": {
             "type": "integer",
             "title": "Cases"
-          },
-          "roles": {
-            "items": {
-              "$ref": "#/components/schemas/SolutionRole"
-            },
-            "type": "array",
-            "title": "Roles"
           },
           "retired_reason": {
             "anyOf": [
@@ -2796,9 +2800,9 @@
           "target_technique",
           "difficulty",
           "score",
+          "deviation",
           "techniques",
           "cases",
-          "roles",
           "retired_reason",
           "requests",
           "landed_at",

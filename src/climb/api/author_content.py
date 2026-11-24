@@ -132,9 +132,9 @@ class AuthorProblemRow(BaseModel):
     target_technique: str | None
     difficulty: ProblemDifficulty | None  # the standing band, or the generator's label
     score: float | None
+    deviation: float | None  # absent on a hand rating
     techniques: list[str]
     cases: int
-    roles: list[SolutionRole]
     retired_reason: RetirementReason | None  # absent on a served problem
     requests: int
     landed_at: datetime | None  # its first solution's, since a problem stores no time
@@ -155,10 +155,8 @@ def author_problems(root: Database) -> AuthorProblems:
     generator = {one.id: one.difficulty for one in ProblemStore(root).all()}
     cases = Counter(one.problem_id for one in CaseLog(root).cases())
     requests = Counter(one.problem_id for one in RetirementRequestLog(root).all())
-    roles: dict[str, set[SolutionRole]] = {}
     landed: dict[str, datetime] = {}
     for one in SolutionLog(root).solutions():
-        roles.setdefault(one.problem_id, set()).add(one.role)
         landed[one.problem_id] = min(landed.get(one.problem_id, one.created_at), one.created_at)
     rows = [
         AuthorProblemRow(
@@ -168,9 +166,9 @@ def author_problems(root: Database) -> AuthorProblems:
             target_technique=problem.target_technique,
             difficulty=problem.difficulty,
             score=stands[problem.id].score if problem.id in stands else None,
+            deviation=stands[problem.id].deviation if problem.id in stands else None,
             techniques=problem.techniques,
             cases=cases[problem.id],
-            roles=[role for role in SolutionRole if role in roles.get(problem.id, set())],
             retired_reason=problem.retired_reason,
             requests=requests[problem.id],
             landed_at=landed.get(problem.id),

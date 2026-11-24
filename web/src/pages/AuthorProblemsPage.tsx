@@ -26,7 +26,6 @@ import {
   flagsLabel,
   generatorLabel,
   problemBankView,
-  problemFactsLine,
   problemFilter,
   problemPicked,
   problemQuery,
@@ -34,6 +33,7 @@ import {
   shortId,
   solutionLine,
   targetLabel,
+  techniquesLabel,
   type AuthorProblem,
   type AuthorProblemRow,
   type ProblemFilter,
@@ -176,19 +176,23 @@ function Row({ one, open, onFlip }: { one: AuthorProblemRow; open: boolean; onFl
         className="flex w-full items-baseline gap-3 px-4 py-2 text-left hover:bg-accent"
       >
         <span className="text-muted-foreground">{open ? '▾' : '▸'}</span>
-        <span className="min-w-0 flex-1 space-y-0.5">
-          <span className="flex items-baseline gap-3">
-            <code className="shrink-0 text-meta">{shortId(one.problem_id)}</code>
-            <span className="min-w-0 flex-1 truncate">{one.title}</span>
-            <span className="shrink-0 text-meta text-muted-foreground">{targetLabel(one)}</span>
-            <span className="shrink-0 text-meta text-muted-foreground tabular-nums">
-              {difficultyLabel(one.score, one.difficulty)}
-            </span>
+        {/* narrow, the break puts the techniques, the cases and the flags on a second line, and the target too on a phone */}
+        <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 lg:flex-nowrap">
+          <span className="order-1 min-w-32 flex-1 truncate">{one.title}</span>
+          <span className="order-4 shrink-0 text-meta text-muted-foreground sm:order-2">{targetLabel(one)}</span>
+          <span className="order-3 shrink-0 text-meta text-muted-foreground tabular-nums lg:order-4">
+            {difficultyLabel(one.score, one.difficulty, one.deviation)}
           </span>
-          <span className="flex items-baseline gap-3 text-meta text-muted-foreground">
-            <span className="min-w-0 flex-1">{problemFactsLine(one)}</span>
-            {flagsLabel(one) && <span className="shrink-0 text-foreground">{flagsLabel(one)}</span>}
+          <span className="order-3 basis-full lg:hidden" />
+          <span className="order-4 min-w-0 truncate text-meta text-muted-foreground lg:order-3 lg:max-w-xs">
+            {techniquesLabel(one)}
           </span>
+          <span className="order-5 shrink-0 text-meta text-muted-foreground tabular-nums">
+            {counted(one.cases, 'case')}
+          </span>
+          {flagsLabel(one) && (
+            <span className="order-6 ml-auto shrink-0 text-meta lg:ml-0">{flagsLabel(one)}</span>
+          )}
         </span>
       </button>
       {open && one.requests > 0 && (

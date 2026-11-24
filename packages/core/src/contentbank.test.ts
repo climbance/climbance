@@ -4,6 +4,7 @@ import {
   cardBankView,
   cardFilter,
   cardShapeLine,
+  difficultyLabel,
   flagsLabel,
   problemBankView,
   problemFilter,
@@ -50,7 +51,7 @@ const row = (id: string, fields: Partial<AuthorProblemRow>): AuthorProblemRow =>
   score: null,
   techniques: ['greedy'],
   cases: 1,
-  roles: ['canonical'],
+  deviation: null,
   retired_reason: null,
   requests: 0,
   landed_at: null,
@@ -212,7 +213,13 @@ describe('the problems page', () => {
 
   it('names the flags on a served row, and the reason alone on a retired one', () => {
     expect(flagsLabel(row('a', { flags: ['untagged', 'titled'] }))).toBe('⚑ untagged titled');
-    expect(flagsLabel(row('b', { flags: ['requested'], retired_reason: 'copied' }))).toBe('');
+    expect(flagsLabel(row('b', { flags: ['requested'], retired_reason: 'copied' }))).toBe('retired: copied');
+  });
+
+  it('reads the score with its deviation and label, and the label alone unrated', () => {
+    expect(difficultyLabel(1312.4, 'medium', 265.2)).toBe('1312 ± 265 medium');
+    expect(difficultyLabel(1200, 'medium', null)).toBe('1200 medium');
+    expect(difficultyLabel(null, 'easy', null)).toBe('easy');
   });
 
   it('keeps the sort out of the URL until it leaves newest', () => {

@@ -1209,12 +1209,12 @@ export interface components {
       difficulty: components['schemas']['ProblemDifficulty'] | null;
       /** Score */
       score: number | null;
+      /** Deviation */
+      deviation: number | null;
       /** Techniques */
       techniques: string[];
       /** Cases */
       cases: number;
-      /** Roles */
-      roles: components['schemas']['SolutionRole'][];
       retired_reason: components['schemas']['RetirementReason'] | null;
       /** Requests */
       requests: number;

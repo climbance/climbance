@@ -3,15 +3,17 @@ from datetime import timedelta
 import pytest
 from helpers import PROVENANCE, T0, authoring, seed_problem
 from test_api_reads import a_card
+from test_difficulty_judge import a_draw, anchored
 
 from climb.api.author_content import author_cards, author_problems
 from climb.cards import CardStore
 from climb.cases import CaseLog
+from climb.difficulty import DRAWS, correct, rating
 from climb.log import RetirementRequestLog
 from climb.matches import MatchLog
 from climb.mint import case
 from climb.problems import ProblemStore
-from climb.ratings import RatingLog
+from climb.ratings import CorrectionLog, DrawLog, RatingLog
 from climb.schema import (
     DifficultyRating,
     MatchSource,
@@ -81,12 +83,25 @@ def test_the_problems_list_retired_ones_with_their_counts(database, author):
 
     rows = {one["problem_id"]: one for one in author.get("/api/author/problems").json()["problems"]}
 
-    assert (rows["p1"]["cases"], rows["p1"]["requests"], rows["p1"]["roles"]) == (
-        1,
-        1,
-        ["canonical"],
-    )
+    assert (rows["p1"]["cases"], rows["p1"]["requests"]) == (1, 1)
     assert (rows["p1"]["retired_reason"], rows["p2"]["retired_reason"]) == (None, "defective")
+
+
+def test_a_row_reads_the_standing_judge_rating_s_deviation(database, author):
+    """The row reads the score with the deviation a judge's rating names."""
+    seed_problem(database, id="p1", techniques=["greedy"])
+    draws, anchors = anchored()
+    correction = correct(draws, anchors, anchor_set="h1")
+    CorrectionLog(database).append(correction)
+    mine = [a_draw("p1", 1500, n) for n in range(DRAWS)]
+    for one in mine:
+        DrawLog(database).append(one)
+    made = rating("p1", mine, correction)
+    RatingLog(database).append(made)
+
+    [row] = author.get("/api/author/problems").json()["problems"]
+
+    assert (row["score"], row["deviation"]) == (made.score, made.deviation)
 
 
 def test_an_opened_problem_reads_its_solutions_cases_and_ratings(database, author):

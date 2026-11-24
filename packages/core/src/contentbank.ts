@@ -126,9 +126,15 @@ export function templateCountsLine(counts: TemplateCounts | undefined): string {
   ].join(' · ');
 }
 
-/** A standing score where a rating stands, else the band's label. */
-export const difficultyLabel = (score: number | null | undefined, label: string | null | undefined) =>
-  score != null ? `${Math.round(score)} ${label ?? ''}`.trim() : (label ?? 'unlabelled');
+/** A standing score, with its deviation where one is named, else the band's label. */
+export const difficultyLabel = (
+  score: number | null | undefined,
+  label: string | null | undefined,
+  deviation?: number | null,
+) =>
+  score != null
+    ? `${Math.round(score)}${deviation != null ? ` ± ${Math.round(deviation)}` : ''} ${label ?? ''}`.trim()
+    : (label ?? 'unlabelled');
 
 export const edgeLine = (card: string, template: string, usedBy: string) =>
   `${card}, its ${template} used by ${usedBy}`;
@@ -322,24 +328,11 @@ export function problemPicked(f: ProblemFilter, field: keyof ProblemFilter, valu
 
 export const targetLabel = (one: AuthorProblemRow) => one.target_template ?? one.target_technique ?? '';
 
-const ROLE_LETTER: Record<string, string> = { canonical: 'C', reference: 'R', naive: 'N' };
-export const rolesLabel = (roles: string[]) => roles.map((one) => ROLE_LETTER[one] ?? '?').join('');
+export const techniquesLabel = (one: AuthorProblemRow) => one.techniques.join(', ') || 'no technique';
 
-export function problemFactsLine(one: AuthorProblemRow): string {
-  return [
-    one.techniques.join(', ') || 'no technique',
-    counted(one.cases, 'case'),
-    rolesLabel(one.roles) || 'no solution',
-    one.retired_reason && `retired: ${one.retired_reason}`,
-    one.requests ? counted(one.requests, 'request') : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-}
-
-// a retired row names its reason on the facts line in place of the flags
+// a retired row names its reason in place of the flags
 export const flagsLabel = (one: AuthorProblemRow) =>
-  one.retired_reason || one.flags.length === 0 ? '' : `⚑ ${one.flags.join(' ')}`;
+  one.retired_reason ? `retired: ${one.retired_reason}` : one.flags.length ? `⚑ ${one.flags.join(' ')}` : '';
 
 // a case may weigh up to the ceiling, so a closed one reads cut to a line
 const CUT = 60;
