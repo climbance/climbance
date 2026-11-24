@@ -5,6 +5,7 @@ import {
   NO_CORRECTION,
   dayLabel,
   gapsLine,
+  attentionLine,
   inboxEntry,
   retentionCells,
   stopLabel,
@@ -65,6 +66,14 @@ describe('waitingLine', () => {
 
   it('reads a pass counting nothing as clear', () => {
     expect(waitingLine({ command: 'judge build', count: 0 })).toBe(CLEAR);
+  });
+});
+
+describe('attentionLine', () => {
+  it('counts the flagged served problems, and reads none as clear', () => {
+    expect(attentionLine(9)).toBe('9 served problems carry a flag');
+    expect(attentionLine(1)).toBe('1 served problem carries a flag');
+    expect(attentionLine(0)).toBe(CLEAR);
   });
 });
 

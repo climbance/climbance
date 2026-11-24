@@ -1,11 +1,13 @@
 import {
   ANSWERED_REQUESTS,
+  ATTENTION_LINK,
   BACK_BOARD,
   CLEAR,
   COPY,
   DAY,
   FEEDBACK,
   INBOX_TITLE,
+  NEEDS_ATTENTION,
   NO_ANSWERED,
   NO_FAULT,
   NO_FEEDBACK,
@@ -14,6 +16,7 @@ import {
   RUN_FAULTS,
   WAITING,
   WAITING_REQUESTS,
+  attentionLine,
   dateLabel,
   dayLabel,
   periodTitle,
@@ -80,26 +83,42 @@ function Inbox({ read }: { read: InboxFigures }) {
       <PageSection id="waiting" title={WAITING} body="bare">
         <FigureTable
           head={['', '', '']}
-          rows={read.waiting.map((one) => ({
-            key: one.command,
-            cells: [
-              <code key="c">{one.command}</code>,
-              waitingLine(one),
-              one.count ? (
-                <Button
-                  key="b"
-                  variant="ghost"
-                  size="icon-xs"
-                  aria-label={`${COPY} ${one.command}`}
-                  onClick={() => navigator.clipboard.writeText(one.command)}
-                >
-                  <Copy />
-                </Button>
-              ) : (
-                ''
-              ),
-            ],
-          }))}
+          rows={[
+            ...read.waiting.map((one) => ({
+              key: one.command,
+              cells: [
+                <code key="c">{one.command}</code>,
+                waitingLine(one),
+                one.count ? (
+                  <Button
+                    key="b"
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label={`${COPY} ${one.command}`}
+                    onClick={() => navigator.clipboard.writeText(one.command)}
+                  >
+                    <Copy />
+                  </Button>
+                ) : (
+                  ''
+                ),
+              ],
+            })),
+            {
+              key: 'attention',
+              cells: [
+                NEEDS_ATTENTION,
+                attentionLine(read.attention),
+                read.attention ? (
+                  <Link key="o" to={ATTENTION_LINK} className={link}>
+                    {OPEN}
+                  </Link>
+                ) : (
+                  ''
+                ),
+              ],
+            },
+          ]}
         />
       </PageSection>
 

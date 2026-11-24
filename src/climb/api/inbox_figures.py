@@ -8,6 +8,7 @@ from enum import StrEnum
 from pydantic import BaseModel
 from sqlalchemy import Date, cast, func, select
 
+from climb.api.author_content import author_problems
 from climb.attempt_claims import claimable, standing_attempt_claims
 from climb.cards import CardStore
 from climb.difficulty import standing_correction
@@ -75,6 +76,8 @@ class FaultRow(BaseModel):
 class InboxFigures(BaseModel):
     period_days: int
     waiting: list[WaitingPass]
+    # the served problems carrying an attention flag
+    attention: int
     # a request waits while its problem is still served
     waiting_requests: list[RequestRow]
     answered_requests: list[RequestRow]
@@ -96,6 +99,7 @@ def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures
     return InboxFigures(
         period_days=PERIOD_DAYS,
         waiting=_waiting(root, author_id, problems),
+        attention=_attention(root, problems),
         waiting_requests=[one for one in rows if by_id[one.problem_id].served],
         answered_requests=[one for one in rows if not by_id[one.problem_id].served],
         feedback=[
@@ -114,8 +118,17 @@ def waiting_rows(root: Database, author_id: str) -> int:
     problems = load_problems(root)
     by_id = {one.id: one for one in problems}
     passes = sum(1 for one in _waiting(root, author_id, problems) if one.count)
-    return passes + sum(
-        1 for one in RetirementRequestLog(root).all() if by_id[one.problem_id].served
+    return (
+        passes
+        + bool(_attention(root, problems))
+        + sum(1 for one in RetirementRequestLog(root).all() if by_id[one.problem_id].served)
+    )
+
+
+def _attention(root: Database, problems: Sequence[Problem]) -> int:
+    served = {one.id for one in problems if one.served}
+    return sum(
+        1 for one in author_problems(root).problems if one.problem_id in served and one.flags
     )
 
 

@@ -1950,6 +1950,8 @@ export interface components {
       period_days: number;
       /** Waiting */
       waiting: components['schemas']['WaitingPass'][];
+      /** Attention */
+      attention: number;
       /** Waiting Requests */
       waiting_requests: components['schemas']['RequestRow'][];
       /** Answered Requests */

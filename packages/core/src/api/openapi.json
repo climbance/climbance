@@ -4891,6 +4891,10 @@
             "type": "array",
             "title": "Waiting"
           },
+          "attention": {
+            "type": "integer",
+            "title": "Attention"
+          },
           "waiting_requests": {
             "items": {
               "$ref": "#/components/schemas/RequestRow"
@@ -4939,6 +4943,7 @@
         "required": [
           "period_days",
           "waiting",
+          "attention",
           "waiting_requests",
           "answered_requests",
           "feedback",

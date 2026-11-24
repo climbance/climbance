@@ -44,6 +44,7 @@ def test_an_empty_store_waits_on_nothing(database):
         Pass.FILL: 0,
     }
     assert read.waiting_requests == read.answered_requests == read.feedback == read.faults == []
+    assert read.attention == 0
 
 
 def test_the_claim_pass_counts_the_authors_attempts_alone(database):
@@ -95,6 +96,20 @@ def test_a_request_waits_while_its_problem_is_served(database):
     assert [(one.title, one.status) for one in read.answered_requests] == [
         ("Longest calm stretch", ProblemStatus.RETIRED)
     ]
+
+
+def test_attention_counts_the_flagged_served_problems(database):
+    """A retired problem's flags are not counted."""
+    stored_problem(database, "p1")
+    stored_problem(database, "p2")
+    stored_problem(
+        database,
+        "p3",
+        status=ProblemStatus.RETIRED,
+        retired_reason=RetirementReason.DEFECTIVE,
+    )
+
+    assert inbox_figures(database, AUTHOR, NOW).attention == 2
 
 
 def test_feedback_reads_newest_first(database):
@@ -185,8 +200,8 @@ def test_the_route_names_no_user(database):
 
 
 def test_the_navigation_counts_the_waiting_rows_that_count_something(database):
-    """Each waiting request is a row; a retired problem's request and a pass
-    counting nothing add none."""
+    """Each waiting request is a row, and the flagged problems one row; a
+    retired problem's request and a pass counting nothing add none."""
     stored_template(database, "t1")
     stored_problem(database, "p1")
     stored_problem(
@@ -209,4 +224,4 @@ def test_the_navigation_counts_the_waiting_rows_that_count_something(database):
             )
         )
 
-    assert waiting_rows(database, AUTHOR) == 4
+    assert waiting_rows(database, AUTHOR) == 5

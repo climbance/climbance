@@ -139,6 +139,15 @@ export function waitingLine(one: WaitingPass): string {
   return `${one.count} ${one.count === 1 ? single : many}`;
 }
 
+export const NEEDS_ATTENTION = 'Needs attention';
+// the problems page filtered to every flagged row
+export const ATTENTION_LINK = '/author/problems?flag=any';
+
+export function attentionLine(n: number): string {
+  if (n === 0) return CLEAR;
+  return `${n} served ${n === 1 ? 'problem carries' : 'problems carry'} a flag`;
+}
+
 export const recentLine = (n: number, days: number) => `${n} in the last ${days} days`;
 
 export const periodTitle = (title: string, days: number) => `${title}, last ${days} days`;
