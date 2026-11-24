@@ -204,15 +204,19 @@ class AuthorCaseWhole(BaseModel):
 LINE = 120
 
 
-def _line(value: object) -> tuple[str, int]:
-    text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+def _compact(value: object) -> str:
+    return json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+
+
+def _line(text: str) -> tuple[str, int]:
     size = len(text.encode())
     return (text if len(text) <= LINE else f"{text[: LINE - 1]}…"), size
 
 
 def _author_case(one: TestCase) -> AuthorCase:
-    args, args_size = _line(one.args)
-    expected, expected_size = _line(one.expected)
+    # the arguments as the page's `argsText` writes them whole
+    args, args_size = _line(f"({', '.join(_compact(arg) for arg in one.args)})")
+    expected, expected_size = _line(_compact(one.expected))
     return AuthorCase(
         id=one.id,
         args=args,

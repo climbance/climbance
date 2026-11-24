@@ -121,7 +121,7 @@ def test_an_opened_problem_reads_its_solutions_cases_and_ratings(database, autho
         ("canonical", ["greedy"])
     ]
     [one] = read["cases"]
-    assert (one["args"], one["expected"], one["size"], one["round"]) == ("[[1,2]]", "3", 8, 0)
+    assert (one["args"], one["expected"], one["size"], one["round"]) == ("([1,2])", "3", 8, 0)
     assert [(one["score"], one["standing"]) for one in read["ratings"]] == [
         (1202.0, True),
         (1201.0, False),
