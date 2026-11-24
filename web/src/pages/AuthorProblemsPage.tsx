@@ -23,6 +23,7 @@ import {
   cutLine,
   difficultyLabel,
   expectedText,
+  flagsLabel,
   generatorLabel,
   problemBankView,
   problemFactsLine,
@@ -104,6 +105,7 @@ function Shelf({
     ['status', view.statuses],
     ['template', view.templates],
     ['landed', view.landed],
+    ['flag', view.flags],
     ['sort', view.sorts],
   ] as const
   return (
@@ -187,7 +189,10 @@ function Row({ one, open, onFlip }: { one: AuthorProblemRow; open: boolean; onFl
               {difficultyLabel(one.score, one.difficulty)}
             </span>
           </span>
-          <span className="block text-meta text-muted-foreground">{problemFactsLine(one)}</span>
+          <span className="flex items-baseline gap-3 text-meta text-muted-foreground">
+            <span className="min-w-0 flex-1">{problemFactsLine(one)}</span>
+            {flagsLabel(one) && <span className="shrink-0 text-foreground">{flagsLabel(one)}</span>}
+          </span>
         </span>
       </button>
       {open && one.requests > 0 && (

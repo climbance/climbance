@@ -4,6 +4,7 @@ import {
   cardBankView,
   cardFilter,
   cardShapeLine,
+  flagsLabel,
   problemBankView,
   problemFilter,
   problemPressed,
@@ -132,7 +133,11 @@ describe('the problems page', () => {
       row('old', { landed_at: '2026-09-01T12:00:00Z' }),
       row('undated', {}),
     ];
-    const view = problemBankView(dated, problemFilter((name) => (name === 'landed' ? '1d' : null)), now);
+    const view = problemBankView(
+      dated,
+      problemFilter((name) => (name === 'landed' ? '1d' : null)),
+      now,
+    );
 
     expect(view.rows.map((one) => one.problem_id)).toEqual(['new']);
     expect(view.landed.map((one) => [one.value, one.count])).toEqual([
@@ -150,17 +155,49 @@ describe('the problems page', () => {
       row('c', { score: 1500, cases: 3 }),
     ];
     const by = (sort: string) =>
-      problemBankView(scored, problemFilter((name) => (name === 'sort' ? sort : null))).rows.map(
-        (one) => one.problem_id,
-      );
+      problemBankView(
+        scored,
+        problemFilter((name) => (name === 'sort' ? sort : null)),
+      ).rows.map((one) => one.problem_id);
 
     expect(by('score')).toEqual(['c', 'a', 'b']);
     expect(by('cases')).toEqual(['b', 'a', 'c']);
     expect(by('nonsense')).toEqual(['a', 'b', 'c']);
   });
 
+  it('narrows to any flag, or to one, counting each on its chip', () => {
+    const flagged = [row('a', { flags: ['untagged', 'titled'] }), row('b', { flags: ['titled'] }), row('c', {})];
+    const by = (flag: string) =>
+      problemBankView(
+        flagged,
+        problemFilter((name) => (name === 'flag' ? flag : null)),
+      );
+
+    expect(by('any').rows.map((one) => one.problem_id)).toEqual(['a', 'b']);
+    expect(by('untagged').rows.map((one) => one.problem_id)).toEqual(['a']);
+    expect(
+      by('any')
+        .flags.slice(0, 3)
+        .map((one) => [one.label, one.count]),
+    ).toEqual([
+      ['Needs attention', 2],
+      ['untagged', 1],
+      ['titled', 2],
+    ]);
+    expect(problemQuery(problemFilter((name) => (name === 'flag' ? 'titled' : null)))).toBe('flag=titled');
+  });
+
+  it('names the flags on a served row, and the reason alone on a retired one', () => {
+    expect(flagsLabel(row('a', { flags: ['untagged', 'titled'] }))).toBe('⚑ untagged titled');
+    expect(flagsLabel(row('b', { flags: ['requested'], retired_reason: 'copied' }))).toBe('');
+  });
+
   it('keeps the sort out of the URL until it leaves newest', () => {
-    const score = problemPressed(problemFilter(() => null), 'sort', 'score');
+    const score = problemPressed(
+      problemFilter(() => null),
+      'sort',
+      'score',
+    );
 
     expect(problemQuery(score)).toBe('sort=score');
     expect(problemQuery(problemPressed(score, 'sort', 'score'))).toBe('');

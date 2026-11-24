@@ -165,9 +165,9 @@ flowchart LR
     core_certview --> core_screens
     core_claim --> core_sitting
     core_cold --> core_sittingrun
+    core_contentbank --> core_author
     core_contentbank --> core_bank
     core_contentbank --> core_listing
-    core_contentbank --> core_screens
     core_courses --> core_types
     core_delayed --> core_exam
     core_delayed --> core_words

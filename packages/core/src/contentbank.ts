@@ -1,5 +1,6 @@
 import type { components } from './api/schema';
 import type { BankChip } from './bank';
+import { NEEDS_ATTENTION } from './author';
 import { DIFFICULTIES } from './listing';
 import { counted } from './screens';
 
@@ -11,6 +12,7 @@ export type AuthorRung = components['schemas']['AuthorRung'];
 export type AuthorProblemRow = components['schemas']['AuthorProblemRow'];
 export type AuthorProblem = components['schemas']['AuthorProblem'];
 type TemplateCounts = components['schemas']['TemplateCounts'];
+export type AttentionFlag = components['schemas']['AttentionFlag'];
 
 export const CARD_BANK_TITLE = 'Cards';
 export const PROBLEM_BANK_TITLE = 'Problems';
@@ -25,6 +27,7 @@ export const PROBLEM_FILTERS = {
   status: 'Status',
   template: 'Template',
   landed: 'Landed',
+  flag: 'Flag',
   sort: 'Sort',
 };
 export const REQUIRES = 'Requires';
@@ -151,6 +154,9 @@ const LANDED: ProblemLanded[] = ['1d', '7d', '30d'];
 const LANDED_DAYS: Record<ProblemLanded, number> = { '1d': 1, '7d': 7, '30d': 30 };
 export type ProblemSort = 'newest' | 'score' | 'cases';
 const SORTS: ProblemSort[] = ['newest', 'score', 'cases'];
+// `any` is every flagged row: the inbox links to it
+export type ProblemFlag = 'any' | AttentionFlag;
+const FLAGS: ProblemFlag[] = ['any', 'untagged', 'titled', 'unrated', 'off-band', 'requested'];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface ProblemFilter {
@@ -159,6 +165,7 @@ export interface ProblemFilter {
   status: ProblemStatus;
   template: string | null;
   landed: ProblemLanded | null;
+  flag: ProblemFlag | null;
   sort: ProblemSort;
 }
 
@@ -171,6 +178,7 @@ export function problemFilter(get: (name: string) => string | null): ProblemFilt
     status: [...STATUSES, 'all'].includes(status ?? '') ? (status as ProblemStatus) : 'served',
     template: get('template'),
     landed: LANDED.find((one) => one === get('landed')) ?? null,
+    flag: FLAGS.find((one) => one === get('flag')) ?? null,
     sort: SORTS.find((one) => one === get('sort')) ?? 'newest',
   };
 }
@@ -182,6 +190,7 @@ export function problemQuery(f: ProblemFilter): string {
   if (f.status !== 'served') q.set('status', f.status);
   if (f.template) q.set('template', f.template);
   if (f.landed) q.set('landed', f.landed);
+  if (f.flag) q.set('flag', f.flag);
   if (f.sort !== 'newest') q.set('sort', f.sort);
   return q.toString();
 }
@@ -196,15 +205,18 @@ const statusHas = (one: AuthorProblemRow, status: ProblemStatus) =>
 
 // dated by the first solution's `created_at`, since a problem stores no time
 const landedHas = (one: AuthorProblemRow, landed: ProblemLanded | null, now: number) =>
-  landed === null ||
-  (one.landed_at != null && now - Date.parse(one.landed_at) <= LANDED_DAYS[landed] * DAY_MS);
+  landed === null || (one.landed_at != null && now - Date.parse(one.landed_at) <= LANDED_DAYS[landed] * DAY_MS);
+
+const flagHas = (one: AuthorProblemRow, flag: ProblemFlag | null) =>
+  flag === null || (flag === 'any' ? one.flags.length > 0 : one.flags.includes(flag));
 
 const problemHas = (one: AuthorProblemRow, f: ProblemFilter, now: number) =>
   (f.technique === null || one.techniques.includes(f.technique)) &&
   (f.difficulty === null || one.difficulty === f.difficulty) &&
   statusHas(one, f.status) &&
   (f.template === null || one.target_template === f.template) &&
-  landedHas(one, f.landed, now);
+  landedHas(one, f.landed, now) &&
+  flagHas(one, f.flag);
 
 // the API sends the rows newest first; a sort keeps that order among ties
 const sorted = (rows: AuthorProblemRow[], sort: ProblemSort) =>
@@ -220,16 +232,13 @@ export interface ProblemBankView {
   statuses: BankChip[];
   templates: BankChip[];
   landed: BankChip[];
+  flags: BankChip[];
   sorts: BankChip[];
   filtered: boolean;
   rows: AuthorProblemRow[];
 }
 
-export function problemBankView(
-  rows: AuthorProblemRow[],
-  f: ProblemFilter,
-  now: number = Date.now(),
-): ProblemBankView {
+export function problemBankView(rows: AuthorProblemRow[], f: ProblemFilter, now: number = Date.now()): ProblemBankView {
   const has = (one: AuthorProblemRow, g: ProblemFilter) => problemHas(one, g, now);
   const kept = rows.filter((one) => has(one, f));
   return {
@@ -241,13 +250,21 @@ export function problemBankView(
     // a chip per form would bury the rows, so only the template a link named shows
     templates: f.template ? chips(rows, [f.template], f.template, (one, template) => has(one, { ...f, template })) : [],
     landed: chips(rows, LANDED, f.landed, (one, landed) => has(one, { ...f, landed })),
+    flags: chips(
+      rows,
+      FLAGS,
+      f.flag,
+      (one, flag) => has(one, { ...f, flag }),
+      (flag) => (flag === 'any' ? NEEDS_ATTENTION : flag),
+    ),
     sorts: chips(kept, SORTS, f.sort, () => true),
     filtered:
       f.technique !== null ||
       f.difficulty !== null ||
       f.status !== 'served' ||
       f.template !== null ||
-      f.landed !== null,
+      f.landed !== null ||
+      f.flag !== null,
     rows: sorted(kept, f.sort),
   };
 }
@@ -264,6 +281,7 @@ export const PROBLEM_CLEARED: ProblemFilter = {
   status: 'served',
   template: null,
   landed: null,
+  flag: null,
   sort: 'newest',
 };
 
@@ -283,6 +301,10 @@ export function problemFactsLine(one: AuthorProblemRow): string {
     .filter(Boolean)
     .join(' · ');
 }
+
+// a retired row names its reason on the facts line in place of the flags
+export const flagsLabel = (one: AuthorProblemRow) =>
+  one.retired_reason || one.flags.length === 0 ? '' : `⚑ ${one.flags.join(' ')}`;
 
 // a case may weigh up to the ceiling, so a closed one reads cut to a line
 const CUT = 60;
