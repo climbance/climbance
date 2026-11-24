@@ -111,7 +111,7 @@ export const recordSaved = (where: string) => `Saved to ${where}.`;
 export const DELETE_ACCOUNT = 'Delete the account';
 export const DELETE_ACCOUNT_TITLE = 'Delete the account and its record?';
 export const deleteAccountWarning = (name: string) =>
-  `Your whole record, your sign-in and your invitation are deleted, and this cannot be undone. Signing in again needs a new invitation. Type ${name} to confirm.`;
+  `Your whole record, your sign-in and your invitation are deleted, and this cannot be undone. Signing in again starts a new account. Type ${name} to confirm.`;
 export const KEEP_ACCOUNT = 'Keep the account';
 
 // the signed-in devices
