@@ -2515,8 +2515,8 @@ apart = ["The gallery"]
 [[journey]]
 id = "first-run"
 name = "First run and the baseline test"
-doc = "journeys/README.md"
-starts = "The login page, with an invitation"
+doc = "journeys/first-run.md"
+starts = "The login page"
 ends = "The first lesson read and its first questions answered"
 screens = [
     "The login",
@@ -2531,12 +2531,12 @@ screens = [
     "A lesson a queue offers",
 ]
 acts = ["Continue"]
-components = ["sign-in", "app-tokens", "snapshot", "baseline-tests", "gating", "queues", "answering", "client-store", "knowledge-sync"]
+components = ["sign-in", "app-tokens", "practice-screens", "knowledge-screens", "snapshot", "baseline-tests", "gating", "queues", "answering", "client-store", "knowledge-sync"]
 
 [[journey]]
 id = "knowledge-queue"
 name = "The knowledge queue"
-doc = "journeys/README.md"
+doc = "journeys/knowledge-queue.md"
 starts = "The knowledge home's Continue"
 ends = "The queue's stop and its summary"
 screens = ["The knowledge home", "A queue", "A module", "A subtopic", "The lessons", "A lesson"]
@@ -2562,7 +2562,7 @@ components = ["knowledge-schedule", "gating", "queues", "answering", "baseline-t
 [[journey]]
 id = "sitting"
 name = "A sitting"
-doc = "journeys/README.md"
+doc = "journeys/sitting.md"
 starts = "The board's pick, a technique's problems, or the problem listing"
 ends = "A solved or ended sitting, its claim and its label answered"
 screens = [
@@ -2579,21 +2579,23 @@ components = ["practice-screens", "core-sitting", "problems", "sitting", "submis
 [[journey]]
 id = "failure-diagnosed"
 name = "A failure diagnosed and the next pick"
-doc = "journeys/README.md"
+doc = "journeys/failure-diagnosed.md"
 starts = "A sitting ended unsolved"
 ends = "The board serving a pick aimed at the form that failed"
 screens = ["A sitting", "The board", "A recall"]
 acts = []
 flows = ["drill-loop"]
-components = ["self-labels", "diagnoser", "pick", "predictions", "template-schedule", "card-states", "mastery"]
+components = ["self-labels", "attempt-log", "diagnoser", "pick", "predictions", "template-schedule", "card-states", "mastery", "recall", "core-recall"]
 
 [[journey]]
 id = "cards-and-recall"
 name = "Cards and recall"
-doc = "journeys/README.md"
+doc = "journeys/cards-and-recall.md"
 starts = "The Cards tab"
 ends = "A card graduated"
 screens = [
+    "The board",
+    "A technique's problems and cards",
     "The cards",
     "A card's trigger, brief and templates",
     "A card's ladder and probes",
@@ -2610,12 +2612,12 @@ acts = [
     "Open a subtopic a template cites",
 ]
 flows = ["starting-a-card-run", "solving-a-rung", "recalling-a-template"]
-components = ["card-runs", "card-states", "recall", "core-recall", "template-schedule", "short-exercises", "core-exercises"]
+components = ["practice-screens", "pick", "card-runs", "card-states", "recall", "core-recall", "template-schedule", "short-exercises", "core-exercises"]
 
 [[journey]]
 id = "cold-sitting"
 name = "A cold sitting and the rating"
-doc = "journeys/README.md"
+doc = "journeys/cold-sitting.md"
 starts = "The board's cold panel"
 ends = "The cold panel reading the measured and the projected rating"
 screens = ["The board", "A cold sitting, running and ended"]
@@ -2623,12 +2625,12 @@ acts = [
     "Start a cold sitting, or return to the one running",
     "End a cold sitting before it is solved, confirmed",
 ]
-components = ["sitting", "submission", "runner", "attempt-log", "rating", "projection", "mastery"]
+components = ["practice-screens", "core-sitting", "sitting", "submission", "runner", "attempt-log", "attempt-claims", "self-labels", "rating", "projection", "mastery"]
 
 [[journey]]
 id = "exam-and-certification"
 name = "A level exam and a certification"
-doc = "journeys/README.md"
+doc = "journeys/exam-and-certification.md"
 starts = "The knowledge home naming a certification ready for its exam, or its Exam press"
 ends = "A certification earned, or its conditions read as not yet met"
 screens = [
@@ -2642,22 +2644,22 @@ acts = [
     "Set the exam size for one exam",
     "Open a lesson ready to read, or a certification ready for its exam",
 ]
-components = ["certifications", "gating", "knowledge-schedule", "answering", "knowledge-screens", "knowledge-sync"]
+components = ["certifications", "gating", "queues", "knowledge-schedule", "projections", "answering", "knowledge-screens", "client-store", "knowledge-sync", "knowledge-log"]
 
 [[journey]]
 id = "phone-offline"
 name = "The phone offline"
-doc = "journeys/README.md"
+doc = "journeys/phone-offline.md"
 starts = "The phone's Home with no connection"
 ends = "The outbox sent, and the web reading the same answers"
 screens = ["The knowledge home", "A queue", "The board", "The cards"]
 acts = ["Read the sync's state, and sync now"]
-components = ["client-store", "queues", "answering", "snapshot", "knowledge-sync", "knowledge-log"]
+components = ["client-store", "knowledge-screens", "queues", "answering", "snapshot", "knowledge-sync", "knowledge-log"]
 
 [[journey]]
 id = "account"
 name = "The account on the web and the phone"
-doc = "journeys/README.md"
+doc = "journeys/account.md"
 starts = "The account menu"
 ends = "Signed out, or the account deleted"
 screens = ["The settings", "The signed-in devices", "The error screen"]
@@ -2673,14 +2675,14 @@ acts = [
     "Choose the colour scheme",
     "Set the device name or the reminder hour",
 ]
-components = ["core-account", "sign-in", "app-tokens", "feedback", "knowledge-sync"]
+components = ["core-account", "sign-in", "app-tokens", "feedback", "client-store", "knowledge-sync", "knowledge-log"]
 
 [[journey]]
 id = "author-review"
 name = "The author's review"
-doc = "journeys/README.md"
+doc = "journeys/author-review.md"
 starts = "The author area's inbox, at `/author`"
 ends = "Each waiting row answered by its command"
 screens = ["The author pages"]
 acts = []
-components = ["author-reads", "retirement-requests", "feedback", "run-faults", "diagnoser", "seed", "generation", "difficulty"]
+components = ["author-reads", "retirement-requests", "feedback", "run-faults", "classifier", "matcher", "exercise-items", "diagnoser", "seed", "generation", "difficulty"]

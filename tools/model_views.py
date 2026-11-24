@@ -334,7 +334,8 @@ def journeys(model: dict) -> str:
     for j in model.get("journey", []):
         components = [f"`{c}`" for c in j.get("components", [])]
         flows = [f"`{f}`" for f in j.get("flows", [])]
-        row = [j["name"], j["starts"], j["ends"], cell(j["screens"]), cell(j["acts"])]
+        name = f"[{j['name']}]({PurePosixPath(j['doc']).name})"
+        row = [name, j["starts"], j["ends"], cell(j["screens"]), cell(j["acts"])]
         row += [cell(flows), cell(components)]
         block.append("| " + " | ".join(row) + " |")
     apart = model.get("journeys", {}).get("apart", [])
