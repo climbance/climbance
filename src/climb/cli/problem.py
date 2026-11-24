@@ -1,7 +1,6 @@
-"""One stored problem read whole, or the corpus listed.
+"""The by-hand writes on one stored problem: retiring it and rating it.
 
-Its own command rather than a flag on `generate`: a problem outlives the run
-that wrote it, and matching, solution claims and the drill loop all reach it.
+The author problems page reads the corpus, so this command only writes.
 """
 
 import argparse
@@ -31,18 +30,15 @@ from climb.storage import Database
 
 
 def problem(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Database) -> None:
-    """The corpus listed, or the one problem an id names."""
+    if args.retire is None and args.rate is None:
+        parser.exit(2, "problem: --retire or --rate; /author/problems reads the corpus\n")
     corpus = Corpus.at(root)
     stored = corpus.problems.all()
     if not stored:
         parser.exit(0, "problem: no problem is stored\n")
-    if args.retire:
+    if args.retire is not None:
         return retired_by_hand(args, parser, stored, corpus, root)
-    if args.rate:
-        return rated_by_hand(args, parser, stored, root)
-    if not args.id:
-        return listed(stored, corpus, root)
-    print(page(one_of(stored, args.id, parser, "problem"), corpus, root))
+    return rated_by_hand(args, parser, stored, root)
 
 
 def retired_by_hand(
@@ -101,21 +97,6 @@ def labelled(one: Problem, root: Database) -> str:
 def request_line(request: RetirementRequest) -> str:
     when = request.created_at.date().isoformat()
     return f"{when}  {request.user_id}  {request.reason}: {request.note}"
-
-
-def listed(stored: list[Problem], corpus: Corpus, root: Database) -> None:
-    """Every stored problem: how it stands and what it carries."""
-    forms = slugs(root)
-    cases = corpus.cases.cases()
-    solutions = corpus.solutions.solutions()
-    rated = with_standing_difficulty(stored, RatingLog(root).ratings())
-    for one in sorted(rated, key=lambda problem: problem.title):
-        form = aimed_at(one, forms)
-        held = sum(case.problem_id == one.id for case in cases)
-        wrote = sum(solution.problem_id == one.id for solution in solutions)
-        carries = f"{held} case(s), {wrote} solution(s)"
-        print(f"{one.id}  {form[:24]:<24}  {one.difficulty!s:<6}  {standing(one):<12}  {carries}")
-    print(f"{len(stored)} problem(s) stored")
 
 
 def aimed_at(one: Problem, forms: dict[str, str]) -> str:

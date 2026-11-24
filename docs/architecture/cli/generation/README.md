@@ -68,8 +68,8 @@ and the order matters because each step can reject what came before.
   stage and the process then ends, so a rejected draft would leave only the
   calls it paid for. `site-outcomes.md` gives what a site's record carries.
 - **A run ends on what it reached, and prints no statement.** Each problem
-  the run stored is a line naming the id, and `climb problem <id>` reads one
-  problem whole. Ten statements scroll the result out of the terminal.
+  the run stored is a line naming the id, and the author problems page reads
+  one problem whole. Ten statements scroll the result out of the terminal.
 
 ## Steps 2 and 3: the canonical's own cases
 

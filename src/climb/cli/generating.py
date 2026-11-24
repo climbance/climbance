@@ -207,7 +207,7 @@ def finale(
     """What the run ended with, printed once and after every stage line.
 
     The statements are not in it. Ten of them scroll the result out of the
-    terminal, and `climb problem <id>` is what reads one whole.
+    terminal, and the author problems page reads one whole.
     """
     block: list[str] = []
     block += section("stored", [written(one) for _, result in reached for one in result.drafted])

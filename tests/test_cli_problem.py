@@ -40,25 +40,32 @@ def shown(monkeypatch, *argv: str) -> None:
     run_cli(monkeypatch, "problem", *argv)
 
 
-def test_the_corpus_is_listed_where_no_id_is_named(root, monkeypatch, capsys):
-    """What a reader has to have before naming one."""
-    stored = landed(root, monkeypatch)
-
-    shown(monkeypatch)
-
-    out = capsys.readouterr().out
-    assert f"{stored.id}  longest-valid-window" in out
-    assert "created" in out and "1 problem(s) stored" in out
+def read(monkeypatch, capsys, one) -> str:
+    """The page `--retire` shows before it asks, declined."""
+    answering(monkeypatch, "n")
+    with pytest.raises(SystemExit):
+        shown(monkeypatch, "--retire", one.id[:8])
+    return capsys.readouterr().out
 
 
-def test_a_problem_is_read_whole_by_a_prefix_of_its_id(root, monkeypatch, capsys):
+def test_no_flag_reads_nothing(root, monkeypatch, capsys):
+    """The author problems page reads the corpus, so a bare call is gone."""
+    landed(root, monkeypatch)
+
+    with pytest.raises(SystemExit) as exit_info:
+        shown(monkeypatch)
+
+    assert exit_info.value.code == 2
+    assert "/author/problems" in capsys.readouterr().err
+
+
+def test_retiring_reads_the_problem_whole_first(root, monkeypatch, capsys):
     """The statement, the cases that decide it, and every solution written for
     it."""
     stored = landed(root, monkeypatch)
 
-    shown(monkeypatch, stored.id[:8])
+    out = read(monkeypatch, capsys, stored)
 
-    out = capsys.readouterr().out
     assert f"# {stored.title} ({stored.id})" in out
     assert stored.statement in out
     # the canonical, the reference and the naive solution, each headed by its
@@ -72,9 +79,8 @@ def test_the_page_names_what_the_run_left_and_what_it_matched(root, monkeypatch,
     problem, and are readable nowhere else."""
     stored = landed(root, monkeypatch)
 
-    shown(monkeypatch, stored.id)
+    out = read(monkeypatch, capsys, stored)
 
-    out = capsys.readouterr().out
     assert "displays  generator" in out
     assert "separating at" in out
     # the bound the size was searched under, which the cleared draft no longer
@@ -84,37 +90,9 @@ def test_the_page_names_what_the_run_left_and_what_it_matched(root, monkeypatch,
     assert "techniques: none read" in out
 
 
-def test_a_retired_problem_names_the_reason(root, monkeypatch, capsys):
-    """The reason decides whether its attempts count, so the status alone would
-    not do."""
-    stored = landed(root, monkeypatch)
-    ProblemStore(root).put(
-        stored.model_copy(
-            update={
-                "status": ProblemStatus.RETIRED,
-                "retired_reason": RetirementReason.DEFECTIVE,
-            }
-        )
-    )
-
-    shown(monkeypatch)
-
-    assert "retired: defective" in capsys.readouterr().out
-
-
-def test_a_problem_that_is_not_stored_says_so(root, monkeypatch, capsys):
-    landed(root, monkeypatch)
-
-    with pytest.raises(SystemExit) as exit_info:
-        shown(monkeypatch, "beef")
-
-    assert exit_info.value.code == 1
-    assert "no problem beef" in capsys.readouterr().err
-
-
 def test_an_empty_corpus_says_so(root, monkeypatch, capsys):
     with pytest.raises(SystemExit) as exit_info:
-        shown(monkeypatch)
+        shown(monkeypatch, "--retire", "beef")
 
     assert exit_info.value.code == 0
     assert "no problem is stored" in capsys.readouterr().err
@@ -205,9 +183,8 @@ def test_a_score_by_hand_moves_the_label_the_page_shows(root, monkeypatch, capsy
     other = band(score)
 
     shown(monkeypatch, stored.id[:8], "--rate", f"{score:g}")
-    shown(monkeypatch, stored.id[:8])
 
-    out = capsys.readouterr().out
+    out = read(monkeypatch, capsys, stored)
     assert f"{stored.difficulty} -> {other} ({score:g})" in out
     assert f"{other} ({score:g}, generator: {stored.difficulty})" in out
     assert ProblemStore(root).get(stored.id).difficulty == stored.difficulty

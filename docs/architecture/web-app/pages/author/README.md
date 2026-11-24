@@ -145,6 +145,7 @@ traces, goes unseen.
 | `climb gaps` | generation, as the corpus by template | retired |
 | `climb feedback` | inbox | retired |
 | `climb problem --requests` | inbox | retired |
+| `climb problem` without `--retire` or `--rate`: the corpus listed, or one problem read | problems | retired |
 | Ad hoc queries over run faults | inbox | gone |
 | Ad hoc queries over the call log's cost by part | spend | gone |
 
@@ -162,9 +163,11 @@ traces, goes unseen.
   command**: `module status`, `card`, `library` and `spot`. The hosted engine
   holds no copy of `content/` and no spot sheet, so a page there could not
   read them.
-- **`climb problem`, apart from `--requests`, and `climb board` stay until
-  another page covers them.** The content browser lists the problems, and the
-  Practice section is the board.
+- **`climb problem --retire` and `--rate` stay, since both write.** `--retire`
+  prints the problem whole before it asks to confirm, so the author reads what
+  the write would change in the terminal that runs it.
+- **`climb board` stays until another page covers it.** The Practice section
+  is the board.
 - **A page names the command that acts on what it shows, and a press copies
   it.** The inbox copies each by-hand pass's command, and the problems page
   copies the commands retiring a problem and rating it by hand. The author

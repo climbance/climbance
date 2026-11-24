@@ -225,9 +225,9 @@ def main() -> None:
     )
     configuration_arguments(generate_parser, sited, "--site")
 
-    problem_parser = command(sub, "problem", "read one stored problem, or list the corpus")
+    problem_parser = command(sub, "problem", "retire a stored problem, or rate it by hand")
     problem_parser.add_argument(
-        "id", nargs="?", help="the problem, by id or a prefix of one; every one otherwise"
+        "id", nargs="?", help="the problem --rate scores, by id or a prefix of one"
     )
     problem_parser.add_argument(
         "--retire",
