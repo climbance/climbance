@@ -7,6 +7,7 @@ from typing import Any
 
 from climb.calls.store import CallLog
 from climb.calls.transport import MAX_TOKENS, Reply, Transport, traced
+from climb.caps import calls_capped
 from climb.ids import new_id
 from climb.schema import Call, Configuration
 
@@ -47,8 +48,11 @@ def ask(
     A failure is recorded before it is re-raised, keeping the message and the
     exception type but never a repr, which can carry request context. The
     schema is not part of the hash: it is built from the candidates, which
-    appear verbatim in the content already.
+    appear verbatim in the content already. A call for a user's request is
+    refused unsent past the day's cap.
     """
+    if user_id is not None:
+        calls_capped(lambda since: log.made_by(user_id, since), datetime.now(UTC))
     text = payload(system, content)
     hash = prompt_hash(system, content)
     model, effort, pin, temperature = (

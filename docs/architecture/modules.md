@@ -117,6 +117,7 @@ flowchart LR
     climb_attempt_claims --> climb_scorer
     climb_board --> climb_attempt_claims
     climb_board --> climb_glicko
+    climb_calls --> climb_caps
     climb_cards --> climb_mutation
     climb_cards --> climb_techniques
     climb_classifier --> climb_calls
@@ -138,7 +139,6 @@ flowchart LR
     climb_diagnosing --> climb_scorer
     climb_diagnosing --> climb_sitting
     climb_difficulty --> climb_sitting
-    climb_feedback --> climb_caps
     climb_feedback --> climb_log
     climb_generation --> climb_drafts
     climb_generation --> climb_matches
@@ -169,7 +169,6 @@ flowchart LR
     climb_projected --> climb_measured
     climb_recall --> climb_sitting
     climb_retirement --> climb_sitting
-    climb_sitting --> climb_caps
     climb_sitting --> climb_cases
     climb_sitting --> climb_log
     climb_sitting --> climb_mint

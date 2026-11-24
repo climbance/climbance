@@ -41,8 +41,10 @@ proxies `/api` to the API. Deployed, the API serves the built files beside
 - **The model calls a user's requests make are capped at 50 a day.** The
   model budget is shared by every account, and one account calling without a
   cap could spend the budget of all the others. No route makes a model call
-  yet. The framing judge of the recognition drill will be the first, and it
-  checks the cap before it calls.
+  yet, and the framing judge of the recognition drill will be the first.
+- **The call itself checks the cap, before the request is sent.** A call that
+  names a `user_id` past the cap is refused unsent and leaves no call record.
+  A call site therefore cannot omit the check.
 - **The cap is counted from the call log, over the user's own calls of the
   last 24 hours.** Each call a request makes carries the account in
   `user_id`, as `../cli/calls.md` gives. A call `climb` makes names no

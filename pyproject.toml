@@ -127,9 +127,9 @@ layers = [
     "climb.graduation : climb.diagnosing",
     "climb.generation : climb.ladder : climb.recall : climb.cold : climb.measured : climb.judging : climb.retirement : climb.feedback : climb.difficulty",
     "climb.attempt_claims : climb.solution_claims : climb.matches : climb.board : climb.cards : climb.sitting : climb.template_schedule",
-    "climb.classifier : climb.diagnoser : climb.mint : climb.log : climb.caps : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.mutant_diagnoses : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs : climb.scorer : climb.glicko",
+    "climb.classifier : climb.diagnoser : climb.mint : climb.log : climb.knowledge : climb.outcomes : climb.problems : climb.solutions : climb.cases : climb.drafts : climb.ratings : climb.trials : climb.judgements : climb.keylines : climb.mutant_diagnoses : climb.verifications : climb.techniques : climb.mutation : climb.calls : climb.runs : climb.scorer : climb.glicko",
     "climb.runner",
-    "climb.schema : climb.ids : climb.storage : climb.standing : climb.statement",
+    "climb.schema : climb.ids : climb.storage : climb.standing : climb.statement : climb.caps",
 ]
 
 # each container's code, as `code` in `docs/architecture/model.toml` names it, is
