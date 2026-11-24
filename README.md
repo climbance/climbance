@@ -266,4 +266,5 @@ content/           the authored cards and modules, a private repository
 
 ## Licence
 
-Apache-2.0, in [`LICENSE`](LICENSE).
+Apache-2.0, in [`LICENSE`](LICENSE). The copyright holder is named in
+[`NOTICE`](NOTICE), and may also offer the code under another licence.
