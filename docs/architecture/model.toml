@@ -655,6 +655,7 @@ section = "Who sees them"
 src = [
     "src/climb/api/author.py",
     "src/climb/api/author_content.py",
+    "src/climb/api/attention.py",
     "src/climb/api/generation_figures.py",
     "src/climb/api/product_figures.py",
     "src/climb/api/spend_figures.py",

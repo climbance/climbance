@@ -76,8 +76,9 @@ the author decides, and no flag retires a problem.
 - **`unrated`**: the problem's standing difficulty carries no score. A cold
   sitting cannot serve it, as `../../../../api/rating.md` gives.
 - **`off-band`**: the standing score lies more than its deviation outside the
-  band of the generator's `difficulty`. The generator aimed at one label and
-  the judge read another, so the statement or the label is wrong.
+  band of the generator's `difficulty`. A `user` rating stores no deviation,
+  and is read as deviation zero. The generator aimed at one label and the
+  judge read another, so the statement or the label is wrong.
 - **`requested`**: a retirement request waits on the problem.
 
 ## Rows

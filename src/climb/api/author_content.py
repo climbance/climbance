@@ -8,6 +8,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from climb.api.attention import AttentionFlag, attention_flags
 from climb.cards import CardStore
 from climb.cards.graph import depths
 from climb.cases import CaseLog
@@ -33,6 +34,7 @@ from climb.solution_claims.store import SolutionClaimLog
 from climb.solutions import SolutionLog
 from climb.statement import signed
 from climb.storage import Database
+from climb.techniques import codes
 from climb.verifications import VerificationLog
 
 
@@ -136,6 +138,7 @@ class AuthorProblemRow(BaseModel):
     retired_reason: RetirementReason | None  # absent on a served problem
     requests: int
     landed_at: datetime | None  # its first solution's, since a problem stores no time
+    flags: list[AttentionFlag]
 
 
 class AuthorProblems(BaseModel):
@@ -148,7 +151,8 @@ def _template_slugs(root: Database) -> dict[str, str]:
 
 def author_problems(root: Database) -> AuthorProblems:
     slugs = _template_slugs(root)
-    scores = {id: one.score for id, one in standing_ratings(RatingLog(root).ratings()).items()}
+    stands = standing_ratings(RatingLog(root).ratings())
+    generator = {one.id: one.difficulty for one in ProblemStore(root).all()}
     cases = Counter(one.problem_id for one in CaseLog(root).cases())
     requests = Counter(one.problem_id for one in RetirementRequestLog(root).all())
     roles: dict[str, set[SolutionRole]] = {}
@@ -163,13 +167,20 @@ def author_problems(root: Database) -> AuthorProblems:
             target_template=slugs.get(problem.target_template_id or ""),
             target_technique=problem.target_technique,
             difficulty=problem.difficulty,
-            score=scores.get(problem.id),
+            score=stands[problem.id].score if problem.id in stands else None,
             techniques=problem.techniques,
             cases=cases[problem.id],
             roles=[role for role in SolutionRole if role in roles.get(problem.id, set())],
             retired_reason=problem.retired_reason,
             requests=requests[problem.id],
             landed_at=landed.get(problem.id),
+            flags=attention_flags(
+                problem,
+                generator=generator.get(problem.id),
+                rating=stands.get(problem.id),
+                requests=requests[problem.id],
+                codes=codes(),
+            ),
         )
         for problem in load_problems(root)
     ]

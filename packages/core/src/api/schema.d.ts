@@ -1122,6 +1122,11 @@ export interface components {
       /** Attempt Id */
       attempt_id: string;
     };
+    /**
+     * AttentionFlag
+     * @enum {string}
+     */
+    AttentionFlag: 'untagged' | 'titled' | 'unrated' | 'off-band' | 'requested';
     /** AuthorArea */
     AuthorArea: {
       /** Groups */
@@ -1215,6 +1220,8 @@ export interface components {
       requests: number;
       /** Landed At */
       landed_at: string | null;
+      /** Flags */
+      flags: components['schemas']['AttentionFlag'][];
     };
     /** AuthorProblems */
     AuthorProblems: {

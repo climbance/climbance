@@ -2439,6 +2439,17 @@
         "title": "AttemptVerification",
         "description": "Private to the user, where a solution's run is product data:\n`api/attempt-log.md`."
       },
+      "AttentionFlag": {
+        "type": "string",
+        "enum": [
+          "untagged",
+          "titled",
+          "unrated",
+          "off-band",
+          "requested"
+        ],
+        "title": "AttentionFlag"
+      },
       "AuthorArea": {
         "properties": {
           "groups": {
@@ -2768,6 +2779,13 @@
               }
             ],
             "title": "Landed At"
+          },
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/AttentionFlag"
+            },
+            "type": "array",
+            "title": "Flags"
           }
         },
         "type": "object",
@@ -2783,7 +2801,8 @@
           "roles",
           "retired_reason",
           "requests",
-          "landed_at"
+          "landed_at",
+          "flags"
         ],
         "title": "AuthorProblemRow"
       },

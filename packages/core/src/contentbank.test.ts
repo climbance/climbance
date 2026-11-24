@@ -53,6 +53,7 @@ const row = (id: string, fields: Partial<AuthorProblemRow>): AuthorProblemRow =>
   retired_reason: null,
   requests: 0,
   landed_at: null,
+  flags: [],
   ...fields,
 });
 
