@@ -97,9 +97,16 @@ the author decides, and no flag retires a problem.
 ## The panel
 
 - **A press on a row opens the problem in a panel beside the list**, in a
-  window wide enough for both. The list keeps its scroll, and the opened row
+  window of 64rem or more. The list keeps its scroll, and the opened row
   stays marked. In a narrower window the row opens in place, as
   `../../../README.md` gives for two parts of one page.
+- **One problem is opened at a time, and the anchor names it.** A press on
+  another row moves the panel there, and a press on the opened row closes it.
+  The page's anchor is then a link to exactly the problem in view.
+- **The panel and the list share the reading column.** The list narrowed to
+  titles takes 14rem. The panel takes the other 38rem, and its code block
+  holds 64 characters, measured in a 1400px window. The page therefore
+  needs no wide layout, which only the sitting takes.
 - **While the panel is open, the list narrows to each row's title and its
   count of flags.** The panel takes the width the statement and the code
   need, and the title alone finds the next problem.

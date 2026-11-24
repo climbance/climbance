@@ -5,11 +5,13 @@ import {
   cardFilter,
   cardShapeLine,
   difficultyLabel,
+  flagCount,
   flagsLabel,
   problemBankView,
   problemFilter,
   problemPicked,
   problemQuery,
+  problemStatus,
   type AuthorCard,
   type AuthorProblemRow,
 } from './index';
@@ -214,6 +216,13 @@ describe('the problems page', () => {
   it('names the flags on a served row, and the reason alone on a retired one', () => {
     expect(flagsLabel(row('a', { flags: ['untagged', 'titled'] }))).toBe('⚑ untagged titled');
     expect(flagsLabel(row('b', { flags: ['requested'], retired_reason: 'copied' }))).toBe('retired: copied');
+  });
+
+  it('counts a served row\'s flags for the narrowed list, and none on a retired one', () => {
+    expect(flagCount(row('a', { flags: ['untagged', 'titled'] }))).toBe('⚑2');
+    expect(flagCount(row('b', { flags: [] }))).toBe('');
+    expect(flagCount(row('c', { flags: ['requested'], retired_reason: 'copied' }))).toBe('');
+    expect(problemStatus(row('c', { retired_reason: 'copied' }))).toBe('retired');
   });
 
   it('reads the score with its deviation and label, and the label alone unrated', () => {

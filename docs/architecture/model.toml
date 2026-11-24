@@ -1153,6 +1153,7 @@ src = [
     "web/src/pages/AuthorCardsPage.tsx",
     "web/src/pages/AuthorProblemsPage.tsx",
     "web/src/lib/openRows.ts",
+    "web/src/lib/media.ts",
     "web/src/components/Chips.tsx",
     "web/src/components/FilterMenu.tsx",
     "web/src/components/AuthorBar.tsx",
