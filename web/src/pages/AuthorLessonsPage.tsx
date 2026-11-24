@@ -16,6 +16,7 @@ import {
   bankCleared,
   bankPressed,
   bankQuery,
+  gridPage,
   gridQuery,
   gridSort,
   gridSorted,
@@ -40,6 +41,7 @@ import { Chips } from '@/components/Chips'
 import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { Pager } from '@/components/Pager'
 import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
@@ -112,6 +114,7 @@ function Shelf({
   const shown = gridSorted(view.rows, LESSON_COLUMNS, sort)
   const dialog = useRowDialog(shown.map((row) => row.x.slug))
   const opened = shown.find((row) => row.x.slug === dialog.opened)
+  const paged = gridPage(shown, dialog.page)
 
   const rows = [
     ['module', view.modules],
@@ -154,16 +157,19 @@ function Shelf({
         {shown.length === 0 ? (
           <p className="text-meta text-muted-foreground">{LESSON_BANK_NONE_MATCH}</p>
         ) : (
-          <DataGrid
-            columns={LESSON_COLUMNS}
-            cells={lessonCells}
-            rows={shown}
-            rowKey={(row) => row.x.slug}
-            marked={dialog.last}
-            onOpen={dialog.open}
-            sort={sort}
-            onSort={(next) => go(filter, next)}
-          />
+          <>
+            <DataGrid
+              columns={LESSON_COLUMNS}
+              cells={lessonCells}
+              rows={paged.rows}
+              rowKey={(row) => row.x.slug}
+              marked={dialog.last}
+              onOpen={dialog.open}
+              sort={sort}
+              onSort={(next) => go(filter, next)}
+            />
+            <Pager page={paged.page} pages={paged.pages} onPage={dialog.turn} />
+          </>
         )}
       </section>
       {opened && (

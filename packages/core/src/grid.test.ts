@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { gridPressed, gridQuery, gridSort, gridSorted, type GridColumn } from './index';
+import {
+  gridPage,
+  gridPressed,
+  gridQuery,
+  gridSort,
+  gridSorted,
+  pageNumber,
+  pageHolding,
+  pageQuery,
+  type GridColumn,
+} from './index';
 
 type Row = { name: string; score: number | null };
 
@@ -49,5 +59,26 @@ describe('the grid', () => {
     expect(gridQuery('', { column: 'score', order: 'asc' }, columns)).toBe('sort=score&order=asc');
     expect(gridSort(params('sort=score&order=asc'), columns)).toEqual({ column: 'score', order: 'asc' });
     expect(gridSort(params('sort=score'), columns)).toEqual({ column: 'score', order: 'desc' });
+  });
+});
+
+describe('the pages', () => {
+  const many = Array.from({ length: 120 }, (_, i) => i);
+
+  it('cuts 50 rows a page', () => {
+    const page = gridPage(many, 3);
+
+    expect([page.rows.length, page.rows[0], page.pages]).toEqual([20, 100, 3]);
+  });
+
+  it('reads a page past the last as the last, and no page as the first', () => {
+    expect(gridPage(many, 9).page).toBe(3);
+    expect(pageNumber(params('page=x'))).toBe(1);
+  });
+
+  it('finds the page holding a row, and keeps the first page out of the URL', () => {
+    expect([pageHolding(49), pageHolding(50)]).toEqual([1, 2]);
+    expect(pageQuery('module=py&page=3', 1)).toBe('module=py');
+    expect(pageQuery('module=py', 2)).toBe('module=py&page=2');
   });
 });

@@ -55,3 +55,36 @@ export function gridSorted<R>(rows: R[], columns: GridColumn<R>[], sort: GridSor
     return sign * (typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y)));
   });
 }
+
+// pages are cut in the browser, over every matching row: `browser.md`
+export const PAGE_SIZE = 50;
+
+export interface GridPage<R> {
+  rows: R[];
+  page: number;
+  pages: number;
+}
+
+/** The page the URL names, from 1; a page past the last reads as the last. */
+export function gridPage<R>(rows: R[], page: number): GridPage<R> {
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const at = Math.min(Math.max(1, page), pages);
+  const start = (at - 1) * PAGE_SIZE;
+  return { rows: rows.slice(start, start + PAGE_SIZE), page: at, pages };
+}
+
+export function pageNumber(get: (name: string) => string | null): number {
+  const page = get('page');
+  return page !== null && /^\d+$/.test(page) ? Number(page) : 1;
+}
+
+/** The page holding the row at `index` among every matching row. */
+export const pageHolding = (index: number) => Math.floor(index / PAGE_SIZE) + 1;
+
+/** The query with the page set; the first page stays out of the URL. */
+export function pageQuery(query: string, page: number): string {
+  const q = new URLSearchParams(query);
+  if (page > 1) q.set('page', String(page));
+  else q.delete('page');
+  return q.toString();
+}

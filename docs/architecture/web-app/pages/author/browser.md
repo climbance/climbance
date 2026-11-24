@@ -54,6 +54,26 @@ traces, goes unseen. `README.md` gives the author area these pages sit in.
   of sight, and several opened cards ran past the window. The dialog below
   replaced the opened row on every browser page.
 
+## Pages
+
+- **A grid shows 50 rows a page, and the page is in the URL as `?page=`.**
+  The `algo` bank's 504 questions ran to 20 windows in one scroll. A page
+  number then names the place a review stopped at.
+- **The pager under the grid is the problem listing's pager**: a press to the
+  previous page, the page as `Page 2 of 11`, and a press to the next. One
+  component draws both, so paging reads the same on every page. A grid of one
+  page shows no pager.
+- **A filter or a sort returns the grid to its first page.** The rows a page
+  number named before the change are other rows after it.
+- **The pages are cut in the browser, over every matching row.** Each chip
+  counts the rows its filter would leave across the whole bank, so the
+  browser holds every row already. The questions and the lessons come from
+  the snapshot, and the problems' rows weigh 69 kB in all. Paging on the
+  server is deferred until one page's rows would outweigh the request.
+- **The dialog steps across pages, and the grid turns to the page of the
+  opened row.** A link to an item's anchor opens the page holding it, and
+  closing the dialog keeps that page.
+
 ## The dialog
 
 - **A press on a row opens the item in a dialog over the grid.** The grid

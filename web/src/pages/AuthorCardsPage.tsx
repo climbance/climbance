@@ -25,6 +25,7 @@ import {
   difficultyLabel,
   edgeLine,
   formsLabel,
+  gridPage,
   gridQuery,
   gridSort,
   gridSorted,
@@ -48,6 +49,7 @@ import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
 import { PageHeader } from '@/components/PageHeader'
+import { Pager } from '@/components/Pager'
 import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { TemplatePanel } from '@/components/TemplatePanel'
@@ -118,6 +120,7 @@ function Shelf({
   const shown = gridSorted(view.rows, CARD_COLUMNS, sort)
   const dialog = useRowDialog(shown.map((one) => one.slug))
   const opened = shown.find((one) => one.slug === dialog.opened)
+  const paged = gridPage(shown, dialog.page)
   return (
     <div className="space-y-section">
       <section className="space-y-2">
@@ -153,16 +156,19 @@ function Shelf({
         {shown.length === 0 ? (
           <p className="text-meta text-muted-foreground">{CARD_BANK_NONE_MATCH}</p>
         ) : (
-          <DataGrid
-            columns={CARD_COLUMNS}
-            cells={cardCells}
-            rows={shown}
-            rowKey={(one) => one.slug}
-            marked={dialog.last}
-            onOpen={dialog.open}
-            sort={sort}
-            onSort={(next) => go(filter, next)}
-          />
+          <>
+            <DataGrid
+              columns={CARD_COLUMNS}
+              cells={cardCells}
+              rows={paged.rows}
+              rowKey={(one) => one.slug}
+              marked={dialog.last}
+              onOpen={dialog.open}
+              sort={sort}
+              onSort={(next) => go(filter, next)}
+            />
+            <Pager page={paged.page} pages={paged.pages} onPage={dialog.turn} />
+          </>
         )}
       </section>
       {opened && (

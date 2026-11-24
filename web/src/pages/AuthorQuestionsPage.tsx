@@ -17,6 +17,7 @@ import {
   bankQuery,
   bankView,
   conceptLine,
+  gridPage,
   gridQuery,
   gridSort,
   gridSorted,
@@ -37,6 +38,7 @@ import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { Inline } from '@/components/Inline'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { Pager } from '@/components/Pager'
 import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Answered } from '@/knowledge/Ask'
@@ -110,6 +112,7 @@ function Bank({
   const shown = gridSorted(view.rows, QUESTION_COLUMNS, sort)
   const dialog = useRowDialog(shown.map((row) => row.q.id))
   const opened = shown.find((row) => row.q.id === dialog.opened)
+  const paged = gridPage(shown, dialog.page)
 
   const rows = [
     ['module', view.modules],
@@ -155,16 +158,19 @@ function Bank({
         {view.shown === 0 ? (
           <p className="text-meta text-muted-foreground">{BANK_NONE_MATCH}</p>
         ) : (
-          <DataGrid
-            columns={QUESTION_COLUMNS}
-            cells={questionCells}
-            rows={shown}
-            rowKey={(row) => row.q.id}
-            marked={dialog.last}
-            onOpen={dialog.open}
-            sort={sort}
-            onSort={(next) => go(filter, next)}
-          />
+          <>
+            <DataGrid
+              columns={QUESTION_COLUMNS}
+              cells={questionCells}
+              rows={paged.rows}
+              rowKey={(row) => row.q.id}
+              marked={dialog.last}
+              onOpen={dialog.open}
+              sort={sort}
+              onSort={(next) => go(filter, next)}
+            />
+            <Pager page={paged.page} pages={paged.pages} onPage={dialog.turn} />
+          </>
         )}
       </section>
       {opened && (

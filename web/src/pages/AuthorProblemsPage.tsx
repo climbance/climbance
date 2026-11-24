@@ -27,6 +27,7 @@ import {
   expectedText,
   flagsLabel,
   generatorLabel,
+  gridPage,
   gridQuery,
   gridSort,
   gridSorted,
@@ -56,6 +57,7 @@ import { FilterMenu } from '@/components/FilterMenu'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
 import { PageHeader } from '@/components/PageHeader'
+import { Pager } from '@/components/Pager'
 import { PlainCode, PythonCode } from '@/components/PythonCode'
 import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
@@ -134,6 +136,7 @@ function Shelf({
   const shown = gridSorted(view.rows, PROBLEM_COLUMNS, sort)
   const dialog = useRowDialog(shown.map((one) => shortId(one.problem_id)))
   const opened = shown.find((one) => shortId(one.problem_id) === dialog.opened)
+  const paged = gridPage(shown, dialog.page)
   return (
     <div className="space-y-section">
       <div className="flex flex-wrap gap-2">
@@ -167,16 +170,19 @@ function Shelf({
         {shown.length === 0 ? (
           <p className="text-meta text-muted-foreground">{PROBLEM_BANK_NONE_MATCH}</p>
         ) : (
-          <DataGrid
-            columns={PROBLEM_COLUMNS}
-            cells={problemCells}
-            rows={shown}
-            rowKey={(one) => shortId(one.problem_id)}
-            marked={dialog.last}
-            onOpen={dialog.open}
-            sort={sort}
-            onSort={(next) => go(filter, next)}
-          />
+          <>
+            <DataGrid
+              columns={PROBLEM_COLUMNS}
+              cells={problemCells}
+              rows={paged.rows}
+              rowKey={(one) => shortId(one.problem_id)}
+              marked={dialog.last}
+              onOpen={dialog.open}
+              sort={sort}
+              onSort={(next) => go(filter, next)}
+            />
+            <Pager page={paged.page} pages={paged.pages} onPage={dialog.turn} />
+          </>
         )}
       </section>
       {opened && <Opened key={opened.problem_id} one={opened} dialog={dialog} />}

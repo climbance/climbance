@@ -1211,6 +1211,7 @@ src = [
     "web/src/components/PageHeader.tsx",
     "web/src/components/PageSection.tsx",
     "web/src/components/SectionHeading.tsx",
+    "web/src/components/Pager.tsx",
     "web/src/components/SectionBar.tsx",
     "web/src/components/Panel.tsx",
     "web/src/components/BackLink.tsx",

@@ -3,9 +3,6 @@ import {
   listingHeading,
   listingView,
   NO_FILTER,
-  PAGE_NEXT,
-  PAGE_PREVIOUS,
-  pageOf,
   PROBLEMS_NONE,
   PROBLEMS_NONE_MATCH,
   PROBLEMS_NOTE,
@@ -20,10 +17,10 @@ import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { Pager } from '@/components/Pager'
 import { SectionHeading } from '@/components/SectionHeading'
 import { PickPanel } from '@/components/PickRow'
 import { ProblemRow } from '@/components/ProblemRow'
-import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
 // every served problem at once, where the board reaches them one technique at
@@ -123,27 +120,11 @@ export function ProblemsPage() {
                         />
                       ))}
                     </PickPanel>
-                    {view.pages > 1 && (
-                      <div className="flex items-center gap-stack pt-1 text-meta text-muted-foreground">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={view.page === 1}
-                          onClick={() => go({ ...filter, page: view.page - 1 })}
-                        >
-                          {PAGE_PREVIOUS}
-                        </Button>
-                        <span className="tabular-nums">{pageOf(view.page, view.pages)}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={view.page === view.pages}
-                          onClick={() => go({ ...filter, page: view.page + 1 })}
-                        >
-                          {PAGE_NEXT}
-                        </Button>
-                      </div>
-                    )}
+                    <Pager
+                      page={view.page}
+                      pages={view.pages}
+                      onPage={(page) => go({ ...filter, page })}
+                    />
                   </>
                 )}
               </section>
