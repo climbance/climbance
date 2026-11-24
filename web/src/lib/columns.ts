@@ -10,7 +10,7 @@ export function useColumns(probe = 'M'.repeat(40)) {
     if (!el) return
     const span = document.createElement('span')
     span.textContent = probe
-    span.style.cssText = 'position:absolute;visibility:hidden;white-space:pre'
+    span.style.cssText = 'position:absolute;top:0;left:0;visibility:hidden;white-space:pre'
     el.appendChild(span)
     const measure = () => {
       const char = span.getBoundingClientRect().width / probe.length
