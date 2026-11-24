@@ -1,6 +1,6 @@
 import type { components } from './api/schema';
-import type { BankChip } from './bank';
 import { NEEDS_ATTENTION } from './author';
+import type { BankChip } from './bank';
 import { DIFFICULTIES } from './listing';
 import { counted } from './screens';
 
@@ -21,15 +21,6 @@ export const CARD_BANK_NONE_MATCH = 'No card matches these filters.';
 export const PROBLEM_BANK_NONE = 'No problem is stored.';
 export const PROBLEM_BANK_NONE_MATCH = 'No problem matches these filters.';
 export const CARD_FILTERS = { module: 'Module', depth: 'Depth' };
-export const PROBLEM_FILTERS = {
-  technique: 'Technique',
-  difficulty: 'Difficulty',
-  status: 'Status',
-  template: 'Template',
-  landed: 'Landed',
-  flag: 'Flag',
-  sort: 'Sort',
-};
 export const REQUIRES = 'Requires';
 export const REQUIRED_BY = 'Required by';
 export const LADDER = 'Ladder';
@@ -146,8 +137,10 @@ export const cardRowLink = (slug: string) => `/author/cards#${encodeURIComponent
 
 // ---- the problems
 
-export type ProblemStatus = 'served' | 'retired' | 'defective' | 'copied' | 'all';
-const STATUSES: Exclude<ProblemStatus, 'all'>[] = ['served', 'retired', 'defective', 'copied'];
+type ProblemStatus = 'served' | 'retired';
+const STATUSES: ProblemStatus[] = ['served', 'retired'];
+type RetirementReason = components['schemas']['RetirementReason'];
+const REASONS: RetirementReason[] = ['defective', 'copied'];
 
 export type ProblemLanded = '1d' | '7d' | '30d';
 const LANDED: ProblemLanded[] = ['1d', '7d', '30d'];
@@ -160,61 +153,71 @@ const FLAGS: ProblemFlag[] = ['any', 'untagged', 'titled', 'unrated', 'off-band'
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface ProblemFilter {
-  technique: string | null;
-  difficulty: string | null;
   status: ProblemStatus;
+  reason: RetirementReason | null;
+  technique: string | null;
   template: string | null;
+  difficulty: string | null;
   landed: ProblemLanded | null;
   flag: ProblemFlag | null;
   sort: ProblemSort;
 }
 
-/** `served` until another is named; `all` is the status filter pressed off. */
+export const PROBLEM_CLEARED: ProblemFilter = {
+  status: 'served',
+  reason: null,
+  technique: null,
+  template: null,
+  difficulty: null,
+  landed: null,
+  flag: null,
+  sort: 'newest',
+};
+
+const among = <V extends string>(values: V[], value: string | null) => values.find((one) => one === value) ?? null;
+
+/** A reason divides the retired problems, so it reads only under `retired`. */
 export function problemFilter(get: (name: string) => string | null): ProblemFilter {
-  const status = get('status');
+  const status = among(STATUSES, get('status')) ?? 'served';
   return {
+    status,
+    reason: status === 'retired' ? among(REASONS, get('reason')) : null,
     technique: get('technique'),
-    difficulty: get('difficulty'),
-    status: [...STATUSES, 'all'].includes(status ?? '') ? (status as ProblemStatus) : 'served',
     template: get('template'),
-    landed: LANDED.find((one) => one === get('landed')) ?? null,
-    flag: FLAGS.find((one) => one === get('flag')) ?? null,
-    sort: SORTS.find((one) => one === get('sort')) ?? 'newest',
+    difficulty: get('difficulty'),
+    landed: among(LANDED, get('landed')),
+    flag: among(FLAGS, get('flag')),
+    sort: among(SORTS, get('sort')) ?? 'newest',
   };
 }
 
 export function problemQuery(f: ProblemFilter): string {
   const q = new URLSearchParams();
-  if (f.technique) q.set('technique', f.technique);
-  if (f.difficulty) q.set('difficulty', f.difficulty);
   if (f.status !== 'served') q.set('status', f.status);
+  if (f.reason) q.set('reason', f.reason);
+  if (f.technique) q.set('technique', f.technique);
   if (f.template) q.set('template', f.template);
+  if (f.difficulty) q.set('difficulty', f.difficulty);
   if (f.landed) q.set('landed', f.landed);
   if (f.flag) q.set('flag', f.flag);
   if (f.sort !== 'newest') q.set('sort', f.sort);
   return q.toString();
 }
 
-const statusHas = (one: AuthorProblemRow, status: ProblemStatus) =>
-  status === 'all' ||
-  (status === 'served'
-    ? !one.retired_reason
-    : status === 'retired'
-      ? !!one.retired_reason
-      : one.retired_reason === status);
-
 // dated by the first solution's `created_at`, since a problem stores no time
 const landedHas = (one: AuthorProblemRow, landed: ProblemLanded | null, now: number) =>
-  landed === null || (one.landed_at != null && now - Date.parse(one.landed_at) <= LANDED_DAYS[landed] * DAY_MS);
+  landed === null ||
+  (one.landed_at != null && now - Date.parse(one.landed_at) <= LANDED_DAYS[landed] * DAY_MS);
 
 const flagHas = (one: AuthorProblemRow, flag: ProblemFlag | null) =>
   flag === null || (flag === 'any' ? one.flags.length > 0 : one.flags.includes(flag));
 
 const problemHas = (one: AuthorProblemRow, f: ProblemFilter, now: number) =>
+  (f.status === 'served' ? !one.retired_reason : !!one.retired_reason) &&
+  (f.reason === null || one.retired_reason === f.reason) &&
   (f.technique === null || one.techniques.includes(f.technique)) &&
-  (f.difficulty === null || one.difficulty === f.difficulty) &&
-  statusHas(one, f.status) &&
   (f.template === null || one.target_template === f.template) &&
+  (f.difficulty === null || one.difficulty === f.difficulty) &&
   landedHas(one, f.landed, now) &&
   flagHas(one, f.flag);
 
@@ -226,64 +229,96 @@ const sorted = (rows: AuthorProblemRow[], sort: ProblemSort) =>
       ? [...rows].sort((a, b) => b.cases - a.cases)
       : rows;
 
+export type ProblemMenuField = Exclude<keyof ProblemFilter, 'sort'>;
+
+/** `value` null is the option clearing the filter. */
+export interface MenuOption {
+  value: string | null;
+  label: string;
+  count: number;
+  on: boolean;
+}
+
+export interface ProblemMenu {
+  field: ProblemMenuField;
+  /** The trigger: the field's name, and its value once one is picked. */
+  label: string;
+  options: MenuOption[];
+  search: boolean;
+}
+
+export const MENU_ANY = 'any';
+export const MENU_SEARCH = 'Search';
+export const MENU_SORT = 'sort';
+const MENU_NAMES: Record<ProblemMenuField, string> = {
+  status: 'status',
+  reason: 'reason',
+  technique: 'technique',
+  template: 'target',
+  difficulty: 'difficulty',
+  landed: 'landed',
+  flag: 'flag',
+};
+
 export interface ProblemBankView {
-  techniques: BankChip[];
-  difficulties: BankChip[];
-  statuses: BankChip[];
-  templates: BankChip[];
-  landed: BankChip[];
-  flags: BankChip[];
-  sorts: BankChip[];
+  menus: ProblemMenu[];
+  sorts: MenuOption[];
   filtered: boolean;
   rows: AuthorProblemRow[];
 }
 
-export function problemBankView(rows: AuthorProblemRow[], f: ProblemFilter, now: number = Date.now()): ProblemBankView {
-  const has = (one: AuthorProblemRow, g: ProblemFilter) => problemHas(one, g, now);
-  const kept = rows.filter((one) => has(one, f));
+/** Each option counts what picking it would leave: the other filters applied, and this value. */
+export function problemBankView(
+  rows: AuthorProblemRow[],
+  f: ProblemFilter,
+  now: number = Date.now(),
+): ProblemBankView {
+  const menu = (field: ProblemMenuField, values: string[], clears = true, search = false): ProblemMenu => {
+    const option = (value: string | null): MenuOption => {
+      const g = problemPicked(f, field, value);
+      return {
+        value,
+        label: value === null ? MENU_ANY : field === 'flag' && value === 'any' ? NEEDS_ATTENTION : value,
+        count: rows.filter((one) => problemHas(one, g, now)).length,
+        on: f[field] === value,
+      };
+    };
+    const on = f[field];
+    return {
+      field,
+      label: field === 'status' ? f.status : on === null ? MENU_NAMES[field] : `${MENU_NAMES[field]}: ${on}`,
+      options: [...(clears ? [option(null)] : []), ...values.map(option)],
+      search,
+    };
+  };
+  // the URL may name a template no problem targets, and its option reads greyed
+  const templates = distinct([
+    ...rows.flatMap((one) => (one.target_template ? [one.target_template] : [])),
+    ...(f.template ? [f.template] : []),
+  ]).sort();
+  const kept = rows.filter((one) => problemHas(one, f, now));
   return {
-    techniques: chips(rows, distinct(rows.flatMap((one) => one.techniques)).sort(), f.technique, (one, technique) =>
-      has(one, { ...f, technique }),
-    ),
-    difficulties: chips(rows, [...DIFFICULTIES], f.difficulty, (one, difficulty) => has(one, { ...f, difficulty })),
-    statuses: chips(rows, STATUSES, f.status === 'all' ? null : f.status, (one, status) => has(one, { ...f, status })),
-    // a chip per form would bury the rows, so only the template a link named shows
-    templates: f.template ? chips(rows, [f.template], f.template, (one, template) => has(one, { ...f, template })) : [],
-    landed: chips(rows, LANDED, f.landed, (one, landed) => has(one, { ...f, landed })),
-    flags: chips(
-      rows,
-      FLAGS,
-      f.flag,
-      (one, flag) => has(one, { ...f, flag }),
-      (flag) => (flag === 'any' ? NEEDS_ATTENTION : flag),
-    ),
-    sorts: chips(kept, SORTS, f.sort, () => true),
-    filtered:
-      f.technique !== null ||
-      f.difficulty !== null ||
-      f.status !== 'served' ||
-      f.template !== null ||
-      f.landed !== null ||
-      f.flag !== null,
+    menus: [
+      menu('status', STATUSES, false),
+      ...(f.status === 'retired' ? [menu('reason', REASONS)] : []),
+      menu('technique', distinct(rows.flatMap((one) => one.techniques)).sort(), true, true),
+      menu('template', templates, true, true),
+      menu('difficulty', [...DIFFICULTIES]),
+      menu('landed', LANDED),
+      menu('flag', FLAGS),
+    ],
+    sorts: SORTS.map((value) => ({ value, label: value, count: kept.length, on: f.sort === value })),
+    filtered: problemQuery({ ...f, sort: 'newest' }) !== '',
     rows: sorted(kept, f.sort),
   };
 }
 
-export function problemPressed(f: ProblemFilter, field: keyof ProblemFilter, value: string | number): ProblemFilter {
-  if (field === 'status') return { ...f, status: f.status === value ? 'all' : (value as ProblemStatus) };
-  if (field === 'sort') return { ...f, sort: f.sort === value ? 'newest' : (value as ProblemSort) };
-  return { ...f, [field]: f[field] === value ? null : value };
+/** Picking `served` clears the reason, which reads only under `retired`. */
+export function problemPicked(f: ProblemFilter, field: keyof ProblemFilter, value: string | null): ProblemFilter {
+  if (field === 'status') return { ...f, status: value as ProblemStatus, reason: value === 'retired' ? f.reason : null };
+  if (field === 'sort') return { ...f, sort: (value as ProblemSort | null) ?? 'newest' };
+  return { ...f, [field]: value };
 }
-
-export const PROBLEM_CLEARED: ProblemFilter = {
-  technique: null,
-  difficulty: null,
-  status: 'served',
-  template: null,
-  landed: null,
-  flag: null,
-  sort: 'newest',
-};
 
 export const targetLabel = (one: AuthorProblemRow) => one.target_template ?? one.target_technique ?? '';
 
@@ -345,6 +380,7 @@ export function ratingLabel(one: AuthorProblem['ratings'][number]): string {
 
 export const generatorLabel = (label: string | null | undefined) => `generator ${label ?? 'unlabelled'}`;
 
-export const problemRowLink = (id: string) => `/author/problems?status=all#${id.slice(0, 8)}`;
+// a rung is a served problem, so its row reads under the default status
+export const problemRowLink = (id: string) => `/author/problems#${id.slice(0, 8)}`;
 export const templateProblemsLink = (template: string) =>
-  `/author/problems?${new URLSearchParams({ template, status: 'all' }).toString()}`;
+  `/author/problems?${new URLSearchParams({ template }).toString()}`;

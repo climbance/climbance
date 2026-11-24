@@ -6,6 +6,7 @@ import {
   BANK_CLEAR_LABEL,
   CASES,
   CLOSE_ALL,
+  MENU_SORT,
   DIFFICULTY,
   NO_CASE,
   NO_RATING,
@@ -16,7 +17,6 @@ import {
   PROBLEM_BANK_NONE_MATCH,
   PROBLEM_BANK_TITLE,
   PROBLEM_CLEARED,
-  PROBLEM_FILTERS,
   argsText,
   caseNote,
   counted,
@@ -28,7 +28,7 @@ import {
   problemBankView,
   problemFactsLine,
   problemFilter,
-  problemPressed,
+  problemPicked,
   problemQuery,
   ratingLabel,
   shortId,
@@ -42,7 +42,7 @@ import {
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { AuthorBar } from '@/components/AuthorBar'
-import { Chips } from '@/components/Chips'
+import { FilterMenu } from '@/components/FilterMenu'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
 import { PageHeader } from '@/components/PageHeader'
@@ -99,37 +99,26 @@ function Shelf({
 }) {
   const view = problemBankView(rows, filter)
   const { open, setOpen, flip } = useOpenRows()
-  const filters = [
-    ['technique', view.techniques],
-    ['difficulty', view.difficulties],
-    ['status', view.statuses],
-    ['template', view.templates],
-    ['landed', view.landed],
-    ['flag', view.flags],
-    ['sort', view.sorts],
-  ] as const
   return (
     <div className="space-y-section">
-      <section className="space-y-2">
-        {filters
-          .filter(([, chips]) => chips.length > 0)
-          .map(([field, chips]) => (
-            <Chips
-              key={field}
-              label={PROBLEM_FILTERS[field]}
-              chips={chips}
-              // a sort leaves every row, so its chips count nothing
-              counted={field !== 'sort'}
-              onPress={(value) => go(problemPressed(filter, field, value))}
-            />
-          ))}
-      </section>
+      <div className="flex flex-wrap gap-2">
+        {view.menus.map((menu) => (
+          <FilterMenu
+            key={menu.field}
+            label={menu.label}
+            options={menu.options}
+            counted
+            search={menu.search}
+            onPick={(value) => go(problemPicked(filter, menu.field, value))}
+          />
+        ))}
+      </div>
       <section className="space-y-stack">
         <SectionHeading
           title={PROBLEM_BANK_TITLE}
           count={view.rows.length}
           aside={
-            <span className="flex gap-3 text-meta text-muted-foreground">
+            <span className="flex items-baseline gap-3 text-meta text-muted-foreground">
               {view.filtered && (
                 <button type="button" className={link} onClick={() => go({ ...PROBLEM_CLEARED, sort: filter.sort })}>
                   {BANK_CLEAR_LABEL}
@@ -145,6 +134,13 @@ function Shelf({
               <button type="button" className={link} onClick={() => setOpen(new Set())}>
                 {CLOSE_ALL}
               </button>
+              {/* a sort leaves every row, so its options count nothing */}
+              <FilterMenu
+                label={`${MENU_SORT}: ${filter.sort}`}
+                options={view.sorts}
+                counted={false}
+                onPick={(value) => go(problemPicked(filter, 'sort', value))}
+              />
             </span>
           }
         />

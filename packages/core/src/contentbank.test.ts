@@ -7,7 +7,7 @@ import {
   flagsLabel,
   problemBankView,
   problemFilter,
-  problemPressed,
+  problemPicked,
   problemQuery,
   type AuthorCard,
   type AuthorProblemRow,
@@ -90,30 +90,63 @@ describe('the problems page', () => {
     row('p3', { target_template: 'core', target_technique: null }),
   ];
 
-  it('reads the served problems until another status is picked', () => {
+  const counts = (view: ReturnType<typeof problemBankView>, field: string) =>
+    view.menus.find((one) => one.field === field)?.options.map((one) => [one.value, one.count]);
+
+  it('reads the served problems until retired is picked', () => {
     const view = problemBankView(
       rows,
       problemFilter(() => null),
     );
 
     expect(view.rows.map((one) => one.problem_id)).toEqual(['p1', 'p3']);
-    expect(view.statuses.map((one) => [one.value, one.count])).toEqual([
+    expect(counts(view, 'status')).toEqual([
       ['served', 2],
       ['retired', 1],
+    ]);
+    expect(view.menus.map((one) => one.field)).not.toContain('reason');
+  });
+
+  it('offers the reason only under retired, and drops it on served', () => {
+    const retired = problemPicked(problemFilter(() => null), 'status', 'retired');
+    const defective = problemPicked(retired, 'reason', 'defective');
+
+    expect(counts(problemBankView(rows, retired), 'reason')).toEqual([
+      [null, 1],
       ['defective', 1],
       ['copied', 0],
     ]);
+    expect(problemQuery(defective)).toBe('status=retired&reason=defective');
+    expect(problemQuery(problemPicked(defective, 'status', 'served'))).toBe('');
+    expect(problemFilter((name) => ({ reason: 'defective' })[name] ?? null).reason).toBeNull();
   });
 
-  it('keeps the status pressed off in the URL', () => {
-    const all = problemPressed(
-      problemFilter(() => null),
-      'status',
-      'served',
-    );
+  it('reads an old status=all as served', () => {
+    expect(problemFilter((name) => (name === 'status' ? 'all' : null)).status).toBe('served');
+  });
 
-    expect(problemQuery(all)).toBe('status=all');
-    expect(problemBankView(rows, all).rows).toHaveLength(3);
+  it('keeps a zero option in the menu, as hard on a corpus with no hard problem', () => {
+    const view = problemBankView(rows, problemFilter(() => null));
+
+    expect(counts(view, 'difficulty')).toEqual([
+      [null, 2],
+      ['easy', 2],
+      ['medium', 0],
+      ['hard', 0],
+    ]);
+  });
+
+  it('offers every target template, and the one a link names though no row targets it', () => {
+    const view = problemBankView(rows, problemFilter((name) => (name === 'template' ? 'gone' : null)));
+    const target = view.menus.find((one) => one.field === 'template');
+
+    expect(target?.label).toBe('target: gone');
+    expect(target?.search).toBe(true);
+    expect(counts(view, 'template')).toEqual([
+      [null, 2],
+      ['core', 1],
+      ['gone', 0],
+    ]);
   });
 
   it('narrows to the problems written for one template', () => {
@@ -133,14 +166,11 @@ describe('the problems page', () => {
       row('old', { landed_at: '2026-09-01T12:00:00Z' }),
       row('undated', {}),
     ];
-    const view = problemBankView(
-      dated,
-      problemFilter((name) => (name === 'landed' ? '1d' : null)),
-      now,
-    );
+    const view = problemBankView(dated, problemFilter((name) => (name === 'landed' ? '1d' : null)), now);
 
     expect(view.rows.map((one) => one.problem_id)).toEqual(['new']);
-    expect(view.landed.map((one) => [one.value, one.count])).toEqual([
+    expect(counts(view, 'landed')).toEqual([
+      [null, 4],
       ['1d', 1],
       ['7d', 2],
       ['30d', 2],
@@ -155,31 +185,24 @@ describe('the problems page', () => {
       row('c', { score: 1500, cases: 3 }),
     ];
     const by = (sort: string) =>
-      problemBankView(
-        scored,
-        problemFilter((name) => (name === 'sort' ? sort : null)),
-      ).rows.map((one) => one.problem_id);
+      problemBankView(scored, problemFilter((name) => (name === 'sort' ? sort : null))).rows.map(
+        (one) => one.problem_id,
+      );
 
     expect(by('score')).toEqual(['c', 'a', 'b']);
     expect(by('cases')).toEqual(['b', 'a', 'c']);
     expect(by('nonsense')).toEqual(['a', 'b', 'c']);
   });
 
-  it('narrows to any flag, or to one, counting each on its chip', () => {
+  it('narrows to any flag, or to one, counting each option', () => {
     const flagged = [row('a', { flags: ['untagged', 'titled'] }), row('b', { flags: ['titled'] }), row('c', {})];
-    const by = (flag: string) =>
-      problemBankView(
-        flagged,
-        problemFilter((name) => (name === 'flag' ? flag : null)),
-      );
+    const by = (flag: string) => problemBankView(flagged, problemFilter((name) => (name === 'flag' ? flag : null)));
+    const menu = by('any').menus.find((one) => one.field === 'flag');
 
     expect(by('any').rows.map((one) => one.problem_id)).toEqual(['a', 'b']);
     expect(by('untagged').rows.map((one) => one.problem_id)).toEqual(['a']);
-    expect(
-      by('any')
-        .flags.slice(0, 3)
-        .map((one) => [one.label, one.count]),
-    ).toEqual([
+    expect(menu?.options.slice(0, 4).map((one) => [one.label, one.count])).toEqual([
+      ['any', 3],
       ['Needs attention', 2],
       ['untagged', 1],
       ['titled', 2],
@@ -193,13 +216,9 @@ describe('the problems page', () => {
   });
 
   it('keeps the sort out of the URL until it leaves newest', () => {
-    const score = problemPressed(
-      problemFilter(() => null),
-      'sort',
-      'score',
-    );
+    const score = problemPicked(problemFilter(() => null), 'sort', 'score');
 
     expect(problemQuery(score)).toBe('sort=score');
-    expect(problemQuery(problemPressed(score, 'sort', 'score'))).toBe('');
+    expect(problemQuery(problemPicked(score, 'sort', 'newest'))).toBe('');
   });
 });
