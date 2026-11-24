@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { described, engineClient } from './engine';
+import { described, engineClient, unanswered } from './engine';
 
 function recording(status = 200, body: string | null = '[]') {
   const seen: Request[] = [];
@@ -38,6 +38,19 @@ describe('engineClient', () => {
     await engineClient('https://engine.test', { fetch: recording(401, '{}').fetch, signedOut }).GET('/api/me');
     await engineClient('https://engine.test', { fetch: recording(403, '{}').fetch, signedOut }).GET('/api/me');
     expect(refused).toEqual([401]);
+  });
+
+  it('gives an error with no body a detail, so it is read as refused', async () => {
+    const fetch = async () => new Response(null, { status: 502, headers: { 'Content-Length': '0' } });
+    const { error } = await engineClient('https://engine.test', { fetch }).GET('/api/me');
+    expect(described(error)).toBe(unanswered(502));
+  });
+
+  it("keeps an error's own detail, and a 204 empty", async () => {
+    const refused = await engineClient('https://engine.test', { fetch: recording(409, '{"detail":"no"}').fetch }).GET('/api/me');
+    expect(described(refused.error)).toBe('no');
+    const done = await engineClient('https://engine.test', { fetch: recording(204, null).fetch }).DELETE('/api/session');
+    expect(done.error).toBeUndefined();
   });
 });
 

@@ -6,10 +6,12 @@ import {
   deviceLine,
   deviceName,
   deviceTitle,
+  engineClient,
   exportedRecord,
   lastAt,
   revokeDevice,
   type EngineClient,
+  unanswered,
 } from './index';
 
 const NOW = Date.parse('2026-11-10T12:00:00Z');
@@ -73,6 +75,12 @@ describe('deleting the account', () => {
   it('names a refused deletion rather than reading it as deleted', async () => {
     const client = { DELETE: () => Promise.resolve({ error: { detail: 'no' } }) } as unknown as EngineClient;
     expect(await deleteAccount(client, 'x')).toEqual({ ok: false, refused: expect.any(String) });
+  });
+
+  it("reads a proxy's empty 502 as refused, not as deleted", async () => {
+    const fetch = async () => new Response(null, { status: 502, headers: { 'Content-Length': '0' } });
+    const client = engineClient('https://engine.test', { fetch });
+    expect(await deleteAccount(client, 'x')).toEqual({ ok: false, refused: unanswered(502) });
   });
 });
 

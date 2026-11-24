@@ -26,8 +26,18 @@ export function engineClient(baseUrl: string, options: EngineOptions = {}): Engi
       if (token) request.headers.set('Authorization', `Bearer ${token}`);
       return request;
     },
-    onResponse({ response }) {
+    async onResponse({ response }) {
       if (response.status === 401) options.signedOut?.(response);
+      // a proxy's 502 comes with no body, which openapi-fetch reads as neither
+      // data nor error, so a caller took the refusal as done
+      if (response.status >= 400 && (await response.clone().text()) === '') {
+        return new Response(JSON.stringify({ detail: unanswered(response.status) }), {
+          status: response.status,
+          statusText: response.statusText,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return undefined;
     },
   });
   return client;
@@ -41,6 +51,8 @@ export type GetData<P extends GetPath> =
   Get<P> extends { responses: { 200: { content: { 'application/json': infer T } } } } ? T : never;
 
 export type GetParams<P extends GetPath> = Get<P> extends { parameters: { path: infer Q } } ? Q : never;
+
+export const unanswered = (status: number) => `the engine answered ${status} with no reason; try again`;
 
 export function described(error: unknown): string {
   // the API refuses with the domain's own sentence
