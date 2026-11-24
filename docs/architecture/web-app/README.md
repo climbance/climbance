@@ -34,8 +34,9 @@ Knowledge     the home
                 the lessons, a lesson
                 the certifications, a certification's conditions
 Account       the guide, the settings, the signed-in devices, the sign-out
-Author        the product, the generation, the workflow, on the web alone
+Author        the inbox, on the web alone
                 the questions, the lessons, the cards, the problems
+                the product, the generation, the spend
 ```
 
 - **The four sections are the destinations both clients name.** The web
@@ -109,14 +110,14 @@ Author        the product, the generation, the workflow, on the web alone
 | `/terms` | reads the terms of use | none | [`terms`](pages/terms/README.md) |
 | any other path | reads that no page is there | none | [`not-found`](pages/not-found/README.md) |
 | `/gallery` | reads the design system, in development alone | none | [`gallery`](pages/gallery/README.md) |
-| `/author` | opens an author page, with the author role alone | none | [`author`](pages/author/README.md) |
-| `/author/product` | reads the learners, the acts per day and the retention | none | [`author/product`](pages/author/product/README.md) |
-| `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | none | [`author/generation`](pages/author/generation/README.md) |
-| `/author/workflow` | reads the by-hand passes, the requests, the feedback, the run faults and the spend | none | [`author/workflow`](pages/author/workflow/README.md) |
+| `/author` | reads the by-hand passes, the requests, the feedback and the run faults, with the author role alone | none | [`author/inbox`](pages/author/inbox/README.md) |
 | `/author/questions` | reads one module's questions at once, each as answered | none | [`author/questions`](pages/author/questions/README.md) |
 | `/author/lessons` | reads one module's lessons, each whole | none | [`author/lessons`](pages/author/lessons/README.md) |
 | `/author/cards` | reads every card, its templates revealed | none | [`author/cards`](pages/author/cards/README.md) |
 | `/author/problems` | reads every problem, served or retired, with its solutions and cases | none | [`author/problems`](pages/author/problems/README.md) |
+| `/author/product` | reads the learners, the acts per day and the retention | none | [`author/product`](pages/author/product/README.md) |
+| `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | none | [`author/generation`](pages/author/generation/README.md) |
+| `/author/spend` | reads what each part's model calls cost | none | [`author/spend`](pages/author/spend/README.md) |
 
 ## Paths
 

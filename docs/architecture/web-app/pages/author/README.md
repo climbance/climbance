@@ -1,22 +1,33 @@
 # The author pages
 
-The pages the author reads the running engine from: how learners use the
-product, how problem generation goes, what waits for the author's hand, and
-every piece of content.
+The pages the author reads the running engine from: what waits for the
+author's hand, every piece of content, how learners use the product, how
+problem generation goes and what the model calls cost.
 The author is the person who generates and reviews the corpus, authors the
 content and deploys the engine. These pages sit under no section, in an
 author area of their own, on the web alone.
 
 | URL | The author | File |
 |---|---|---|
-| `/author` | opens one of the pages below | this file |
-| `/author/product` | reads how many learners use the product, how much and how long they stay | [`product`](product/README.md) |
-| `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | [`generation`](generation/README.md) |
-| `/author/workflow` | reads what waits in each by-hand pass and queue, the run faults and the spend by part | [`workflow`](workflow/README.md) |
+| `/author` | reads what waits in each by-hand pass and queue, the feedback and the run faults | [`inbox`](inbox/README.md) |
 | `/author/questions` | reads one module's questions at once, each as answered, with its concept | [`questions`](questions/README.md) |
 | `/author/lessons` | reads one module's lessons, each whole, with the questions it teaches | [`lessons`](lessons/README.md) |
 | `/author/cards` | reads every card with its templates revealed, its requirements and its ladder | [`cards`](cards/README.md) |
 | `/author/problems` | reads every problem, served or retired, with its statement, solutions and cases | [`problems`](problems/README.md) |
+| `/author/product` | reads how many learners use the product, how much and how long they stay | [`product`](product/README.md) |
+| `/author/generation` | reads the drafts, the landing rate, the spend per landed problem and the corpus | [`generation`](generation/README.md) |
+| `/author/spend` | reads what each part's model calls cost | [`spend`](spend/README.md) |
+
+## The navigation
+
+- **The author area's navigation names its pages in three groups.** The
+  inbox is the first group. The content browser's four pages are the second.
+  The product, the generation and the spend are the third. The groups follow
+  what the author does on each page: act on what waits, review content, and
+  read figures.
+- **The inbox is the author area's home, at `/author`.** The author opens the
+  area to learn whether anything needs the author's hand, and the inbox
+  answers that first. `inbox/README.md` gives the count its entry carries.
 
 ## The content browser
 
@@ -43,9 +54,19 @@ traces, goes unseen.
   is retired with `climb problem --retire`. No press writes a log record,
   so a review leaves the author's own schedule and board unchanged.
 - **A page lists every matching row in one scroll, each row closed.** A
-  closed row reads on one or two lines, and a press opens it in place. The
-  author scans the closed rows for a pattern, then opens the rows that show
-  one.
+  closed row reads on one or two lines. The author scans the closed rows for
+  a pattern, then opens the rows that show one.
+- **A press opens a row in place on the questions, the lessons and the cards
+  pages.** An opened question, lesson or card reads in a screen or less, so
+  several open rows read together.
+- **The problems page opens a row in a panel beside the list.** An opened
+  problem holds a statement, up to three solutions and its cases, and runs
+  taller than a window. Opened in place, it would push the next row out of
+  sight. Each opened problem is also a request of its own, so the problems
+  page offers no Open all.
+- **On every browser page, `j` and `k` move to the next and the previous row,
+  and open it.** The anchor in the URL follows the opened row. A review then
+  reads each row in turn without a pointer.
 - **A row's anchor is its slug, or a problem's id prefix**, as `#<slug>`. A
   link to the anchor opens that row, so the pages link to each other's rows: a
   lesson to its questions, a card to its rungs.
@@ -89,7 +110,7 @@ traces, goes unseen.
   is private, and `../../../concepts/log-records.md` keeps each reader to one
   user's records. The product page's queries return counts grouped by day,
   and never a row of one user's log. Feedback and retirement requests are
-  notes addressed to the author, so the workflow page lists each one whole,
+  notes addressed to the author, so the inbox lists each one whole,
   naming no sender.
 - **Every figure is computed from the store on each load, and none is stored.**
   The figures are counts and sums over append-only tables, and a stored copy
@@ -105,9 +126,10 @@ traces, goes unseen.
 | Ad hoc queries over users, sittings, attempts and answers | product | gone |
 | Ad hoc queries over drafts, site outcomes and the call log's cost | generation | gone |
 | `climb gaps` | generation, as the corpus by template | retired |
-| `climb feedback` | workflow | retired |
-| `climb problem --requests` | workflow | retired |
-| Ad hoc queries over run faults | workflow | gone |
+| `climb feedback` | inbox | retired |
+| `climb problem --requests` | inbox | retired |
+| Ad hoc queries over run faults | inbox | gone |
+| Ad hoc queries over the call log's cost by part | spend | gone |
 
 ## What stays a command
 
@@ -126,5 +148,14 @@ traces, goes unseen.
 - **`climb problem`, apart from `--requests`, and `climb board` stay until
   another page covers them.** The content browser lists the problems, and the
   Practice section is the board.
+- **A page names the command that acts on what it shows, and a press copies
+  it.** The inbox copies each by-hand pass's command, and the problems page
+  copies the commands retiring a problem and rating it by hand. The author
+  then pastes a command naming the right id, never retypes it.
+- **The first writes a page may earn are retiring a problem and rating it by
+  hand**, both from the problems page's panel. The author reads the problem
+  in the panel before running either command, and decides there.
+  Each write is deferred until the author has used the copied commands, by
+  the rule opening this section.
 - **`climb log export` stays.** The operator exports one user's log on that
   user's request, and the settings page already gives the user the same file.

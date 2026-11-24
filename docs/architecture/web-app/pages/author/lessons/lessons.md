@@ -7,8 +7,9 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/lessons?module=py --------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Lessons            Product  Generation  Workflow                       |
-|                    Questions  [ Lessons ]  Cards  Problems             |
+| Lessons         Inbox 5                                                |
+|                 Questions  [ Lessons ]  Cards  Problems                |
+|                 Product  Generation  Spend                             |
 |                                                                        |
 | Module   algo  python  [ py ]                                          |
 | Topic    core 9  data 6                                  ( Clear )     |

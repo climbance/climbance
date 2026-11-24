@@ -7,7 +7,9 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/product ------------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Product                             [ Product ]  Generation  Workflow  |
+| Product         Inbox 5                                                |
+|                 Questions  Lessons  Cards  Problems                    |
+|                 [ Product ]  Generation  Spend                         |
 |                                                                        |
 | 12 invited . 9 signed in . 5 active in the last 7 days                 |
 |                                                                        |

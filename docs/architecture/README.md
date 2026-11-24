@@ -90,7 +90,7 @@ flowchart TB
     api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
     subgraph web_app["Web app"]
         web_shell["Web shell<br/>The navigation, the account menu, the signed-in devices, the error screen, the settings and the pages under no section."]
-        web_author["Web author pages<br/>The author area: the product, generation and workflow pages, and the content browser, for a user with the author role."]
+        web_author["Web author pages<br/>The author area: the inbox, the content browser, and the product, generation and spend pages, for a user with the author role."]
         web_design_system["Web design system<br/>The tokens, the shadcn components and the shared shapes every web page is built from, shown in the gallery."]
         web_areas["Web page areas<br/>The header, the body, the act, the panels and the section bar a web page is laid out in."]
         web_practice["Web practice pages<br/>The board, a technique's problems, the guide and the problem listing."]

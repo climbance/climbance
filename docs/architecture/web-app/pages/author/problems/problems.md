@@ -1,40 +1,35 @@
 # The problems page
 
-A wireframe of the page `README.md` specifies, drawn at low fidelity.
+A wireframe of the page `README.md` specifies, drawn at low fidelity, with
+no problem opened. [`opened.md`](opened.md) draws it with one opened.
 `../../../README.md` gives how a wireframe is read.
 
 ```
-+- /author/problems?technique=two-pointers ------------------------------+
++- /author/problems?landed=7d -------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Problems           Product  Generation  Workflow                       |
-|                    Questions  Lessons  Cards  [ Problems ]             |
+| Problems        Inbox 5                                                |
+|                 Questions  Lessons  Cards  [ Problems ]                |
+|                 Product  Generation  Spend                             |
 |                                                                        |
-| Technique  [ two-pointers 9 ]  sorting 3                               |
-| Difficulty easy 3  medium 5  hard 1                                    |
-| Status     [ served 9 ]  retired 1                       ( Clear )     |
+| served ▾  technique ▾  target ▾  difficulty ▾  landed: 7d ▾            |
+| ( Needs attention 3 )                        12 rows  sort: newest ▾   |
 |                                                                        |
-| > 3f9a2c71  Pair sums under a cap  same-direction  easy  14 cases  CRN |
-| v b04e18d2  Closest pair           same-direction  1240 medium         |
-|             two-pointers . 22 cases . CRN . 1 request                  |
-|   +------------------------------------------------------------------+ |
-|   | Closest pair                                                     | |
-|   | Given a sorted list ...                                          | |
-|   +------------------------------------------------------------------+ |
-|   Canonical   displays same-direction . claims two-pointers  passed    |
-|     def solve(...): ...                                                |
-|   Reference   passed                                                   |
-|     def solve(...): ...                                                |
-|   Naive       passed                                                   |
-|     def solve(...): ...                                                |
-|   Cases   1  ([1, 4, 9], 10)          -> 1                             |
-|           17 ([3, 3, 8, ...], 6)       -> 0      round 1               |
-|           22 ([0, 1, 2, ...], 99)      -> 98     repeats 40            |
-|   Difficulty  1240 ± 90  standing . 1310 ± 140 . generator medium      |
+| Sliding Window Temperature Peaks  deque-window-max  1312 ± 265 medium  |
+|   sliding-window . 13 cases                        ⚑ untagged titled   |
+| Smallest Valid Cyclic Shift  deficit-reset-start    1109 ± 265 medium  |
+|   greedy . 14 cases                                                    |
+| Circular Circuit Power Run   deficit-reset-start    1109 ± 265 medium  |
+|   greedy . 14 cases                                                    |
+| Minimum Fiber-Optic Segments farthest-reach-levels  1211 ± 265 medium  |
+|   greedy, intervals, shortest-path . 16 cases                          |
+| …                                                                      |
 +------------------------------------------------------------------------+
 ```
 
-- `CRN` names the solutions by role: canonical, reference and naive.
-- A closed row reads on one line where it fits, and on two otherwise.
-- An opened row reads the statement as served, the solutions by role, the
-  cases, then the difficulty.
+- The filters read on one line, each a menu naming its value, above the
+  attention filter and the count of rows.
+- A row reads on one line in a wide window. At this drawing's width it wraps
+  to two: the title, the target and the difficulty, then the techniques, the
+  cases and the flags.
+- No row shows the id or the solutions by role. The panel shows both.

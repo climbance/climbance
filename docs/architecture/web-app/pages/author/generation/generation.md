@@ -7,7 +7,9 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/generation ---------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Generation                          Product  [ Generation ]  Workflow  |
+| Generation      Inbox 5                                                |
+|                 Questions  Lessons  Cards  Problems                    |
+|                 Product  [ Generation ]  Spend                         |
 |                                                                        |
 | Last 30 days                                                           |
 | 42 writings . 17 landed . 40%       $0.31 a landed problem             |

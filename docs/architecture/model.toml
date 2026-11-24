@@ -1138,7 +1138,7 @@ id = "web-author"
 kind = "component"
 container = "web-app"
 name = "Web author pages"
-role = "The author area: the product, generation and workflow pages, and the content browser, for a user with the author role."
+role = "The author area: the inbox, the content browser, and the product, generation and spend pages, for a user with the author role."
 doc = "web-app/pages/author/README.md"
 src = [
     "web/src/pages/AuthorPage.tsx",

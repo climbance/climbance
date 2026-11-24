@@ -16,9 +16,9 @@ problem, a reason and the user's note.
   the request would ask for nothing.
 - **The problem stays served while the request waits.** A request is evidence
   for the author, and a wrong request costs only the author's reading.
-- **The author reads the requests on the workflow page**, each beside
+- **The author reads the requests on the inbox**, each beside
   whether its problem is still served, as
-  `../web-app/pages/author/workflow/README.md` gives. `climb problem --retire`
+  `../web-app/pages/author/inbox/README.md` gives. `climb problem --retire`
   prints the problem's requests before asking to confirm.
 - **A request is private to the user**, exported and erased with the rest of
   the log. The author reads it as the operator, as the author reads the rest

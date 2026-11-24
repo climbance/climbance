@@ -8,13 +8,20 @@ the rules this page shares with the other browser pages.
 
 [`problems.md`](problems.md) draws the page at low fidelity.
 
+The author comes to this page to review problems: the batch the last
+generation run landed, the problems an attention flag names, and the
+problems a learner asked to retire. The layout serves that review. The rows
+read one line each so a window holds about 25, and an opened problem reads in
+a panel beside them.
+
 ## Where it reads from
 
 - **The problems are read from `/api/author/problems`**, over the corpus of
   the engine serving the page. Problems are product data kept in the store,
   not in git, so the hosted engine's corpus is readable from this page alone.
-- **An opened row reads `/api/author/problems/:id`**, one problem at a time. A
-  case may weigh up to the ceiling, so the list carries no case and no
+  Each listed problem carries its attention flags, computed on the server.
+- **An opened problem reads `/api/author/problems/:id`**, one problem at a
+  time. A case may weigh up to the ceiling, so the list carries no case and no
   solution's code.
 - **The opened problem carries each case cut on the server.** Each case's
   arguments and expected return are sent as one line of compact JSON, cut at
@@ -26,35 +33,83 @@ the rules this page shares with the other browser pages.
 
 ## Filters
 
-- **The page filters by technique, difficulty, status and target**, as
-  `?technique=`, `?difficulty=`, `?status=` and `?template=`. A card's ladder
-  links here with `?template=`, so every problem written for one form is one
-  link.
-- **The template filter offers only the template the URL names.** The corpus
-  targets over a hundred templates, and a chip for each would push the rows
-  below the fold. A card's ladder and its templates link to the filter.
-- **The status filter reads `served` until the author picks another**, and
-  offers `retired` and every retirement reason. A retired problem stays in the
-  corpus, so the author can still read why it was retired.
+- **The filters sit on one line above the rows**: status, technique, target,
+  difficulty, landed, and the attention flags. A filter reads as a menu
+  naming its current value. Chips for 29 techniques took a third of the
+  window, above the first row.
+- **Each filter is in the URL**: `?status=`, `?reason=`, `?technique=`,
+  `?template=`, `?difficulty=`, `?landed=`, `?flag=` and `?sort=`. A card's
+  ladder links here with `?template=`, so every problem written for one form
+  is one link.
+- **Each menu option counts the rows picking it would leave.** An option
+  leaving no row reads greyed and stays in the menu. `hard` reads greyed on
+  today's corpus: no judge score lies above 1567, and the hard band starts at
+  1900, as `../../../../cli/difficulty/README.md` gives.
+- **The technique and the target menus carry a search field.** The corpus
+  targets over a hundred templates, and the search reaches any of them
+  without a row of chips.
+- **The status reads `served` until the author picks `retired`.** The
+  retirement reasons, `defective` and `copied`, are offered as `?reason=`
+  only once `retired` is picked. A reason divides the retired problems, so
+  offering it beside `served` read as a third status.
+- **The landed filter reads `any`, `1d`, `7d` or `30d`.** After a generation
+  run, `1d` lists the batch it landed. A problem record stores no time, so a
+  problem is dated by its first solution's `created_at`, which landing
+  writes.
+- **`Needs attention` sets `?flag=any`**, and names how many rows carry a
+  flag. A single flag's name narrows the rows to that flag.
+- **The rows read newest first by default.** `?sort=score` and `?sort=cases`
+  order them by the standing score or the count of cases, highest first.
+
+## Attention flags
+
+A flag names a property of a problem worth a look before a learner meets
+it. A flag is computed on every read and never stored. A flag only points:
+the author decides, and no flag retires a problem.
+
+- **`untagged`**: the problem's techniques are empty. The board credits an
+  attempt on it to no technique when no claim covers the attempt.
+- **`titled`**: the title holds a technique's name, its slug's words in order
+  with case ignored, such as `Sliding Window` for `sliding-window`. The
+  listing shows the title, so the title names the approach before the
+  statement does.
+- **`unrated`**: the problem's standing difficulty carries no score. A cold
+  sitting cannot serve it, as `../../../../api/rating.md` gives.
+- **`off-band`**: the standing score lies more than its deviation outside the
+  band of the generator's `difficulty`. The generator aimed at one label and
+  the judge read another, so the statement or the label is wrong.
+- **`requested`**: a retirement request waits on the problem.
 
 ## Rows
 
-- **A row shows the problem before it is opened**: the first eight characters
-  of its id, its title, its target and its standing difficulty. Then it shows
-  its techniques, its count of cases and its solutions by role. A retired row
-  names its reason. `climb problem --retire` takes the id's prefix, as the
-  workflow page's requests give it.
-- **The rows read newest first.** The author reads what the last generation
-  run landed first. A problem record stores no time, so a row is
-  dated by its first solution's `created_at`, which landing writes.
-- **The row names how many retirement requests the problem carries.** An
-  opened row links the count to the workflow page's requests. A link inside
-  the closed row would nest one press inside the row's own press.
+- **A closed row reads on one line**: the title, the target, the techniques,
+  the standing score with its deviation and its label, the count of cases, and
+  the flags. A retired row names its reason in place of the flags. In a narrow
+  window a row wraps to two lines.
+- **The title leads the row, and the id is read in the panel.** The author
+  scans titles and flags. The id's prefix is needed only for a command.
+- **The solutions by role read in the panel alone.** A problem written for a
+  template with no speedup lands with no naive solution, as
+  `../../../../cli/generation/states.md` gives, so the roles differ by target
+  and not by fault.
 
-## An opened row
+## The panel
 
-- **An opened row draws the statement with the sitting's own component**, as
-  a learner is served it. The author reviews the exact text a solver reads.
+- **A press on a row opens the problem in a panel beside the list**, in a
+  window wide enough for both. The list keeps its scroll, and the opened row
+  stays marked. In a narrower window the row opens in place, as
+  `../../../README.md` gives for two parts of one page.
+- **While the panel is open, the list narrows to each row's title and its
+  count of flags.** The panel takes the width the statement and the code
+  need, and the title alone finds the next problem.
+- **`j` and `k` open the next and the previous row, and Escape closes the
+  panel.** The anchor in the URL follows the opened row. Reviewing a batch of
+  20 problems is then 20 presses of one key.
+- **The panel's head names the problem**: its title, the first eight
+  characters of its id, its status and its flags. A press on the id copies
+  it.
+- **The panel draws the statement with the sitting's own component**, as a
+  learner is served it. The author reviews the exact text a solver reads.
 - **Each solution reads by role: the canonical, the reference, then the
   naive**, with its code and its latest verification. A canonical names the
   templates it displays, from the standing template matches, and the
@@ -66,3 +121,8 @@ the rules this page shares with the other browser pages.
 - **The difficulty reads as each rating's score and deviation, latest first**,
   with the standing one marked and the generator's label beside them. The
   author then sees how the served score was reached.
+- **The panel names the retirement requests the problem carries**, each with
+  its reason and note, and links them to the inbox.
+- **The panel's foot copies the commands acting on the problem**: retiring it
+  as `defective`, retiring it as `copied`, and rating it by hand, each as
+  `climb problem` takes it. The page writes nothing, as `../README.md` gives.

@@ -7,8 +7,9 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/questions?module=algo&kind=output ----------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Questions          Product  Generation  Workflow                       |
-|                    [ Questions ]  Lessons  Cards  Problems             |
+| Questions       Inbox 5                                                |
+|                 [ Questions ]  Lessons  Cards  Problems                |
+|                 Product  Generation  Spend                             |
 |                                                                        |
 | Module   [ algo ]  python  py                                          |
 | Topic    sorting 14  searching 9  graphs 22                            |
