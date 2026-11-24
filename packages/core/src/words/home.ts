@@ -67,6 +67,17 @@ export function meLine(me: { email: string | null; user_id: string } | undefined
 
 // the settings
 export const ACCOUNT = 'Account';
+const PROVIDER_NAMES = { google: 'Google', github: 'GitHub' } as const;
+type Connected = { provider: keyof typeof PROVIDER_NAMES; email: string };
+// an account's address shows only where it differs from the name above it
+export function connectedLine(accounts: Connected[], name: string | null): string | null {
+  if (!accounts.length) return null;
+  const each = accounts.map((a) =>
+    a.email === name ? PROVIDER_NAMES[a.provider] : `${PROVIDER_NAMES[a.provider]} (${a.email})`,
+  );
+  const listed = each.length === 1 ? each[0] : `${each.slice(0, -1).join(', ')} and ${each.at(-1)}`;
+  return `Signs in through ${listed}`;
+}
 export const STUDY = 'Study';
 export const SETTING_LABEL: Record<SettingName, string> = {
   new_per_day: 'New questions per day',
@@ -121,7 +132,6 @@ export const REVOKE = 'Revoke';
 
 // the login
 export const LOGIN_INTRO = 'Deliberate practice of algorithmic problem-solving. Access is by invitation.';
-const PROVIDER_NAMES = { google: 'Google', github: 'GitHub' } as const;
 export const continueWith = (provider: keyof typeof PROVIDER_NAMES) => `Continue with ${PROVIDER_NAMES[provider]}`;
 export const devLoginAs = (user: string) => `Dev login as ${user}`;
 export const SIGN_IN_LOADING = 'Reading the sign-in…';

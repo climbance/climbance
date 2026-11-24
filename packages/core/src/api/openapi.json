@@ -4225,6 +4225,24 @@
         ],
         "title": "Confidence"
       },
+      "ConnectedAccount": {
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/Provider"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "email"
+        ],
+        "title": "ConnectedAccount",
+        "description": "A provider's account the user signs in through, by the address its latest\nsign-in gave."
+      },
       "CorpusRow": {
         "properties": {
           "card_slug": {
@@ -5662,13 +5680,21 @@
           "author": {
             "type": "boolean",
             "title": "Author"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectedAccount"
+            },
+            "type": "array",
+            "title": "Accounts"
           }
         },
         "type": "object",
         "required": [
           "user_id",
           "email",
-          "author"
+          "author",
+          "accounts"
         ],
         "title": "Me",
         "description": "Who the session signs in as. The engine mints the id, and the address is\nthe provider's, so a user reached by the dev login carries none."

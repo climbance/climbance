@@ -7,11 +7,13 @@ from pydantic import BaseModel
 
 from climb.api.context import SESSION_COOKIE, Root, UserId, author, bearer_of
 from climb.log import (
+    ConnectedAccount,
     DeviceKind,
     Provider,
     SignedInDevice,
     UserLog,
     account_deleted,
+    connected_accounts,
     device_revoked,
     email_of,
     revoked,
@@ -42,11 +44,17 @@ class Me(BaseModel):
     user_id: str
     email: str | None
     author: bool  # whether the author pages answer the user
+    accounts: list[ConnectedAccount]  # oldest first, and none for the dev login
 
 
 @router.get("/me")
 def me(request: Request, root: Root, user_id: UserId) -> Me:
-    return Me(user_id=user_id, email=email_of(root, user_id), author=author(request, root, user_id))
+    return Me(
+        user_id=user_id,
+        email=email_of(root, user_id),
+        author=author(request, root, user_id),
+        accounts=connected_accounts(root, user_id),
+    )
 
 
 @router.delete("/session", status_code=204)

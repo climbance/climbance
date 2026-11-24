@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ACCOUNT,
   ARCHIVED_MODULES,
+  connectedLine,
   FEEDBACK,
   meLine,
   named,
@@ -141,6 +142,11 @@ export default function SettingsScreen() {
               >
                 {meLine(me)}
               </Text>
+              {me && connectedLine(me.accounts, me.email) ? (
+                <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {connectedLine(me.accounts, me.email)}
+                </Text>
+              ) : null}
             </View>
           ) : (
             <Text variant="bodyMedium" style={{ flex: 1 }}>

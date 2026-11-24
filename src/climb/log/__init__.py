@@ -16,12 +16,13 @@ from climb.log.sessions import LIFETIME, hashed, opened, revoked, user_of
 from climb.log.sittings import SittingStore
 from climb.log.store import AttemptLog
 from climb.log.table import Provider, Role
-from climb.log.users import email_of, named, signed_in
+from climb.log.users import ConnectedAccount, connected_accounts, email_of, named, signed_in
 
 __all__ = [
     "LIFETIME",
     "AttemptLog",
     "CardRunLog",
+    "ConnectedAccount",
     "DeviceKind",
     "Faulted",
     "FeedbackLog",
@@ -40,6 +41,7 @@ __all__ = [
     "app_revoked",
     "app_user_of",
     "authored",
+    "connected_accounts",
     "device_revoked",
     "email_of",
     "erased",

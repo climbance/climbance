@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { meLine, moduleStats, named, refusal, settingRange, signInUnread, signOutWarning, waitingToSend } from './home';
+import { connectedLine, meLine, moduleStats, named, refusal, settingRange, signInUnread, signOutWarning, waitingToSend } from './home';
 
 describe('home words', () => {
   it('counts a module row due first, then its questions', () => {
@@ -23,6 +23,15 @@ describe('home words', () => {
     expect(signOutWarning(3, 'phone')).toBe(
       '3 records did not reach the engine. Signing out now deletes them from this phone.',
     );
+  });
+
+  it('names the connected accounts, with an address only where it differs', () => {
+    const google = { provider: 'google', email: 'a@example.invalid' } as const;
+    expect(connectedLine([google], 'a@example.invalid')).toBe('Signs in through Google');
+    expect(connectedLine([google, { provider: 'github', email: 'b@example.invalid' }], 'a@example.invalid')).toBe(
+      'Signs in through Google and GitHub (b@example.invalid)',
+    );
+    expect(connectedLine([], null)).toBeNull();
   });
 
   it('reads an unknown refusal as an incomplete sign-in', () => {

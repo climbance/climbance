@@ -13,6 +13,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 | Account                                                                |
 | you@example.invalid              ( Signed-in devices ) ( Sign out )    |
 | u-4f9c2a                                                               |
+| Signs in through Google and GitHub                                     |
 |                                                                        |
 | Study                                                                  |
 | New questions per day                           [ 10 ]  0 to 200       |
@@ -40,6 +41,11 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 - The page reads as the phone's Settings screen does: Account, Study, the
   sync, the archived modules, Feedback, then the record. The phone adds the
   device name and the reminder hour, which are about one phone.
+- The account names every Google or GitHub account connected to the user,
+  oldest first. An account's address is shown only where it differs from the
+  name above it, since an account joins a user by a matching address and a
+  later sign-in can change the address. A user the dev login reached has no
+  connected account, and the line is absent.
 - The record's export and the account's deletion come last, since the
   deletion is the one act on the page that cannot be undone.
 - The daily limit and the exam size are settings of the log, so a value

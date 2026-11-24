@@ -1656,6 +1656,16 @@ export interface components {
      * @enum {string}
      */
     Confidence: 'guess' | 'leaning' | 'sure';
+    /**
+     * ConnectedAccount
+     * @description A provider's account the user signs in through, by the address its latest
+     *     sign-in gave.
+     */
+    ConnectedAccount: {
+      provider: components['schemas']['Provider'];
+      /** Email */
+      email: string;
+    };
     /** CorpusRow */
     CorpusRow: {
       /** Card Slug */
@@ -2227,6 +2237,8 @@ export interface components {
       email: string | null;
       /** Author */
       author: boolean;
+      /** Accounts */
+      accounts: components['schemas']['ConnectedAccount'][];
     };
     /**
      * Measure

@@ -38,13 +38,28 @@ def test_the_session_says_who_it_signs_in_as(database):
 
     me = browsing(database, user_id).get("/api/me").json()
 
-    assert me == {"user_id": user_id, "email": "solver@example.com", "author": False}
+    assert me == {
+        "user_id": user_id,
+        "email": "solver@example.com",
+        "author": False,
+        "accounts": [{"provider": "google", "email": "solver@example.com"}],
+    }
 
 
 def test_a_user_no_provider_linked_carries_no_address(database):
     me = browsing(database, USER).get("/api/me").json()
 
-    assert me == {"user_id": USER, "email": None, "author": False}
+    assert me == {"user_id": USER, "email": None, "author": False, "accounts": []}
+
+
+def test_the_session_names_every_account_connected_to_its_user(database):
+    """A GitHub account joining by its email is listed after the Google one."""
+    user_id = signed_in(database, Provider.GOOGLE, "google-7", "solver@example.com")
+    signed_in(database, Provider.GITHUB, "github-9", "solver@example.com")
+
+    me = browsing(database, user_id).get("/api/me").json()
+
+    assert [a["provider"] for a in me["accounts"]] == ["google", "github"]
 
 
 def test_who_the_session_signs_in_as_needs_a_session(database):

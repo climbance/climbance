@@ -295,6 +295,8 @@ ignore_names = [
     "recallable",
     # the cards list reads a card's required rungs solved, and no module does
     "required_solved",
+    # the settings read the user's connected accounts, and no module does
+    "accounts",
     # the board's pick names its problem, which the page reads and no module does
     "problem_title",
     # the board reads a technique's judgement rates, and no module does

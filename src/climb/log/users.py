@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import Connection, func, select, update
 from sqlalchemy.dialects.postgresql import insert
 
@@ -28,6 +29,24 @@ def email_of(root: Database, user_id: str) -> str | None:
     )
     with root.connect() as conn:
         return conn.execute(query).scalar_one_or_none()
+
+
+class ConnectedAccount(BaseModel):
+    """A provider's account the user signs in through, by the address its latest
+    sign-in gave."""
+
+    provider: Provider
+    email: str
+
+
+def connected_accounts(root: Database, user_id: str) -> list[ConnectedAccount]:
+    query = (
+        select(identities.c.provider, identities.c.email)
+        .where(identities.c.user_id == user_id)
+        .order_by(identities.c.created_at)
+    )
+    with root.connect() as conn:
+        return [ConnectedAccount.model_validate(row) for row in conn.execute(query).mappings()]
 
 
 def signed_in(root: Database, provider: Provider, provider_user_id: str, email: str) -> str:

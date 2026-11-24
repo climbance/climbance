@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   ACCOUNT,
   ARCHIVED_MODULES,
+  connectedLine,
   FEEDBACK,
   meLine,
   named,
@@ -158,6 +159,9 @@ function Account({ me }: { me: Me | undefined }) {
             <p className={cn('text-meta text-muted-foreground', me?.email && 'font-mono')}>
               {meLine(me)}
             </p>
+            {me && connectedLine(me.accounts, me.email) && (
+              <p className="text-meta text-muted-foreground">{connectedLine(me.accounts, me.email)}</p>
+            )}
           </div>
           <Button variant="outline" onClick={() => setApps(true)}>
             <Smartphone />
