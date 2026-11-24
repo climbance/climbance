@@ -24,6 +24,8 @@ export const PROBLEM_FILTERS = {
   difficulty: 'Difficulty',
   status: 'Status',
   template: 'Template',
+  landed: 'Landed',
+  sort: 'Sort',
 };
 export const REQUIRES = 'Requires';
 export const REQUIRED_BY = 'Required by';
@@ -144,11 +146,20 @@ export const cardRowLink = (slug: string) => `/author/cards#${encodeURIComponent
 export type ProblemStatus = 'served' | 'retired' | 'defective' | 'copied' | 'all';
 const STATUSES: Exclude<ProblemStatus, 'all'>[] = ['served', 'retired', 'defective', 'copied'];
 
+export type ProblemLanded = '1d' | '7d' | '30d';
+const LANDED: ProblemLanded[] = ['1d', '7d', '30d'];
+const LANDED_DAYS: Record<ProblemLanded, number> = { '1d': 1, '7d': 7, '30d': 30 };
+export type ProblemSort = 'newest' | 'score' | 'cases';
+const SORTS: ProblemSort[] = ['newest', 'score', 'cases'];
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 export interface ProblemFilter {
   technique: string | null;
   difficulty: string | null;
   status: ProblemStatus;
   template: string | null;
+  landed: ProblemLanded | null;
+  sort: ProblemSort;
 }
 
 /** `served` until another is named; `all` is the status filter pressed off. */
@@ -159,6 +170,8 @@ export function problemFilter(get: (name: string) => string | null): ProblemFilt
     difficulty: get('difficulty'),
     status: [...STATUSES, 'all'].includes(status ?? '') ? (status as ProblemStatus) : 'served',
     template: get('template'),
+    landed: LANDED.find((one) => one === get('landed')) ?? null,
+    sort: SORTS.find((one) => one === get('sort')) ?? 'newest',
   };
 }
 
@@ -168,6 +181,8 @@ export function problemQuery(f: ProblemFilter): string {
   if (f.difficulty) q.set('difficulty', f.difficulty);
   if (f.status !== 'served') q.set('status', f.status);
   if (f.template) q.set('template', f.template);
+  if (f.landed) q.set('landed', f.landed);
+  if (f.sort !== 'newest') q.set('sort', f.sort);
   return q.toString();
 }
 
@@ -179,47 +194,78 @@ const statusHas = (one: AuthorProblemRow, status: ProblemStatus) =>
       ? !!one.retired_reason
       : one.retired_reason === status);
 
-const problemHas = (one: AuthorProblemRow, f: ProblemFilter) =>
+// dated by the first solution's `created_at`, since a problem stores no time
+const landedHas = (one: AuthorProblemRow, landed: ProblemLanded | null, now: number) =>
+  landed === null ||
+  (one.landed_at != null && now - Date.parse(one.landed_at) <= LANDED_DAYS[landed] * DAY_MS);
+
+const problemHas = (one: AuthorProblemRow, f: ProblemFilter, now: number) =>
   (f.technique === null || one.techniques.includes(f.technique)) &&
   (f.difficulty === null || one.difficulty === f.difficulty) &&
   statusHas(one, f.status) &&
-  (f.template === null || one.target_template === f.template);
+  (f.template === null || one.target_template === f.template) &&
+  landedHas(one, f.landed, now);
+
+// the API sends the rows newest first; a sort keeps that order among ties
+const sorted = (rows: AuthorProblemRow[], sort: ProblemSort) =>
+  sort === 'score'
+    ? [...rows].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity))
+    : sort === 'cases'
+      ? [...rows].sort((a, b) => b.cases - a.cases)
+      : rows;
 
 export interface ProblemBankView {
   techniques: BankChip[];
   difficulties: BankChip[];
   statuses: BankChip[];
   templates: BankChip[];
+  landed: BankChip[];
+  sorts: BankChip[];
   filtered: boolean;
   rows: AuthorProblemRow[];
 }
 
-export function problemBankView(rows: AuthorProblemRow[], f: ProblemFilter): ProblemBankView {
+export function problemBankView(
+  rows: AuthorProblemRow[],
+  f: ProblemFilter,
+  now: number = Date.now(),
+): ProblemBankView {
+  const has = (one: AuthorProblemRow, g: ProblemFilter) => problemHas(one, g, now);
+  const kept = rows.filter((one) => has(one, f));
   return {
     techniques: chips(rows, distinct(rows.flatMap((one) => one.techniques)).sort(), f.technique, (one, technique) =>
-      problemHas(one, { ...f, technique }),
+      has(one, { ...f, technique }),
     ),
-    difficulties: chips(rows, [...DIFFICULTIES], f.difficulty, (one, difficulty) =>
-      problemHas(one, { ...f, difficulty }),
-    ),
-    statuses: chips(rows, STATUSES, f.status === 'all' ? null : f.status, (one, status) =>
-      problemHas(one, { ...f, status }),
-    ),
+    difficulties: chips(rows, [...DIFFICULTIES], f.difficulty, (one, difficulty) => has(one, { ...f, difficulty })),
+    statuses: chips(rows, STATUSES, f.status === 'all' ? null : f.status, (one, status) => has(one, { ...f, status })),
     // a chip per form would bury the rows, so only the template a link named shows
-    templates: f.template
-      ? chips(rows, [f.template], f.template, (one, template) => problemHas(one, { ...f, template }))
-      : [],
-    filtered: f.technique !== null || f.difficulty !== null || f.status !== 'served' || f.template !== null,
-    rows: rows.filter((one) => problemHas(one, f)),
+    templates: f.template ? chips(rows, [f.template], f.template, (one, template) => has(one, { ...f, template })) : [],
+    landed: chips(rows, LANDED, f.landed, (one, landed) => has(one, { ...f, landed })),
+    sorts: chips(kept, SORTS, f.sort, () => true),
+    filtered:
+      f.technique !== null ||
+      f.difficulty !== null ||
+      f.status !== 'served' ||
+      f.template !== null ||
+      f.landed !== null,
+    rows: sorted(kept, f.sort),
   };
 }
 
 export function problemPressed(f: ProblemFilter, field: keyof ProblemFilter, value: string | number): ProblemFilter {
   if (field === 'status') return { ...f, status: f.status === value ? 'all' : (value as ProblemStatus) };
+  if (field === 'sort') return { ...f, sort: f.sort === value ? 'newest' : (value as ProblemSort) };
   return { ...f, [field]: f[field] === value ? null : value };
 }
 
-export const PROBLEM_CLEARED: ProblemFilter = { technique: null, difficulty: null, status: 'served', template: null };
+export const PROBLEM_CLEARED: ProblemFilter = {
+  technique: null,
+  difficulty: null,
+  status: 'served',
+  template: null,
+  landed: null,
+  sort: 'newest',
+};
 
 export const targetLabel = (one: AuthorProblemRow) => one.target_template ?? one.target_technique ?? '';
 

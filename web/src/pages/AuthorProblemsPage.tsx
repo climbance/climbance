@@ -103,6 +103,8 @@ function Shelf({
     ['difficulty', view.difficulties],
     ['status', view.statuses],
     ['template', view.templates],
+    ['landed', view.landed],
+    ['sort', view.sorts],
   ] as const
   return (
     <div className="space-y-section">
@@ -114,7 +116,8 @@ function Shelf({
               key={field}
               label={PROBLEM_FILTERS[field]}
               chips={chips}
-              counted
+              // a sort leaves every row, so its chips count nothing
+              counted={field !== 'sort'}
               onPress={(value) => go(problemPressed(filter, field, value))}
             />
           ))}
@@ -126,7 +129,7 @@ function Shelf({
           aside={
             <span className="flex gap-3 text-meta text-muted-foreground">
               {view.filtered && (
-                <button type="button" className={link} onClick={() => go(PROBLEM_CLEARED)}>
+                <button type="button" className={link} onClick={() => go({ ...PROBLEM_CLEARED, sort: filter.sort })}>
                   {BANK_CLEAR_LABEL}
                 </button>
               )}

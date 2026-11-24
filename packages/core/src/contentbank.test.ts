@@ -123,4 +123,46 @@ describe('the problems page', () => {
 
     expect(view.rows.map((one) => one.problem_id)).toEqual(['p3']);
   });
+
+  it('lists the problems landed within the window, by the first solution', () => {
+    const now = Date.parse('2026-11-24T12:00:00Z');
+    const dated = [
+      row('new', { landed_at: '2026-11-24T02:00:00Z' }),
+      row('week', { landed_at: '2026-11-20T12:00:00Z' }),
+      row('old', { landed_at: '2026-09-01T12:00:00Z' }),
+      row('undated', {}),
+    ];
+    const view = problemBankView(dated, problemFilter((name) => (name === 'landed' ? '1d' : null)), now);
+
+    expect(view.rows.map((one) => one.problem_id)).toEqual(['new']);
+    expect(view.landed.map((one) => [one.value, one.count])).toEqual([
+      ['1d', 1],
+      ['7d', 2],
+      ['30d', 2],
+    ]);
+    expect(view.filtered).toBe(true);
+  });
+
+  it('orders by score or cases, highest first, unrated last and ties newest first', () => {
+    const scored = [
+      row('a', { score: 1200, cases: 3 }),
+      row('b', { score: null, cases: 9 }),
+      row('c', { score: 1500, cases: 3 }),
+    ];
+    const by = (sort: string) =>
+      problemBankView(scored, problemFilter((name) => (name === 'sort' ? sort : null))).rows.map(
+        (one) => one.problem_id,
+      );
+
+    expect(by('score')).toEqual(['c', 'a', 'b']);
+    expect(by('cases')).toEqual(['b', 'a', 'c']);
+    expect(by('nonsense')).toEqual(['a', 'b', 'c']);
+  });
+
+  it('keeps the sort out of the URL until it leaves newest', () => {
+    const score = problemPressed(problemFilter(() => null), 'sort', 'score');
+
+    expect(problemQuery(score)).toBe('sort=score');
+    expect(problemQuery(problemPressed(score, 'sort', 'score'))).toBe('');
+  });
 });
