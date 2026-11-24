@@ -120,7 +120,8 @@ def test_an_opened_problem_reads_its_solutions_cases_and_ratings(database, autho
     assert [(one["role"], one["claims"]) for one in read["solutions"]] == [
         ("canonical", ["greedy"])
     ]
-    assert read["cases"] == [{"args": [[1, 2]], "expected": 3, "round": 0, "repeats": 1}]
+    [one] = read["cases"]
+    assert (one["args"], one["expected"], one["size"], one["round"]) == ("[[1,2]]", "3", 8, 0)
     assert [(one["score"], one["standing"]) for one in read["ratings"]] == [
         (1202.0, True),
         (1201.0, False),
@@ -144,3 +145,20 @@ def test_a_card_counts_each_template_s_items_and_a_problem_names_its_target(data
 
     assert (card.counts[0].keyline_items, card.required_by) == (0, [])
     assert row.target_template == "core"
+
+
+def test_an_opened_problem_cuts_each_case_and_a_pressed_one_reads_whole(database, author):
+    """A heavy case keeps the opened problem small, and reads whole alone."""
+    seed_problem(database, id="p1", techniques=["greedy"], statement="Sum.\n\ndef solve(xs):")
+    heavy = case("p1", [list(range(100_000))], 1, provenance=PROVENANCE)
+    CaseLog(database).append(heavy)
+
+    opened = author.get("/api/author/problems/p1")
+    [one] = opened.json()["cases"]
+    whole = author.get(f"/api/author/problems/p1/cases/{one['id']}")
+
+    assert len(opened.content) < 50_000
+    assert one["size"] > 500_000
+    assert len(one["args"]) == 120
+    assert whole.json() == {"args": heavy.args, "expected": 1}
+    assert author.get("/api/author/problems/p2/cases/" + one["id"]).status_code == 404

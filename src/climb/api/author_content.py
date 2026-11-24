@@ -1,6 +1,7 @@
 """The cards and the problems the content browser lists:
 `web-app/pages/author/cards/` and `web-app/pages/author/problems/`."""
 
+import json
 from collections import Counter
 from datetime import datetime
 from typing import Any
@@ -24,6 +25,7 @@ from climb.schema import (
     RatingSource,
     RetirementReason,
     SolutionRole,
+    TestCase,
 )
 from climb.solution_claims import load_problem, load_problems
 from climb.solution_claims.standing import standing_solution_claims
@@ -185,10 +187,45 @@ class AuthorSolution(BaseModel):
 
 
 class AuthorCase(BaseModel):
-    args: list[Any]
-    expected: Any
+    id: str
+    args: str  # the arguments as one line, cut
+    expected: str  # the expected return as one line, cut
+    size: int  # bytes of the arguments and the expected return whole, as JSON
     round: int | None
     repeats: int
+
+
+class AuthorCaseWhole(BaseModel):
+    args: list[Any]
+    expected: Any
+
+
+# a case may weigh up to the ceiling, so an opened problem carries each cut
+LINE = 120
+
+
+def _line(value: object) -> tuple[str, int]:
+    text = json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+    size = len(text.encode())
+    return (text if len(text) <= LINE else f"{text[: LINE - 1]}…"), size
+
+
+def _author_case(one: TestCase) -> AuthorCase:
+    args, args_size = _line(one.args)
+    expected, expected_size = _line(one.expected)
+    return AuthorCase(
+        id=one.id,
+        args=args,
+        expected=expected,
+        size=args_size + expected_size,
+        round=one.round,
+        repeats=one.repeats,
+    )
+
+
+def author_case(root: Database, problem_id: str, case_id: str) -> AuthorCaseWhole | None:
+    found = [one for one in CaseLog(root).for_problem(problem_id) if one.id == case_id]
+    return AuthorCaseWhole(args=found[0].args, expected=found[0].expected) if found else None
 
 
 class AuthorRating(BaseModel):
@@ -249,10 +286,7 @@ def author_problem(root: Database, problem_id: str) -> AuthorProblem | None:
             )
             for one in sorted(solutions, key=lambda one: order.index(one.role))
         ],
-        cases=[
-            AuthorCase(args=one.args, expected=one.expected, round=one.round, repeats=one.repeats)
-            for one in CaseLog(root).for_problem(problem_id)
-        ],
+        cases=[_author_case(one) for one in CaseLog(root).for_problem(problem_id)],
         ratings=[
             AuthorRating(
                 created_at=one.created_at,

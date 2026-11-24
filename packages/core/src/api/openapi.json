@@ -1942,6 +1942,54 @@
           }
         }
       }
+    },
+    "/api/author/problems/{problem_id}/cases/{case_id}": {
+      "get": {
+        "summary": "Problem Case",
+        "operationId": "problem_case_api_author_problems__problem_id__cases__case_id__get",
+        "parameters": [
+          {
+            "name": "problem_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Problem Id"
+            }
+          },
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Case Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorCaseWhole"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2456,13 +2504,21 @@
       },
       "AuthorCase": {
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
           "args": {
-            "items": {},
-            "type": "array",
+            "type": "string",
             "title": "Args"
           },
           "expected": {
+            "type": "string",
             "title": "Expected"
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size"
           },
           "round": {
             "anyOf": [
@@ -2482,12 +2538,32 @@
         },
         "type": "object",
         "required": [
+          "id",
           "args",
           "expected",
+          "size",
           "round",
           "repeats"
         ],
         "title": "AuthorCase"
+      },
+      "AuthorCaseWhole": {
+        "properties": {
+          "args": {
+            "items": {},
+            "type": "array",
+            "title": "Args"
+          },
+          "expected": {
+            "title": "Expected"
+          }
+        },
+        "type": "object",
+        "required": [
+          "args",
+          "expected"
+        ],
+        "title": "AuthorCaseWhole"
       },
       "AuthorConcepts": {
         "properties": {

@@ -244,8 +244,14 @@ export const cutLine = (text: string, at = CUT) => (text.length > at ? `${text.s
 export const argsText = (args: unknown[]) => `(${args.map((one) => JSON.stringify(one)).join(', ')})`;
 export const expectedText = (expected: unknown) => JSON.stringify(expected) ?? 'null';
 
-export function caseNote(one: { round?: number | null; repeats: number }): string {
+// the size names a case heavy enough that its cut line hides most of it
+const KB = 1024;
+export const sizeLabel = (bytes: number) =>
+  bytes < KB * KB ? `${Math.round(bytes / KB)} KB` : `${(bytes / KB / KB).toFixed(1)} MB`;
+
+export function caseNote(one: { round?: number | null; repeats: number; size?: number }): string {
   return [
+    one.size && one.size >= KB ? sizeLabel(one.size) : null,
     one.round ? `round ${one.round}` : null,
     one.round == null ? 'separating' : null,
     one.repeats > 1 ? `repeats ${one.repeats}` : null,

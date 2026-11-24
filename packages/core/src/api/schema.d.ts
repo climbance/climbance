@@ -930,6 +930,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/author/problems/{problem_id}/cases/{case_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Problem Case */
+    get: operations['problem_case_api_author_problems__problem_id__cases__case_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1114,14 +1131,25 @@ export interface components {
     };
     /** AuthorCase */
     AuthorCase: {
+      /** Id */
+      id: string;
       /** Args */
-      args: unknown[];
+      args: string;
       /** Expected */
-      expected: unknown;
+      expected: string;
+      /** Size */
+      size: number;
       /** Round */
       round: number | null;
       /** Repeats */
       repeats: number;
+    };
+    /** AuthorCaseWhole */
+    AuthorCaseWhole: {
+      /** Args */
+      args: unknown[];
+      /** Expected */
+      expected: unknown;
     };
     /** AuthorConcepts */
     AuthorConcepts: {
@@ -4791,6 +4819,38 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuthorProblem'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  problem_case_api_author_problems__problem_id__cases__case_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        problem_id: string;
+        case_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthorCaseWhole'];
         };
       };
       /** @description Validation Error */

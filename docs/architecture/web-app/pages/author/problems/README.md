@@ -16,6 +16,13 @@ the rules this page shares with the other browser pages.
 - **An opened row reads `/api/author/problems/:id`**, one problem at a time. A
   case may weigh up to the ceiling, so the list carries no case and no
   solution's code.
+- **The opened problem carries each case cut on the server.** Each case's
+  arguments and expected return are sent as one line of compact JSON, cut at
+  120 characters, with the case's full size in bytes. One local problem
+  weighed 411 KB for 13 whole cases, and the cut keeps a response under 50 KB.
+  A case of 1 KB or more names its size in its row.
+- **A pressed case reads `/api/author/problems/:id/cases/:case`**, the case
+  whole. Only the case the author asked for is sent at full weight.
 
 ## Filters
 

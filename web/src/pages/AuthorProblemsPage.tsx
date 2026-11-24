@@ -245,7 +245,7 @@ function Problem({ problem }: { problem: AuthorProblem }) {
         ) : (
           <ol className="space-y-0.5 text-meta">
             {problem.cases.map((one, i) => (
-              <Case key={i} at={i + 1} one={one} />
+              <Case key={one.id} problem={problem.problem_id} at={i + 1} one={one} />
             ))}
           </ol>
         )}
@@ -264,10 +264,8 @@ function Problem({ problem }: { problem: AuthorProblem }) {
   )
 }
 
-function Case({ at, one }: { at: number; one: AuthorProblem['cases'][number] }) {
+function Case({ problem, at, one }: { problem: string; at: number; one: AuthorProblem['cases'][number] }) {
   const [whole, setWhole] = useState(false)
-  const args = argsText(one.args)
-  const expected = expectedText(one.expected)
   return (
     <li>
       <button
@@ -277,11 +275,28 @@ function Case({ at, one }: { at: number; one: AuthorProblem['cases'][number] }) 
       >
         <span className="w-8 shrink-0 text-right tabular-nums text-muted-foreground">{at}</span>
         <code className="min-w-0 flex-1 truncate">
-          {whole ? '' : `${cutLine(args)} → ${cutLine(expected, 24)}`}
+          {whole ? '' : `${cutLine(one.args)} → ${cutLine(one.expected, 24)}`}
         </code>
         <span className="shrink-0 text-muted-foreground">{caseNote(one)}</span>
       </button>
-      {whole && <PlainCode wrap>{`${args}\n→ ${expected}`}</PlainCode>}
+      {whole && <WholeCase problem={problem} id={one.id} />}
     </li>
+  )
+}
+
+// the opened problem carries each case cut, so a pressed one reads whole alone
+function WholeCase({ problem, id }: { problem: string; id: string }) {
+  const read = useLoaded(
+    (signal) =>
+      api.GET('/api/author/problems/{problem_id}/cases/{case_id}', {
+        params: { path: { problem_id: problem, case_id: id } },
+        signal,
+      }),
+    `author-case:${problem}:${id}`,
+  )
+  return (
+    <Loaded of={OF.author} state={read} blankWhen={() => false}>
+      {(one) => <PlainCode wrap>{`${argsText(one.args)}\n→ ${expectedText(one.expected)}`}</PlainCode>}
+    </Loaded>
   )
 }

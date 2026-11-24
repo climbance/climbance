@@ -10,9 +10,11 @@ from pydantic import BaseModel
 
 from climb.api.author_content import (
     AuthorCards,
+    AuthorCaseWhole,
     AuthorProblem,
     AuthorProblems,
     author_cards,
+    author_case,
     author_problem,
     author_problems,
 )
@@ -99,4 +101,12 @@ def problem(root: Root, problem_id: str) -> AuthorProblem:
     found = author_problem(root, problem_id)
     if found is None:
         raise HTTPException(status_code=404, detail=f"no problem {problem_id}")
+    return found
+
+
+@router.get("/problems/{problem_id}/cases/{case_id}")
+def problem_case(root: Root, problem_id: str, case_id: str) -> AuthorCaseWhole:
+    found = author_case(root, problem_id, case_id)
+    if found is None:
+        raise HTTPException(status_code=404, detail=f"no case {case_id} on {problem_id}")
     return found
