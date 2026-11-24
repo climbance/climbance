@@ -37,14 +37,14 @@ WEB = {
     "author/product": "The author pages",
     "author/generation": "The author pages",
     "author/spend": "The author pages",
-    "author/workflow": "The author pages",
     "author/questions": "The author pages",
     "author/lessons": "The author pages",
     "author/cards": "The author pages",
     "author/problems": "The author pages",
 }
-# routes that serve no row: the page answering a path nothing else does
-WEB_UNLISTED = {"*"}
+# routes that serve no row: the page answering a path nothing else does, and
+# a redirect
+WEB_UNLISTED = {"*", "author/workflow"}
 
 # each phone screen file, by its path under native/src/app, and its row
 PHONE = {

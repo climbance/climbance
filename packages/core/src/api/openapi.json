@@ -1829,17 +1829,17 @@
         }
       }
     },
-    "/api/author/workflow": {
+    "/api/author/inbox": {
       "get": {
-        "summary": "Workflow",
-        "operationId": "workflow_api_author_workflow_get",
+        "summary": "Inbox",
+        "operationId": "inbox_api_author_inbox_get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkflowFigures"
+                  "$ref": "#/components/schemas/InboxFigures"
                 }
               }
             }
@@ -4851,6 +4851,77 @@
         ],
         "title": "Hinted"
       },
+      "InboxFigures": {
+        "properties": {
+          "period_days": {
+            "type": "integer",
+            "title": "Period Days"
+          },
+          "waiting": {
+            "items": {
+              "$ref": "#/components/schemas/WaitingPass"
+            },
+            "type": "array",
+            "title": "Waiting"
+          },
+          "waiting_requests": {
+            "items": {
+              "$ref": "#/components/schemas/RequestRow"
+            },
+            "type": "array",
+            "title": "Waiting Requests"
+          },
+          "answered_requests": {
+            "items": {
+              "$ref": "#/components/schemas/RequestRow"
+            },
+            "type": "array",
+            "title": "Answered Requests"
+          },
+          "feedback": {
+            "items": {
+              "$ref": "#/components/schemas/FeedbackRow"
+            },
+            "type": "array",
+            "title": "Feedback"
+          },
+          "feedback_days": {
+            "type": "integer",
+            "title": "Feedback Days"
+          },
+          "feedback_recent": {
+            "type": "integer",
+            "title": "Feedback Recent"
+          },
+          "fault_days": {
+            "items": {
+              "$ref": "#/components/schemas/FaultDay"
+            },
+            "type": "array",
+            "title": "Fault Days"
+          },
+          "faults": {
+            "items": {
+              "$ref": "#/components/schemas/FaultRow"
+            },
+            "type": "array",
+            "title": "Faults"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_days",
+          "waiting",
+          "waiting_requests",
+          "answered_requests",
+          "feedback",
+          "feedback_days",
+          "feedback_recent",
+          "fault_days",
+          "faults"
+        ],
+        "title": "InboxFigures"
+      },
       "JudgeAnswer": {
         "properties": {
           "called_clean": {
@@ -6411,9 +6482,8 @@
             "type": "string",
             "title": "Note"
           },
-          "waits": {
-            "type": "boolean",
-            "title": "Waits"
+          "status": {
+            "$ref": "#/components/schemas/ProblemStatus"
           }
         },
         "type": "object",
@@ -6423,7 +6493,7 @@
           "title",
           "reason",
           "note",
-          "waits"
+          "status"
         ],
         "title": "RequestRow"
       },
@@ -8174,59 +8244,6 @@
           "count"
         ],
         "title": "WaitingPass"
-      },
-      "WorkflowFigures": {
-        "properties": {
-          "period_days": {
-            "type": "integer",
-            "title": "Period Days"
-          },
-          "waiting": {
-            "items": {
-              "$ref": "#/components/schemas/WaitingPass"
-            },
-            "type": "array",
-            "title": "Waiting"
-          },
-          "requests": {
-            "items": {
-              "$ref": "#/components/schemas/RequestRow"
-            },
-            "type": "array",
-            "title": "Requests"
-          },
-          "feedback": {
-            "items": {
-              "$ref": "#/components/schemas/FeedbackRow"
-            },
-            "type": "array",
-            "title": "Feedback"
-          },
-          "fault_days": {
-            "items": {
-              "$ref": "#/components/schemas/FaultDay"
-            },
-            "type": "array",
-            "title": "Fault Days"
-          },
-          "faults": {
-            "items": {
-              "$ref": "#/components/schemas/FaultRow"
-            },
-            "type": "array",
-            "title": "Faults"
-          }
-        },
-        "type": "object",
-        "required": [
-          "period_days",
-          "waiting",
-          "requests",
-          "feedback",
-          "fault_days",
-          "faults"
-        ],
-        "title": "WorkflowFigures"
       },
       "WritingState": {
         "type": "string",

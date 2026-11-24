@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  CLEAR,
   NO_CORRECTION,
   dayLabel,
   gapsLine,
@@ -59,6 +60,10 @@ describe('waitingLine', () => {
     expect(waitingLine({ command: 'claim --by-hand', count: 14 })).toBe('14 of your attempts carry no claim of yours');
     expect(waitingLine({ command: 'match --by-hand', count: 1 })).toBe('1 canonical carries no match of yours');
     expect(waitingLine({ command: 'difficulty judge', count: null })).toBe(NO_CORRECTION);
+  });
+
+  it('reads a pass counting nothing as clear', () => {
+    expect(waitingLine({ command: 'judge build', count: 0 })).toBe(CLEAR);
   });
 });
 

@@ -1,5 +1,5 @@
-"""The workflow page's figures, read from the store on each load:
-`web-app/pages/author/workflow/README.md`."""
+"""The inbox's figures, read from the store on each load:
+`web-app/pages/author/inbox/README.md`."""
 
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
@@ -18,12 +18,13 @@ from climb.log import AttemptLog, FeedbackLog, RetirementRequestLog
 from climb.log.table import run_faults
 from climb.matches import MatchLog, unsettled
 from climb.ratings import CorrectionLog, RatingLog
-from climb.schema import Client, Problem, RetirementReason, RunKind
+from climb.schema import Client, Problem, ProblemStatus, RetirementReason, RunKind
 from climb.solution_claims import load_problems
 from climb.solutions import SolutionLog
 from climb.storage import Database
 
 PERIOD_DAYS = 30
+FEEDBACK_DAYS = 7
 # the latest faults the page lists with their detail
 LATEST_FAULTS = 10
 
@@ -50,7 +51,7 @@ class RequestRow(BaseModel):
     title: str
     reason: RetirementReason
     note: str
-    waits: bool
+    status: ProblemStatus
 
 
 class FeedbackRow(BaseModel):
@@ -71,42 +72,48 @@ class FaultRow(BaseModel):
     detail: str
 
 
-class WorkflowFigures(BaseModel):
+class InboxFigures(BaseModel):
     period_days: int
     waiting: list[WaitingPass]
-    requests: list[RequestRow]
+    # a request waits while its problem is still served
+    waiting_requests: list[RequestRow]
+    answered_requests: list[RequestRow]
     feedback: list[FeedbackRow]
+    feedback_days: int
+    feedback_recent: int
     fault_days: list[FaultDay]
     faults: list[FaultRow]
 
 
-def workflow_figures(root: Database, author_id: str, now: datetime) -> WorkflowFigures:
+def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures:
     since = now - timedelta(days=PERIOD_DAYS)
     problems = load_problems(root)
-    titles = {one.id: one for one in problems}
-    requests = sorted(
-        RetirementRequestLog(root).all(),
-        key=lambda one: (not titles[one.problem_id].served, -one.created_at.timestamp()),
-    )
+    by_id = {one.id: one for one in problems}
+    rows = [
+        RequestRow(
+            created_at=one.created_at,
+            problem_id=one.problem_id,
+            title=by_id[one.problem_id].title,
+            reason=one.reason,
+            note=one.note,
+            status=by_id[one.problem_id].status,
+        )
+        for one in sorted(RetirementRequestLog(root).all(), key=lambda one: one.created_at)
+    ][::-1]
+    feedback = list(reversed(FeedbackLog(root).all()))
+    recent = now - timedelta(days=FEEDBACK_DAYS)
     fault_days, faults = _faults(root, since)
-    return WorkflowFigures(
+    return InboxFigures(
         period_days=PERIOD_DAYS,
         waiting=_waiting(root, author_id, problems),
-        requests=[
-            RequestRow(
-                created_at=one.created_at,
-                problem_id=one.problem_id,
-                title=titles[one.problem_id].title,
-                reason=one.reason,
-                note=one.note,
-                waits=titles[one.problem_id].served,
-            )
-            for one in requests
-        ],
+        waiting_requests=[one for one in rows if by_id[one.problem_id].served],
+        answered_requests=[one for one in rows if not by_id[one.problem_id].served],
         feedback=[
             FeedbackRow(created_at=one.created_at, client=one.client, page=one.page, note=one.note)
-            for one in reversed(FeedbackLog(root).all())
+            for one in feedback
         ],
+        feedback_days=FEEDBACK_DAYS,
+        feedback_recent=sum(1 for one in feedback if one.created_at >= recent),
         fault_days=fault_days,
         faults=faults,
     )

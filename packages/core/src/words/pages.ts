@@ -48,7 +48,6 @@ export const COPY = 'Copy';
 
 // the author area
 export const AUTHOR_TITLE = 'Author';
-export const AUTHOR_NONE = 'No author page is built yet.';
 
 // the board
 export const BOARD_TITLE = 'Practice';

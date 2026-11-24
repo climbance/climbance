@@ -53,4 +53,4 @@ export function candidates(technique: string, signal: AbortSignal) {
 export type GenerationFigures = components['schemas']['GenerationFigures']
 export type ProductFigures = components['schemas']['ProductFigures']
 export type SpendFigures = components['schemas']['SpendFigures']
-export type WorkflowFigures = components['schemas']['WorkflowFigures']
+export type InboxFigures = components['schemas']['InboxFigures']

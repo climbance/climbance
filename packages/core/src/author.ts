@@ -11,7 +11,6 @@ export const AUTHOR_PAGES: Record<string, string> = {
   product: 'Product',
   generation: 'Generation',
   spend: 'Spend',
-  workflow: 'Workflow',
   questions: 'Questions',
   lessons: 'Lessons',
   cards: 'Cards',
@@ -96,15 +95,16 @@ export function untemplatedLine(n: number): string | null {
   return n ? `${counted(n, 'problem')} written for a technique, on no template's row` : null;
 }
 
-export const WORKFLOW_TITLE = 'Workflow';
+export const INBOX_TITLE = 'Inbox';
 export const WAITING = 'Waiting';
-export const RETIREMENT_REQUESTS = 'Retirement requests';
+export const WAITING_REQUESTS = 'Retirement requests, waiting';
+export const ANSWERED_REQUESTS = 'Retirement requests, answered';
 export const RUN_FAULTS = 'Run faults';
 export const SPEND = 'Spend';
 export const COST = 'cost';
-export const WAITS = 'waits';
-export const RETIRED_STATE = 'retired';
-export const NO_REQUEST = 'No retirement request is stored.';
+export const CLEAR = 'clear';
+export const OPEN = 'open';
+export const NO_ANSWERED = 'No retirement request is answered.';
 export const NO_FEEDBACK = 'No feedback is stored.';
 export const NO_FAULT = 'No run faulted in the period.';
 export const NO_CALL = 'No model call in the period.';
@@ -130,12 +130,12 @@ const WAITING_WHAT: Record<WaitingPass['command'], [string, string]> = {
 
 export function waitingLine(one: WaitingPass): string {
   if (one.count == null) return NO_CORRECTION;
+  if (one.count === 0) return CLEAR;
   const [single, many] = WAITING_WHAT[one.command];
   return `${one.count} ${one.count === 1 ? single : many}`;
 }
 
-export const requestsWaitingLine = (requests: { waits: boolean }[]) =>
-  `${requests.filter((one) => one.waits).length} waiting`;
+export const recentLine = (n: number, days: number) => `${n} in the last ${days} days`;
 
 export const periodTitle = (title: string, days: number) => `${title}, last ${days} days`;
 

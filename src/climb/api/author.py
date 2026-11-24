@@ -20,9 +20,9 @@ from climb.api.author_content import (
 )
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
+from climb.api.inbox_figures import InboxFigures, inbox_figures
 from climb.api.product_figures import ProductFigures, product_figures
 from climb.api.spend_figures import SpendFigures, spend_figures
-from climb.api.workflow_figures import WorkflowFigures, workflow_figures
 from climb.cards import CardStore
 from climb.drafts import DraftStore
 from climb.knowledge.seed import seeded_concepts
@@ -39,7 +39,6 @@ PAGES: list[str] = [
     "product",
     "generation",
     "spend",
-    "workflow",
     "questions",
     "lessons",
     "cards",
@@ -83,9 +82,9 @@ def spend(root: Root) -> SpendFigures:
     return spend_figures(root, now=datetime.now(UTC))
 
 
-@router.get("/workflow")
-def workflow(root: Root, user_id: Annotated[str, Depends(author_id)]) -> WorkflowFigures:
-    return workflow_figures(root, user_id, now=datetime.now(UTC))
+@router.get("/inbox")
+def inbox(root: Root, user_id: Annotated[str, Depends(author_id)]) -> InboxFigures:
+    return inbox_figures(root, user_id, now=datetime.now(UTC))
 
 
 @router.get("/concepts")

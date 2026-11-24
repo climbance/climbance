@@ -189,7 +189,7 @@ function Row({ one, open, onFlip }: { one: AuthorProblemRow; open: boolean; onFl
       </button>
       {open && one.requests > 0 && (
         // a link inside the row's press would nest one press in another
-        <Link to="/author/workflow#requests" className={`${link} block px-4 pb-2 text-meta`}>
+        <Link to="/author#requests" className={`${link} block px-4 pb-2 text-meta`}>
           {counted(one.requests, 'retirement request')}
         </Link>
       )}

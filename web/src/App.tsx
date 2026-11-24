@@ -1,5 +1,5 @@
 import { Fragment, lazy, Suspense } from 'react'
-import { Route, Routes, useMatch } from 'react-router'
+import { Navigate, Route, Routes, useMatch } from 'react-router'
 
 import { LOADING } from '@climb/core'
 import { LOGIN, PRIVACY, TERMS } from '@/api/client'
@@ -11,7 +11,6 @@ import { AuthorGenerationPage } from '@/pages/AuthorGenerationPage'
 import { AuthorPage } from '@/pages/AuthorPage'
 import { AuthorProductPage } from '@/pages/AuthorProductPage'
 import { AuthorSpendPage } from '@/pages/AuthorSpendPage'
-import { AuthorWorkflowPage } from '@/pages/AuthorWorkflowPage'
 import { BoardPage } from '@/pages/BoardPage'
 import { CardsPage } from '@/pages/CardsPage'
 import { FillPage } from '@/pages/FillPage'
@@ -119,7 +118,7 @@ function App() {
               <Route path="author/product" element={<AuthorProductPage />} />
               <Route path="author/generation" element={<AuthorGenerationPage />} />
               <Route path="author/spend" element={<AuthorSpendPage />} />
-              <Route path="author/workflow" element={<AuthorWorkflowPage />} />
+              <Route path="author/workflow" element={<Navigate to="/author" replace />} />
               <Route path="author/questions" element={<AuthorQuestionsPage />} />
               <Route path="author/lessons" element={<AuthorLessonsPage />} />
               <Route path="author/cards" element={<AuthorCardsPage />} />

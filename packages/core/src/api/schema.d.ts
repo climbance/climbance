@@ -862,15 +862,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/author/workflow': {
+  '/api/author/inbox': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Workflow */
-    get: operations['workflow_api_author_workflow_get'];
+    /** Inbox */
+    get: operations['inbox_api_author_inbox_get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1935,6 +1935,27 @@ export interface components {
       /** Text */
       text: string;
     };
+    /** InboxFigures */
+    InboxFigures: {
+      /** Period Days */
+      period_days: number;
+      /** Waiting */
+      waiting: components['schemas']['WaitingPass'][];
+      /** Waiting Requests */
+      waiting_requests: components['schemas']['RequestRow'][];
+      /** Answered Requests */
+      answered_requests: components['schemas']['RequestRow'][];
+      /** Feedback */
+      feedback: components['schemas']['FeedbackRow'][];
+      /** Feedback Days */
+      feedback_days: number;
+      /** Feedback Recent */
+      feedback_recent: number;
+      /** Fault Days */
+      fault_days: components['schemas']['FaultDay'][];
+      /** Faults */
+      faults: components['schemas']['FaultRow'][];
+    };
     /** JudgeAnswer */
     JudgeAnswer: {
       /** Called Clean */
@@ -2576,8 +2597,7 @@ export interface components {
       reason: components['schemas']['RetirementReason'];
       /** Note */
       note: string;
-      /** Waits */
-      waits: boolean;
+      status: components['schemas']['ProblemStatus'];
     };
     /** RequiredBy */
     RequiredBy: {
@@ -3256,21 +3276,6 @@ export interface components {
       command: components['schemas']['Pass'];
       /** Count */
       count: number | null;
-    };
-    /** WorkflowFigures */
-    WorkflowFigures: {
-      /** Period Days */
-      period_days: number;
-      /** Waiting */
-      waiting: components['schemas']['WaitingPass'][];
-      /** Requests */
-      requests: components['schemas']['RequestRow'][];
-      /** Feedback */
-      feedback: components['schemas']['FeedbackRow'][];
-      /** Fault Days */
-      fault_days: components['schemas']['FaultDay'][];
-      /** Faults */
-      faults: components['schemas']['FaultRow'][];
     };
     /**
      * WritingState
@@ -4752,7 +4757,7 @@ export interface operations {
       };
     };
   };
-  workflow_api_author_workflow_get: {
+  inbox_api_author_inbox_get: {
     parameters: {
       query?: never;
       header?: never;
@@ -4767,7 +4772,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['WorkflowFigures'];
+          'application/json': components['schemas']['InboxFigures'];
         };
       };
     };

@@ -3,7 +3,7 @@ from datetime import UTC, date, datetime, timedelta
 from helpers import attempt, browsing, seed_problem, stored_problem, stored_template
 from sqlalchemy import insert, text
 
-from climb.api.workflow_figures import Pass, workflow_figures
+from climb.api.inbox_figures import Pass, inbox_figures
 from climb.log import AttemptLog, FeedbackLog, RetirementRequestLog, named
 from climb.log.table import run_faults
 from climb.schema import (
@@ -34,7 +34,7 @@ def waiting(read) -> dict[Pass, int | None]:
 
 def test_an_empty_store_waits_on_nothing(database):
     """With no correction stored, `difficulty judge` reads no count."""
-    read = workflow_figures(database, AUTHOR, NOW)
+    read = inbox_figures(database, AUTHOR, NOW)
 
     assert waiting(read) == {
         Pass.CLAIM: 0,
@@ -43,7 +43,7 @@ def test_an_empty_store_waits_on_nothing(database):
         Pass.JUDGE: 0,
         Pass.FILL: 0,
     }
-    assert read.requests == read.feedback == read.faults == []
+    assert read.waiting_requests == read.answered_requests == read.feedback == read.faults == []
 
 
 def test_the_claim_pass_counts_the_authors_attempts_alone(database):
@@ -54,19 +54,19 @@ def test_the_claim_pass_counts_the_authors_attempts_alone(database):
         named(database, user_id)
         log.append_attempt(attempt(id, "p1").model_copy(update={"user_id": user_id}))
 
-    assert waiting(workflow_figures(database, AUTHOR, NOW))[Pass.CLAIM] == 1
+    assert waiting(inbox_figures(database, AUTHOR, NOW))[Pass.CLAIM] == 1
 
 
 def test_a_template_with_no_items_waits_for_both_builds(database):
     stored_template(database, "t1")
 
-    read = waiting(workflow_figures(database, AUTHOR, NOW))
+    read = waiting(inbox_figures(database, AUTHOR, NOW))
 
     assert (read[Pass.JUDGE], read[Pass.FILL]) == (1, 1)
 
 
-def test_a_waiting_request_reads_above_a_newer_settled_one(database):
-    """A request waits while its problem is still served."""
+def test_a_request_waits_while_its_problem_is_served(database):
+    """A request on a retired problem reads as answered, with the status."""
     stored_problem(database, "p1", title="Pair sums under a cap")
     stored_problem(
         database,
@@ -89,11 +89,11 @@ def test_a_waiting_request_reads_above_a_newer_settled_one(database):
             )
         )
 
-    read = workflow_figures(database, AUTHOR, NOW).requests
+    read = inbox_figures(database, AUTHOR, NOW)
 
-    assert [(one.title, one.waits) for one in read] == [
-        ("Pair sums under a cap", True),
-        ("Longest calm stretch", False),
+    assert [one.title for one in read.waiting_requests] == ["Pair sums under a cap"]
+    assert [(one.title, one.status) for one in read.answered_requests] == [
+        ("Longest calm stretch", ProblemStatus.RETIRED)
     ]
 
 
@@ -112,10 +112,30 @@ def test_feedback_reads_newest_first(database):
             )
         )
 
-    assert [one.note for one in workflow_figures(database, AUTHOR, NOW).feedback] == [
-        "note f2",
-        "note f1",
-    ]
+    read = inbox_figures(database, AUTHOR, NOW)
+
+    assert [one.note for one in read.feedback] == ["note f2", "note f1"]
+
+
+def test_feedback_counts_the_notes_of_the_last_seven_days(database):
+    """A note older than the week is listed and left out of the count."""
+    named(database, LEARNER)
+    log = FeedbackLog(database)
+    for id, day in (("f1", 10), ("f2", 21)):
+        log.append(
+            Feedback(
+                id=id,
+                created_at=datetime(2026, 11, day, tzinfo=UTC),
+                user_id=LEARNER,
+                client=Client.WEB,
+                page="/",
+                note=id,
+            )
+        )
+
+    read = inbox_figures(database, AUTHOR, NOW)
+
+    assert (len(read.feedback), read.feedback_days, read.feedback_recent) == (2, 7, 1)
 
 
 def test_faults_count_per_day_and_kind_over_the_period(database):
@@ -133,7 +153,7 @@ def test_faults_count_per_day_and_kind_over_the_period(database):
         fault("f4", NOW - timedelta(days=40), RunKind.RECALL),
     )
 
-    read = workflow_figures(database, AUTHOR, NOW)
+    read = inbox_figures(database, AUTHOR, NOW)
 
     assert [(one.day, one.counts) for one in read.fault_days] == [
         (date(2026, 11, 23), {RunKind.SUBMISSION: 2, RunKind.RECALL: 0}),
@@ -158,7 +178,7 @@ def test_the_route_names_no_user(database):
     client = browsing(database, "local")
     client.app.state.dev_user = "local"
 
-    response = client.get("/api/author/workflow")
+    response = client.get("/api/author/inbox")
 
     assert response.status_code == 200
     assert LEARNER not in response.text and "a note" in response.text
