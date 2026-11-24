@@ -1,7 +1,6 @@
 import {
   ANSWERS,
   ATTEMPTS,
-  AUTHOR_TITLE,
   DAY,
   DAYS,
   LEARNERS,
@@ -15,7 +14,6 @@ import {
 } from '@climb/core'
 import { api, type ProductFigures } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { FigureTable } from '@/components/FigureTable'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
@@ -26,18 +24,13 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
 // learner reads the not-found page, as on `/author`
 export function AuthorProductPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const figures = useLoaded((signal) => api.GET('/api/author/product', { signal }), 'product')
   if (me.data && !me.data.author) return <NotFoundPage />
   const state = me.data ? figures : { retry: me.retry, error: me.error, data: undefined }
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/author', label: AUTHOR_TITLE }}
-        title={PRODUCT_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={PRODUCT_TITLE} />
       <Loaded of={OF.author} state={state} blankWhen={() => false}>
         {(read) => <Product read={read} />}
       </Loaded>

@@ -35,7 +35,8 @@ const SECTIONS = [
 
 const FADE = '1rem'
 
-export function NavMenu({ wide }: { wide: boolean }) {
+// `width` is the main column's, so the bar's ends line up with the page's
+export function NavMenu({ width }: { width: string }) {
   const { pathname } = useLocation()
   const sections = useRef<HTMLDivElement>(null)
   // a narrow fade: at 360px the fourth section starts barely inside the row
@@ -64,12 +65,7 @@ export function NavMenu({ wide }: { wide: boolean }) {
 
   return (
     <header className="border-b">
-      <nav
-        className={cn(
-          'mx-auto flex items-center gap-1 px-gutter py-2',
-          wide ? 'max-w-wide' : 'max-w-reading',
-        )}
-      >
+      <nav className={cn('mx-auto flex items-center gap-1 px-gutter py-2', width)}>
         {/* the wordmark reaches the board, as a site's own name does */}
         <Link
           to="/"

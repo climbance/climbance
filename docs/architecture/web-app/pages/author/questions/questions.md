@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/questions?module=algo&kind=output ----------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Questions       Inbox 5                                                |
-|                 [ Questions ]  Lessons  Cards  Problems                |
-|                 Product  Generation  Spend                             |
+| Questions                                                              |
 |                                                                        |
 | Module   [ algo ]  python  py                                          |
 | Topic    sorting 14  searching 9  graphs 22                            |
@@ -41,6 +39,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - The author bar names the three figure pages, then the four browser pages.
 - The module chips pick one module, and the other filters' chips count what
   pressing each would leave.

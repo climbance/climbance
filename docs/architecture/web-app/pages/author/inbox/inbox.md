@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author --------------------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Inbox           [ Inbox 5 ]                                            |
-|                 Questions  Lessons  Cards  Problems                    |
-|                 Product  Generation  Spend                             |
+| Inbox                                                                  |
 |                                                                        |
 | Waiting                                                                |
 | claim --by-hand        14 of your attempts carry no claim of yours  ⧉  |
@@ -35,8 +33,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
-- The navigation reads in three groups: the inbox, the content browser, then
-  the figures. The inbox's entry counts the rows that wait, here five.
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - The sections read in the order the author acts on them: what waits first,
   then what learners reported, then what failed.
 - `⧉` copies the row's command. `open` follows the row's link to the page

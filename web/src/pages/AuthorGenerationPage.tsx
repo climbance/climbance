@@ -1,5 +1,4 @@
 import {
-  AUTHOR_TITLE,
   CORPUS,
   DRAFTS,
   DRAFTS_NOW,
@@ -26,7 +25,6 @@ import {
 } from '@climb/core'
 import { api, type GenerationFigures } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { FigureTable } from '@/components/FigureTable'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
@@ -39,18 +37,13 @@ const BANDS = ['easy', 'medium', 'hard'] as const
 // learner reads the not-found page, as on `/author`
 export function AuthorGenerationPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const figures = useLoaded((signal) => api.GET('/api/author/generation', { signal }), 'generation')
   if (me.data && !me.data.author) return <NotFoundPage />
   const state = me.data ? figures : { retry: me.retry, error: me.error, data: undefined }
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/author', label: AUTHOR_TITLE }}
-        title={GENERATION_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={GENERATION_TITLE} />
       <Loaded of={OF.author} state={state} blankWhen={() => false}>
         {(read) => <Generation read={read} />}
       </Loaded>

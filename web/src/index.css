@@ -68,6 +68,8 @@
   /* web-app/areas.md gives the reading column and the sitting as its exception */
   --container-reading: 56rem;
   --container-wide: 96rem;
+  /* the reading column, the author navigation's 11rem and the 2rem between */
+  --container-author: 69rem;
   --container-form: 24rem;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

@@ -49,11 +49,12 @@ flowchart LR
     web_App --> web_pages
     web_api --> core
     web_components --> editor
-    web_components --> web_knowledge
+    web_components --> web_pages
     web_knowledge --> web_pages
     web_lib --> web_api
     web_main --> web_App
     web_pages --> web_components
+    web_pages --> web_knowledge
     web_pages --> web_lib
 ```
 

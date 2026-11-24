@@ -39,6 +39,10 @@ act, the rows and panels, and the sections of a long page.
   that is hard to track back to the next line's start.
 - **The sitting is the exception, and reads in two columns.** The statement and
   the editor sit side by side, and a reading column is too narrow to hold both.
+- **The author area adds its navigation's column beside the reading
+  column.** Each author page's body keeps the 56rem column, as
+  `pages/author/README.md` gives, and its problems page opens a problem in a
+  dialog as wide as the window.
 - **Every page but the sitting reads at phone width.** A sitting on the web
   wants a wide window, and a narrow one stacks the statement above the editor
   rather than shrinking both. The phone's sitting holds the two as tabs

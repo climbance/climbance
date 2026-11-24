@@ -7,6 +7,7 @@ import { Broke } from '@/components/Broke'
 import { NavMenu } from '@/components/NavMenu'
 import { KnowledgeProvider } from '@/knowledge/KnowledgeProvider'
 import { cn } from '@/lib/utils'
+import { AuthorLayout } from '@/components/AuthorLayout'
 import { AuthorGenerationPage } from '@/pages/AuthorGenerationPage'
 import { AuthorPage } from '@/pages/AuthorPage'
 import { AuthorProductPage } from '@/pages/AuthorProductPage'
@@ -73,6 +74,9 @@ function App() {
   const sitting = useMatch('/problems/:problemId') !== null
   const cold = useMatch('/cold/:sittingId') !== null
   const wide = sitting || cold
+  // the author pages hold the navigation's column beside the reading column
+  const author = useMatch({ path: '/author', end: false }) !== null
+  const width = wide ? 'max-w-wide' : author ? 'max-w-author' : 'max-w-reading'
   // nothing in the menu is reachable before signing in, and the three pages
   // open without a session
   const signingIn = useMatch(LOGIN) !== null
@@ -84,8 +88,8 @@ function App() {
 
   return (
     <Session>
-      {!signingIn && !readingPolicy && !readingTerms && <NavMenu wide={wide} />}
-      <main className={cn('mx-auto p-gutter', wide ? 'max-w-wide' : 'max-w-reading')}>
+      {!signingIn && !readingPolicy && !readingTerms && <NavMenu width={width} />}
+      <main className={cn('mx-auto p-gutter', width)}>
         <Broke>
           <Suspense fallback={<p className="text-meta text-muted-foreground">{LOADING}</p>}>
             <Routes>
@@ -114,15 +118,18 @@ function App() {
               <Route path="knowledge/exam" element={<ExamPage />} />
               <Route path="start" element={<GuidePage />} />
               <Route path="settings" element={<SettingsPage />} />
-              <Route path="author" element={<AuthorPage />} />
-              <Route path="author/product" element={<AuthorProductPage />} />
-              <Route path="author/generation" element={<AuthorGenerationPage />} />
-              <Route path="author/spend" element={<AuthorSpendPage />} />
-              <Route path="author/workflow" element={<Navigate to="/author" replace />} />
-              <Route path="author/questions" element={<AuthorQuestionsPage />} />
-              <Route path="author/lessons" element={<AuthorLessonsPage />} />
-              <Route path="author/cards" element={<AuthorCardsPage />} />
-              <Route path="author/problems" element={<AuthorProblemsPage />} />
+              {/* one layout, so the navigation's column stays mounted between author pages */}
+              <Route element={<AuthorLayout />}>
+                <Route path="author" element={<AuthorPage />} />
+                <Route path="author/product" element={<AuthorProductPage />} />
+                <Route path="author/generation" element={<AuthorGenerationPage />} />
+                <Route path="author/spend" element={<AuthorSpendPage />} />
+                <Route path="author/workflow" element={<Navigate to="/author" replace />} />
+                <Route path="author/questions" element={<AuthorQuestionsPage />} />
+                <Route path="author/lessons" element={<AuthorLessonsPage />} />
+                <Route path="author/cards" element={<AuthorCardsPage />} />
+                <Route path="author/problems" element={<AuthorProblemsPage />} />
+              </Route>
               <Route path={LOGIN} element={<LoginPage />} />
               <Route path={PRIVACY} element={<PrivacyPage />} />
               <Route path={TERMS} element={<TermsPage />} />

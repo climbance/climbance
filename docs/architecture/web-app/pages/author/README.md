@@ -20,14 +20,28 @@ author area of their own, on the web alone.
 
 ## The navigation
 
-- **The author area's navigation names its pages in three groups.** The
-  inbox is the first group. The content browser's four pages are the second.
-  The product, the generation and the spend are the third. The groups follow
-  what the author does on each page: act on what waits, review content, and
-  read figures.
+[`navigation.md`](navigation.md) draws the navigation at low fidelity.
+
+- **The author area's navigation is a column left of every author page, in
+  three named groups.** The inbox stands first and alone. The content
+  browser's four pages follow under `Content`, then the product, the
+  generation and the spend under `Figures`. The groups follow what the author
+  does on each page: act on what waits, review content, and read figures.
+  Three rows of links wrapped beside the title read as one row broken by the
+  window, so the grouping went unseen.
 - **The inbox is the author area's home, at `/author`.** The author opens the
   area to learn whether anything needs the author's hand, and the inbox
   answers that first. `inbox/README.md` gives the count its entry carries.
+- **The column is drawn before any request answers.** The pages and their
+  groups are fixed in `packages/core`, and only the inbox's count is read
+  from `/api/author`. The count fills a slot of fixed width, so nothing on
+  the page moves when it arrives. A navigation drawn once `/api/author`
+  answered pushed the page down 4 seconds after it opened, on prod's store.
+- **The column stays mounted between author pages**, so the count is read
+  once per arrival in the area, and again on the inbox.
+- **The column takes 11rem beside the reading column**, and each page's body
+  keeps the 56rem `../../areas.md` gives. In a window under 64rem the column
+  folds into one menu, opened from a button above the page's title.
 
 ## The content browser
 
@@ -59,7 +73,7 @@ traces, goes unseen.
 - **A press opens a row in place on the questions, the lessons and the cards
   pages.** An opened question, lesson or card reads in a screen or less, so
   several open rows read together.
-- **The problems page opens a row in a panel beside the list.** An opened
+- **The problems page opens a row in a dialog over the list.** An opened
   problem holds a statement, up to three solutions and its cases, and runs
   taller than a window. Opened in place, it would push the next row out of
   sight. Each opened problem is also a request of its own, so the problems
@@ -173,8 +187,8 @@ traces, goes unseen.
   copies the commands retiring a problem and rating it by hand. The author
   then pastes a command naming the right id, never retypes it.
 - **The first writes a page may earn are retiring a problem and rating it by
-  hand**, both from the problems page's panel. The author reads the problem
-  in the panel before running either command, and decides there.
+  hand**, both from the problems page's dialog. The author reads the problem
+  in the dialog before running either command, and decides there.
   Each write is deferred until the author has used the copied commands, by
   the rule opening this section.
 - **`climb log export` stays.** The operator exports one user's log on that

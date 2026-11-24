@@ -6,7 +6,11 @@ import {
   dayLabel,
   gapsLine,
   attentionLine,
-  inboxEntry,
+  AUTHOR_GROUPS,
+  AUTHOR_PAGES,
+  authorPath,
+  positionLabel,
+  waitingCount,
   retentionCells,
   stopLabel,
   timeLabel,
@@ -94,9 +98,30 @@ describe('gapsLine', () => {
   });
 });
 
-describe('inboxEntry', () => {
-  it('counts the waiting rows, and reads bare with none', () => {
-    expect(inboxEntry(5)).toBe('Inbox 5');
-    expect(inboxEntry(0)).toBe('Inbox');
+describe('waitingCount', () => {
+  it('counts the waiting rows, and reads blank with none or before the count arrives', () => {
+    expect(waitingCount(5)).toBe('5');
+    expect(waitingCount(0)).toBe('');
+    expect(waitingCount(undefined)).toBe('');
+  });
+});
+
+describe('AUTHOR_GROUPS', () => {
+  it('names every author page once, the inbox first', () => {
+    const pages = AUTHOR_GROUPS.flatMap((group) => group.pages);
+    expect(pages[0]).toBe('inbox');
+    expect(new Set(pages)).toEqual(new Set(Object.keys(AUTHOR_PAGES)));
+    expect(pages).toHaveLength(Object.keys(AUTHOR_PAGES).length);
+  });
+
+  it("places the inbox at the area's home", () => {
+    expect(authorPath('inbox')).toBe('/author');
+    expect(authorPath('spend')).toBe('/author/spend');
+  });
+});
+
+describe('positionLabel', () => {
+  it("reads the opened row's place among the rows", () => {
+    expect(positionLabel(5, 133)).toBe('5 of 133');
   });
 });

@@ -1,7 +1,6 @@
 import {
   ANSWERED_REQUESTS,
   ATTENTION_LINK,
-  BACK_BOARD,
   CLEAR,
   COPY,
   DAY,
@@ -30,7 +29,6 @@ import { Link } from 'react-router'
 
 import { api, type InboxFigures } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { FigureTable } from '@/components/FigureTable'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
@@ -45,7 +43,6 @@ const KINDS = ['submission', 'recall'] as const
 // The API's 403 guards it; a learner reads the not-found page rather than a refusal
 export function AuthorPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const figures = useLoaded((signal) => api.GET('/api/author/inbox', { signal }), 'inbox')
   if (me.data && !me.data.author) return <NotFoundPage />
   // held at loading until the session is read, so a learner never sees the refusal
@@ -53,11 +50,7 @@ export function AuthorPage() {
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/', label: BACK_BOARD }}
-        title={INBOX_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={INBOX_TITLE} />
       <Loaded of={OF.author} state={state} blankWhen={() => false}>
         {(read) => <Inbox read={read} />}
       </Loaded>
@@ -74,7 +67,9 @@ const requestCells = (one: Request) => [
   <code key="i">{shortId(one.problem_id)}</code>,
   one.title,
   one.reason,
-  <span key="n" className="whitespace-pre-wrap">{one.note}</span>,
+  <span key="n" className="whitespace-pre-wrap">
+    {one.note}
+  </span>,
 ]
 
 function Inbox({ read }: { read: InboxFigures }) {
@@ -152,7 +147,9 @@ function Inbox({ read }: { read: InboxFigures }) {
                 cells: [
                   dateLabel(one.created_at),
                   `${one.client} · ${one.page}`,
-                  <span key="n" className="whitespace-pre-wrap">{one.note}</span>,
+                  <span key="n" className="whitespace-pre-wrap">
+                    {one.note}
+                  </span>,
                 ],
               }))}
             />
@@ -193,7 +190,9 @@ function Inbox({ read }: { read: InboxFigures }) {
                 cells: [
                   timeLabel(one.created_at),
                   one.kind,
-                  <span key="d" className="whitespace-pre-wrap">{one.detail}</span>,
+                  <span key="d" className="whitespace-pre-wrap">
+                    {one.detail}
+                  </span>,
                 ],
               }))}
             />

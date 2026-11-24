@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/generation ---------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Generation      Inbox 5                                                |
-|                 Questions  Lessons  Cards  Problems                    |
-|                 Product  [ Generation ]  Spend                         |
+| Generation                                                             |
 |                                                                        |
 | Last 30 days                                                           |
 | 42 writings . 17 landed . 40%       $0.31 a landed problem             |
@@ -36,6 +34,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - The bar under the title moves between the three author pages, since each
   is reached from `/author` and the author reads them in turn.
 - The figures at the top read the period: the writings, the landed ones, the

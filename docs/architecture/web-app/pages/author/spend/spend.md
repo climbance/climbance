@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/spend --------------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Spend           Inbox 5                                                |
-|                 Questions  Lessons  Cards  Problems                    |
-|                 Product  Generation  [ Spend ]                         |
+| Spend                                                                  |
 |                                                                        |
 | Last 30 days                                               cost        |
 | generation . generator                                    $4.10        |
@@ -21,5 +19,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - A part reads one row, and generation reads one row per site.
 - The parts read by cost, highest first.

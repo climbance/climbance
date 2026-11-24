@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/lessons?module=py --------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Lessons         Inbox 5                                                |
-|                 Questions  [ Lessons ]  Cards  Problems                |
-|                 Product  Generation  Spend                             |
+| Lessons                                                                |
 |                                                                        |
 | Module   algo  python  [ py ]                                          |
 | Topic    core 9  data 6                                  ( Clear )     |
@@ -28,6 +26,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - A closed row reads on two lines: the lesson, then what it teaches.
 - An opened row names the lessons it needs and those needing it, draws the
   lesson whole, and lists its groups' questions as links.

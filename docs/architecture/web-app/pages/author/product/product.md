@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/product ------------------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Product         Inbox 5                                                |
-|                 Questions  Lessons  Cards  Problems                    |
-|                 [ Product ]  Generation  Spend                         |
+| Product                                                                |
 |                                                                        |
 | 12 invited . 9 signed in . 5 active in the last 7 days                 |
 |                                                                        |
@@ -25,6 +23,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - The users read first, then the retention, then the days, newest first.
 - A share reads beside its `m of n`. With no user old enough to count, the
   row reads `none yet` in place of both.

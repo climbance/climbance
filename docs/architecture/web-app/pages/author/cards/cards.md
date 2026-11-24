@@ -7,9 +7,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +- /author/cards?module=algo --------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Cards           Inbox 5                                                |
-|                 Questions  Lessons  [ Cards ]  Problems                |
-|                 Product  Generation  Spend                             |
+| Cards                                                                  |
 |                                                                        |
 | Module   [ algo 18 ]                                                   |
 | Depth    0 6  1 7  2 5                                   ( Clear )     |
@@ -32,6 +30,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - A closed row reads on two lines: the card, then its templates, rungs and
   gaps.
 - An opened row reads the card's text, each template with its code and counts,

@@ -7,12 +7,15 @@ export function stepKey(keys: string[], at: string | null, by: 1 | -1): string |
   return keys[Math.min(keys.length - 1, Math.max(0, i + by))]
 }
 
-// a key typed into a field, or into an open menu, belongs to that field or menu
+// a key typed into a field, or into an open menu or dialog, belongs to it. A
+// dialog marked `data-steps` is the opened row itself, so j and k still step
 function typing(target: EventTarget | null) {
   return (
     target instanceof HTMLElement &&
     (target.isContentEditable ||
-      target.closest('input, textarea, select, [role=menu], [role=listbox], [role=dialog]') !== null)
+      target.closest(
+        'input, textarea, select, [role=menu], [role=listbox], [role=dialog]:not([data-steps])',
+      ) !== null)
   )
 }
 

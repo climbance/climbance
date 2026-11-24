@@ -6,7 +6,6 @@ import {
   cardShapeLine,
   configurationLabel,
   difficultyLabel,
-  flagCount,
   problemCommands,
   flagsLabel,
   problemBankView,
@@ -221,10 +220,7 @@ describe('the problems page', () => {
     expect(flagsLabel(row('b', { flags: ['requested'], retired_reason: 'copied' }))).toBe('retired: copied');
   });
 
-  it('counts a served row\'s flags for the narrowed list, and none on a retired one', () => {
-    expect(flagCount(row('a', { flags: ['untagged', 'titled'] }))).toBe('⚑2');
-    expect(flagCount(row('b', { flags: [] }))).toBe('');
-    expect(flagCount(row('c', { flags: ['requested'], retired_reason: 'copied' }))).toBe('');
+  it('reads a retired row as retired', () => {
     expect(problemStatus(row('c', { retired_reason: 'copied' }))).toBe('retired');
   });
 

@@ -1159,7 +1159,7 @@ src = [
     "web/src/lib/media.ts",
     "web/src/components/Chips.tsx",
     "web/src/components/FilterMenu.tsx",
-    "web/src/components/AuthorBar.tsx",
+    "web/src/components/AuthorLayout.tsx",
     "web/src/components/FigureTable.tsx",
 ]
 

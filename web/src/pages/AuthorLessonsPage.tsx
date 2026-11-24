@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 
 import {
-  AUTHOR_TITLE,
   BANK_CLEAR_LABEL,
   BANK_NONE,
   CLOSE_ALL,
@@ -36,7 +35,6 @@ import {
 
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { Chips } from '@/components/Chips'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
@@ -50,7 +48,6 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
 // `web-app/pages/author/lessons/`. A learner reads the not-found page
 export function AuthorLessonsPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const k = useKnowledge()
   const catalog = useMemo(
     () => (k.snapshot ? loadSnapshot(k.snapshot as Snapshot) : undefined),
@@ -65,11 +62,7 @@ export function AuthorLessonsPage() {
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/author', label: AUTHOR_TITLE }}
-        title={LESSONS_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={LESSONS_TITLE} />
       <Loaded of={OF.author} state={state} blank={BANK_NONE} blankWhen={(f) => f === null}>
         {(filter) => (
           <Shelf

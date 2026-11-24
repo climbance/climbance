@@ -8,9 +8,7 @@ no problem opened. [`opened.md`](opened.md) draws it with one opened.
 +- /author/problems?landed=7d -------------------------------------------+
 | Climbance    Practice  Problems  Cards  Knowledge               ☀  ≡   |
 +------------------------------------------------------------------------+
-| Problems        Inbox 5                                                |
-|                 Questions  Lessons  Cards  [ Problems ]                |
-|                 Product  Generation  Spend                             |
+| Problems                                                               |
 |                                                                        |
 | served ▾  technique ▾  target ▾  difficulty ▾  landed: 7d ▾            |
 | ( Needs attention 3 )                        12 rows  sort: newest ▾   |
@@ -27,6 +25,8 @@ no problem opened. [`opened.md`](opened.md) draws it with one opened.
 +------------------------------------------------------------------------+
 ```
 
+- The author navigation sits left of the page, as `../navigation.md`
+  draws it, and is left out here.
 - The filters read on one line, each a menu naming its value, above the
   attention filter and the count of rows.
 - A row reads on one line in a wide window. At this drawing's width it wraps

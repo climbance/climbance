@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 
 import {
-  AUTHOR_TITLE,
   BANK_CLEAR_LABEL,
   BANK_FILTERS,
   BANK_NONE,
@@ -28,7 +27,6 @@ import {
 
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { Chips } from '@/components/Chips'
 import { Inline } from '@/components/Inline'
 import { Loaded } from '@/components/Loaded'
@@ -47,7 +45,6 @@ type Concept = { slug: string; level: number; claim: string; source: string[] }
 // learner reads the not-found page, as on `/author`
 export function AuthorQuestionsPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const k = useKnowledge()
   // the whole snapshot, a paused or archived module's bank included
   const catalog = useMemo(
@@ -71,11 +68,7 @@ export function AuthorQuestionsPage() {
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/author', label: AUTHOR_TITLE }}
-        title={QUESTIONS_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={QUESTIONS_TITLE} />
       <Loaded of={OF.author} state={state} blank={BANK_NONE} blankWhen={(f) => f === null}>
         {(filter) => (
           <Bank

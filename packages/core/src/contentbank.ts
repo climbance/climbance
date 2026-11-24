@@ -336,8 +336,6 @@ export const techniquesLabel = (one: AuthorProblemRow) => one.techniques.join(',
 export const flagsLabel = (one: AuthorProblemRow) =>
   one.retired_reason ? `retired: ${one.retired_reason}` : one.flags.length ? `⚑ ${one.flags.join(' ')}` : '';
 
-// a row narrowed beside the panel counts its flags, and the panel names them
-export const flagCount = (one: AuthorProblemRow) => (one.flags.length && !one.retired_reason ? `⚑${one.flags.length}` : '');
 
 export const problemStatus = (one: AuthorProblemRow) => (one.retired_reason ? 'retired' : 'served');
 

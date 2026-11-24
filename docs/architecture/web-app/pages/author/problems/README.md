@@ -12,7 +12,7 @@ The author comes to this page to review problems: the batch the last
 generation run landed, the problems an attention flag names, and the
 problems a learner asked to retire. The layout serves that review. The rows
 read one line each so a window holds about 25, and an opened problem reads in
-a panel beside them.
+a dialog over them.
 
 ## Where it reads from
 
@@ -87,45 +87,52 @@ the author decides, and no flag retires a problem.
   the standing score with its deviation and its label, the count of cases, and
   the flags. A retired row names its reason in place of the flags. In a narrow
   window a row wraps to two lines.
-- **The title leads the row, and the id is read in the panel.** The author
+- **The title leads the row, and the id is read in the dialog.** The author
   scans titles and flags. The id's prefix is needed only for a command.
-- **The solutions by role read in the panel alone.** A problem written for a
+- **The solutions by role read in the dialog alone.** A problem written for a
   template with no speedup lands with no naive solution, as
   `../../../../cli/generation/states.md` gives, so the roles differ by target
   and not by fault.
 
-## The panel
+## The dialog
 
-- **A press on a row opens the problem in a panel beside the list**, in a
-  window of 64rem or more. The list keeps its scroll, and the opened row
-  stays marked. In a narrower window the row opens in place, as
-  `../../../README.md` gives for two parts of one page.
-- **One problem is opened at a time, and the anchor names it.** A press on
-  another row moves the panel there, and a press on the opened row closes it.
-  The page's anchor is then a link to exactly the problem in view.
-- **The panel and the list share the reading column.** The list narrowed to
-  titles takes 14rem. The panel takes the other 38rem, and its code block
-  holds 64 characters, measured in a 1400px window. The page therefore
-  needs no wide layout, which only the sitting takes.
-- **While the panel is open, the list narrows to each row's title and its
-  count of flags.** The panel takes the width the statement and the code
-  need, and the title alone finds the next problem.
-- **`j` and `k` open the next and the previous row, and Escape closes the
-  panel.** The anchor in the URL follows the opened row. Reviewing a batch of
-  20 problems is then 20 presses of one key.
+- **A press on a row opens the problem in a dialog over the list.** The
+  dialog leaves a margin of 1.5rem around it in a wide window, and fills a
+  window under 64rem. The list underneath keeps its full rows and its
+  scroll. A panel beside the list, tried first, narrowed the list to titles
+  cut at 20 characters and left the panel 38rem, too narrow to set the
+  statement beside a solution.
+- **One problem is opened at a time, and the anchor names it.** The page's
+  anchor is then a link to exactly the problem in view, and a reload or a
+  pasted link opens the same dialog.
+- **The dialog reads in two columns in a window of 64rem or more.** The
+  statement reads on the left. The solutions, the cases, the difficulty and
+  the site outcomes read on the right, each column scrolling on its own. The
+  author checks the canonical against the statement, so the two read side by
+  side. A narrower window stacks the columns, as `../../../README.md` gives
+  for two parts of one page.
+- **`j` and `k` step the dialog to the next and the previous row, and the
+  head reads the position, such as `5 of 133`.** The dialog stays open, and
+  the anchor in the URL follows. Reviewing a batch of 20 problems is then 20
+  presses of one key. Two buttons in the head step the same way.
+- **Escape, the close button or a press outside closes the dialog**, and
+  clears the anchor. The list then shows the row last opened, marked, so the
+  author resumes the scan from it.
+
 ## The opened problem
 
-The panel reads, in order, the head, the statement, the solutions, the
-cases, the difficulty, the site outcomes and the foot.
+The dialog reads the head, then the statement in the left column, then
+the solutions, the cases, the difficulty and the site outcomes in the right
+one, then the foot.
 
-- **The panel's head names the problem**: its title, the first eight
+- **The dialog's head names the problem**: its title, the first eight
   characters of its id, its status and its flags. A press on the id copies
   it.
 - **The head names the configuration that wrote the problem**: the model,
   the effort, the temperature, the prompt hash and the pin. A temperature
   nobody set reads `default`. A resume compares the configuration and the
   prompt hash, so the author can see which bench wrote a problem judged weak.
-- **The panel draws the statement with the sitting's own component**, as a
+- **The dialog draws the statement with the sitting's own component**, as a
   learner is served it. The author reviews the exact text a solver reads.
 - **Each solution reads by role: the canonical, the reference, then the
   naive**, with its code, its latest verification and the configuration that
@@ -146,9 +153,9 @@ cases, the difficulty, the site outcomes and the foot.
   without the bound says nothing about how far the search had left to look.
   A resumed step writes a second outcome, so a site can read twice. A problem
   landed before site outcomes were stored reads `no site outcome`.
-- **The panel names the retirement requests the problem carries**, each with
+- **The dialog names the retirement requests the problem carries**, each with
   its reason and note, and links them to the inbox.
-- **The panel's foot copies the commands acting on the problem**: retiring it
+- **The dialog's foot copies the commands acting on the problem**: retiring it
   as `defective`, retiring it as `copied`, and rating it by hand, each as
   `climb problem` takes it. The page writes nothing, as `../README.md` gives.
   Each command names the full id, so it cannot match a second problem. The

@@ -1,7 +1,6 @@
 import { Link, useSearchParams } from 'react-router'
 
 import {
-  AUTHOR_TITLE,
   BANK_CLEAR_LABEL,
   CARD_BANK_NONE,
   CARD_BANK_NONE_MATCH,
@@ -39,7 +38,6 @@ import {
 
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
-import { AuthorBar } from '@/components/AuthorBar'
 import { Chips } from '@/components/Chips'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
@@ -54,7 +52,6 @@ import { NotFoundPage } from '@/pages/NotFoundPage'
 // every card at once, its forms revealed: `web-app/pages/author/cards/`
 export function AuthorCardsPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
-  const area = useLoaded((signal) => api.GET('/api/author', { signal }), 'author')
   const cards = useLoaded((signal) => api.GET('/api/author/cards', { signal }), 'author-cards')
   const [search, setSearch] = useSearchParams()
   if (me.data && !me.data.author) return <NotFoundPage />
@@ -62,11 +59,7 @@ export function AuthorCardsPage() {
 
   return (
     <section className="space-y-section">
-      <PageHeader
-        back={{ to: '/author', label: AUTHOR_TITLE }}
-        title={CARD_BANK_TITLE}
-        aside={area.data && <AuthorBar area={area.data} />}
-      />
+      <PageHeader title={CARD_BANK_TITLE} />
       <Loaded
         of={OF.author}
         state={state}
