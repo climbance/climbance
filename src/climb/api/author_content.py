@@ -15,7 +15,7 @@ from climb.cards.graph import depths
 from climb.cases import CaseLog
 from climb.judgements import ItemStore
 from climb.keylines import KeyLineStore
-from climb.ladder import ladder
+from climb.ladder import Ladder, ladder
 from climb.log import RetirementRequestLog
 from climb.matches import MatchLog, standing_matches
 from climb.outcomes import OutcomeLog
@@ -27,7 +27,6 @@ from climb.schema import (
     CaseOutcome,
     Gate,
     MachineProvenance,
-    Problem,
     ProblemDifficulty,
     RatingSource,
     RetirementReason,
@@ -35,6 +34,7 @@ from climb.schema import (
     TestCase,
 )
 from climb.solution_claims import load_problem, load_problems
+from climb.solution_claims.derive import viewed
 from climb.solution_claims.standing import standing_solution_claims
 from climb.solution_claims.store import SolutionClaimLog
 from climb.solutions import SolutionLog
@@ -75,60 +75,99 @@ class AuthorCard(BaseModel):
     gaps: list[str]  # the core templates no served canonical displays, by slug
 
 
+class AuthorCardRow(BaseModel):
+    """A card as the grid lists it, without its text, its code or its rungs."""
+
+    slug: str
+    title: str
+    technique: str
+    module: str
+    depth: int
+    core: int  # templates
+    optional: int
+    rungs: int
+    size: int  # the selector's
+    gaps: list[str]
+
+
 class AuthorCards(BaseModel):
-    cards: list[AuthorCard]
+    cards: list[AuthorCardRow]
+
+
+def _ladders(root: Database, cards: Sequence[Card]) -> dict[str, Ladder]:
+    # no attempts and no run: each ladder as the corpus derives it now
+    problems = load_problems(root)
+    solutions = SolutionLog(root).heads(SolutionRole.CANONICAL)
+    # standing once: a ladder taking the standing verdicts finds them standing
+    matches = list(standing_matches(MatchLog(root).verdicts()).values())
+    return {card.slug: ladder(card, problems, solutions, matches, []) for card in cards}
 
 
 def author_cards(root: Database) -> AuthorCards:
     cards = CardStore(root).all()
-    problems = load_problems(root)
-    solutions = SolutionLog(root).solutions()
-    matches = MatchLog(root).matches()
+    deep = depths(cards)
+    ladders = _ladders(root, cards)
+    rows = [
+        AuthorCardRow(
+            slug=card.slug,
+            title=card.title,
+            technique=card.technique,
+            module=card.module,
+            depth=deep[card.slug],
+            core=sum(1 for one in card.templates if not one.optional),
+            optional=sum(1 for one in card.templates if one.optional),
+            rungs=len(ladders[card.slug].rungs),
+            size=card.selector.size,
+            gaps=[gap.slug for gap in ladders[card.slug].gaps],
+        )
+        for card in cards
+    ]
+    # the card graph's order: a card reads after every card it requires
+    rows.sort(key=lambda one: (one.depth, one.title))
+    return AuthorCards(cards=rows)
+
+
+def author_card(root: Database, slug: str) -> AuthorCard | None:
+    cards = CardStore(root).all()
+    card = next((one for one in cards if one.slug == slug), None)
+    if card is None:
+        return None
+    resolved = _ladders(root, [card])[card.slug]
     scores = {id: one.score for id, one in standing_ratings(RatingLog(root).ratings()).items()}
     judged = Counter(one.template_id for one in ItemStore(root).served())
     filled = Counter(one.template_id for one in KeyLineStore(root).served())
-    deep = depths(cards)
-    found: list[AuthorCard] = []
-    for card in cards:
-        slugs = {one.id: one.slug for one in card.templates}
-        # no attempts and no run: the ladder as the corpus derives it now
-        resolved = ladder(card, problems, solutions, matches, [])
-        found.append(
-            AuthorCard(
-                card=card,
-                depth=deep[card.slug],
-                counts=[
-                    TemplateCounts(
-                        template_id=one.id,
-                        cases=len(one.cases),
-                        judgement_items=judged[one.id],
-                        keyline_items=filled[one.id],
-                    )
-                    for one in card.templates
-                ],
-                required_by=[
-                    RequiredBy(card=other.slug, template=edge.template, used_by=edge.used_by)
-                    for other in cards
-                    for edge in other.requires
-                    if edge.card == card.slug
-                ],
-                rungs=[
-                    AuthorRung(
-                        problem_id=rung.problem.id,
-                        title=rung.problem.title,
-                        templates=[slugs[one] for one in rung.templates],
-                        difficulty=rung.problem.difficulty,
-                        score=scores.get(rung.problem.id),
-                        required=rung.required,
-                    )
-                    for rung in resolved.rungs
-                ],
-                gaps=[gap.slug for gap in resolved.gaps],
+    slugs = {one.id: one.slug for one in card.templates}
+    return AuthorCard(
+        card=card,
+        depth=depths(cards)[card.slug],
+        counts=[
+            TemplateCounts(
+                template_id=one.id,
+                cases=len(one.cases),
+                judgement_items=judged[one.id],
+                keyline_items=filled[one.id],
             )
-        )
-    # the card graph's order: a card reads after every card it requires
-    found.sort(key=lambda one: (one.depth, one.card.title))
-    return AuthorCards(cards=found)
+            for one in card.templates
+        ],
+        required_by=[
+            RequiredBy(card=other.slug, template=edge.template, used_by=edge.used_by)
+            for other in cards
+            for edge in other.requires
+            if edge.card == card.slug
+        ],
+        rungs=[
+            AuthorRung(
+                problem_id=rung.problem.id,
+                title=rung.problem.title,
+                templates=[slugs[one] for one in rung.templates],
+                difficulty=rung.problem.difficulty,
+                score=scores.get(rung.problem.id),
+                required=rung.required,
+            )
+            for rung in resolved.rungs
+        ],
+        gaps=[gap.slug for gap in resolved.gaps],
+    )
 
 
 class AuthorProblemRow(BaseModel):
@@ -155,10 +194,12 @@ def _template_slugs(root: Database) -> dict[str, str]:
     return {one.id: one.slug for card in CardStore(root).all() for one in card.templates}
 
 
-def author_problems(root: Database, problems: Sequence[Problem] | None = None) -> AuthorProblems:
+def author_problems(root: Database) -> AuthorProblems:
     slugs = _template_slugs(root)
-    stands = standing_ratings(RatingLog(root).ratings())
-    generator = {one.id: one.difficulty for one in ProblemStore(root).all()}
+    stored = ProblemStore(root).all()
+    ratings = RatingLog(root).ratings()
+    stands = standing_ratings(ratings)
+    generator = {one.id: one.difficulty for one in stored}
     cases = CaseLog(root).counts()
     requests = Counter(one.problem_id for one in RetirementRequestLog(root).all())
     landed = SolutionLog(root).landed()
@@ -184,7 +225,7 @@ def author_problems(root: Database, problems: Sequence[Problem] | None = None) -
                 codes=codes(),
             ),
         )
-        for problem in (load_problems(root) if problems is None else problems)
+        for problem in viewed(root, stored, ratings)
     ]
     # newest first: the author reads what the last run landed first
     rows.sort(key=lambda one: (one.landed_at is not None, one.landed_at, one.problem_id))

@@ -339,13 +339,16 @@ def seeded_subtopics(*, root: Database) -> set[str]:
         return {"/".join(row) for row in conn.execute(live)}
 
 
-def seeded_concepts(module: str, *, root: Database) -> list[Concept]:
-    """A live module's concepts, by level then slug. None for an unknown one."""
+def seeded_concepts(module: str, *, root: Database, slug: str | None = None) -> list[Concept]:
+    """A live module's concepts, by level then slug, or the one `slug` names.
+    None for an unknown one."""
     live = (
         select(concepts)
         .join(modules, concepts.c.module_id == modules.c.id)
         .where(modules.c.slug == module, modules.c.retired_at.is_(None))
         .order_by(concepts.c.level, concepts.c.slug)
     )
+    if slug is not None:
+        live = live.where(concepts.c.slug == slug)
     with root.connect() as conn:
         return [Concept.model_validate(dict(row)) for row in conn.execute(live).mappings()]

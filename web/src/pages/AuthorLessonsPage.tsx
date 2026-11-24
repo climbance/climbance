@@ -4,29 +4,30 @@ import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BANK_CLEAR_LABEL,
   BANK_NONE,
-  CLOSE_ALL,
   LESSON_BANK_FILTERS,
   LESSON_BANK_NONE_MATCH,
+  LESSON_COLUMNS,
   LESSON_NEEDED_BY,
   LESSON_NEEDS,
   LESSON_NO_TEXT,
   LESSON_QUESTIONS,
   LESSONS_TITLE,
   OF,
-  OPEN_ALL,
   bankCleared,
   bankPressed,
   bankQuery,
+  gridQuery,
+  gridSort,
+  gridSorted,
   lessonBankView,
   lessonFilter,
-  lessonMinutesLabel,
   lessonRowLink,
   loadSnapshot,
-  pretestLabel,
   questionRowLink,
+  taughtLabel,
   taughtLine,
   type BankFilter,
-  type Course,
+  type GridSort,
   type Lesson,
   type LessonBankRow,
   type LessonBankView,
@@ -36,15 +37,19 @@ import {
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { Chips } from '@/components/Chips'
+import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
 import { LessonText } from '@/knowledge/LessonText'
-import { link, useOpenRows } from '@/lib/openRows'
+import { link } from '@/lib/openRows'
+import { useRowDialog } from '@/lib/rowDialog'
+import { cn } from '@/lib/utils'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
-// one module's lessons at once, each drawn as the lesson page draws it:
+// one module's lessons, each opened as the lesson page draws it:
 // `web-app/pages/author/lessons/`. A learner reads the not-found page
 export function AuthorLessonsPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
@@ -68,7 +73,10 @@ export function AuthorLessonsPage() {
           <Shelf
             filter={filter!}
             view={lessonBankView(catalog!, filter!)}
-            go={(next) => setSearch(new URLSearchParams(bankQuery(next)))}
+            sort={gridSort((name) => search.get(name), LESSON_COLUMNS)}
+            go={(next, sort) =>
+              setSearch(new URLSearchParams(gridQuery(bankQuery(next), sort, LESSON_COLUMNS)))
+            }
           />
         )}
       </Loaded>
@@ -76,19 +84,34 @@ export function AuthorLessonsPage() {
   )
 }
 
+const quiet = 'whitespace-nowrap text-muted-foreground'
+
+const lessonCells: GridCells<LessonBankRow> = {
+  slug: { cell: (row) => <code>{row.x.slug}</code>, className: 'max-w-56 truncate' },
+  title: { cell: (row) => row.x.title, className: 'text-body', grow: true },
+  teaches: {
+    cell: (row) => taughtLabel(row.taught),
+    className: 'max-w-64 truncate text-muted-foreground',
+  },
+  minutes: { cell: (row) => row.minutes || '', className: quiet },
+  pretest: { cell: (row) => row.x.pretest, className: quiet },
+  questions: { cell: (row) => row.questions.length, className: quiet },
+}
+
 function Shelf({
   filter,
   view,
+  sort,
   go,
 }: {
   filter: BankFilter
   view: LessonBankView
-  go: (next: BankFilter) => void
+  sort: GridSort | null
+  go: (next: BankFilter, sort: GridSort | null) => void
 }) {
-  const shown = view.groups.flatMap((g) => g.rows.map((row) => row.x.slug))
-  const { open, setOpen, flip } = useOpenRows([...new Set(shown)])
-  // a lesson under several subtopics anchors at its first row alone
-  const anchored = new Set<string>()
+  const shown = gridSorted(view.rows, LESSON_COLUMNS, sort)
+  const dialog = useRowDialog(shown.map((row) => row.x.slug))
+  const opened = shown.find((row) => row.x.slug === dialog.opened)
 
   const rows = [
     ['module', view.modules],
@@ -107,7 +130,7 @@ function Shelf({
               label={LESSON_BANK_FILTERS[field]}
               chips={chips}
               counted={field !== 'module'}
-              onPress={(value) => go(bankPressed(filter, field, value))}
+              onPress={(value) => go(bankPressed(filter, field, value), sort)}
             />
           ))}
       </section>
@@ -115,129 +138,114 @@ function Shelf({
       <section className="space-y-stack">
         <SectionHeading
           title={view.course.title}
-          count={view.shown}
+          count={shown.length}
           aside={
-            <span className="flex gap-3 text-meta text-muted-foreground">
-              {view.filtered && (
-                <button type="button" className={link} onClick={() => go(bankCleared(filter))}>
-                  {BANK_CLEAR_LABEL}
-                </button>
-              )}
-              <button type="button" className={link} onClick={() => setOpen(new Set(shown))}>
-                {OPEN_ALL}
+            view.filtered && (
+              <button
+                type="button"
+                className={cn(link, 'text-meta text-muted-foreground')}
+                onClick={() => go(bankCleared(filter), sort)}
+              >
+                {BANK_CLEAR_LABEL}
               </button>
-              <button type="button" className={link} onClick={() => setOpen(new Set())}>
-                {CLOSE_ALL}
-              </button>
-            </span>
+            )
           }
         />
-        {view.shown === 0 && (
+        {shown.length === 0 ? (
           <p className="text-meta text-muted-foreground">{LESSON_BANK_NONE_MATCH}</p>
+        ) : (
+          <DataGrid
+            columns={LESSON_COLUMNS}
+            cells={lessonCells}
+            rows={shown}
+            rowKey={(row) => row.x.slug}
+            marked={dialog.last}
+            onOpen={dialog.open}
+            sort={sort}
+            onSort={(next) => go(filter, next)}
+          />
         )}
-        {view.groups.map((g) => (
-          <section key={g.key} className="space-y-1">
-            <SectionHeading sub title={g.heading} count={g.rows.length} />
-            <ul className="divide-y rounded-xl border bg-card">
-              {g.rows.map((row) => {
-                const anchor = !anchored.has(row.x.slug)
-                anchored.add(row.x.slug)
-                return (
-                  <Row
-                    key={row.x.slug}
-                    row={row}
-                    course={view.course}
-                    anchor={anchor}
-                    open={open.has(row.x.slug)}
-                    onFlip={() => flip(row.x.slug)}
-                    rowLink={(slug) => lessonRowLink(view, filter, slug)}
-                  />
-                )
-              })}
-            </ul>
-          </section>
-        ))}
       </section>
+      {opened && (
+        <RowDialog
+          dialog={dialog}
+          title={opened.x.title}
+          head={
+            <>
+              <p className="text-meta text-muted-foreground">
+                <code>{opened.x.slug}</code> · {taughtLine(opened)}
+              </p>
+              {(opened.needs.length > 0 || opened.neededBy.length > 0) && (
+                <p className="flex flex-wrap gap-x-4 text-meta">
+                  <Lessons label={LESSON_NEEDS} items={opened.needs} view={view} filter={filter} />
+                  <Lessons
+                    label={LESSON_NEEDED_BY}
+                    items={opened.neededBy}
+                    view={view}
+                    filter={filter}
+                  />
+                </p>
+              )}
+            </>
+          }
+        >
+          <Opened row={opened} view={view} filter={filter} />
+        </RowDialog>
+      )}
     </div>
   )
 }
 
-function Row(props: {
+// the snapshot holds the lesson's text, so an opened lesson makes no request
+function Opened({
+  row,
+  view,
+  filter,
+}: {
   row: LessonBankRow
-  course: Course
-  anchor: boolean
-  open: boolean
-  onFlip: () => void
-  rowLink: (slug: string) => string
+  view: LessonBankView
+  filter: BankFilter
 }) {
-  const { x, minutes, taught, questions, needs, neededBy } = props.row
   const navigate = useNavigate()
-  const body = props.course.lessonBodies[x.slug] ?? ''
+  const body = view.course.lessonBodies[row.x.slug] ?? ''
   return (
-    <li id={props.anchor ? x.slug : undefined} className="scroll-mt-4">
-      <button
-        type="button"
-        aria-expanded={props.open}
-        onClick={props.onFlip}
-        className="flex w-full items-baseline gap-3 px-4 py-2 text-left hover:bg-accent"
-      >
-        <span className="text-muted-foreground">{props.open ? '▾' : '▸'}</span>
-        <span className="min-w-0 flex-1 space-y-0.5">
-          <span className="flex items-baseline gap-3">
-            <code className="shrink-0 text-meta">{x.slug}</code>
-            <span className="min-w-0 flex-1 truncate">{x.title}</span>
-            <span className="shrink-0 text-meta text-muted-foreground tabular-nums">
-              {[lessonMinutesLabel(minutes), pretestLabel(x.pretest)].filter(Boolean).join('  ')}
-            </span>
-          </span>
-          <span className="block text-meta text-muted-foreground">
-            {taughtLine(taught, questions.length)}
-          </span>
-        </span>
-      </button>
-      {props.open && (
-        <div className="space-y-stack px-4 pb-4">
-          {(needs.length > 0 || neededBy.length > 0) && (
-            <p className="flex flex-wrap gap-x-4 text-meta">
-              <Lessons label={LESSON_NEEDS} items={needs} rowLink={props.rowLink} />
-              <Lessons label={LESSON_NEEDED_BY} items={neededBy} rowLink={props.rowLink} />
-            </p>
-          )}
-          <div className="rounded-xl border p-4">
-            {body ? (
-              <LessonText
-                module={props.course.slug}
-                text={body}
-                // a linked lesson opens as its row here, not as the learner's page
-                onLesson={(slug) => void navigate(props.rowLink(slug))}
-              />
-            ) : (
-              <p className="text-meta text-muted-foreground">{LESSON_NO_TEXT}</p>
-            )}
-          </div>
-          {questions.length > 0 && (
-            <p className="flex flex-wrap gap-x-3 text-meta">
-              <span className="text-muted-foreground">{LESSON_QUESTIONS}</span>
-              {questions.map((q) => (
-                <Link key={q.id} to={questionRowLink(props.course.slug, q.id)} className={link}>
-                  <code>{q.id}</code>
-                </Link>
-              ))}
-            </p>
-          )}
-        </div>
+    <>
+      {body ? (
+        <LessonText
+          module={view.course.slug}
+          text={body}
+          // a linked lesson opens in this dialog, not as the learner's page
+          onLesson={(slug) => void navigate(lessonRowLink(view, filter, slug))}
+        />
+      ) : (
+        <p className="text-meta text-muted-foreground">{LESSON_NO_TEXT}</p>
       )}
-    </li>
+      {row.questions.length > 0 && (
+        <p className="flex flex-wrap gap-x-3 text-meta">
+          <span className="text-muted-foreground">{LESSON_QUESTIONS}</span>
+          {row.questions.map((q) => (
+            <Link key={q.id} to={questionRowLink(view.course.slug, q.id)} className={link}>
+              <code>{q.id}</code>
+            </Link>
+          ))}
+        </p>
+      )}
+    </>
   )
 }
 
-function Lessons(props: { label: string; items: Lesson[]; rowLink: (slug: string) => string }) {
+function Lessons(props: {
+  label: string
+  items: Lesson[]
+  view: LessonBankView
+  filter: BankFilter
+}) {
   if (!props.items.length) return null
   return (
     <span className="flex flex-wrap gap-x-2">
       <span className="text-muted-foreground">{props.label}</span>
       {props.items.map((y) => (
-        <Link key={y.slug} to={props.rowLink(y.slug)} className={link}>
+        <Link key={y.slug} to={lessonRowLink(props.view, props.filter, y.slug)} className={link}>
           <code>{y.slug}</code>
         </Link>
       ))}

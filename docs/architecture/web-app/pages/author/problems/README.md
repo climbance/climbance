@@ -2,8 +2,8 @@
 
 The page at `/author/problems`, in the author area: every problem in the
 corpus, served or retired, each opened with its solutions and its cases.
-`../README.md` gives who reaches it, and `## The content browser` there gives
-the rules this page shares with the other browser pages.
+`../README.md` gives who reaches it, and `../browser.md` gives the grid and
+the dialog this page shares with the other browser pages.
 `../../../../cli/generation/problem.md` gives the problem.
 
 [`problems.md`](problems.md) draws the page at low fidelity.
@@ -38,9 +38,9 @@ a dialog over them.
   naming its current value. Chips for 29 techniques took a third of the
   window, above the first row.
 - **Each filter is in the URL**: `?status=`, `?reason=`, `?technique=`,
-  `?template=`, `?difficulty=`, `?landed=`, `?flag=` and `?sort=`. A card's
-  ladder links here with `?template=`, so every problem written for one form
-  is one link.
+  `?template=`, `?difficulty=`, `?landed=`, `?flag=`, `?sort=` and
+  `?order=`. A card's ladder links here with `?template=`, so every problem
+  written for one form is one link.
 - **Each menu option counts the rows picking it would leave.** An option
   leaving no row reads greyed and stays in the menu. `hard` reads greyed on
   today's corpus: no judge score lies above 1567, and the hard band starts at
@@ -58,8 +58,8 @@ a dialog over them.
   writes.
 - **`Needs attention` sets `?flag=any`**, and names how many rows carry a
   flag. A single flag's name narrows the rows to that flag.
-- **The rows read newest first by default.** `?sort=score` and `?sort=cases`
-  order them by the standing score or the count of cases, highest first.
+- **The rows read newest first by default.** The landed date, the score and
+  the cases sort on a press of their header, as `../browser.md` gives.
 
 ## Attention flags
 
@@ -81,12 +81,14 @@ the author decides, and no flag retires a problem.
   judge read another, so the statement or the label is wrong.
 - **`requested`**: a retirement request waits on the problem.
 
-## Rows
+## The grid
 
-- **A closed row reads on one line**: the title, the target, the techniques,
-  the standing score with its deviation and its label, the count of cases, and
-  the flags. A retired row names its reason in place of the flags. In a narrow
-  window a row wraps to two lines.
+- **A row's columns are the title, the target, the techniques, the standing
+  score with its deviation, the count of cases, the flags and the landed
+  date.** An unrated row reads its label in the score's column. The band of
+  a rated row reads in the difficulty filter, and the label beside the score
+  pushed the landed date out of the reading column. A retired row names its
+  reason in the flags' column.
 - **The title leads the row, and the id is read in the dialog.** The author
   scans titles and flags. The id's prefix is needed only for a command.
 - **The solutions by role read in the dialog alone.** A problem written for a
@@ -96,28 +98,16 @@ the author decides, and no flag retires a problem.
 
 ## The dialog
 
-- **A press on a row opens the problem in a dialog over the list.** The
-  dialog leaves a margin of 1.5rem around it in a wide window, and fills a
-  window under 64rem. The list underneath keeps its full rows and its
-  scroll. A panel beside the list, tried first, narrowed the list to titles
-  cut at 20 characters and left the panel 38rem, too narrow to set the
-  statement beside a solution.
-- **One problem is opened at a time, and the anchor names it.** The page's
-  anchor is then a link to exactly the problem in view, and a reload or a
-  pasted link opens the same dialog.
+- **The problem's dialog fills the window but for a margin of 1.5rem**, and
+  fills a window under 64rem whole. A panel beside the list, tried first,
+  narrowed the list to titles cut at 20 characters and left the panel 38rem,
+  too narrow to set the statement beside a solution.
 - **The dialog reads in two columns in a window of 64rem or more.** The
   statement reads on the left. The solutions, the cases, the difficulty and
   the site outcomes read on the right, each column scrolling on its own. The
   author checks the canonical against the statement, so the two read side by
   side. A narrower window stacks the columns, as `../../../README.md` gives
   for two parts of one page.
-- **`j` and `k` step the dialog to the next and the previous row, and the
-  head reads the position, such as `5 of 133`.** The dialog stays open, and
-  the anchor in the URL follows. Reviewing a batch of 20 problems is then 20
-  presses of one key. Two buttons in the head step the same way.
-- **Escape, the close button or a press outside closes the dialog**, and
-  clears the anchor. The list then shows the row last opened, marked, so the
-  author resumes the scan from it.
 
 ## The opened problem
 

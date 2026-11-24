@@ -879,15 +879,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/author/concepts': {
+  '/api/author/concepts/{module}/{slug}': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Concepts */
-    get: operations['concepts_api_author_concepts_get'];
+    /** Concept */
+    get: operations['concept_api_author_concepts__module___slug__get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -905,6 +905,23 @@ export interface paths {
     };
     /** Cards */
     get: operations['cards_api_author_cards_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/author/cards/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Card */
+    get: operations['card_api_author_cards__slug__get'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1148,10 +1165,36 @@ export interface components {
       /** Gaps */
       gaps: string[];
     };
+    /**
+     * AuthorCardRow
+     * @description A card as the grid lists it, without its text, its code or its rungs.
+     */
+    AuthorCardRow: {
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Technique */
+      technique: string;
+      /** Module */
+      module: string;
+      /** Depth */
+      depth: number;
+      /** Core */
+      core: number;
+      /** Optional */
+      optional: number;
+      /** Rungs */
+      rungs: number;
+      /** Size */
+      size: number;
+      /** Gaps */
+      gaps: string[];
+    };
     /** AuthorCards */
     AuthorCards: {
       /** Cards */
-      cards: components['schemas']['AuthorCard'][];
+      cards: components['schemas']['AuthorCardRow'][];
     };
     /** AuthorCase */
     AuthorCase: {
@@ -1174,11 +1217,6 @@ export interface components {
       args: unknown[];
       /** Expected */
       expected: unknown;
-    };
-    /** AuthorConcepts */
-    AuthorConcepts: {
-      /** Concepts */
-      concepts: components['schemas']['Concept'][];
     };
     /** AuthorConfiguration */
     AuthorConfiguration: {
@@ -4848,13 +4886,14 @@ export interface operations {
       };
     };
   };
-  concepts_api_author_concepts_get: {
+  concept_api_author_concepts__module___slug__get: {
     parameters: {
-      query: {
-        module: string;
-      };
+      query?: never;
       header?: never;
-      path?: never;
+      path: {
+        module: string;
+        slug: string;
+      };
       cookie?: never;
     };
     requestBody?: never;
@@ -4865,7 +4904,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['AuthorConcepts'];
+          'application/json': components['schemas']['Concept'];
         };
       };
       /** @description Validation Error */
@@ -4895,6 +4934,37 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuthorCards'];
+        };
+      };
+    };
+  };
+  card_api_author_cards__slug__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthorCard'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
         };
       };
     };

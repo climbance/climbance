@@ -108,9 +108,9 @@ export function untemplatedLine(n: number): string | null {
 
 export const INBOX_TITLE = 'Inbox';
 
-export const PREVIOUS_PROBLEM = 'Previous problem';
-export const NEXT_PROBLEM = 'Next problem';
-// the opened problem's place among the listed rows, as `5 of 133`
+export const PREVIOUS_ROW = 'Previous';
+export const NEXT_ROW = 'Next';
+// the opened item's place among the grid's rows, as `5 of 133`
 export const positionLabel = (at: number, of: number) => `${at} of ${of}`;
 
 // the count beside the inbox's entry in the navigation: the waiting rows, or none

@@ -9,8 +9,10 @@ from climb.matches.matcher import candidates
 from climb.matches.standing import standing_matches
 from climb.schema import (
     Card,
+    MatchHead,
     Problem,
     Solution,
+    SolutionHead,
     SolutionRole,
     Template,
     TemplateMatch,
@@ -44,8 +46,8 @@ def core(card: Card) -> list[Template]:
 def coverage(
     cards: Iterable[Card],
     problems: Iterable[Problem],
-    solutions: Iterable[Solution],
-    matches: Iterable[TemplateMatch],
+    solutions: Iterable[Solution | SolutionHead],
+    matches: Iterable[TemplateMatch | MatchHead],
 ) -> list[Coverage]:
     """Every template a match can be keyed to, in the order its card authored
     it, with what displays it. A retired problem's canonicals count for

@@ -1847,18 +1847,27 @@
         }
       }
     },
-    "/api/author/concepts": {
+    "/api/author/concepts/{module}/{slug}": {
       "get": {
-        "summary": "Concepts",
-        "operationId": "concepts_api_author_concepts_get",
+        "summary": "Concept",
+        "operationId": "concept_api_author_concepts__module___slug__get",
         "parameters": [
           {
             "name": "module",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string",
               "title": "Module"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
             }
           }
         ],
@@ -1868,7 +1877,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorConcepts"
+                  "$ref": "#/components/schemas/Concept"
                 }
               }
             }
@@ -1897,6 +1906,45 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AuthorCards"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/author/cards/{slug}": {
+      "get": {
+        "summary": "Card",
+        "operationId": "card_api_author_cards__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorCard"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -2523,11 +2571,73 @@
         ],
         "title": "AuthorCard"
       },
+      "AuthorCardRow": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "technique": {
+            "type": "string",
+            "title": "Technique"
+          },
+          "module": {
+            "type": "string",
+            "title": "Module"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "core": {
+            "type": "integer",
+            "title": "Core"
+          },
+          "optional": {
+            "type": "integer",
+            "title": "Optional"
+          },
+          "rungs": {
+            "type": "integer",
+            "title": "Rungs"
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "technique",
+          "module",
+          "depth",
+          "core",
+          "optional",
+          "rungs",
+          "size",
+          "gaps"
+        ],
+        "title": "AuthorCardRow",
+        "description": "A card as the grid lists it, without its text, its code or its rungs."
+      },
       "AuthorCards": {
         "properties": {
           "cards": {
             "items": {
-              "$ref": "#/components/schemas/AuthorCard"
+              "$ref": "#/components/schemas/AuthorCardRow"
             },
             "type": "array",
             "title": "Cards"
@@ -2601,22 +2711,6 @@
           "expected"
         ],
         "title": "AuthorCaseWhole"
-      },
-      "AuthorConcepts": {
-        "properties": {
-          "concepts": {
-            "items": {
-              "$ref": "#/components/schemas/Concept"
-            },
-            "type": "array",
-            "title": "Concepts"
-          }
-        },
-        "type": "object",
-        "required": [
-          "concepts"
-        ],
-        "title": "AuthorConcepts"
       },
       "AuthorConfiguration": {
         "properties": {

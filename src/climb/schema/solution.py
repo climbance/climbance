@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import Field, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 from climb.schema.provenance import MachineProvenance
 
@@ -15,6 +15,15 @@ class SolutionRole(StrEnum):
     # the form replaces. `cli/generation/solutions.md` gives what it may never
     # do
     NAIVE = "naive"
+
+
+class SolutionHead(BaseModel):
+    """A solution without its code and provenance, for a reader that keys on
+    its role alone."""
+
+    id: str
+    problem_id: str
+    role: SolutionRole
 
 
 class Solution(MachineProvenance):

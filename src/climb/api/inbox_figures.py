@@ -1,14 +1,16 @@
 """The inbox's figures, read from the store on each load:
 `web-app/pages/author/inbox/README.md`."""
 
+from collections import Counter
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from enum import StrEnum
 
 from pydantic import BaseModel
 from sqlalchemy import Date, cast, func, select
 
-from climb.api.author_content import author_problems
+from climb.api.attention import attention_flags
 from climb.attempt_claims import claimable, standing_attempt_claims
 from climb.cards import CardStore
 from climb.difficulty import standing_correction
@@ -18,11 +20,22 @@ from climb.keylines import KeyLineStore
 from climb.log import AttemptLog, FeedbackLog, RetirementRequestLog
 from climb.log.table import run_faults
 from climb.matches import MatchLog, unsettled
-from climb.ratings import CorrectionLog, RatingLog
-from climb.schema import Client, Problem, ProblemStatus, RetirementReason, RunKind
-from climb.solution_claims import load_problems
+from climb.problems import ProblemStore
+from climb.ratings import CorrectionLog, RatingLog, standing_ratings
+from climb.schema import (
+    Card,
+    Client,
+    DifficultyRating,
+    Problem,
+    ProblemStatus,
+    RetirementReason,
+    RetirementRequest,
+    RunKind,
+)
+from climb.solution_claims.derive import viewed
 from climb.solutions import SolutionLog
 from climb.storage import Database
+from climb.techniques import codes
 
 PERIOD_DAYS = 30
 FEEDBACK_DAYS = 7
@@ -88,18 +101,41 @@ class InboxFigures(BaseModel):
     faults: list[FaultRow]
 
 
+@dataclass(frozen=True)
+class _Corpus:
+    """The corpus reads every waiting figure shares, each made once per load."""
+
+    stored: list[Problem]  # as the store holds them, the generator's label kept
+    problems: list[Problem]  # carrying the view
+    ratings: list[DifficultyRating]
+    cards: list[Card]
+    requests: list[RetirementRequest]
+
+
+def _corpus(root: Database) -> _Corpus:
+    stored = ProblemStore(root).all()
+    ratings = RatingLog(root).ratings()
+    return _Corpus(
+        stored=stored,
+        problems=viewed(root, stored, ratings),
+        ratings=ratings,
+        cards=CardStore(root).all(),
+        requests=RetirementRequestLog(root).all(),
+    )
+
+
 def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures:
     since = now - timedelta(days=PERIOD_DAYS)
-    problems = load_problems(root)
-    by_id = {one.id: one for one in problems}
-    rows = _requests(root, by_id)
+    corpus = _corpus(root)
+    by_id = {one.id: one for one in corpus.problems}
+    rows = _requests(corpus.requests, by_id)
     feedback = list(reversed(FeedbackLog(root).all()))
     recent = now - timedelta(days=FEEDBACK_DAYS)
     fault_days, faults = _faults(root, since)
     return InboxFigures(
         period_days=PERIOD_DAYS,
-        waiting=_waiting(root, author_id, problems),
-        attention=_attention(root, problems),
+        waiting=_waiting(root, author_id, corpus),
+        attention=_attention(corpus),
         waiting_requests=[one for one in rows if by_id[one.problem_id].served],
         answered_requests=[one for one in rows if not by_id[one.problem_id].served],
         feedback=[
@@ -115,23 +151,35 @@ def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures
 
 def waiting_rows(root: Database, author_id: str) -> int:
     """The rows under the inbox's What waits that count something."""
-    problems = load_problems(root)
-    by_id = {one.id: one for one in problems}
-    passes = sum(1 for one in _waiting(root, author_id, problems) if one.count)
+    corpus = _corpus(root)
+    by_id = {one.id: one for one in corpus.problems}
+    passes = sum(1 for one in _waiting(root, author_id, corpus) if one.count)
     return (
         passes
-        + bool(_attention(root, problems))
-        + sum(1 for one in RetirementRequestLog(root).all() if by_id[one.problem_id].served)
+        + bool(_attention(corpus))
+        + sum(1 for one in corpus.requests if by_id[one.problem_id].served)
     )
 
 
-def _attention(root: Database, problems: Sequence[Problem]) -> int:
-    served = {one.id for one in problems if one.served}
-    rows = author_problems(root, problems).problems
-    return sum(1 for one in rows if one.problem_id in served and one.flags)
+def _attention(corpus: _Corpus) -> int:
+    generator = {one.id: one.difficulty for one in corpus.stored}
+    stands = standing_ratings(corpus.ratings)
+    requests = Counter(one.problem_id for one in corpus.requests)
+    return sum(
+        1
+        for one in corpus.problems
+        if one.served
+        and attention_flags(
+            one,
+            generator=generator.get(one.id),
+            rating=stands.get(one.id),
+            requests=requests[one.id],
+            codes=codes(),
+        )
+    )
 
 
-def _requests(root: Database, by_id: dict[str, Problem]) -> list[RequestRow]:
+def _requests(requests: Sequence[RetirementRequest], by_id: dict[str, Problem]) -> list[RequestRow]:
     # newest first
     return [
         RequestRow(
@@ -142,12 +190,12 @@ def _requests(root: Database, by_id: dict[str, Problem]) -> list[RequestRow]:
             note=one.note,
             status=by_id[one.problem_id].status,
         )
-        for one in sorted(RetirementRequestLog(root).all(), key=lambda one: one.created_at)
+        for one in sorted(requests, key=lambda one: one.created_at)
     ][::-1]
 
 
-def _waiting(root: Database, author_id: str, problems: Sequence[Problem]) -> list[WaitingPass]:
-    by_id = {one.id: one for one in problems}
+def _waiting(root: Database, author_id: str, corpus: _Corpus) -> list[WaitingPass]:
+    by_id = {one.id: one for one in corpus.problems}
     log = AttemptLog(root)
     claim = claimable(
         log.attempts(author_id),
@@ -155,22 +203,26 @@ def _waiting(root: Database, author_id: str, problems: Sequence[Problem]) -> lis
         standing_attempt_claims(log.claims(author_id)),
         user_id=author_id,
     )
-    cards = CardStore(root).all()
-    questions = unsettled(cards, problems, SolutionLog(root).solutions(), MatchLog(root).matches())
+    # the user's matches alone: a machine match settles no question
+    questions = unsettled(
+        corpus.cards, corpus.problems, SolutionLog(root).canonicals(), MatchLog(root).by_hand()
+    )
     correction = standing_correction(CorrectionLog(root).all())
     unrated = None
     if correction is not None:
-        rated = {
-            one.problem_id for one in RatingLog(root).all() if one.correction_id == correction.id
-        }
-        unrated = sum(1 for one in problems if one.served and one.id not in rated)
+        rated = {one.problem_id for one in corpus.ratings if one.correction_id == correction.id}
+        unrated = sum(1 for one in corpus.problems if one.served and one.id not in rated)
     return [
         WaitingPass(command=Pass.CLAIM, count=len(claim)),
         # a question is a canonical against one card; the page counts canonicals
         WaitingPass(command=Pass.MATCH, count=len({one.solution.id for one in questions})),
         WaitingPass(command=Pass.DIFFICULTY, count=unrated),
-        WaitingPass(command=Pass.JUDGE, count=len(stale(cards, ItemStore(root).all()))),
-        WaitingPass(command=Pass.FILL, count=len(stale_key_lines(cards, KeyLineStore(root).all()))),
+        # served items alone: a build compares only those
+        WaitingPass(command=Pass.JUDGE, count=len(stale(corpus.cards, ItemStore(root).served()))),
+        WaitingPass(
+            command=Pass.FILL,
+            count=len(stale_key_lines(corpus.cards, KeyLineStore(root).served())),
+        ),
     ]
 
 

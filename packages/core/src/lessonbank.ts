@@ -1,6 +1,7 @@
 import { bankFilter, bankQuery, type BankChip, type BankFilter } from './bank';
-import { subTitle, topicTitle, type Catalog } from './courses';
+import { subTitle, type Catalog } from './courses';
 import type { Lesson } from './graph';
+import type { GridColumn } from './grid';
 import { inGraphOrder, lessonMinutes } from './lessons';
 import type { Course, Question } from './types';
 
@@ -28,20 +29,13 @@ export interface LessonBankRow {
   neededBy: Lesson[];
 }
 
-export interface LessonBankGroup {
-  key: string;
-  heading: string;
-  rows: LessonBankRow[];
-}
-
 export interface LessonBankView {
   course: Course;
   modules: BankChip[];
   topics: BankChip[];
   subs: BankChip[]; // offered once a topic is picked
   filtered: boolean;
-  shown: number; // distinct lessons, though one may sit under several subtopics
-  groups: LessonBankGroup[];
+  rows: LessonBankRow[]; // a lesson once, however many subtopics it teaches in
 }
 
 const lessonsOf = (c: Course) => c.graph?.lessons ?? [];
@@ -50,8 +44,8 @@ const teachesIn = (c: Course, x: Lesson, topic: string | null, sub: string | nul
   x.teaches.some(([s]) => (!topic || topicOf(c, s) === topic) && (!sub || s === sub));
 
 /**
- * One module's lessons under `f`, listed under each subtopic a group they teach
- * sits in, in the module's subtopic order and then graph order.
+ * One module's lessons under `f`, each once, by the first subtopic in the
+ * module's order that a group it teaches sits in, then in graph order.
  */
 export function lessonBankView(catalog: Catalog, f: BankFilter): LessonBankView {
   const course = catalog.courses.find((c) => c.slug === f.module)!;
@@ -77,20 +71,12 @@ export function lessonBankView(catalog: Catalog, f: BankFilter): LessonBankView 
     };
   };
 
-  const groups: LessonBankGroup[] = [];
-  const shown = new Set<string>();
+  const shown = new Map<string, Lesson>();
   for (const t of course.topics) {
     if (f.topic && t.slug !== f.topic) continue;
     for (const sub of t.subs) {
       if (f.sub && sub !== f.sub) continue;
-      const here = all.filter((x) => x.teaches.some(([s]) => s === sub));
-      if (!here.length) continue;
-      for (const x of here) shown.add(x.slug);
-      groups.push({
-        key: `${t.slug}/${sub}`,
-        heading: `${topicTitle(course, t.slug)} · ${subTitle(course, sub)}`,
-        rows: here.map(row),
-      });
+      for (const x of all.filter((y) => y.teaches.some(([s]) => s === sub))) shown.set(x.slug, x);
     }
   }
 
@@ -118,17 +104,20 @@ export function lessonBankView(catalog: Catalog, f: BankFilter): LessonBankView 
         }))
       : [],
     filtered: f.topic !== null || f.sub !== null,
-    shown: shown.size,
-    groups,
+    rows: [...shown.values()].map(row),
   };
 }
 
 /** A lesson's row on this page: the filter kept when the row is in view, else the module alone. */
 export function lessonRowLink(view: LessonBankView, f: BankFilter, slug: string): string {
-  const inView = view.groups.some((g) => g.rows.some((r) => r.x.slug === slug));
+  const inView = view.rows.some((r) => r.x.slug === slug);
   const query = inView ? bankQuery(f) : bankQuery(lessonFilterOf(f.module));
   return `?${query}#${encodeURIComponent(slug)}`;
 }
+
+/** A lesson's dialog on the lessons page, the module alone kept. */
+export const lessonRowOf = (module: string, slug: string) =>
+  `/author/lessons?${bankQuery(lessonFilterOf(module))}#${encodeURIComponent(slug)}`;
 
 /** A question's row on the questions page. */
 export const questionRowLink = (module: string, id: string) =>
@@ -143,9 +132,23 @@ const lessonFilterOf = (module: string): BankFilter => ({
   format: null,
 });
 
-/** What a closed row's second line says it teaches, as `Functions 0, 1 · 24 questions`. */
-export const taughtLine = (taught: Taught[], questions: number) =>
-  `${LESSON_TEACHES} ${taught.map((t) => `${t.title} ${t.levels.join(', ')}`).join('; ')} · ${questions} ${questions === 1 ? 'question' : 'questions'}`;
+/** The groups a lesson teaches, as `Functions 0, 1; Closures 1`. */
+export const taughtLabel = (taught: Taught[]) => taught.map((t) => `${t.title} ${t.levels.join(', ')}`).join('; ');
+
+/** The dialog's line on what a lesson teaches, as `teaches Functions 0, 1 · 6 min`. */
+export const taughtLine = (row: LessonBankRow) =>
+  [`${LESSON_TEACHES} ${taughtLabel(row.taught)}`, lessonMinutesLabel(row.minutes), pretestLabel(row.x.pretest)]
+    .filter(Boolean)
+    .join(' · ');
+
+export const LESSON_COLUMNS: GridColumn<LessonBankRow>[] = [
+  { id: 'slug', header: 'Slug' },
+  { id: 'title', header: 'Title' },
+  { id: 'teaches', header: 'Teaches' },
+  { id: 'minutes', header: 'Minutes', sortBy: (row) => row.minutes, numeric: true },
+  { id: 'pretest', header: 'Pretest' },
+  { id: 'questions', header: 'Questions', sortBy: (row) => row.questions.length, numeric: true },
+];
 
 export const lessonMinutesLabel = (n: number) => (n ? `${n} min` : '');
 export const pretestLabel = (n: number) => `pretest ${n}`;

@@ -1,6 +1,7 @@
 import type { components } from './api/schema';
 import { NEEDS_ATTENTION } from './author';
 import type { BankChip } from './bank';
+import type { GridColumn } from './grid';
 import { DIFFICULTIES } from './listing';
 import { counted } from './screens';
 
@@ -8,6 +9,7 @@ import { counted } from './screens';
 // `web-app/pages/author/problems/`
 
 export type AuthorCard = components['schemas']['AuthorCard'];
+export type AuthorCardRow = components['schemas']['AuthorCardRow'];
 export type AuthorRung = components['schemas']['AuthorRung'];
 export type AuthorProblemRow = components['schemas']['AuthorProblemRow'];
 export type AuthorProblem = components['schemas']['AuthorProblem'];
@@ -60,11 +62,11 @@ export interface CardBankView {
   modules: BankChip[];
   depths: BankChip[];
   filtered: boolean;
-  rows: AuthorCard[];
+  rows: AuthorCardRow[];
 }
 
-const cardHas = (one: AuthorCard, f: CardFilter) =>
-  (f.module === null || one.card.module === f.module) && (f.depth === null || one.depth === f.depth);
+const cardHas = (one: AuthorCardRow, f: CardFilter) =>
+  (f.module === null || one.module === f.module) && (f.depth === null || one.depth === f.depth);
 
 function chips<R, V extends string | number>(
   rows: R[],
@@ -84,9 +86,9 @@ function chips<R, V extends string | number>(
 const distinct = <V>(values: V[]) => [...new Set(values)];
 
 /** Each chip counts what pressing it would leave: the other filter applied, and this value. */
-export function cardBankView(cards: AuthorCard[], f: CardFilter): CardBankView {
+export function cardBankView(cards: AuthorCardRow[], f: CardFilter): CardBankView {
   return {
-    modules: chips(cards, distinct(cards.map((one) => one.card.module)).sort(), f.module, (one, module) =>
+    modules: chips(cards, distinct(cards.map((one) => one.module)).sort(), f.module, (one, module) =>
       cardHas(one, { ...f, module }),
     ),
     depths: chips(
@@ -105,17 +107,26 @@ export function cardPressed(f: CardFilter, field: keyof CardFilter, value: strin
   return { ...f, [field]: f[field] === value ? null : value };
 }
 
-export const cardHeadLine = (one: AuthorCard) => `${one.card.technique} · ${one.card.module} · depth ${one.depth}`;
+export const cardHeadLine = (one: AuthorCardRow) =>
+  [`${one.technique} · ${one.module} · depth ${one.depth}`, gapsLabel(one.gaps)].join(' · ');
 
-/** The templates by core and optional, the rungs against the selector's size, and the gaps. */
-export function cardShapeLine(one: AuthorCard): string {
-  const optional = one.card.templates.filter((t) => t.optional).length;
-  const core = one.card.templates.length - optional;
-  const forms = optional ? `${core} core + ${optional} optional` : `${core} core`;
-  const rungs = `${one.rungs.length} of ${one.card.selector.size} rungs`;
-  const gaps = one.gaps.length ? `${counted(one.gaps.length, 'gap')}: ${one.gaps.join(', ')}` : 'no gap';
-  return [forms, rungs, gaps].join(' · ');
-}
+/** The templates by core and optional, as `2 + 1`. */
+export const formsLabel = (one: AuthorCardRow) => (one.optional ? `${one.core} + ${one.optional}` : `${one.core}`);
+/** The ladder's rungs against the selector's size, as `5/6`. */
+export const rungsLabel = (one: AuthorCardRow) => `${one.rungs}/${one.size}`;
+export const gapsLabel = (gaps: string[]) => (gaps.length ? `${counted(gaps.length, 'gap')}: ${gaps.join(', ')}` : 'no gap');
+
+export const CARD_COLUMNS: GridColumn<AuthorCardRow>[] = [
+  { id: 'slug', header: 'Slug' },
+  { id: 'title', header: 'Title' },
+  { id: 'technique', header: 'Technique' },
+  { id: 'module', header: 'Module' },
+  { id: 'depth', header: 'Depth', sortBy: (one) => one.depth, numeric: true },
+  { id: 'templates', header: 'Templates' },
+  // the share of the ladder filled, so a short ladder of a small selector reads full
+  { id: 'rungs', header: 'Rungs', sortBy: (one) => one.rungs / one.size, numeric: true },
+  { id: 'gaps', header: 'Gaps', sortBy: (one) => one.gaps.length, numeric: true },
+];
 
 const countOf = (n: number, one: string, many: string) => (n ? `${n} ${n === 1 ? one : many}` : `no ${one}`);
 
@@ -153,8 +164,6 @@ const REASONS: RetirementReason[] = ['defective', 'copied'];
 export type ProblemLanded = '1d' | '7d' | '30d';
 const LANDED: ProblemLanded[] = ['1d', '7d', '30d'];
 const LANDED_DAYS: Record<ProblemLanded, number> = { '1d': 1, '7d': 7, '30d': 30 };
-export type ProblemSort = 'newest' | 'score' | 'cases';
-const SORTS: ProblemSort[] = ['newest', 'score', 'cases'];
 // `any` is every flagged row: the inbox links to it
 export type ProblemFlag = 'any' | AttentionFlag;
 const FLAGS: ProblemFlag[] = ['any', 'untagged', 'titled', 'unrated', 'off-band', 'requested'];
@@ -168,7 +177,6 @@ export interface ProblemFilter {
   difficulty: string | null;
   landed: ProblemLanded | null;
   flag: ProblemFlag | null;
-  sort: ProblemSort;
 }
 
 export const PROBLEM_CLEARED: ProblemFilter = {
@@ -179,7 +187,6 @@ export const PROBLEM_CLEARED: ProblemFilter = {
   difficulty: null,
   landed: null,
   flag: null,
-  sort: 'newest',
 };
 
 const among = <V extends string>(values: V[], value: string | null) => values.find((one) => one === value) ?? null;
@@ -195,7 +202,6 @@ export function problemFilter(get: (name: string) => string | null): ProblemFilt
     difficulty: get('difficulty'),
     landed: among(LANDED, get('landed')),
     flag: among(FLAGS, get('flag')),
-    sort: among(SORTS, get('sort')) ?? 'newest',
   };
 }
 
@@ -208,7 +214,6 @@ export function problemQuery(f: ProblemFilter): string {
   if (f.difficulty) q.set('difficulty', f.difficulty);
   if (f.landed) q.set('landed', f.landed);
   if (f.flag) q.set('flag', f.flag);
-  if (f.sort !== 'newest') q.set('sort', f.sort);
   return q.toString();
 }
 
@@ -229,15 +234,7 @@ const problemHas = (one: AuthorProblemRow, f: ProblemFilter, now: number) =>
   landedHas(one, f.landed, now) &&
   flagHas(one, f.flag);
 
-// the API sends the rows newest first; a sort keeps that order among ties
-const sorted = (rows: AuthorProblemRow[], sort: ProblemSort) =>
-  sort === 'score'
-    ? [...rows].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity))
-    : sort === 'cases'
-      ? [...rows].sort((a, b) => b.cases - a.cases)
-      : rows;
-
-export type ProblemMenuField = Exclude<keyof ProblemFilter, 'sort'>;
+export type ProblemMenuField = keyof ProblemFilter;
 
 /** `value` null is the option clearing the filter. */
 export interface MenuOption {
@@ -257,7 +254,6 @@ export interface ProblemMenu {
 
 export const MENU_ANY = 'any';
 export const MENU_SEARCH = 'Search';
-export const MENU_SORT = 'sort';
 const MENU_NAMES: Record<ProblemMenuField, string> = {
   status: 'status',
   reason: 'reason',
@@ -270,7 +266,6 @@ const MENU_NAMES: Record<ProblemMenuField, string> = {
 
 export interface ProblemBankView {
   menus: ProblemMenu[];
-  sorts: MenuOption[];
   filtered: boolean;
   rows: AuthorProblemRow[];
 }
@@ -315,16 +310,15 @@ export function problemBankView(
       menu('landed', LANDED),
       menu('flag', FLAGS),
     ],
-    sorts: SORTS.map((value) => ({ value, label: value, count: kept.length, on: f.sort === value })),
-    filtered: problemQuery({ ...f, sort: 'newest' }) !== '',
-    rows: sorted(kept, f.sort),
+    filtered: problemQuery(f) !== '',
+    // newest first, as the API sends them, until a header is pressed
+    rows: kept,
   };
 }
 
 /** Picking `served` clears the reason, which reads only under `retired`. */
 export function problemPicked(f: ProblemFilter, field: keyof ProblemFilter, value: string | null): ProblemFilter {
   if (field === 'status') return { ...f, status: value as ProblemStatus, reason: value === 'retired' ? f.reason : null };
-  if (field === 'sort') return { ...f, sort: (value as ProblemSort | null) ?? 'newest' };
   return { ...f, [field]: value };
 }
 
@@ -403,6 +397,21 @@ export function siteLabel(one: AuthorProblem['sites'][number]): string {
 export const generatorLabel = (label: string | null | undefined) => `generator ${label ?? 'unlabelled'}`;
 
 // a rung is a served problem, so its row reads under the default status
+export const PROBLEM_COLUMNS: GridColumn<AuthorProblemRow>[] = [
+  { id: 'title', header: 'Title' },
+  { id: 'target', header: 'Target' },
+  { id: 'techniques', header: 'Techniques' },
+  { id: 'score', header: 'Score', sortBy: (one) => one.score ?? null, numeric: true },
+  { id: 'cases', header: 'Cases', sortBy: (one) => one.cases, numeric: true },
+  { id: 'flags', header: 'Flags' },
+  {
+    id: 'landed',
+    header: 'Landed',
+    sortBy: (one) => (one.landed_at ? Date.parse(one.landed_at) : null),
+    numeric: true,
+  },
+];
+
 export const problemRowLink = (id: string) => `/author/problems#${id.slice(0, 8)}`;
 export const templateProblemsLink = (template: string) =>
   `/author/problems?${new URLSearchParams({ template }).toString()}`;

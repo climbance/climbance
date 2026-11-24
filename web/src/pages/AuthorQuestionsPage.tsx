@@ -1,47 +1,53 @@
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 
 import {
   BANK_CLEAR_LABEL,
   BANK_FILTERS,
   BANK_NONE,
   BANK_NONE_MATCH,
-  CLOSE_ALL,
   CONCEPT,
   OF,
-  OPEN_ALL,
+  QUESTION_COLUMNS,
   QUESTIONS_TITLE,
+  TAUGHT_BY,
   bankCleared,
   bankFilter,
   bankPressed,
   bankQuery,
   bankView,
-  codeLength,
   conceptLine,
+  gridQuery,
+  gridSort,
+  gridSorted,
+  lessonRowOf,
   loadSnapshot,
   type BankFilter,
   type BankRow,
+  type BankView,
   type Course,
+  type GridSort,
   type Snapshot,
 } from '@climb/core'
 
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
 import { Chips } from '@/components/Chips'
+import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { Inline } from '@/components/Inline'
 import { Loaded } from '@/components/Loaded'
 import { PageHeader } from '@/components/PageHeader'
+import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Answered } from '@/knowledge/Ask'
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
-import { link, useOpenRows } from '@/lib/openRows'
+import { link } from '@/lib/openRows'
+import { useRowDialog } from '@/lib/rowDialog'
 import { cn } from '@/lib/utils'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
-type Concept = { slug: string; level: number; claim: string; source: string[] }
-
-// one module's questions at once, each as the queue draws it answered:
-// `web-app/pages/author/questions/`. The API's 403 guards the concepts; a
+// one module's questions, each opened as the queue draws it answered:
+// `web-app/pages/author/questions/`. The API's 403 guards the concept; a
 // learner reads the not-found page, as on `/author`
 export function AuthorQuestionsPage() {
   const me = useLoaded((signal) => api.GET('/api/me', { signal }), 'me')
@@ -53,14 +59,6 @@ export function AuthorQuestionsPage() {
   )
   const [search, setSearch] = useSearchParams()
   const filter = catalog ? bankFilter((name) => search.get(name), catalog) : null
-  const author = me.data?.author === true
-  const concepts = useLoaded(
-    (signal) =>
-      author && filter
-        ? api.GET('/api/author/concepts', { params: { query: { module: filter.module } }, signal })
-        : Promise.resolve({ data: { concepts: [] }, error: undefined }),
-    `concepts-${author}-${filter?.module}`,
-  )
   if (me.data && !me.data.author) return <NotFoundPage />
   const state = me.data
     ? loadedFrom(k, catalog ? filter : undefined)
@@ -74,8 +72,10 @@ export function AuthorQuestionsPage() {
           <Bank
             filter={filter!}
             view={bankView(catalog!, filter!)}
-            concepts={concepts.data?.concepts ?? []}
-            go={(next) => setSearch(new URLSearchParams(bankQuery(next)))}
+            sort={gridSort((name) => search.get(name), QUESTION_COLUMNS)}
+            go={(next, sort) =>
+              setSearch(new URLSearchParams(gridQuery(bankQuery(next), sort, QUESTION_COLUMNS)))
+            }
           />
         )}
       </Loaded>
@@ -83,20 +83,33 @@ export function AuthorQuestionsPage() {
   )
 }
 
+const quiet = 'whitespace-nowrap text-muted-foreground'
+
+const questionCells: GridCells<BankRow> = {
+  // the whole slug reads in the dialog's head
+  slug: { cell: (row) => <code>{row.q.id}</code>, className: 'max-w-56 truncate' },
+  subtopic: { cell: (row) => row.subtopic, className: 'max-w-40 truncate text-muted-foreground' },
+  level: { cell: (row) => row.q.level, className: quiet },
+  kind: { cell: (row) => row.q.kind, className: quiet },
+  format: { cell: (row) => row.format, className: quiet },
+  prompt: { cell: (row) => <Inline text={row.first} />, grow: true },
+  code: { cell: (row) => row.lines || '', className: quiet },
+}
+
 function Bank({
   filter,
   view,
-  concepts,
+  sort,
   go,
 }: {
   filter: BankFilter
-  view: ReturnType<typeof bankView>
-  concepts: Concept[]
-  go: (next: BankFilter) => void
+  view: BankView
+  sort: GridSort | null
+  go: (next: BankFilter, sort: GridSort | null) => void
 }) {
-  const bySlug = useMemo(() => new Map(concepts.map((c) => [c.slug, c])), [concepts])
-  const shown = view.groups.flatMap((g) => g.rows.map((row) => row.q.id))
-  const { open, setOpen, flip } = useOpenRows(shown)
+  const shown = gridSorted(view.rows, QUESTION_COLUMNS, sort)
+  const dialog = useRowDialog(shown.map((row) => row.q.id))
+  const opened = shown.find((row) => row.q.id === dialog.opened)
 
   const rows = [
     ['module', view.modules],
@@ -118,7 +131,7 @@ function Bank({
               label={BANK_FILTERS[field]}
               chips={chips}
               counted={field !== 'module'}
-              onPress={(value) => go(bankPressed(filter, field, value))}
+              onPress={(value) => go(bankPressed(filter, field, value), sort)}
             />
           ))}
       </section>
@@ -128,85 +141,84 @@ function Bank({
           title={view.course.title}
           count={view.shown}
           aside={
-            <span className="flex gap-3 text-meta text-muted-foreground">
-              {view.filtered && (
-                <button type="button" className={link} onClick={() => go(bankCleared(filter))}>
-                  {BANK_CLEAR_LABEL}
-                </button>
-              )}
-              <button type="button" className={link} onClick={() => setOpen(new Set(shown))}>
-                {OPEN_ALL}
+            view.filtered && (
+              <button
+                type="button"
+                className={cn(link, 'text-meta text-muted-foreground')}
+                onClick={() => go(bankCleared(filter), sort)}
+              >
+                {BANK_CLEAR_LABEL}
               </button>
-              <button type="button" className={link} onClick={() => setOpen(new Set())}>
-                {CLOSE_ALL}
-              </button>
-            </span>
+            )
           }
         />
-        {view.shown === 0 && <p className="text-meta text-muted-foreground">{BANK_NONE_MATCH}</p>}
-        {view.groups.map((g) => (
-          <section key={g.key} className="space-y-1">
-            <SectionHeading sub title={g.heading} count={g.rows.length} />
-            <ul className="divide-y rounded-xl border bg-card">
-              {g.rows.map((row) => (
-                <Row
-                  key={row.q.id}
-                  row={row}
-                  course={view.course}
-                  concept={bySlug.get(row.q.concept)}
-                  open={open.has(row.q.id)}
-                  onFlip={() => flip(row.q.id)}
-                />
-              ))}
-            </ul>
-          </section>
-        ))}
+        {view.shown === 0 ? (
+          <p className="text-meta text-muted-foreground">{BANK_NONE_MATCH}</p>
+        ) : (
+          <DataGrid
+            columns={QUESTION_COLUMNS}
+            cells={questionCells}
+            rows={shown}
+            rowKey={(row) => row.q.id}
+            marked={dialog.last}
+            onOpen={dialog.open}
+            sort={sort}
+            onSort={(next) => go(filter, next)}
+          />
+        )}
       </section>
+      {opened && (
+        <RowDialog
+          dialog={dialog}
+          title={<code>{opened.q.id}</code>}
+          head={
+            <p className="text-meta text-muted-foreground">
+              {[opened.subtopic, `level ${opened.q.level}`, opened.q.kind, opened.format].join(
+                ' · ',
+              )}
+            </p>
+          }
+        >
+          <Opened key={opened.q.id} row={opened} course={view.course} />
+        </RowDialog>
+      )}
     </div>
   )
 }
 
-function Row(props: {
-  row: BankRow
-  course: Course
-  concept: Concept | undefined
-  open: boolean
-  onFlip: () => void
-}) {
-  const { q, format, first, lines } = props.row
+function Opened({ row, course }: { row: BankRow; course: Course }) {
   return (
-    <li id={q.id} className="scroll-mt-4">
-      <button
-        type="button"
-        aria-expanded={props.open}
-        onClick={props.onFlip}
-        className="flex w-full items-baseline gap-3 px-4 py-2 text-left hover:bg-accent"
-      >
-        <span className="text-muted-foreground">{props.open ? '▾' : '▸'}</span>
-        <code className="shrink-0 text-meta">{q.id}</code>
-        <span className="shrink-0 text-meta text-muted-foreground">
-          {q.level} {q.kind} {format}
-        </span>
-        <span className="min-w-0 flex-1 truncate">
-          <Inline text={first} />
-        </span>
-        <span className="shrink-0 text-meta text-muted-foreground tabular-nums">
-          {codeLength(lines)}
-        </span>
-      </button>
-      {props.open && (
-        <div className="space-y-stack px-4 pb-4">
-          <div className="rounded-xl border p-4">
-            <Answered q={q} course={props.course} />
-          </div>
-          {props.concept && <ConceptLine concept={props.concept} />}
-        </div>
+    <>
+      <div className="rounded-xl border p-4">
+        <Answered q={row.q} course={course} />
+      </div>
+      {row.q.concept && <ConceptLine module={course.slug} slug={row.q.concept} />}
+      {row.lessons.length > 0 && (
+        <p className="flex flex-wrap gap-x-3 text-meta">
+          <span className="text-muted-foreground">{TAUGHT_BY}</span>
+          {row.lessons.map((x) => (
+            <Link key={x.slug} to={lessonRowOf(course.slug, x.slug)} className={link}>
+              {x.title}
+            </Link>
+          ))}
+        </p>
       )}
-    </li>
+    </>
   )
 }
 
-function ConceptLine({ concept }: { concept: Concept }) {
+// one concept, read as its question opens: the snapshot carries none
+function ConceptLine({ module, slug }: { module: string; slug: string }) {
+  const read = useLoaded(
+    (signal) =>
+      api.GET('/api/author/concepts/{module}/{slug}', {
+        params: { path: { module, slug } },
+        signal,
+      }),
+    `concept:${module}:${slug}`,
+  )
+  const concept = read.data
+  if (!concept) return null
   return (
     <div className="space-y-1 text-meta">
       <p>
@@ -218,7 +230,7 @@ function ConceptLine({ concept }: { concept: Concept }) {
       </p>
       <ul className="space-y-0.5">
         {concept.source.map((one) => (
-          <li key={one} className={cn('break-all text-muted-foreground')}>
+          <li key={one} className="break-all text-muted-foreground">
             {/^https?:\/\//.test(one) ? (
               <a href={one} target="_blank" rel="noreferrer" className={link}>
                 {one}

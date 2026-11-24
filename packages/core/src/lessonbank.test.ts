@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { lessonBankView, lessonFilter, lessonRowLink, loadSnapshot, questionRowLink, taughtLine } from './index';
+import { lessonBankView, lessonFilter, lessonRowLink, loadSnapshot, questionRowLink, taughtLabel } from './index';
 
 const q = (id: string, sub: string, level: number) => ({
   id,
@@ -44,26 +44,22 @@ const params = (query: string) => {
 };
 
 describe('lessonBankView', () => {
-  it('lists a lesson under each subtopic it teaches, in graph order', () => {
+  it('lists a lesson once, though it teaches in two subtopics, in graph order', () => {
     const view = lessonBankView(catalog, lessonFilter(params('module=py&level=1'), catalog)!);
     expect(view.filtered).toBe(false);
-    expect(view.shown).toBe(2);
-    expect(view.groups.map((g) => [g.key, g.rows.map((r) => r.x.slug)])).toEqual([
-      ['t/s', ['first', 'later']],
-      ['u/v', ['later']],
-    ]);
-    const later = view.groups[0].rows[1];
+    expect(view.rows.map((r) => r.x.slug)).toEqual(['first', 'later']);
+    const later = view.rows[1];
     expect(later.questions.map((x) => x.id)).toEqual(['s1', 'v0']);
     expect(later.needs.map((x) => x.slug)).toEqual(['first']);
-    expect(view.groups[0].rows[0].neededBy.map((x) => x.slug)).toEqual(['later']);
-    expect(taughtLine(later.taught, 2)).toBe('teaches s 1; v 0 · 2 questions');
+    expect(view.rows[0].neededBy.map((x) => x.slug)).toEqual(['later']);
+    expect(taughtLabel(later.taught)).toBe('s 1; v 0');
   });
 
   it('counts on each topic chip the lessons pressing it would leave', () => {
     const view = lessonBankView(catalog, lessonFilter(params('module=py&topic=u'), catalog)!);
     expect(view.topics.map((c) => c.count)).toEqual([2, 1]);
     expect(view.subs.map((c) => [c.value, c.count])).toEqual([['v', 1]]);
-    expect(view.groups.map((g) => g.key)).toEqual(['u/v']);
+    expect(view.rows.map((r) => r.x.slug)).toEqual(['later']);
   });
 
   it('links a lesson out of view by its module alone, and a question to its row', () => {

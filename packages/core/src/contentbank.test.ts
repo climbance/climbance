@@ -3,18 +3,23 @@ import { describe, expect, it } from 'vitest';
 import {
   cardBankView,
   cardFilter,
-  cardShapeLine,
+  cardHeadLine,
+  formsLabel,
+  rungsLabel,
   configurationLabel,
   difficultyLabel,
   problemCommands,
   flagsLabel,
+  PROBLEM_COLUMNS,
+  gridSort,
+  gridSorted,
   problemBankView,
   problemFilter,
   problemPicked,
   problemQuery,
   problemStatus,
   siteLabel,
-  type AuthorCard,
+  type AuthorCardRow,
   type AuthorProblemRow,
 } from './index';
 
@@ -26,25 +31,18 @@ const template = (slug: string, optional = false) => ({
   code: 'pass',
   optional,
 });
-const card = (slug: string, module: string, depth: number, gaps: string[] = []): AuthorCard =>
-  ({
-    card: {
-      id: slug,
-      slug,
-      technique: slug,
-      module,
-      title: slug,
-      trigger: 't',
-      brief: 'b',
-      templates: [template('a'), template('b', true)],
-      selector: { technique: slug, size: 3 },
-    },
-    depth,
-    counts: [],
-    required_by: [],
-    rungs: [],
-    gaps,
-  }) as unknown as AuthorCard;
+const card = (slug: string, module: string, depth: number, gaps: string[] = []): AuthorCardRow => ({
+  slug,
+  title: slug,
+  technique: slug,
+  module,
+  depth,
+  core: 1,
+  optional: 1,
+  rungs: 0,
+  size: 3,
+  gaps,
+});
 
 const row = (id: string, fields: Partial<AuthorProblemRow>): AuthorProblemRow => ({
   problem_id: id,
@@ -72,7 +70,7 @@ describe('the cards page', () => {
       cardFilter((name) => ({ depth: '0' })[name] ?? null),
     );
 
-    expect(view.rows.map((one) => one.card.slug)).toEqual(['x', 'z']);
+    expect(view.rows.map((one) => one.slug)).toEqual(['x', 'z']);
     expect(view.modules.map((one) => [one.value, one.count])).toEqual([
       ['algo', 1],
       ['py', 1],
@@ -83,8 +81,9 @@ describe('the cards page', () => {
     ]);
   });
 
-  it('names a gap on the closed row', () => {
-    expect(cardShapeLine(cards[1])).toBe('1 core + 1 optional · 0 of 3 rungs · 1 gap: a');
+  it('reads the templates by core and optional, the rungs against the size, and the gaps', () => {
+    expect([formsLabel(cards[1]), rungsLabel(cards[1])]).toEqual(['1 + 1', '0/3']);
+    expect(cardHeadLine(cards[1])).toBe('y · algo · depth 1 · 1 gap: a');
   });
 });
 
@@ -189,8 +188,8 @@ describe('the problems page', () => {
       row('b', { score: null, cases: 9 }),
       row('c', { score: 1500, cases: 3 }),
     ];
-    const by = (sort: string) =>
-      problemBankView(scored, problemFilter((name) => (name === 'sort' ? sort : null))).rows.map(
+    const by = (column: string) =>
+      gridSorted(scored, PROBLEM_COLUMNS, gridSort((name) => (name === 'sort' ? column : null), PROBLEM_COLUMNS)).map(
         (one) => one.problem_id,
       );
 
@@ -228,13 +227,6 @@ describe('the problems page', () => {
     expect(difficultyLabel(1312.4, 'medium', 265.2)).toBe('1312 ± 265 medium');
     expect(difficultyLabel(1200, 'medium', null)).toBe('1200 medium');
     expect(difficultyLabel(null, 'easy', null)).toBe('easy');
-  });
-
-  it('keeps the sort out of the URL until it leaves newest', () => {
-    const score = problemPicked(problemFilter(() => null), 'sort', 'score');
-
-    expect(problemQuery(score)).toBe('sort=score');
-    expect(problemQuery(problemPicked(score, 'sort', 'newest'))).toBe('');
   });
 
   it('copies the retirements of a served problem, and the rating from its standing score', () => {

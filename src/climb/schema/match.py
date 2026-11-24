@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import Field, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 from climb.schema.provenance import MachineProvenance
 
@@ -10,6 +10,17 @@ class MatchSource(StrEnum):
     USER = "user"  # the set a machine run is scored against
     GENERATOR = "generator"  # what it was told to write; an assertion, so no provenance
     CLASSIFIER = "classifier"
+
+
+class MatchHead(BaseModel):
+    """A match's verdict without its provenance, for a reader that only asks
+    which verdict stands."""
+
+    created_at: datetime
+    template_id: str
+    solution_id: str
+    matched: bool
+    source: MatchSource
 
 
 class TemplateMatch(MachineProvenance):

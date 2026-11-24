@@ -1049,6 +1049,7 @@ src = [
     "packages/core/src/bank.*",
     "packages/core/src/lessonbank.*",
     "packages/core/src/contentbank.*",
+    "packages/core/src/grid.*",
 ]
 
 [[element]]
@@ -1167,6 +1168,9 @@ src = [
     "web/src/components/FilterMenu.tsx",
     "web/src/components/AuthorLayout.tsx",
     "web/src/components/FigureTable.tsx",
+    "web/src/components/DataGrid.tsx",
+    "web/src/components/RowDialog.tsx",
+    "web/src/lib/rowDialog.ts",
 ]
 
 [[element]]

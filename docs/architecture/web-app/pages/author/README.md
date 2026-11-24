@@ -46,47 +46,9 @@ author area of their own, on the web alone.
 ## The content browser
 
 The content browser is the four pages listing content: the questions, the
-lessons, the cards and the problems. The author reads a whole bank there at
-once, as a learner would see each item. A question is otherwise reviewed one
-at a time in a queue, where a rule broken across a bank, such as long hand
-traces, goes unseen.
-
-- **The browser's pages are built in this order: the questions, the lessons,
-  the cards, then the problems.** The questions are the largest bank and the
-  one reviewed only in a queue today. The lessons read from the same snapshot,
-  so the lessons page reuses the questions page's filters.
-- **Each page reads the content of the engine serving it.** The questions and
-  the lessons come from the snapshot, which the seed builds from the store.
-  The cards and the problems come from `/api/author/`. `just app-prod` then
-  shows prod's content and `just app` shows the local store's.
-- **Each item is drawn with the component a learner's page draws it with.** A
-  question uses the queue's answered question, a lesson the lesson page's, a
-  card the card page's, and a statement the sitting's. A component of the
-  browser's own could show an item differently from what a learner reads.
-- **The browser only reads.** A change to a question, a lesson or a card is an
-  edit in the content repository, then a seed. A problem is never edited and
-  is retired with `climb problem --retire`. No press writes a log record,
-  so a review leaves the author's own schedule and board unchanged.
-- **A page lists every matching row in one scroll, each row closed.** A
-  closed row reads on one or two lines. The author scans the closed rows for
-  a pattern, then opens the rows that show one.
-- **A press opens a row in place on the questions, the lessons and the cards
-  pages.** An opened question, lesson or card reads in a screen or less, so
-  several open rows read together.
-- **The problems page opens a row in a dialog over the list.** An opened
-  problem holds a statement, up to three solutions and its cases, and runs
-  taller than a window. Opened in place, it would push the next row out of
-  sight. Each opened problem is also a request of its own, so the problems
-  page offers no Open all.
-- **On every browser page, `j` and `k` move to the next and the previous row,
-  and open it.** The anchor in the URL follows the opened row. A review then
-  reads each row in turn without a pointer.
-- **A row's anchor is its slug, or a problem's id prefix**, as `#<slug>`. A
-  link to the anchor opens that row, so the pages link to each other's rows: a
-  lesson to its questions, a card to its rungs.
-- **The filters live in the URL, and each chip counts what pressing it would
-  leave**, as on the problem listing. A filtered view is then a link the author
-  keeps.
+lessons, the cards and the problems. [`browser.md`](browser.md) gives the
+rules the four share: the grid each lists its rows in, and the dialog an
+opened item reads in.
 
 ## Who sees them
 
@@ -146,6 +108,13 @@ traces, goes unseen.
 - **Every figure is computed from the store on each load, and none is stored.**
   The figures are counts and sums over append-only tables, and a stored copy
   would need a rule for when it goes stale.
+- **Each figure's read selects the rows and the columns the figure uses.** On
+  2026-11-24 the inbox took 1.5 s on prod, and the navigation's count as long
+  again, while each read whole tables and validated every record. The same
+  reads took 0.2 s against the local store. Reading the user's template
+  matches alone took 0.8 ms, and the whole table 34 ms. A figure a domain
+  function computes is handed the narrowed records, so its rule keeps one
+  implementation.
 - **A figure is a table before it is a chart.** Which figures earn a chart,
   and over which period, is deferred until the author has read the tables
   over real use.

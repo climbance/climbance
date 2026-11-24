@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 
-from climb.schema import MatchSource, TemplateMatch
+from climb.schema import MatchHead, MatchSource, TemplateMatch
 from climb.standing import latest_by, standing
 
 type Pair = tuple[str, str]
@@ -18,7 +18,7 @@ def latest_machine_matches(matches: Iterable[TemplateMatch]) -> dict[Pair, Templ
     )
 
 
-def standing_matches(matches: Iterable[TemplateMatch]) -> dict[Pair, TemplateMatch]:
+def standing_matches[M: TemplateMatch | MatchHead](matches: Iterable[M]) -> dict[Pair, M]:
     """The verdict that stands on each pair, keyed by template and solution."""
     return standing(
         matches,

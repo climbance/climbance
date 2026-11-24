@@ -59,7 +59,7 @@ describe('bankView', () => {
   it('lists every output question, each chip counting what pressing it would leave', () => {
     const f = bankFilter(params('module=algo&kind=output'), catalog)!;
     const view = bankView(catalog, f);
-    expect(view.groups.flatMap((g) => g.rows.map((row) => row.q.id))).toEqual(['early', 'late', 'other']);
+    expect(view.rows.map((row) => row.q.id)).toEqual(['early', 'late', 'other']);
     expect(view.kinds.map((chip) => [chip.value, chip.count, chip.on])).toEqual([
       ['output', 3, true],
       ['principle', 1, false],
@@ -67,9 +67,9 @@ describe('bankView', () => {
     expect(view.formats.map((chip) => chip.count)).toEqual([2, 1, 0]);
   });
 
-  it('reads a closed row: the first line of the prompt and the code in lines', () => {
+  it('reads a row: the first line of the prompt and the code in lines', () => {
     const f = bankFilter(params('module=algo&level=2'), catalog)!;
-    const [row] = bankView(catalog, f).groups[0].rows;
+    const [row] = bankView(catalog, f).rows;
     expect([row.first, row.lines]).toEqual(['late', 2]);
   });
 

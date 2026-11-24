@@ -4,7 +4,14 @@ from collections.abc import Iterable
 
 from climb.problems.store import ProblemStore
 from climb.ratings import RatingLog, with_standing_difficulty
-from climb.schema import Problem, Solution, SolutionClaim, SolutionRole
+from climb.schema import (
+    DifficultyRating,
+    Problem,
+    Solution,
+    SolutionClaim,
+    SolutionHead,
+    SolutionRole,
+)
 from climb.solution_claims.standing import standing_solution_claims
 from climb.solution_claims.store import SolutionClaimLog
 from climb.solutions.store import SolutionLog
@@ -14,7 +21,7 @@ from climb.techniques import with_ancestors
 
 def derive(
     problems: Iterable[Problem],
-    solutions: Iterable[Solution],
+    solutions: Iterable[Solution | SolutionHead],
     claims: Iterable[SolutionClaim],
 ) -> dict[str, list[str]]:
     """The techniques each problem's canonicals were read as, keyed by problem.
@@ -38,7 +45,7 @@ def derive(
 
 def with_techniques(
     problems: Iterable[Problem],
-    solutions: Iterable[Solution],
+    solutions: Iterable[Solution | SolutionHead],
     claims: Iterable[SolutionClaim],
 ) -> list[Problem]:
     """Each problem carrying the view rather than what its record stores."""
@@ -64,7 +71,16 @@ def load_problem(root: Database, problem_id: str) -> Problem | None:
 
 
 def load_problems(root: Database) -> list[Problem]:
-    """Every stored problem carrying the view. The store alone returns the
-    record: no techniques, and the generator's label."""
-    rated = with_standing_difficulty(ProblemStore(root).all(), RatingLog(root).ratings())
-    return with_techniques(rated, SolutionLog(root).solutions(), SolutionClaimLog(root).claims())
+    """Every stored problem with its techniques and its standing difficulty."""
+    return viewed(root, ProblemStore(root).all(), RatingLog(root).ratings())
+
+
+def viewed(
+    root: Database, stored: Iterable[Problem], ratings: Iterable[DifficultyRating]
+) -> list[Problem]:
+    """Stored problems carrying the view, for a reader that holds the records
+    and the ratings for other figures too."""
+    rated = with_standing_difficulty(stored, ratings)
+    return with_techniques(
+        rated, SolutionLog(root).heads(SolutionRole.CANONICAL), SolutionClaimLog(root).claims()
+    )

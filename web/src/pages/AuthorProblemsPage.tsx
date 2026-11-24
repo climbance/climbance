@@ -1,39 +1,40 @@
-import { ChevronLeft, ChevronRight, Copy } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import { Copy } from 'lucide-react'
+import { useState } from 'react'
+import { Link, useSearchParams } from 'react-router'
 
 import {
   BANK_CLEAR_LABEL,
   CASES,
   COPY,
-  MENU_SORT,
   DIFFICULTY,
   NO_CASE,
   NO_RATING,
-  NEXT_PROBLEM,
   NO_SITE,
   NO_SOLUTION,
   OF,
-  PREVIOUS_PROBLEM,
   PROBLEM_BANK_NONE,
   PROBLEM_BANK_NONE_MATCH,
   PROBLEM_BANK_TITLE,
   PROBLEM_CLEARED,
+  PROBLEM_COLUMNS,
   argsText,
   caseNote,
   counted,
   configurationLabel,
   cutLine,
+  dateLabel,
   difficultyLabel,
   expectedText,
   flagsLabel,
   generatorLabel,
+  gridQuery,
+  gridSort,
+  gridSorted,
   problemBankView,
   problemCommands,
   problemFilter,
   problemPicked,
   problemQuery,
-  positionLabel,
   problemStatus,
   ratingLabel,
   shortId,
@@ -44,21 +45,23 @@ import {
   techniquesLabel,
   type AuthorProblem,
   type AuthorProblemRow,
+  type GridSort,
   type ProblemFilter,
 } from '@climb/core'
 
 import { api } from '@/api/client'
 import { useLoaded } from '@/api/useLoaded'
+import { DataGrid, type GridCells } from '@/components/DataGrid'
 import { FilterMenu } from '@/components/FilterMenu'
 import { Loaded } from '@/components/Loaded'
 import { Markdown } from '@/components/Markdown'
 import { PageHeader } from '@/components/PageHeader'
 import { PlainCode, PythonCode } from '@/components/PythonCode'
+import { RowDialog } from '@/components/RowDialog'
 import { SectionHeading } from '@/components/SectionHeading'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { link } from '@/lib/openRows'
-import { stepKey, useStepKeys } from '@/lib/stepRows'
+import { useRowDialog } from '@/lib/rowDialog'
 import { cn } from '@/lib/utils'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -86,7 +89,10 @@ export function AuthorProblemsPage() {
           <Shelf
             rows={read.problems}
             filter={problemFilter((name) => search.get(name))}
-            go={(next) => setSearch(new URLSearchParams(problemQuery(next)))}
+            sort={gridSort((name) => search.get(name), PROBLEM_COLUMNS)}
+            go={(next, sort) =>
+              setSearch(new URLSearchParams(gridQuery(problemQuery(next), sort, PROBLEM_COLUMNS)))
+            }
           />
         )}
       </Loaded>
@@ -94,44 +100,40 @@ export function AuthorProblemsPage() {
   )
 }
 
+const problemCells: GridCells<AuthorProblemRow> = {
+  title: { cell: (one) => one.title, className: 'text-body', grow: true },
+  target: { cell: targetLabel, className: 'max-w-32 truncate text-muted-foreground' },
+  techniques: { cell: techniquesLabel, className: 'max-w-32 truncate text-muted-foreground' },
+  score: {
+    // the band reads in the difficulty filter; an unrated row names its label
+    cell: (one) =>
+      difficultyLabel(one.score, one.score == null ? one.difficulty : null, one.deviation),
+    className: 'whitespace-nowrap text-muted-foreground',
+  },
+  cases: { cell: (one) => one.cases, className: 'text-muted-foreground' },
+  // a retired row names its reason in the flags' column
+  flags: { cell: flagsLabel, className: 'max-w-28 truncate' },
+  landed: {
+    cell: (one) => (one.landed_at ? dateLabel(one.landed_at) : ''),
+    className: 'text-muted-foreground',
+  },
+}
+
 function Shelf({
   rows,
   filter,
+  sort,
   go,
 }: {
   rows: AuthorProblemRow[]
   filter: ProblemFilter
-  go: (next: ProblemFilter) => void
+  sort: GridSort | null
+  go: (next: ProblemFilter, sort: GridSort | null) => void
 }) {
   const view = problemBankView(rows, filter)
-  const location = useLocation()
-  const navigate = useNavigate()
-  const anchor = decodeURIComponent(location.hash.slice(1))
-  const keys = view.rows.map((one) => shortId(one.problem_id))
-  const at = keys.indexOf(anchor)
-  const opened = at < 0 ? undefined : view.rows[at]
-  // the row last opened stays marked once the dialog closes, and a step resumes from it
-  const [last, setLast] = useState<string | null>(opened ? anchor : null)
-  if (opened && last !== anchor) setLast(anchor)
-  const open = (key: string) => navigate({ search: location.search, hash: key }, { replace: true })
-  const close = () => {
-    navigate({ search: location.search, hash: '' }, { replace: true })
-    // the list scrolled under the dialog only on arrival, so the row is brought back into view
-    if (last)
-      requestAnimationFrame(() =>
-        document.getElementById(last)?.scrollIntoView({ block: 'nearest' }),
-      )
-  }
-  const step = (by: 1 | -1) => {
-    const next = stepKey(keys, opened ? anchor : last, by)
-    if (next !== undefined) open(next)
-  }
-  useStepKeys(step)
-  // a link to `#<id>` scrolls to its row on arrival
-  useEffect(() => {
-    if (anchor) document.getElementById(anchor)?.scrollIntoView({ block: 'center' })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const shown = gridSorted(view.rows, PROBLEM_COLUMNS, sort)
+  const dialog = useRowDialog(shown.map((one) => shortId(one.problem_id)))
+  const opened = shown.find((one) => shortId(one.problem_id) === dialog.opened)
   return (
     <div className="space-y-section">
       <div className="flex flex-wrap gap-2">
@@ -142,130 +144,53 @@ function Shelf({
             options={menu.options}
             counted
             search={menu.search}
-            onPick={(value) => go(problemPicked(filter, menu.field, value))}
+            onPick={(value) => go(problemPicked(filter, menu.field, value), sort)}
           />
         ))}
       </div>
       <section className="space-y-stack">
         <SectionHeading
           title={PROBLEM_BANK_TITLE}
-          count={view.rows.length}
+          count={shown.length}
           aside={
-            <span className="flex items-baseline gap-3 text-meta text-muted-foreground">
-              {view.filtered && (
-                <button
-                  type="button"
-                  className={link}
-                  onClick={() => go({ ...PROBLEM_CLEARED, sort: filter.sort })}
-                >
-                  {BANK_CLEAR_LABEL}
-                </button>
-              )}
-              {/* a sort leaves every row, so its options count nothing */}
-              <FilterMenu
-                label={`${MENU_SORT}: ${filter.sort}`}
-                options={view.sorts}
-                counted={false}
-                onPick={(value) => go(problemPicked(filter, 'sort', value))}
-              />
-            </span>
+            view.filtered && (
+              <button
+                type="button"
+                className={cn(link, 'text-meta text-muted-foreground')}
+                onClick={() => go(PROBLEM_CLEARED, sort)}
+              >
+                {BANK_CLEAR_LABEL}
+              </button>
+            )
           }
         />
-        {view.rows.length === 0 ? (
+        {shown.length === 0 ? (
           <p className="text-meta text-muted-foreground">{PROBLEM_BANK_NONE_MATCH}</p>
         ) : (
-          <ul className="divide-y rounded-xl border bg-card">
-            {view.rows.map((one) => (
-              <Row
-                key={one.problem_id}
-                one={one}
-                marked={shortId(one.problem_id) === last}
-                onPress={() => open(shortId(one.problem_id))}
-              />
-            ))}
-          </ul>
+          <DataGrid
+            columns={PROBLEM_COLUMNS}
+            cells={problemCells}
+            rows={shown}
+            rowKey={(one) => shortId(one.problem_id)}
+            marked={dialog.last}
+            onOpen={dialog.open}
+            sort={sort}
+            onSort={(next) => go(filter, next)}
+          />
         )}
       </section>
-      <Dialog open={opened !== undefined} onOpenChange={(now) => !now && close()}>
-        {opened && (
-          <DialogContent
-            // j and k step inside this dialog: `lib/stepRows.ts`
-            data-steps
-            aria-describedby={undefined}
-            // the dialog itself takes the focus, so no step button opens ringed
-            onOpenAutoFocus={(event) => {
-              event.preventDefault()
-              ;(event.currentTarget as HTMLElement).focus()
-            }}
-            className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none p-0 sm:max-w-none lg:h-[calc(100dvh-3rem)] lg:w-[calc(100vw-3rem)] lg:rounded-xl"
-          >
-            <Opened
-              key={opened.problem_id}
-              one={opened}
-              position={positionLabel(at + 1, keys.length)}
-              step={step}
-            />
-          </DialogContent>
-        )}
-      </Dialog>
+      {opened && <Opened key={opened.problem_id} one={opened} dialog={dialog} />}
     </div>
-  )
-}
-
-function Row({
-  one,
-  marked,
-  onPress,
-}: {
-  one: AuthorProblemRow
-  marked: boolean
-  onPress: () => void
-}) {
-  return (
-    <li id={shortId(one.problem_id)} className="scroll-mt-4">
-      <button
-        type="button"
-        aria-haspopup="dialog"
-        onClick={onPress}
-        className={cn(
-          'flex w-full items-baseline gap-3 px-4 py-2 text-left hover:bg-accent',
-          marked && 'bg-accent',
-        )}
-      >
-        {/* narrow, the break puts the techniques, the cases and the flags on a second line, and the target too on a phone */}
-        <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 lg:flex-nowrap">
-          <span className="order-1 min-w-32 flex-1 truncate">{one.title}</span>
-          <span className="order-4 shrink-0 text-meta text-muted-foreground sm:order-2">
-            {targetLabel(one)}
-          </span>
-          <span className="order-3 shrink-0 text-meta text-muted-foreground tabular-nums lg:order-4">
-            {difficultyLabel(one.score, one.difficulty, one.deviation)}
-          </span>
-          <span className="order-3 basis-full lg:hidden" />
-          <span className="order-4 min-w-0 truncate text-meta text-muted-foreground lg:order-3 lg:max-w-xs">
-            {techniquesLabel(one)}
-          </span>
-          <span className="order-5 shrink-0 text-meta text-muted-foreground tabular-nums">
-            {counted(one.cases, 'case')}
-          </span>
-          {flagsLabel(one) && (
-            <span className="order-6 ml-auto shrink-0 text-meta lg:ml-0">{flagsLabel(one)}</span>
-          )}
-        </span>
-      </button>
-    </li>
   )
 }
 
 // a case may weigh up to the ceiling, so an opened problem is read alone
 function Opened({
   one,
-  position,
-  step,
+  dialog,
 }: {
   one: AuthorProblemRow
-  position: string
-  step: (by: 1 | -1) => void
+  dialog: ReturnType<typeof useRowDialog>
 }) {
   const read = useLoaded(
     (signal) =>
@@ -276,85 +201,64 @@ function Opened({
     `author-problem:${one.problem_id}`,
   )
   return (
-    <>
-      <header className="space-y-1 border-b px-5 py-3 pr-12">
-        <div className="flex items-baseline gap-3">
-          <span className="flex shrink-0 items-baseline gap-1 text-meta text-muted-foreground">
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              aria-label={PREVIOUS_PROBLEM}
-              onClick={() => step(-1)}
+    <RowDialog
+      dialog={dialog}
+      wide
+      title={one.title}
+      head={
+        <>
+          <p className="flex flex-wrap gap-x-3 text-meta">
+            <button
+              type="button"
+              aria-label={`${COPY} ${one.problem_id}`}
+              onClick={() => navigator.clipboard.writeText(one.problem_id)}
+              className="inline-flex items-center gap-1 hover:bg-accent"
             >
-              <ChevronLeft />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              aria-label={NEXT_PROBLEM}
-              onClick={() => step(1)}
-            >
-              <ChevronRight />
-            </Button>
-            <span className="tabular-nums">{position}</span>
-          </span>
-          <DialogTitle className="min-w-0 truncate text-heading">{one.title}</DialogTitle>
-        </div>
-        <p className="flex flex-wrap gap-x-3 text-meta">
-          <button
-            type="button"
-            aria-label={`${COPY} ${one.problem_id}`}
-            onClick={() => navigator.clipboard.writeText(one.problem_id)}
-            className="inline-flex items-center gap-1 hover:bg-accent"
-          >
-            <code>{shortId(one.problem_id)}</code>
-            <Copy className="size-3" />
-          </button>
-          <span className="text-muted-foreground">{problemStatus(one)}</span>
-          <span className="text-muted-foreground">
-            {[targetLabel(one), techniquesLabel(one)].filter(Boolean).join(' · ')}
-          </span>
-          <span className="text-muted-foreground tabular-nums">
-            {difficultyLabel(one.score, one.difficulty, one.deviation)} ·{' '}
-            {counted(one.cases, 'case')}
-          </span>
-          {flagsLabel(one) && <span>{flagsLabel(one)}</span>}
-          {one.requests > 0 && (
-            <Link to="/author#requests" className={link}>
-              {counted(one.requests, 'retirement request')}
-            </Link>
-          )}
-        </p>
-        {read.data && (
-          <p className="text-meta text-muted-foreground">
-            {configurationLabel(read.data.written_by)}
+              <code>{shortId(one.problem_id)}</code>
+              <Copy className="size-3" />
+            </button>
+            <span className="text-muted-foreground">{problemStatus(one)}</span>
+            <span className="text-muted-foreground">
+              {[targetLabel(one), techniquesLabel(one)].filter(Boolean).join(' · ')}
+            </span>
+            <span className="text-muted-foreground tabular-nums">
+              {difficultyLabel(one.score, one.difficulty, one.deviation)} ·{' '}
+              {counted(one.cases, 'case')}
+            </span>
+            {flagsLabel(one) && <span>{flagsLabel(one)}</span>}
+            {one.requests > 0 && (
+              <Link to="/author#requests" className={link}>
+                {counted(one.requests, 'retirement request')}
+              </Link>
+            )}
           </p>
-        )}
-      </header>
-      <div className="min-h-0 flex-1 overflow-y-auto lg:overflow-hidden">
-        <Loaded of={OF.author} state={read} blankWhen={() => false}>
-          {(problem) => <Problem problem={problem} />}
-        </Loaded>
-      </div>
-      <footer className="flex flex-wrap gap-2 border-t px-5 py-3">
-        {problemCommands(one).map((command) => (
-          <Button
-            key={command.label}
-            variant="outline"
-            size="xs"
-            title={command.command}
-            onClick={() => navigator.clipboard.writeText(command.command)}
-          >
-            <Copy />
-            {command.label}
-          </Button>
-        ))}
-      </footer>
-    </>
+          {read.data && (
+            <p className="text-meta text-muted-foreground">
+              {configurationLabel(read.data.written_by)}
+            </p>
+          )}
+        </>
+      }
+      foot={problemCommands(one).map((command) => (
+        <Button
+          key={command.label}
+          variant="outline"
+          size="xs"
+          title={command.command}
+          onClick={() => navigator.clipboard.writeText(command.command)}
+        >
+          <Copy />
+          {command.label}
+        </Button>
+      ))}
+    >
+      <Loaded of={OF.author} state={read} blankWhen={() => false}>
+        {(problem) => <Problem problem={problem} />}
+      </Loaded>
+    </RowDialog>
   )
 }
 
-// two columns, each scrolling on its own, in a wide window; stacked below 64rem
 function Problem({ problem }: { problem: AuthorProblem }) {
   return (
     <div className="lg:grid lg:h-full lg:grid-cols-2">

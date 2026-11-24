@@ -59,7 +59,7 @@ from climb.schema.knowledge import (
     Subtopic,
     Topic,
 )
-from climb.schema.match import MatchSource, TemplateMatch
+from climb.schema.match import MatchHead, MatchSource, TemplateMatch
 from climb.schema.outcome import CallSite, Gate, SiteOutcome
 from climb.schema.prediction import Act, Arm, Prediction, Rank
 from climb.schema.problem import (
@@ -76,7 +76,7 @@ from climb.schema.retirement_request import RetirementRequest
 from climb.schema.run_fault import RunFault, RunKind
 from climb.schema.seed import CardSeed, TemplateSeed
 from climb.schema.sitting import Pause, Sitting
-from climb.schema.solution import Solution, SolutionRole
+from climb.schema.solution import Solution, SolutionHead, SolutionRole
 from climb.schema.solution_claim import SolutionClaim
 from climb.schema.technique import Kind, Technique
 from climb.schema.trial import Trial
@@ -138,6 +138,7 @@ __all__ = [
     "LessonMark",
     "LimitRaise",
     "MachineProvenance",
+    "MatchHead",
     "MatchSource",
     "Measure",
     "Module",
@@ -171,6 +172,7 @@ __all__ = [
     "Sitting",
     "Solution",
     "SolutionClaim",
+    "SolutionHead",
     "SolutionRole",
     "Stint",
     "StintMode",

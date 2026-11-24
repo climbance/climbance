@@ -1,5 +1,7 @@
 import { answerResult, gradeResult } from './answer';
-import { LETTERS, levelName, subTitle, topicTitle, type Catalog } from './courses';
+import { LETTERS, levelName, subTitle, type Catalog } from './courses';
+import type { Lesson } from './graph';
+import type { GridColumn } from './grid';
 import { block } from './reply';
 import type { AnswerRow, Result } from './result';
 import type { Course, Format, Question } from './types';
@@ -83,18 +85,14 @@ export interface BankChip {
   on: boolean;
 }
 
-/** A closed row: what the author scans a bank by. */
+/** A row of the grid: what the author scans a bank by. */
 export interface BankRow {
   q: Question;
+  subtopic: string; // the subtopic's title
   format: BankFormat;
   first: string; // the prompt's first line
   lines: number; // the code's length, 0 where the question carries none
-}
-
-export interface BankGroup {
-  key: string;
-  heading: string;
-  rows: BankRow[];
+  lessons: Lesson[]; // those teaching its group
 }
 
 export interface BankView {
@@ -107,7 +105,7 @@ export interface BankView {
   formats: BankChip[];
   filtered: boolean;
   shown: number;
-  groups: BankGroup[];
+  rows: BankRow[];
 }
 
 const matches = (q: Question, f: BankFilter, skip?: Field) =>
@@ -120,6 +118,7 @@ const matches = (q: Question, f: BankFilter, skip?: Field) =>
 /**
  * One module's bank under `f`. Each chip counts what pressing it would leave,
  * and the rows read by topic, subtopic, level, then the question's position.
+ * The snapshot lists a module's questions by topic and subtopic already.
  */
 export function bankView(catalog: Catalog, f: BankFilter): BankView {
   const course = catalog.courses.find((c) => c.slug === f.module)!;
@@ -137,18 +136,11 @@ export function bankView(catalog: Catalog, f: BankFilter): BankView {
   const heldLevels = [...new Set(bank.map((q) => q.level))].sort((a, b) => a - b);
 
   const shown = bank.filter((q) => matches(q, f));
-  const groups: BankGroup[] = [];
-  for (const q of shown) {
-    const key = `${q.topic}/${q.sub}`;
-    let group = groups.find((g) => g.key === key);
-    if (!group) {
-      group = { key, heading: `${topicTitle(course, q.topic)} · ${subTitle(course, q.sub)}`, rows: [] };
-      groups.push(group);
-    }
-    group.rows.push(bankRow(q));
-  }
+  const subs = [...new Set(shown.map((q) => `${q.topic}/${q.sub}`))];
   // sorts are stable, so a level keeps its questions' positions
-  for (const g of groups) g.rows.sort((a, b) => a.q.level - b.q.level);
+  const rows = [...shown]
+    .sort((a, b) => subs.indexOf(`${a.topic}/${a.sub}`) - subs.indexOf(`${b.topic}/${b.sub}`) || a.level - b.level)
+    .map((q) => bankRow(q, course));
 
   return {
     course,
@@ -187,19 +179,31 @@ export function bankView(catalog: Catalog, f: BankFilter): BankView {
     ),
     filtered: Object.values({ ...f, module: null }).some((v) => v !== null),
     shown: shown.length,
-    groups,
+    rows,
   };
 }
 
-function bankRow(q: Question): BankRow {
+function bankRow(q: Question, course: Course): BankRow {
   const code = q.code.replace(/\n+$/, '');
   return {
     q,
+    subtopic: subTitle(course, q.sub),
     format: bankFormat(q.format),
     first: block(q.prompt).split('\n')[0],
     lines: code ? code.split('\n').length : 0,
+    lessons: (course.graph?.lessons ?? []).filter((x) => x.teaches.some(([s, l]) => s === q.sub && l === q.level)),
   };
 }
+
+export const QUESTION_COLUMNS: GridColumn<BankRow>[] = [
+  { id: 'slug', header: 'Slug' },
+  { id: 'subtopic', header: 'Subtopic' },
+  { id: 'level', header: 'Level', sortBy: (row) => row.q.level, numeric: true },
+  { id: 'kind', header: 'Kind', sortBy: (row) => row.q.kind },
+  { id: 'format', header: 'Format', sortBy: (row) => row.format },
+  { id: 'prompt', header: 'Prompt' },
+  { id: 'code', header: 'Code', sortBy: (row) => row.lines, numeric: true },
+];
 
 export const codeLength = (n: number) => (n ? `${n} ${n === 1 ? 'line' : 'lines'}` : '');
 
@@ -254,8 +258,6 @@ export const QUESTIONS_TITLE = 'Questions';
 export const BANK_NONE = 'No module is seeded.';
 export const BANK_NONE_MATCH = 'No question matches these filters.';
 export const BANK_CLEAR_LABEL = 'Clear';
-export const OPEN_ALL = 'Open all';
-export const CLOSE_ALL = 'Close all';
 export const CONCEPT = 'Concept';
 export const TAUGHT_BY = 'Taught by';
 export const BANK_FILTERS = { module: 'Module', topic: 'Topic', sub: 'Subtopic', level: 'Level', kind: 'Kind', format: 'Format' };

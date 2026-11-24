@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import func, select
 
-from climb.schema import Solution, SolutionRole
+from climb.schema import Solution, SolutionHead, SolutionRole
 from climb.solutions.table import solutions
 from climb.storage import Database, Log
 
@@ -15,6 +15,19 @@ class SolutionLog(Log[Solution]):
 
     def solutions(self) -> list[Solution]:
         return self.all()
+
+    def heads(self, role: SolutionRole | None = None) -> list[SolutionHead]:
+        query = select(solutions.c.id, solutions.c.problem_id, solutions.c.role)
+        if role is not None:
+            query = query.where(solutions.c.role == role)
+        with self.root.connect() as conn:
+            return [
+                SolutionHead(id=id, problem_id=problem_id, role=role)
+                for id, problem_id, role in conn.execute(query.order_by(solutions.c.appended))
+            ]
+
+    def canonicals(self) -> list[Solution]:
+        return self.where(solutions.c.role == SolutionRole.CANONICAL)
 
     def landed(self) -> dict[str, datetime]:
         """Each problem's first `created_at`, which landing writes."""

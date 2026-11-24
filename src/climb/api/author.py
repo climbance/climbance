@@ -9,10 +9,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
 from climb.api.author_content import (
+    AuthorCard,
     AuthorCards,
     AuthorCaseWhole,
     AuthorProblem,
     AuthorProblems,
+    author_card,
     author_cards,
     author_case,
     author_problem,
@@ -49,10 +51,6 @@ class AuthorArea(BaseModel):
     waiting: int
 
 
-class AuthorConcepts(BaseModel):
-    concepts: list[Concept]
-
-
 @router.get("")
 def area(root: Root, user_id: Annotated[str, Depends(author_id)]) -> AuthorArea:
     return AuthorArea(groups=GROUPS, waiting=waiting_rows(root, user_id))
@@ -86,14 +84,25 @@ def inbox(root: Root, user_id: Annotated[str, Depends(author_id)]) -> InboxFigur
     return inbox_figures(root, user_id, now=datetime.now(UTC))
 
 
-@router.get("/concepts")
-def concepts(root: Root, module: str) -> AuthorConcepts:
-    return AuthorConcepts(concepts=seeded_concepts(module, root=root))
+@router.get("/concepts/{module}/{slug}")
+def concept(root: Root, module: str, slug: str) -> Concept:
+    found = seeded_concepts(module, root=root, slug=slug)
+    if not found:
+        raise HTTPException(status_code=404, detail=f"no concept {slug} in {module}")
+    return found[0]
 
 
 @router.get("/cards")
 def cards(root: Root) -> AuthorCards:
     return author_cards(root)
+
+
+@router.get("/cards/{slug}")
+def card(root: Root, slug: str) -> AuthorCard:
+    found = author_card(root, slug)
+    if found is None:
+        raise HTTPException(status_code=404, detail=f"no card {slug}")
+    return found
 
 
 @router.get("/problems")

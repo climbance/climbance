@@ -127,14 +127,14 @@ def test_the_generation_page_reads_an_empty_store(database):
     assert read["stops"] == [] and read["drafts"] == []
 
 
-def test_the_concepts_route_reads_one_module_s_concepts(database, tmp_path):
+def test_the_concept_route_reads_one_concept(database, tmp_path):
     """The hosted engine holds no `content/` to read a concept from."""
     base = with_concepts(authored(tmp_path), "list-mutable")
     seed_module(read_module(base), root=database)
     client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
-    read = client.get("/api/author/concepts", params={"module": "python"}).json()
+    read = client.get("/api/author/concepts/python/list-mutable").json()
 
-    assert [c["claim"] for c in read["concepts"]] == ["A list is mutated through its references."]
-    assert client.get("/api/author/concepts", params={"module": "algo"}).json()["concepts"] == []
+    assert read["claim"] == "A list is mutated through its references."
+    assert client.get("/api/author/concepts/algo/list-mutable").status_code == 404

@@ -5,7 +5,7 @@ from helpers import PROVENANCE, T0, authoring, seed_problem
 from test_api_reads import a_card
 from test_difficulty_judge import a_draw, anchored
 
-from climb.api.author_content import author_cards, author_problems
+from climb.api.author_content import author_card, author_problems
 from climb.cards import CardStore
 from climb.cases import CaseLog
 from climb.difficulty import DRAWS, correct, rating
@@ -45,7 +45,7 @@ def matched(template_id: str, solution_id: str) -> TemplateMatch:
 
 
 def test_the_cards_read_in_the_graph_s_order_with_their_ladders(database, author):
-    """A required card reads first, and a rung names the forms it covers."""
+    """A required card reads first, and a row counts its rungs and gaps."""
     root = a_card("two-pointers", "two-pointers")
     above = a_card("sliding-window", "sliding-window").model_copy(
         update={"requires": [Requirement(card="two-pointers", template="core", used_by="core")]}
@@ -56,14 +56,29 @@ def test_the_cards_read_in_the_graph_s_order_with_their_ladders(database, author
 
     cards = author.get("/api/author/cards").json()["cards"]
 
-    assert [one["card"]["slug"] for one in cards] == ["two-pointers", "sliding-window"]
-    assert cards[0]["required_by"] == [
+    assert [one["slug"] for one in cards] == ["two-pointers", "sliding-window"]
+    assert [(one["rungs"], one["gaps"]) for one in cards] == [(1, []), (0, ["core"])]
+
+
+def test_an_opened_card_reads_its_edges_and_its_ladder(database, author):
+    """A rung names the forms it covers, and a requiring card its edge."""
+    root = a_card("two-pointers", "two-pointers")
+    above = a_card("sliding-window", "sliding-window").model_copy(
+        update={"requires": [Requirement(card="two-pointers", template="core", used_by="core")]}
+    )
+    CardStore(database).put_all([above, root])
+    seed_problem(database, id="p1", techniques=["two-pointers"], difficulty="easy")
+    MatchLog(database).append(matched("t-two-pointers", "p1-canonical"))
+
+    card = author.get("/api/author/cards/two-pointers").json()
+
+    assert card["required_by"] == [
         {"card": "sliding-window", "template": "core", "used_by": "core"}
     ]
-    assert [(r["problem_id"], r["templates"], r["required"]) for r in cards[0]["rungs"]] == [
+    assert [(r["problem_id"], r["templates"], r["required"]) for r in card["rungs"]] == [
         ("p1", ["core"], True)
     ]
-    assert (cards[0]["gaps"], cards[1]["gaps"]) == ([], ["core"])
+    assert author.get("/api/author/cards/no-such-card").status_code == 404
 
 
 def test_the_problems_list_retired_ones_with_their_counts(database, author):
@@ -157,9 +172,10 @@ def test_a_card_counts_each_template_s_items_and_a_problem_names_its_target(data
         target_technique=None,
     )
 
-    (card,) = author_cards(database).cards
+    card = author_card(database, "greedy-basic")
     (row,) = author_problems(database).problems
 
+    assert card is not None
     assert (card.counts[0].keyline_items, card.required_by) == (0, [])
     assert row.target_template == "core"
 

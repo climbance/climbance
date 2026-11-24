@@ -2,7 +2,7 @@
 
 The page at `/author/questions`, in the author area: one module's questions at
 once, each drawn as a learner reads it once answered. `../README.md` gives who
-reaches it, and `## The content browser` there gives the rules this page shares
+reaches it, and `../browser.md` gives the grid and the dialog this page shares
 with the lessons, the cards and the problems pages.
 
 [`questions.md`](questions.md) draws the page at low fidelity.
@@ -18,11 +18,11 @@ with the lessons, the cards and the problems pages.
 - **The snapshot holds the live questions alone.** A retired question is never
   served, so the browser shows the bank a learner can meet. Listing retired
   questions is deferred until the author asks for one the seed retired.
-- **A concept's claim and source are read from `/api/author/concepts`**, one
-  module at a time. The seed stores each concept of a module written by
-  concept, as `../../../../cli/seed.md` gives. The snapshot carries no concept,
-  since no learner reads one, and a phone would download every claim for
-  nothing.
+- **An opened question's concept is read from
+  `/api/author/concepts/:module/:slug`**, one concept at a time. The seed
+  stores each concept of a module written by concept, as
+  `../../../../cli/seed.md` gives. The snapshot carries no concept, since no
+  learner reads one, and a phone would download every claim for nothing.
 
 ## Filters
 
@@ -39,23 +39,20 @@ with the lessons, the cards and the problems pages.
   degrades as a filtered queue's choice does: an unknown subtopic keeps its
   topic.
 
-## Rows
+## The grid
 
-- **A row shows the question before it is opened**: its slug, its level, its
+- **A row's columns are the question's slug, its subtopic, its level, its
   kind, its format, the first line of its prompt, and the length of its code
-  in lines where it carries code. The author scans a bank for a broken rule,
-  such as a long hand trace, and the code's length shows one without opening
-  the row.
-- **The rows read in the bank's order**: by topic, subtopic, level, then the
-  question's position. A subtopic's heading counts its questions, so a
-  subtopic missing a level reads as a gap.
-- **Open all opens every shown row**, and Close all closes them. A single row
-  opens on a press of its own. The open rows are not in the URL, since a link
-  is kept for its filters.
+  in lines** where it carries code. The author scans a bank for a broken rule,
+  such as a long hand trace, and the code's column shows one without opening
+  the question.
+- **The rows read in the bank's order by default**: by topic, subtopic, level,
+  then the question's position. The level, the kind, the format and the code's
+  length sort on a press of their header.
 
-## An opened row
+## The dialog
 
-- **An opened row draws the question with the queue's own component, as
+- **The dialog draws the question with the queue's own component, as
   answered.** It shows the prompt, the code, every choice with the correct ones
   marked, each choice's reason, and each wrong choice's misconception. It then
   shows the explanation and the detail opened. The author then reviews the
@@ -63,9 +60,9 @@ with the lessons, the cards and the problems pages.
 - **An open question shows its key and its traps**, with each point's detail
   where the question carries one. A `short` question shows every accepted
   reply, and whether case counts.
-- **Under the question, the row names its concept**: the concept's slug,
+- **Under the question, the dialog names its concept**: the concept's slug,
   claim, level and source. A question written from the concept tests the claim,
   so the author checks the two side by side. A question of a module not
   written by concept shows no concept.
-- **The row names the lessons teaching the question**, each a link to that
-  lesson on the lessons page.
+- **The dialog names the lessons teaching the question**, each a link to that
+  lesson's dialog on the lessons page.

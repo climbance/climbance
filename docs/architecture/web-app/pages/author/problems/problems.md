@@ -11,17 +11,16 @@ no problem opened. [`opened.md`](opened.md) draws it with one opened.
 | Problems                                                               |
 |                                                                        |
 | served ▾  technique ▾  target ▾  difficulty ▾  landed: 7d ▾            |
-| ( Needs attention 3 )                        12 rows  sort: newest ▾   |
+| ( Needs attention 3 )                                     12 rows      |
 |                                                                        |
-| Sliding Window Temperature Peaks  deque-window-max  1312 ± 265 medium  |
-|   sliding-window . 13 cases                        ⚑ untagged titled   |
-| Smallest Valid Cyclic Shift  deficit-reset-start    1109 ± 265 medium  |
-|   greedy . 14 cases                                                    |
-| Circular Circuit Power Run   deficit-reset-start    1109 ± 265 medium  |
-|   greedy . 14 cases                                                    |
-| Minimum Fiber-Optic Segments farthest-reach-levels  1211 ± 265 medium  |
-|   greedy, intervals, shortest-path . 16 cases                          |
-| …                                                                      |
+| +--------------------------------------------------------------------+ |
+| | Title               Target         Techniques  Score  Cases Flags  ▾ | |
+| |--------------------------------------------------------------------| |
+| | Sliding Window Tem… deque-window…  sliding-wi… 1312±265  13 untagged| |
+| |▌Smallest Valid Cyc… deficit-rese…  greedy      1109±265  14         | |
+| | Circular Circuit P… deficit-rese…  greedy      1109±265  14         | |
+| | …                                                                  | |
+| +--------------------------------------------------------------------+ |
 +------------------------------------------------------------------------+
 ```
 
@@ -29,7 +28,6 @@ no problem opened. [`opened.md`](opened.md) draws it with one opened.
   draws it, and is left out here.
 - The filters read on one line, each a menu naming its value, above the
   attention filter and the count of rows.
-- A row reads on one line in a wide window. At this drawing's width it wraps
-  to two: the title, the target and the difficulty, then the techniques, the
-  cases and the flags.
-- No row shows the id or the solutions by role. The panel shows both.
+- A row reads on one line. The landed column sits right of the flags, out of
+  this drawing's width, and `▾` there marks it as the sort.
+- No row shows the id or the solutions by role. The dialog shows both.
