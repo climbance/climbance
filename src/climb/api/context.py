@@ -49,15 +49,17 @@ def on_loopback(request: Request) -> bool:
 
 
 def author(request: Request, root: Database, user_id: str) -> bool:
-    # on loopback too, so a fault in the role check exposes nothing to the
-    # internet. The dev login answers on loopback alone, and refuses to start
-    # beside a provider, so its user is the local engine's author
-    return on_loopback(request) and (
-        user_id == request.app.state.dev_user or authored(root, user_id)
-    )
+    # off loopback the user must also be the one `CLIMB_AUTHOR_ID` pins, which
+    # no invitation can grant. The dev login answers on loopback alone, and
+    # refuses to start beside a provider, so its user is the local engine's
+    # author
+    if on_loopback(request):
+        return user_id == request.app.state.dev_user or authored(root, user_id)
+    pinned = request.app.state.hosted_author
+    return pinned is not None and user_id == pinned and authored(root, user_id)
 
 
 def author_id(request: Request, root: Root, user_id: UserId) -> str:
     if not author(request, root, user_id):
-        raise HTTPException(403, "the author pages need the author role, on 127.0.0.1")
+        raise HTTPException(403, "the author pages need the author role")
     return user_id

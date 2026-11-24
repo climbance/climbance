@@ -25,6 +25,7 @@ def app() -> FastAPI:
         root,
         sign_in=SignIn.from_environ(os.environ),
         dev_login=os.environ.get("CLIMB_DEV_LOGIN") or None,
+        hosted_author=os.environ.get("CLIMB_AUTHOR_ID") or None,
         pages=Path(pages) if (pages := os.environ.get("CLIMB_PAGES")) else None,
     )
 

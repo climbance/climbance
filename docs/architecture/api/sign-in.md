@@ -57,8 +57,10 @@ credential handling is the engine's own.
 - **An invitation carries a `role`, `learner` by default or `author`.** The
   author pages are open to a user one of whose identities' emails holds an
   `author` invitation. The role is read from the invitation at each request,
-  so a withdrawn invitation removes it at once.
-  `../web-app/pages/author/README.md` gives the pages and how the role is set.
+  so a withdrawn invitation removes it at once. Off loopback the user must
+  also be the one `CLIMB_AUTHOR_ID` names.
+  `../web-app/pages/author/README.md` gives the pages, how the role is set,
+  and the hosted guard.
 - **An author signs in as any user does, and keeps one log.** The author is
   also a learner, and the eval set and the by-hand passes read the author's
   own log. A separate account for authoring would split that log from the

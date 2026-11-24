@@ -1,5 +1,5 @@
 import pytest
-from helpers import T0, browsing, make_problem, seed_problem
+from helpers import T0, authoring, make_problem, seed_problem
 
 from climb.api.attention import AttentionFlag, attention_flags
 from climb.log import RetirementRequestLog
@@ -10,7 +10,7 @@ from climb.schema import DifficultyRating, RetirementReason, RetirementRequest
 
 @pytest.fixture
 def author(database):
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
     return client
 

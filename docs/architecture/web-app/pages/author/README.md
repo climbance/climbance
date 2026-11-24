@@ -88,22 +88,28 @@ traces, goes unseen.
   copied onto the user.
 - **The dev login is an author.** The dev login answers on loopback alone, as
   `../../../api/sign-in.md` gives, so the local engine shows its own store's
-  pages with no invitation to set.
+  pages with no invitation to set. Off loopback the dev login's user is no
+  author.
 - **Every author route answers 403 to a user without the role**, under
   `/api/author/`. The web app hides the account menu's Author entry from that
   user, and a learner typing an `/author` path reads the not-found page. The
   route's answer is the guard, and the hidden entry only keeps the menu
   accurate.
-- **Every author route answers only a request that arrived at a loopback
-  address, the role held or not.** Open sign-up lets a stranger hold a
-  session, so a fault in the role check would otherwise expose the author
-  pages to the internet. One check guards every `/api/author/` route, and a
-  test shows each refused off loopback with the role held. `/api/me` reports
-  no author off loopback, so the hosted pages show no Author entry.
-- **The hosted engine therefore serves no author page.** Inside the hosted
-  `api` container, every request arrives at the container's own address:
-  Caddy's over the compose network, and one through the host's published
-  port too. A tunnel to the API's port would be refused for the same reason.
+- **Off loopback, an author route also needs the user `CLIMB_AUTHOR_ID`
+  names.** The variable is set on the hosted engine alone. Open sign-up lets a
+  stranger hold a session, and an author invitation set on a mistyped or lost
+  email would otherwise open the pages to that address's holder. The pinned
+  id is read from the server's environment, which no sign-in and no
+  invitation writes. Unset, the hosted engine serves no author page.
+- **A request that arrived at a loopback address needs the role alone.** The
+  dev login answers there and is an author, and `just app-prod` signs in
+  through it. One check guards every `/api/author/` route and `/api/me`'s
+  author flag, and a test walks each route off loopback: answered with the
+  role held and the id pinned, refused with either missing.
+- **Inside the hosted `api` container, every request arrives off loopback.**
+  Caddy's request arrives at the container's own address over the compose
+  network, and so does one through the host's published port. The hosted
+  engine therefore always applies the pinned id.
 
 ## Where the figures come from
 
@@ -112,7 +118,7 @@ traces, goes unseen.
   local end of the deployment repo's `just tunnel`, which forwards prod's
   Postgres. The author signs in through the dev login, which answers on
   loopback alone and is an author. Each figure therefore needs no copy of the
-  store, and no author route faces the internet.
+  store. The hosted pages read the same figures for the pinned author.
 - **The dev login signs in as the author's prod user, `PROD_AUTHOR_ID` in
   `.env`.** `just app-prod` refuses to start without it. The dev login
   otherwise mints a user named `local` in prod's store, and the product page

@@ -42,16 +42,49 @@ def test_no_author_route_answers_without_a_session(database, method, path):
     assert TestClient(create_app(database)).request(method, path).status_code == 401
 
 
-@pytest.mark.parametrize(("method", "path"), every_call())
-def test_no_author_route_answers_off_loopback(database, method, path):
-    """The role held, a request from another machine is refused all the same:
-    the hosted engine serves no author page."""
+def hosted(database, *, pinned: bool) -> TestClient:
+    """A browser on another machine, signed in as a user holding the role."""
     invite(database, "author@example.com", Role.AUTHOR)
     user_id = signed_in(database, Provider.GOOGLE, "google-7", "author@example.com")
-    author = browsing(database, user_id, base_url="http://203.0.113.7")
+    client = browsing(database, user_id, base_url="http://203.0.113.7")
+    client.app.state.hosted_author = user_id if pinned else None
+    return client
+
+
+@pytest.mark.parametrize(("method", "path"), every_call())
+def test_the_hosted_engine_answers_the_pinned_author(database, method, path):
+    """Off loopback, the role held by the user `CLIMB_AUTHOR_ID` names."""
+    author = hosted(database, pinned=True)
+
+    assert author.request(method, path).status_code != 403
+    assert author.get("/api/me").json()["author"]
+
+
+@pytest.mark.parametrize(("method", "path"), every_call())
+def test_the_role_alone_opens_no_route_off_loopback(database, method, path):
+    """An author invitation on an email nobody pinned exposes nothing hosted."""
+    author = hosted(database, pinned=False)
 
     assert author.request(method, path).status_code == 403
     assert not author.get("/api/me").json()["author"]
+
+
+def test_the_pin_alone_opens_no_route_off_loopback(database):
+    """The pinned user is refused once its invitation is withdrawn."""
+    author = hosted(database, pinned=True)
+
+    withdraw(database, "author@example.com")
+
+    assert author.get("/api/author").status_code == 403
+    assert not author.get("/api/me").json()["author"]
+
+
+def test_the_dev_user_is_no_author_off_loopback(database):
+    """The dev login's user is the author on this machine alone."""
+    client = browsing(database, "local", base_url="http://203.0.113.7")
+    client.app.state.dev_user = "local"
+
+    assert client.get("/api/author").status_code == 403
 
 
 def test_an_author_invitation_opens_the_author_area(database):

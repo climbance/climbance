@@ -36,6 +36,7 @@ def create_app(
     *,
     sign_in: SignIn | None = None,
     dev_login: str | None = None,
+    hosted_author: str | None = None,
     pages: Path | None = None,
 ) -> FastAPI:
     # a deployed engine signs its users in through a provider, so a client
@@ -47,6 +48,7 @@ def create_app(
     # what the login page offers, filled in below by what is configured
     app.state.providers = []
     app.state.dev_user = dev_login
+    app.state.hosted_author = hosted_author
     app.middleware("http")(_json_writes)
     app.add_exception_handler(Refused, _refused)
     app.add_exception_handler(TooOften, _refused)
