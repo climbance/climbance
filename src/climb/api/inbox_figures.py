@@ -127,9 +127,8 @@ def waiting_rows(root: Database, author_id: str) -> int:
 
 def _attention(root: Database, problems: Sequence[Problem]) -> int:
     served = {one.id for one in problems if one.served}
-    return sum(
-        1 for one in author_problems(root).problems if one.problem_id in served and one.flags
-    )
+    rows = author_problems(root, problems).problems
+    return sum(1 for one in rows if one.problem_id in served and one.flags)
 
 
 def _requests(root: Database, by_id: dict[str, Problem]) -> list[RequestRow]:

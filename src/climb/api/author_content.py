@@ -3,6 +3,7 @@
 
 import json
 from collections import Counter
+from collections.abc import Sequence
 from datetime import datetime
 from typing import Any
 
@@ -26,6 +27,7 @@ from climb.schema import (
     CaseOutcome,
     Gate,
     MachineProvenance,
+    Problem,
     ProblemDifficulty,
     RatingSource,
     RetirementReason,
@@ -153,15 +155,13 @@ def _template_slugs(root: Database) -> dict[str, str]:
     return {one.id: one.slug for card in CardStore(root).all() for one in card.templates}
 
 
-def author_problems(root: Database) -> AuthorProblems:
+def author_problems(root: Database, problems: Sequence[Problem] | None = None) -> AuthorProblems:
     slugs = _template_slugs(root)
     stands = standing_ratings(RatingLog(root).ratings())
     generator = {one.id: one.difficulty for one in ProblemStore(root).all()}
-    cases = Counter(one.problem_id for one in CaseLog(root).cases())
+    cases = CaseLog(root).counts()
     requests = Counter(one.problem_id for one in RetirementRequestLog(root).all())
-    landed: dict[str, datetime] = {}
-    for one in SolutionLog(root).solutions():
-        landed[one.problem_id] = min(landed.get(one.problem_id, one.created_at), one.created_at)
+    landed = SolutionLog(root).landed()
     rows = [
         AuthorProblemRow(
             problem_id=problem.id,
@@ -172,7 +172,7 @@ def author_problems(root: Database) -> AuthorProblems:
             score=stands[problem.id].score if problem.id in stands else None,
             deviation=stands[problem.id].deviation if problem.id in stands else None,
             techniques=problem.techniques,
-            cases=cases[problem.id],
+            cases=cases.get(problem.id, 0),
             retired_reason=problem.retired_reason,
             requests=requests[problem.id],
             landed_at=landed.get(problem.id),
@@ -184,7 +184,7 @@ def author_problems(root: Database) -> AuthorProblems:
                 codes=codes(),
             ),
         )
-        for problem in load_problems(root)
+        for problem in (load_problems(root) if problems is None else problems)
     ]
     # newest first: the author reads what the last run landed first
     rows.sort(key=lambda one: (one.landed_at is not None, one.landed_at, one.problem_id))
