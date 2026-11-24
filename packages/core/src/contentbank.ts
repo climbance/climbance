@@ -382,3 +382,22 @@ export const generatorLabel = (label: string | null | undefined) => `generator $
 export const problemRowLink = (id: string) => `/author/problems#${id.slice(0, 8)}`;
 export const templateProblemsLink = (template: string) =>
   `/author/problems?${new URLSearchParams({ template }).toString()}`;
+
+export interface ProblemCommand {
+  label: string;
+  command: string;
+}
+
+// as `climb problem` takes them; a retired problem has nothing left to retire
+export function problemCommands(one: AuthorProblemRow): ProblemCommand[] {
+  const id = one.problem_id;
+  const retire = one.retired_reason
+    ? []
+    : (['defective', 'copied'] as const).map((reason) => ({
+        label: `retire ${reason}`,
+        command: `climb problem --retire ${id} --reason ${reason}`,
+      }));
+  // the standing score, to be edited; unrated, the command ends where the score is typed
+  const score = one.score != null ? `${Math.round(one.score)}` : '';
+  return [...retire, { label: 'rate by hand', command: `climb problem ${id} --rate ${score}` }];
+}

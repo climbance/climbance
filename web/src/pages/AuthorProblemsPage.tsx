@@ -1,3 +1,4 @@
+import { Copy } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 
@@ -5,6 +6,7 @@ import {
   AUTHOR_TITLE,
   BANK_CLEAR_LABEL,
   CASES,
+  COPY,
   MENU_SORT,
   DIFFICULTY,
   NO_CASE,
@@ -25,6 +27,7 @@ import {
   flagsLabel,
   generatorLabel,
   problemBankView,
+  problemCommands,
   problemFilter,
   problemPicked,
   problemQuery,
@@ -48,6 +51,7 @@ import { Markdown } from '@/components/Markdown'
 import { PageHeader } from '@/components/PageHeader'
 import { PlainCode, PythonCode } from '@/components/PythonCode'
 import { SectionHeading } from '@/components/SectionHeading'
+import { Button } from '@/components/ui/button'
 import { useMedia } from '@/lib/media'
 import { link } from '@/lib/openRows'
 import { cn } from '@/lib/utils'
@@ -256,7 +260,15 @@ function Panel({ one, inPlace = false }: { one: AuthorProblemRow; inPlace?: bool
         {/* in place, the row above already names the title, the target, the score and the flags */}
         {!inPlace && <h2 className="text-heading font-medium">{one.title}</h2>}
         <p className="flex flex-wrap gap-x-3 text-meta">
-          <code>{shortId(one.problem_id)}</code>
+          <button
+            type="button"
+            aria-label={`${COPY} ${one.problem_id}`}
+            onClick={() => navigator.clipboard.writeText(one.problem_id)}
+            className="inline-flex items-center gap-1 hover:bg-accent"
+          >
+            <code>{shortId(one.problem_id)}</code>
+            <Copy className="size-3" />
+          </button>
           <span className="text-muted-foreground">{problemStatus(one)}</span>
           {!inPlace && flagsLabel(one) && <span>{flagsLabel(one)}</span>}
         </p>
@@ -279,6 +291,20 @@ function Panel({ one, inPlace = false }: { one: AuthorProblemRow; inPlace?: bool
       <Loaded of={OF.author} state={read} blankWhen={() => false}>
         {(problem) => <Problem problem={problem} />}
       </Loaded>
+      <footer className="flex flex-wrap gap-2">
+        {problemCommands(one).map((command) => (
+          <Button
+            key={command.label}
+            variant="outline"
+            size="xs"
+            title={command.command}
+            onClick={() => navigator.clipboard.writeText(command.command)}
+          >
+            <Copy />
+            {command.label}
+          </Button>
+        ))}
+      </footer>
     </div>
   )
 }

@@ -134,3 +134,8 @@ the author decides, and no flag retires a problem.
 - **The panel's foot copies the commands acting on the problem**: retiring it
   as `defective`, retiring it as `copied`, and rating it by hand, each as
   `climb problem` takes it. The page writes nothing, as `../README.md` gives.
+  Each command names the full id, so it cannot match a second problem. The
+  rating command ends in the standing score, rounded, for the author to edit
+  before running it, and an unrated problem's command ends where the score is
+  typed. A retired problem's foot offers the rating alone, since `climb
+  problem --retire` refuses a problem already retired.

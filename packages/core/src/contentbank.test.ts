@@ -6,6 +6,7 @@ import {
   cardShapeLine,
   difficultyLabel,
   flagCount,
+  problemCommands,
   flagsLabel,
   problemBankView,
   problemFilter,
@@ -236,5 +237,18 @@ describe('the problems page', () => {
 
     expect(problemQuery(score)).toBe('sort=score');
     expect(problemQuery(problemPicked(score, 'sort', 'newest'))).toBe('');
+  });
+
+  it('copies the retirements of a served problem, and the rating from its standing score', () => {
+    const id = '4f9c2a00-0000-0000-0000-000000000000';
+
+    expect(problemCommands(row(id, { score: 1109.4 })).map((one) => one.command)).toEqual([
+      `climb problem --retire ${id} --reason defective`,
+      `climb problem --retire ${id} --reason copied`,
+      `climb problem ${id} --rate 1109`,
+    ]);
+    expect(problemCommands(row(id, { retired_reason: 'copied', score: null })).map((one) => one.command)).toEqual([
+      `climb problem ${id} --rate `,
+    ]);
   });
 });
