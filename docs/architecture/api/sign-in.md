@@ -42,7 +42,9 @@ credential handling is the engine's own.
 - **An email the `invitations` table holds is admitted past both limits.** An
   invitation is added, withdrawn and listed by `climb invite`. Withdrawing one
   no longer stops a sign-in, since an email with no invitation signs up too.
-- **The author blocks an abusive account by deleting it with `climb`.** A
+- **The author blocks an abusive account by deleting it with `climb log
+  delete --user`.** The command runs the deletion the account menu runs, and
+  asks for the user id typed back, as `climb log erase` does. A
   block that keeps the email from signing up again is deferred until one
   account needs it.
 - **The two limits are constants in the sign-in code, raised by a commit.**

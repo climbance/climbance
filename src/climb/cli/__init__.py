@@ -468,13 +468,19 @@ def main() -> None:
     )
     refresh_parser.add_argument("--json", action="store_true", help="emit the refresh as JSON")
 
-    log_parser = command(sub, "log", "one user's whole log, read out or erased")
+    log_parser = command(
+        sub, "log", "one user's whole log, read out or erased, or the account deleted"
+    )
     action = log_parser.add_subparsers(dest="action", required=True)
     export_parser = action.add_parser("export", help="print every record of the log as JSON")
     user_argument(export_parser)
     erase_parser = action.add_parser("erase", help="delete every record of the log")
     # named every time: a default would erase the author's own log
     erase_parser.add_argument("--user", required=True, help="whose log to erase")
+    delete_parser = action.add_parser(
+        "delete", help="erase the log and delete the account, as the account menu does"
+    )
+    delete_parser.add_argument("--user", required=True, help="whose account to delete")
 
     args = parser.parse_args()
     # read at call time, not at import: a test names its own database

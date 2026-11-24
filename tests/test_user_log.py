@@ -326,3 +326,38 @@ def test_deleting_an_account_erases_its_log(practised):
     assert counted["attempts"] == 1
     assert whole_log(practised, AUTHOR).attempts == []
     assert whole_log(practised, OTHER) == before
+
+
+def test_the_terminal_deletes_an_account_once_the_user_id_is_typed_back(
+    practised, monkeypatch, capsys
+):
+    """`climb log delete` runs the account menu's deletion, leaving no row."""
+    connected(practised, monkeypatch)
+    monkeypatch.setattr("sys.stdin", io.StringIO(f"{AUTHOR}\n"))
+
+    run_cli(monkeypatch, "log", "delete", "--user", AUTHOR)
+
+    assert "1 users" in capsys.readouterr().out
+    with practised.connect() as conn:
+        keyed = conn.execute(
+            text(
+                "SELECT table_name FROM information_schema.columns"
+                " WHERE table_schema = current_schema() AND column_name = 'user_id'"
+            )
+        ).scalars()
+        for table in keyed:
+            named = text(f"SELECT count(*) FROM {table} WHERE user_id = :user")
+            assert conn.execute(named, {"user": AUTHOR}).scalar() == 0, table
+        assert AUTHOR not in set(conn.execute(select(users.c.id)).scalars())
+    assert whole_log(practised, OTHER).attempts
+
+
+def test_a_mistyped_confirmation_deletes_no_account(practised, monkeypatch):
+    connected(practised, monkeypatch)
+    monkeypatch.setattr("sys.stdin", io.StringIO(f"{OTHER}\n"))
+
+    with pytest.raises(SystemExit) as exit_info:
+        run_cli(monkeypatch, "log", "delete", "--user", AUTHOR)
+
+    assert exit_info.value.code == 1
+    assert len(whole_log(practised, AUTHOR).attempts) == 1

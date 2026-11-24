@@ -47,8 +47,9 @@ what order", and each record's own section says who wins.
   default.** An erasure cannot be undone, and a default would name the
   author's own log.
 - **A user exports the record and deletes the account from the settings, on
-  either client.** `climb log export` and `climb log erase` serve the
-  operator, and an erasure keeps the account. A user acting without the
+  either client.** `climb log export`, `climb log erase` and `climb log
+  delete` serve the operator. An erasure keeps the account, and `climb log
+  delete` deletes it as the account menu does. A user acting without the
   operator needs both acts in the app.
 - **The export is the JSON `climb log export` prints, saved as a file.** It
   holds every record an erasure deletes, the card runs and the recall attempts
