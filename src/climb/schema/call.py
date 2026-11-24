@@ -29,6 +29,7 @@ class Call(BaseModel):
     elapsed_ms: int | None = None  # what the caller waited, over `requests` requests
     requests: int | None = None
     request_ms: int | None = None  # the last request alone: the one that answered or failed
+    user_id: str | None = None  # the account whose request made it; absent on a `climb` run
 
     @model_validator(mode="after")
     def _answered_or_failed(self) -> Call:

@@ -1,4 +1,6 @@
-from sqlalchemy import insert, select
+from datetime import datetime
+
+from sqlalchemy import func, insert, select
 
 from climb.calls.table import calls
 from climb.schema import Call
@@ -24,3 +26,11 @@ class CallLog:
         with self.root.connect() as conn:
             rows = conn.execute(select(calls).order_by(calls.c.appended)).mappings()
             return [Call.model_validate(dict(row)) for row in rows]
+
+    def made_by(self, user_id: str, since: datetime) -> int:
+        with self.root.connect() as conn:
+            return conn.execute(
+                select(func.count())
+                .select_from(calls)
+                .where(calls.c.user_id == user_id, calls.c.created_at >= since)
+            ).scalar_one()

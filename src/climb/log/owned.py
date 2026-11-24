@@ -99,7 +99,7 @@ KNOWLEDGE: dict[str, Table] = {
 
 class UserLog(BaseModel):
     """Every record of one user's log, and the calls a model made about the
-    user's code."""
+    user's code or for the user's request."""
 
     user_id: str
     sittings: list[Sitting]
@@ -135,6 +135,7 @@ def whole_log(root: Database, user_id: str) -> UserLog:
     diagnosed = log.diagnoses(user_id)
     named = {one.call_id for one in [*claims, *diagnosed] if one.call_id is not None}
     with root.connect() as conn:
+        named |= set(conn.execute(select(calls.c.id).where(calls.c.user_id == user_id)).scalars())
         rows = conn.execute(
             select(calls).where(calls.c.id.in_(named)).order_by(calls.c.appended)
         ).mappings()
@@ -194,8 +195,8 @@ def account_deleted(root: Database, user_id: str) -> dict[str, int]:
 
 def _erase(conn: Connection, user_id: str) -> dict[str, int]:
     """Deletes the user's whole log, and each call a model made about the
-    user's code that no other record names. Returns how many rows left each
-    table."""
+    user's code or for the user's request that no other record names. Returns
+    how many rows left each table."""
     theirs = select(attempts.c.id).where(attempts.c.user_id == user_id)
     runs = select(attempt_verifications.c.id).where(attempt_verifications.c.attempt_id.in_(theirs))
     held = select(sittings.c.id).where(sittings.c.user_id == user_id)
@@ -205,16 +206,20 @@ def _erase(conn: Connection, user_id: str) -> dict[str, int]:
     # the one delete the append-only tables let through, and for this
     # transaction alone
     conn.execute(text("SET LOCAL climb.erasing = 'on'"))
-    named = set(
-        conn.execute(
-            select(attempt_claims.c.call_id).where(
-                attempt_claims.c.attempt_id.in_(theirs), attempt_claims.c.call_id.is_not(None)
-            )
-        ).scalars()
-    ) | set(
-        conn.execute(
-            select(diagnoses.c.call_id).where(diagnoses.c.attempt_id.in_(theirs))
-        ).scalars()
+    named = (
+        set(
+            conn.execute(
+                select(attempt_claims.c.call_id).where(
+                    attempt_claims.c.attempt_id.in_(theirs), attempt_claims.c.call_id.is_not(None)
+                )
+            ).scalars()
+        )
+        | set(
+            conn.execute(
+                select(diagnoses.c.call_id).where(diagnoses.c.attempt_id.in_(theirs))
+            ).scalars()
+        )
+        | set(conn.execute(select(calls.c.id).where(calls.c.user_id == user_id)).scalars())
     )
     # children before the rows they name, since the foreign keys refuse the
     # other order

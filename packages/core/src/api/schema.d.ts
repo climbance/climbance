@@ -1299,6 +1299,8 @@ export interface components {
       requests?: number | null;
       /** Request Ms */
       request_ms?: number | null;
+      /** User Id */
+      user_id?: string | null;
     };
     /**
      * CallSite
@@ -3113,7 +3115,7 @@ export interface components {
     /**
      * UserLog
      * @description Every record of one user's log, and the calls a model made about the
-     *     user's code.
+     *     user's code or for the user's request.
      */
     UserLog: {
       /** User Id */

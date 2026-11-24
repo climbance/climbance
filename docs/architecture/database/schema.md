@@ -214,7 +214,7 @@ flowchart LR
 | `attempt_verification_case_results` | Attempt log | `attempt_verification_id` → `attempt_verifications`, `case_id` → `test_cases` |
 | `attempt_verifications` | Attempt log | `attempt_id` → `attempts` |
 | `attempts` | Attempt log | `problem_id` → `problems`, `sitting_id` → `sittings`, `user_id` → `users` |
-| `calls` | Calls |  |
+| `calls` | Calls | `user_id` → `users` |
 | `card_requirements` | Seed | (`card_id`, `used_by`) → `card_templates`, `card_id` → `cards`, `card` → `cards` |
 | `card_run_probes` | Card runs | `card_run_id` → `card_runs`, `problem_id` → `problems` |
 | `card_runs` | Card runs | `card_id` → `cards`, `user_id` → `users` |

@@ -3155,6 +3155,17 @@
               }
             ],
             "title": "Request Ms"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
           }
         },
         "type": "object",
@@ -7948,7 +7959,7 @@
           "setting_changes"
         ],
         "title": "UserLog",
-        "description": "Every record of one user's log, and the calls a model made about the\nuser's code."
+        "description": "Every record of one user's log, and the calls a model made about the\nuser's code or for the user's request."
       },
       "ValidationError": {
         "properties": {

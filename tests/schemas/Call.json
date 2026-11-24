@@ -194,6 +194,18 @@
       ],
       "default": null,
       "title": "Temperature"
+    },
+    "user_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "User Id"
     }
   },
   "required": [

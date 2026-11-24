@@ -40,6 +40,7 @@ def ask(
     configuration: Configuration,
     schema: dict[str, Any] | None = None,
     max_tokens: int = MAX_TOKENS,
+    user_id: str | None = None,
 ) -> tuple[Call, str | None]:
     """Send one prompt, record what happened, and return the call and its text.
 
@@ -79,6 +80,7 @@ def ask(
                 prompt_hash=hash,
                 pin=pin,
                 temperature=temperature,
+                user_id=user_id,
                 error=f"{type(exc).__name__}: {exc}",
                 elapsed_ms=elapsed(started),
                 **failed(exc),
@@ -93,6 +95,7 @@ def ask(
         prompt_hash=hash,
         pin=pin,
         temperature=temperature,
+        user_id=user_id,
         # No text is a refusal or a cut-short answer, recorded as the failure
         # it is rather than as an empty verdict.
         response=reply.text,

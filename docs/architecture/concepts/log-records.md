@@ -20,7 +20,7 @@ what order", and each record's own section says who wins.
 
 - **One user's log is every sitting, attempt, attempt verification, attempt
   claim, self-label and diagnosis keyed to that user**, and the calls a model
-  made about the user's code.
+  made about the user's code or for the user's request.
 - **The knowledge log is part of it**: the user's answers, stints, module status
   changes, focuses, lesson marks, certification exams, setting changes,
   limit raises and module orders, as `../api/knowledge-log.md`

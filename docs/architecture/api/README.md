@@ -35,3 +35,18 @@ proxies `/api` to the API. Deployed, the API serves the built files beside
   user's reports past 10 a minute.** A render failing in a loop would otherwise
   fill the log. The API counts the reports in memory, per worker, since a
   report is no stored record.
+
+## Model calls
+
+- **The model calls a user's requests make are capped at 50 a day.** The
+  model budget is shared by every account, and one account calling without a
+  cap could spend the budget of all the others. No route makes a model call
+  yet. The framing judge of the recognition drill will be the first, and it
+  checks the cap before it calls.
+- **The cap is counted from the call log, over the user's own calls of the
+  last 24 hours.** Each call a request makes carries the account in
+  `user_id`, as `../cli/calls.md` gives. A call `climb` makes names no
+  account, so the author's generation and evals never count against a user.
+- **A call past the cap is refused with a 429 and the message "50 model calls
+  a day is the cap".** The run caps in `submission.md` answer the same way,
+  and each client shows the message as it shows a run cap's.

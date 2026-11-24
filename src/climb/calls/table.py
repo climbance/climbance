@@ -1,4 +1,4 @@
-from sqlalchemy import CheckConstraint, Column, Double, Integer, Table, Text
+from sqlalchemy import CheckConstraint, Column, Double, ForeignKey, Index, Integer, Table, Text
 
 from climb.storage import appended_column, metadata, timestamp
 
@@ -26,7 +26,10 @@ calls = Table(
     Column("elapsed_ms", Integer),
     Column("requests", Integer),
     Column("request_ms", Integer),
+    Column("user_id", Text, ForeignKey("users.id")),
     # the record's own rules, held where a writer skipping the model meets them
     CheckConstraint("(response IS NULL) <> (error IS NULL)", name="answered_or_failed"),
     CheckConstraint("prompt <> '' AND prompt_hash <> ''", name="prompt_named"),
+    # the daily cap counts one user's calls since a moment
+    Index(None, "user_id", "created_at"),
 )

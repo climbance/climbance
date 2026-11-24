@@ -11,6 +11,10 @@ holds nothing about what the answer was for.
   vocabulary. It holds only what was asked, of whom, and what returned. That
   absence lets a second domain reuse the log without being taught anything, and
   keeps the run loop's decisions in the domain where they belong.
+- **A call made for a user's request names the account in `user_id`.** The
+  account is the one fact about the caller a call holds. The daily cap in
+  `../api/README.md` counts it, and a user's erasure deletes the call with the
+  log. A call `climb` makes leaves `user_id` empty.
 - **The prompt is stored whole, beside its prompt hash.** The record therefore
   hashes to its own key, and a renderer that changes later cannot make an old
   record unreadable. The prompt is inline rather than deduplicated into a store
