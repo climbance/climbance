@@ -12,6 +12,13 @@ module's rules from `packages/core`, and syncs with the engine through the API.
 - **The app runs on Android first, and iOS follows from the same code.** It is
   installed directly from a build signed by a key kept out of git. A store
   release is deferred until someone other than the author installs it.
+- **A tab out of view is frozen, and renders the store's latest value when it
+  is back in view.** Every record rebuilt the board on every mounted screen,
+  so only the tab in view renders. React drops a context change made while
+  the tab is frozen. `ui/frozen.tsx` therefore provides the store again below
+  the freeze, from a value read outside it. Without that, the Practice tab
+  kept a focus set on a module's page. Continue then served every module
+  instead of the focus, as the prod rehearsal of 2026-11-24 found.
 
 ## Typing code
 

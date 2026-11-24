@@ -107,6 +107,9 @@ interface Store {
 
 const Ctx = createContext<Store | null>(null);
 
+/** Provides a store value already read, again below a subtree that `ui/frozen.tsx` freezes. */
+export const StoreRelay = Ctx.Provider;
+
 export function useStore(): Store {
   const s = useContext(Ctx);
   if (!s) throw new Error('useStore outside StoreProvider');
