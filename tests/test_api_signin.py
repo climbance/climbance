@@ -1,4 +1,5 @@
 import time
+from datetime import UTC, datetime
 from urllib.parse import parse_qs, urlsplit
 
 import httpx
@@ -6,13 +7,14 @@ import pytest
 from fastapi.testclient import TestClient
 from joserfc import jwt
 from joserfc.jwk import RSAKey
-from sqlalchemy import select
+from sqlalchemy import insert, select
 
 from climb.api import create_app
 from climb.api.context import SESSION_COOKIE
 from climb.api.signin import Client, SignIn
 from climb.log import LIFETIME, Provider, hashed, invite
-from climb.log.table import identities, sessions
+from climb.log.table import identities, sessions, users
+from climb.log.users import PACE
 from climb.storage import Database
 
 ORIGIN = "http://localhost:5173"
@@ -236,17 +238,31 @@ def test_an_unverified_google_email_signs_nobody_in(database, monkeypatch):
     assert opened_sessions(database) == []
 
 
-def test_an_uninvited_email_signs_nobody_in_and_leaves_no_user(database, monkeypatch):
-    """Sign-in is by invitation: code runs for whoever signs in, so an open
-    door is an abuse surface. Refused before anything is stored."""
-    invite(database, "someone-else@example.com")
+def test_an_email_no_invitation_holds_signs_up_and_reaches_the_board(database, monkeypatch):
     client = browser(database)
     sent = redirected(client, Provider.GOOGLE)
     google_returns(monkeypatch, client, nonce=sent["nonce"])
 
     response = client.get(f"/api/auth/google/callback?code=abc&state={sent['state']}")
 
-    assert refusal(response) == "uninvited"
+    assert response.headers["location"] == "/"
+    assert client.get("/api/board").status_code == 200
+
+
+def test_a_sign_up_past_the_limits_leaves_no_user_and_says_why(database, monkeypatch):
+    """Refused before anything is stored, with the code the login page reads as
+    today's places being taken."""
+    with database.begin() as conn:
+        conn.execute(
+            insert(users), [{"id": f"u-{n}", "created_at": datetime.now(UTC)} for n in range(PACE)]
+        )
+    client = browser(database)
+    sent = redirected(client, Provider.GOOGLE)
+    google_returns(monkeypatch, client, nonce=sent["nonce"])
+
+    response = client.get(f"/api/auth/google/callback?code=abc&state={sent['state']}")
+
+    assert refusal(response) == "full"
     assert linked(database) == []
     assert opened_sessions(database) == []
     assert session_cookie(response) is None

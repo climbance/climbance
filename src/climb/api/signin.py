@@ -22,7 +22,6 @@ from climb.api.context import SESSION_COOKIE, Root
 from climb.log import (
     LIFETIME,
     Provider,
-    invited,
     issued,
     opened,
     signed_in,
@@ -44,7 +43,8 @@ class Refusal(StrEnum):
 
     INCOMPLETE = "incomplete"
     NO_EMAIL = "no-email"
-    UNINVITED = "uninvited"
+    # the sign-up limits admitted no new user today
+    FULL = "full"
 
 
 # Google signs its ID tokens under either issuer
@@ -179,12 +179,11 @@ async def callback(provider: Provider, request: Request, root: Root) -> Redirect
         return refused(Refusal.INCOMPLETE)
     if account.email is None:
         return refused(Refusal.NO_EMAIL)
-    # before anything is stored: an uninvited account leaves no user behind
-    if not await run_in_threadpool(invited, root, account.email):
-        return refused(Refusal.UNINVITED)
     user_id = await run_in_threadpool(
         signed_in, root, provider, account.provider_user_id, account.email
     )
+    if user_id is None:
+        return refused(Refusal.FULL)
     if challenge:
         code = await run_in_threadpool(issued, root, user_id, challenge)
         return RedirectResponse(f"{APP_REDIRECTS[client]}?code={code}", status_code=303)

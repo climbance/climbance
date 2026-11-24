@@ -1,9 +1,12 @@
+from datetime import UTC, datetime, timedelta
+
 import pytest
 from sqlalchemy import func, insert, select
 from sqlalchemy.exc import IntegrityError
 
-from climb.log import Provider, signed_in
+from climb.log import Provider, invite, signed_in
 from climb.log.table import identities, users
+from climb.log.users import CEILING, PACE
 
 EMAIL = "solver@example.com"
 
@@ -100,3 +103,61 @@ def test_an_identity_names_a_user_the_engine_minted(database):
                 created_at=func.now(),
             )
         )
+
+
+def minted(database, count: int, *, hours_ago: int = 0) -> None:
+    with database.begin() as conn:
+        conn.execute(
+            insert(users),
+            [
+                {
+                    "id": f"u-{hours_ago}-{n}",
+                    "created_at": datetime.now(UTC) - timedelta(hours=hours_ago),
+                }
+                for n in range(count)
+            ],
+        )
+
+
+def test_an_email_no_invitation_holds_signs_up(database):
+    """Sign-up is open: `api/sign-in.md`."""
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) is not None
+    assert counted(database, users) == 1
+
+
+def test_a_sign_up_past_the_day_s_pace_is_refused_and_stores_nothing(database):
+    minted(database, PACE)
+
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) is None
+    assert counted(database, users) == PACE
+    assert counted(database, identities) == 0
+
+
+def test_users_minted_over_a_day_ago_leave_the_pace(database):
+    minted(database, PACE, hours_ago=25)
+
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) is not None
+
+
+def test_a_sign_up_past_the_ceiling_is_refused(database):
+    minted(database, CEILING, hours_ago=48)
+
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) is None
+
+
+def test_an_invitation_signs_up_past_both_limits(database):
+    minted(database, CEILING, hours_ago=48)
+    minted(database, PACE)
+    invite(database, "Solver@example.com")
+
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) is not None
+
+
+def test_the_limits_leave_existing_users_signing_in(database):
+    """The limits gate only the minting: an existing account, or a new one
+    joining it by its email, signs in past them."""
+    first = signed_in(database, Provider.GOOGLE, "108234", EMAIL)
+    minted(database, CEILING, hours_ago=48)
+
+    assert signed_in(database, Provider.GOOGLE, "108234", EMAIL) == first
+    assert signed_in(database, Provider.GITHUB, "583231", EMAIL) == first

@@ -35,7 +35,7 @@ describe('home words', () => {
   });
 
   it('reads an unknown refusal as an incomplete sign-in', () => {
-    expect(refusal('uninvited')).toBe('That address has no invitation.');
+    expect(refusal('full')).toBe("Today's places are taken. Try again on a later day.");
     expect(refusal('something-new')).toBe(refusal('incomplete'));
   });
 

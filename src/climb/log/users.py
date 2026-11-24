@@ -1,10 +1,17 @@
+from datetime import timedelta
+
 from pydantic import BaseModel
-from sqlalchemy import Connection, func, select, update
+from sqlalchemy import Connection, func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 
 from climb.ids import new_id
-from climb.log.table import Provider, identities, users
+from climb.log.table import Provider, identities, invitations, users
 from climb.storage import Database
+
+# the sign-up limits, raised by a commit: `api/sign-in.md`
+PACE = 20
+CEILING = 200
+PACE_WINDOW = timedelta(hours=24)
 
 
 def known(conn: Connection, user_id: str) -> None:
@@ -49,12 +56,13 @@ def connected_accounts(root: Database, user_id: str) -> list[ConnectedAccount]:
         return [ConnectedAccount.model_validate(row) for row in conn.execute(query).mappings()]
 
 
-def signed_in(root: Database, provider: Provider, provider_user_id: str, email: str) -> str:
+def signed_in(root: Database, provider: Provider, provider_user_id: str, email: str) -> str | None:
     """The engine's user an account signs in as. `email` is one the provider
     verified: an unverified one would join whoever holds that address.
 
     A known account keeps its user. A new account joins the user of an account
-    with the same email, and mints a user where none has it.
+    with the same email, and mints a user where none has it, unless the
+    sign-up limits refuse it. `None` then, and nothing is stored.
     """
     email = email.lower()
     account = (identities.c.provider == provider) & (
@@ -73,6 +81,8 @@ def signed_in(root: Database, provider: Provider, provider_user_id: str, email: 
             .limit(1)
         ).scalar_one_or_none()
         if user_id is None:
+            if not _admitted(conn, email):
+                return None
             user_id = new_id()
             # a first sign-in of the same account racing this one fails on the
             # primary key, and its user rolls back with it
@@ -87,3 +97,20 @@ def signed_in(root: Database, provider: Provider, provider_user_id: str, email: 
             )
         )
     return user_id
+
+
+def _admitted(conn: Connection, email: str) -> bool:
+    """Whether a new user may be minted for the email: invited, or under both
+    limits."""
+    if conn.execute(select(invitations.c.email).where(invitations.c.email == email)).first():
+        return True
+    # serialises the count and the insert, so two sign-ups racing at the
+    # limit cannot both pass it
+    conn.execute(text("SELECT pg_advisory_xact_lock(hashtext('climb.sign-up'))"))
+    total, recent = conn.execute(
+        select(
+            func.count(),
+            func.count().filter(users.c.created_at > func.now() - PACE_WINDOW),
+        ).select_from(users)
+    ).one()
+    return total < CEILING and recent < PACE

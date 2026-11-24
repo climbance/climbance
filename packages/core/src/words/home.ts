@@ -149,7 +149,7 @@ export function signInUnread(error: string): string {
 const REFUSALS: Record<string, string> = {
   incomplete: 'That sign-in did not complete. Try again.',
   'no-email': 'That account has no verified email address, which signs nobody in.',
-  uninvited: 'That address has no invitation.',
+  full: "Today's places are taken. Try again on a later day.",
 };
 export const refusal = (code: string) => REFUSALS[code] ?? REFUSALS.incomplete;
 

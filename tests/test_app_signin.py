@@ -4,12 +4,13 @@ from datetime import UTC, datetime, timedelta
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from sqlalchemy import select, update
+from sqlalchemy import insert, select, update
 from test_api_signin import browser, google_returns
 
 from climb.api.apps import APP_REDIRECTS
 from climb.log import Provider, hashed, invite
-from climb.log.table import app_codes, app_tokens
+from climb.log.table import app_codes, app_tokens, users
+from climb.log.users import PACE
 
 VERIFIER = "v" * 43 + "-the-app-s-own-secret"
 CHALLENGE = (
@@ -121,11 +122,24 @@ def test_the_code_is_stored_as_its_hash(database, monkeypatch):
         assert conn.execute(select(app_codes.c.id)).scalar_one() == hashed(code_in(response))
 
 
-def test_an_uninvited_email_returns_to_the_app_refused(database, monkeypatch):
+def test_an_email_no_invitation_holds_signs_up_in_the_app(database, monkeypatch):
+    client, response = returned(database, monkeypatch, invited=False)
+    token = exchanged(client, code_in(response)).json()["token"]
+
+    board = client.get("/api/board", headers={"authorization": f"Bearer {token}"})
+
+    assert board.status_code == 200
+
+
+def test_a_sign_up_past_the_limits_returns_to_the_app_refused(database, monkeypatch):
+    with database.begin() as conn:
+        conn.execute(
+            insert(users), [{"id": f"u-{n}", "created_at": datetime.now(UTC)} for n in range(PACE)]
+        )
     _, response = returned(database, monkeypatch, invited=False)
 
     location = urlsplit(response.headers["location"])
-    assert parse_qs(location.query) == {"refused": ["uninvited"]}
+    assert parse_qs(location.query) == {"refused": ["full"]}
 
 
 @pytest.mark.parametrize("challenge", ["", "short", "x" * 43 + "!"])
