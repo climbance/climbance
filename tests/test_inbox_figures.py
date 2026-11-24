@@ -1,6 +1,6 @@
 from datetime import UTC, date, datetime, timedelta
 
-from helpers import attempt, browsing, seed_problem, stored_problem, stored_template
+from helpers import attempt, authoring, seed_problem, stored_problem, stored_template
 from sqlalchemy import insert, text
 
 from climb.api.inbox_figures import Pass, inbox_figures, waiting_rows
@@ -175,7 +175,7 @@ def test_the_route_names_no_user(database):
             note="a note",
         )
     )
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
     response = client.get("/api/author/inbox")

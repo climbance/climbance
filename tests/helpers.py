@@ -363,3 +363,8 @@ def browsing(database, user_id: str, **options) -> TestClient:
     client = TestClient(create_app(database), headers=headers, **options)
     client.cookies.set(SESSION_COOKIE, opened(database, user_id))
     return client
+
+
+def authoring(database, user_id: str) -> TestClient:
+    """`browsing`, from this machine, where the author routes answer."""
+    return browsing(database, user_id, base_url="http://127.0.0.1")

@@ -141,6 +141,14 @@ migrate:
 migration name:
     uv run alembic revision --autogenerate -m "{{ name }}"
 
+# PROD_AUTHOR_ID names the author's user in prod, so the dev login mints no
+# user in prod's store.
+# `just app` over the deployed database, for the author pages the hosted engine does not serve.
+app-prod:
+    DATABASE_URL="${PROD_DATABASE_URL:?PROD_DATABASE_URL is not set in .env}" \
+    CLIMB_DEV_LOGIN="${PROD_AUTHOR_ID:?PROD_AUTHOR_ID is not set in .env}" \
+    just app
+
 # PROD_DATABASE_URL in `.env` names the local end of the tunnel the deployment
 # repo's `just tunnel` holds open.
 # Any climb command against the deployed database.

@@ -1,6 +1,6 @@
 from datetime import UTC, date, datetime, timedelta
 
-from helpers import browsing
+from helpers import authoring
 from sqlalchemy import insert, text
 
 from climb.api.product_figures import product_figures
@@ -141,7 +141,7 @@ def test_the_route_returns_no_user_id(database):
     """The page counts across users and lists none."""
     named(database, LEARNER)
     acted(database, LEARNER, datetime.now(UTC) - timedelta(hours=1))
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
     body = client.get("/api/author/product").text

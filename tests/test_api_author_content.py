@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 import pytest
-from helpers import PROVENANCE, T0, browsing, seed_problem
+from helpers import PROVENANCE, T0, authoring, seed_problem
 from test_api_reads import a_card
 
 from climb.api.author_content import author_cards, author_problems
@@ -24,7 +24,7 @@ from climb.schema import (
 
 @pytest.fixture
 def author(database):
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
     return client
 

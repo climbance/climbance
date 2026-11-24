@@ -43,7 +43,7 @@ traces, goes unseen.
   so the lessons page reuses the questions page's filters.
 - **Each page reads the content of the engine serving it.** The questions and
   the lessons come from the snapshot, which the seed builds from the store.
-  The cards and the problems come from `/api/author/`. The hosted engine then
+  The cards and the problems come from `/api/author/`. `just app-prod` then
   shows prod's content and `just app` shows the local store's.
 - **Each item is drawn with the component a learner's page draws it with.** A
   question uses the queue's answered question, a lesson the lesson page's, a
@@ -94,18 +94,29 @@ traces, goes unseen.
   user, and a learner typing an `/author` path reads the not-found page. The
   route's answer is the guard, and the hidden entry only keeps the menu
   accurate.
-- **The author routes are reachable from the internet, guarded by the role
-  alone.** One check guards every `/api/author/` route, and a test shows a
-  learner answered 403 on each. A stronger boundary serves the author routes
-  on loopback alone, reached through `just tunnel`, so a fault in the role
-  check exposes nothing. The trigger for taking it is sign-in opening beyond
-  invitations, when a stranger could hold a session.
+- **Every author route answers only a request that arrived at a loopback
+  address, the role held or not.** Open sign-up lets a stranger hold a
+  session, so a fault in the role check would otherwise expose the author
+  pages to the internet. One check guards every `/api/author/` route, and a
+  test shows each refused off loopback with the role held. `/api/me` reports
+  no author off loopback, so the hosted pages show no Author entry.
+- **The hosted engine therefore serves no author page.** Inside the hosted
+  `api` container, every request arrives at the container's own address:
+  Caddy's over the compose network, and one through the host's published
+  port too. A tunnel to the API's port would be refused for the same reason.
 
 ## Where the figures come from
 
-- **Each engine reads its own store.** The author pages at the hosted engine
-  read prod's store, and the pages at `just app` read the local one. Each
-  figure therefore needs no tunnel and no copy of the store.
+- **The author reads prod's figures from a local engine over the database
+  tunnel.** `just app-prod` runs `just app` with `DATABASE_URL` naming the
+  local end of the deployment repo's `just tunnel`, which forwards prod's
+  Postgres. The author signs in through the dev login, which answers on
+  loopback alone and is an author. Each figure therefore needs no copy of the
+  store, and no author route faces the internet.
+- **The dev login signs in as the author's prod user, `PROD_AUTHOR_ID` in
+  `.env`.** `just app-prod` refuses to start without it. The dev login
+  otherwise mints a user named `local` in prod's store, and the product page
+  would count that user as a learner.
 - **The product page counts across users and lists no user.** Each user's log
   is private, and `../../../concepts/log-records.md` keeps each reader to one
   user's records. The product page's queries return counts grouped by day,

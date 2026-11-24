@@ -7,12 +7,9 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import RedirectResponse
 
 from climb.api.apps import APP_REDIRECTS, challenge_of
-from climb.api.context import Root
+from climb.api.context import Root, on_loopback
 from climb.api.signin import session_redirect
 from climb.log import issued, named, opened
-
-# the addresses only a request from this machine arrives at
-LOOPBACK = {"127.0.0.1", "::1"}
 
 router = APIRouter(prefix="/auth", include_in_schema=False)
 
@@ -21,10 +18,7 @@ router = APIRouter(prefix="/auth", include_in_schema=False)
 async def dev_login(
     request: Request, root: Root, client: str | None = None, code_challenge: str = ""
 ) -> RedirectResponse:
-    # the address the request arrived at, which another machine's request never
-    # is. Checked per request: the app is built before any address is bound
-    server = request.scope.get("server")
-    if server is None or server[0] not in LOOPBACK:
+    if not on_loopback(request):
         raise HTTPException(403, "the dev login answers on 127.0.0.1 alone")
     user_id = request.app.state.dev_user
     if client is not None and client != "app-dev":

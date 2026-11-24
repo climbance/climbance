@@ -7,6 +7,8 @@ from climb.storage import Database
 
 # the cookie a signed-in browser carries its session's token in
 SESSION_COOKIE = "session"
+# the addresses only a request from this machine arrives at
+LOOPBACK = {"127.0.0.1", "::1"}
 
 
 def _root(request: Request) -> Database:
@@ -39,13 +41,23 @@ def _user_id(request: Request, root: Root) -> str:
 UserId = Annotated[str, Depends(_user_id)]
 
 
+def on_loopback(request: Request) -> bool:
+    # the address the request arrived at, which another machine's request never
+    # is. Checked per request: the app is built before any address is bound
+    server = request.scope.get("server")
+    return server is not None and server[0] in LOOPBACK
+
+
 def author(request: Request, root: Database, user_id: str) -> bool:
-    # the dev login answers on loopback alone, and refuses to start beside a
-    # provider, so its user is the local engine's author
-    return user_id == request.app.state.dev_user or authored(root, user_id)
+    # on loopback too, so a fault in the role check exposes nothing to the
+    # internet. The dev login answers on loopback alone, and refuses to start
+    # beside a provider, so its user is the local engine's author
+    return on_loopback(request) and (
+        user_id == request.app.state.dev_user or authored(root, user_id)
+    )
 
 
 def author_id(request: Request, root: Root, user_id: UserId) -> str:
     if not author(request, root, user_id):
-        raise HTTPException(403, "the author pages need the author role")
+        raise HTTPException(403, "the author pages need the author role, on 127.0.0.1")
     return user_id

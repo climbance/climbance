@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from helpers import browsing
+from helpers import authoring, browsing
 from test_seed_knowledge import authored, with_concepts
 
 from climb.api import create_app
@@ -32,7 +32,7 @@ def test_the_author_area_has_a_route_to_guard():
 @pytest.mark.parametrize(("method", "path"), every_call())
 def test_a_learner_reaches_no_author_route(database, method, path):
     """Every route under `/api/author/`, those added later included."""
-    learner = browsing(database, USER)
+    learner = authoring(database, USER)
 
     assert learner.request(method, path).status_code == 403
 
@@ -42,10 +42,22 @@ def test_no_author_route_answers_without_a_session(database, method, path):
     assert TestClient(create_app(database)).request(method, path).status_code == 401
 
 
+@pytest.mark.parametrize(("method", "path"), every_call())
+def test_no_author_route_answers_off_loopback(database, method, path):
+    """The role held, a request from another machine is refused all the same:
+    the hosted engine serves no author page."""
+    invite(database, "author@example.com", Role.AUTHOR)
+    user_id = signed_in(database, Provider.GOOGLE, "google-7", "author@example.com")
+    author = browsing(database, user_id, base_url="http://203.0.113.7")
+
+    assert author.request(method, path).status_code == 403
+    assert not author.get("/api/me").json()["author"]
+
+
 def test_an_author_invitation_opens_the_author_area(database):
     invite(database, "author@example.com", Role.AUTHOR)
     user_id = signed_in(database, Provider.GOOGLE, "google-7", "author@example.com")
-    author = browsing(database, user_id)
+    author = authoring(database, user_id)
 
     assert author.get("/api/author").status_code == 200
     assert author.get("/api/me").json()["author"]
@@ -55,7 +67,7 @@ def test_a_withdrawn_invitation_closes_the_author_area_at_once(database):
     """The role is read from the invitation at each request."""
     invite(database, "author@example.com", Role.AUTHOR)
     user_id = signed_in(database, Provider.GOOGLE, "google-7", "author@example.com")
-    author = browsing(database, user_id)
+    author = authoring(database, user_id)
 
     withdraw(database, "author@example.com")
 
@@ -64,7 +76,7 @@ def test_a_withdrawn_invitation_closes_the_author_area_at_once(database):
 
 def test_the_dev_login_is_the_author(database):
     """The local engine shows its own pages with no invitation to set."""
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
     assert client.get("/api/author").status_code == 200
@@ -73,7 +85,7 @@ def test_the_dev_login_is_the_author(database):
 
 def test_the_generation_page_reads_an_empty_store(database):
     """Every figure answers on a store no run has written to."""
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
     read = client.get("/api/author/generation").json()
@@ -86,7 +98,7 @@ def test_the_concepts_route_reads_one_module_s_concepts(database, tmp_path):
     """The hosted engine holds no `content/` to read a concept from."""
     base = with_concepts(authored(tmp_path), "list-mutable")
     seed_module(read_module(base), root=database)
-    client = browsing(database, "local")
+    client = authoring(database, "local")
     client.app.state.dev_user = "local"
 
     read = client.get("/api/author/concepts", params={"module": "python"}).json()
