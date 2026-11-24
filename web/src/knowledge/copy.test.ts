@@ -116,4 +116,12 @@ describe('the copy', () => {
     const again = await open(engine.transport)
     expect(await again.records()).toEqual([])
   })
+
+  it("closes for another tab's erase rather than holding it", async () => {
+    const engine = fakeEngine()
+    let closed = 0
+    await Copy.open(USER, engine.transport, () => (closed += 1))
+    await eraseCopy(USER)
+    expect(closed).toBe(1)
+  })
 })

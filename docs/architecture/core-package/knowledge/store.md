@@ -32,6 +32,11 @@ the platform itself cannot do the same.
   keeps a user's log readable on a shared device. An outbox that cannot be
   sent is named before sign-out discards it, so the user decides whether
   those answers are lost.
+- **A web tab closes its copy when another tab deletes it, then reloads.**
+  IndexedDB holds a deletion until every open connection closes. One more
+  open tab of the same user would otherwise stall a sign-out or an account
+  deletion before it revokes the session. The reloaded tab finds the session
+  gone and shows the login page.
 
 ## The outbox
 

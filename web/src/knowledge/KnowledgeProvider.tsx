@@ -57,7 +57,8 @@ export function KnowledgeProvider({ children }: { children: ReactNode }) {
       if (!data || gone) return
       // named before the copy opens: a sitting's draft needs the user, not the copy
       setUser(data.user_id)
-      const one = await Copy.open(data.user_id, engine)
+      // another tab erased the copy, signing out or deleting the account
+      const one = await Copy.open(data.user_id, engine, () => window.location.reload())
       if (gone) return one.close()
       copy.current = one
       const lastAt = (await one.lastSync()) ?? null

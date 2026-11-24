@@ -52,8 +52,14 @@ export class Copy {
     this.user = user
   }
 
-  static async open(user: string, transport: Transport): Promise<Copy> {
+  /** `blocking` runs once this copy closed for another tab erasing it. */
+  static async open(user: string, transport: Transport, blocking?: () => void): Promise<Copy> {
     const db = await openDB<Schema>(copyName(user), 1, {
+      // an open connection holds a deletion in another tab until it closes
+      blocking() {
+        db.close()
+        blocking?.()
+      },
       upgrade(d) {
         d.createObjectStore('meta')
         d.createObjectStore('records', { keyPath: 'client_id' }).createIndex('pending', 'pending')
