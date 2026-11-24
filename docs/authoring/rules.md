@@ -233,8 +233,13 @@ The rules come from three review passes over the Python module in November
     without a break.** This covers a question's `code` and `example`, a
     lesson fence naming a language, and an `output` fence. A phone fits some
     40 characters and wraps a longer line behind a `↪`. In a snippet read for
-    its output, a reader can take that wrap for a line break. *check (a block
-    with a line over 60 is warned)*
+    its output, a reader can take that wrap for a line break. *check (a line
+    over 60 is refused)*
+    - A line a tool printed is warned over 60, not refused. This covers an
+      `output` fence and, in a `console` session, every line outside a
+      command and the file a `cat` shows. A lesson quotes a tool's text
+      whole, and a mypy message such as `Incompatible types in assignment`
+      runs past 60 with the shortest names. *check (warning)*
     - In a module written by concept, a question's `code` holds at most 40
       characters a line. A phone of 2026 wrapped a line of 44. A lesson keeps
       the limit of 60, since its prose can introduce a block split over

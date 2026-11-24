@@ -193,7 +193,7 @@ def test_box_drawing_outside_a_text_block_is_refused(tmp_path):
     ]
 
 
-def test_a_line_wider_than_a_phone_is_warned(tmp_path):
+def test_a_line_wider_than_a_phone_is_refused(tmp_path):
     """Rule 25: a phone wraps a line past some 40 characters, and a wrap in
     a snippet read for its output can pass for a line break. A `text`
     block is a drawing, kept whole, and a `mermaid` one is drawn to the
@@ -204,11 +204,33 @@ def test_a_line_wider_than_a_phone_is_warned(tmp_path):
     fences = "".join(f"\n```{lang}\n{wide}```\n" for lang in langs)
     root = written(tmp_path, [q], lessons={"les": (["sub@0"], LESSON + fences)})
 
-    assert found(checked(root).warnings, 25) == [
+    assert found(checked(root).errors, 25) == [
         "[25] banks/t/sub.toml a code: 1 line over 60 characters, the longest 67",
         "[25] banks/t/sub.toml a example: 1 line over 60 characters, the longest 67",
         "[25] lessons/les.md line 7: 1 line over 60 characters, the longest 67",
-        "[25] lessons/les.md line 11: 1 line over 60 characters, the longest 67",
+    ]
+    assert found(checked(root).warnings, 25) == [
+        "[25] lessons/les.md line 11: printed: 1 line over 60 characters, the longest 67",
+    ]
+
+
+def test_a_console_session_refuses_its_typed_lines_alone(tmp_path):
+    """Rule 25: a session's commands and the file a `cat` shows are typed
+    code. A checker's message is quoted whole, and shorter code cannot
+    always bring it under 60, so a wide one is only warned."""
+    wide = "x" * 61
+    session = f"$ cat p.py\n{wide}\n$ mypy p.py\n{wide}\n{wide}\n"
+    root = written(
+        tmp_path,
+        [question("a")],
+        lessons={"les": (["sub@0"], LESSON + f"\n```console\n{session}```\n")},
+    )
+
+    assert found(checked(root).errors, 25) == [
+        "[25] lessons/les.md line 7: 1 line over 60 characters, the longest 61",
+    ]
+    assert found(checked(root).warnings, 25) == [
+        "[25] lessons/les.md line 7: printed: 2 lines over 60 characters, the longest 61",
     ]
 
 

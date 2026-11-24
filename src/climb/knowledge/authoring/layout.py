@@ -5,6 +5,7 @@ import re
 
 from climb.knowledge.authoring.course import Course, Report, where
 from climb.knowledge.authoring.lessons import DIAGRAM
+from climb.knowledge.authoring.tools import transcript
 
 FENCE = re.compile(r"^```(\w*)\n(.*?)^```", re.S | re.M)
 # a layout: columns aligned by spaces, arrows, an underline, an ordering
@@ -72,14 +73,31 @@ def _wide(code: str, limit: int = WIDE) -> str | None:
     return f"{len(over)} {lines} over {limit} characters, the longest {max(over)}"
 
 
+def _typed(lang: str, block: str) -> tuple[str, str]:
+    """A fence as the lines a reader types and the lines a tool printed."""
+    if lang == "output":
+        return "", block
+    if lang != "console":
+        return block, ""
+    typed: list[str] = []
+    printed: list[str] = []
+    for command, shown in transcript(block):
+        typed.append("$ " + command)
+        (typed if command.startswith("cat ") else printed).extend(shown)
+    return "\n".join(typed), "\n".join(printed)
+
+
 def widths(course: Course, report: Report) -> None:
-    narrow = NARROW if course.concepts else WIDE
     for q in course.questions:
         for name, code in (
             ("code", q.get("code")),
             ("example", q.get("detail", {}).get("example")),
         ):
-            if isinstance(code, str) and (found := _wide(code, narrow)):
+            if not isinstance(code, str):
+                continue
+            if found := _wide(code):
+                report.error(25, f"{where(q)} {name}", found)
+            elif course.concepts and (found := _wide(code, NARROW)):
                 report.warn(25, f"{where(q)} {name}", found)
         lines = len(str(q.get("code", "")).strip().splitlines())
         if course.concepts and lines > LONGEST:
@@ -88,5 +106,12 @@ def widths(course: Course, report: Report) -> None:
     # and a `mermaid` one is drawn to the screen's width
     for slug, text in course.lessons.items():
         for m in FENCE.finditer(text):
-            if m[1] and m[1] not in ("text", "mermaid") and (found := _wide(m[2])):
-                report.warn(25, f"lessons/{slug}.md {_line(text, m.start())}", found)
+            if not m[1] or m[1] in ("text", "mermaid"):
+                continue
+            at = f"lessons/{slug}.md {_line(text, m.start())}"
+            typed, printed = _typed(m[1], m[2])
+            if found := _wide(typed):
+                report.error(25, at, found)
+            # a tool's own text is quoted whole, so it is only warned
+            if found := _wide(printed):
+                report.warn(25, at, f"printed: {found}")
