@@ -15,10 +15,13 @@ module's rules from `packages/core`, and syncs with the engine through the API.
 - **A tab out of view is frozen, and renders the store's latest value when it
   is back in view.** Every record rebuilt the board on every mounted screen,
   so only the tab in view renders. React drops a context change made while
-  the tab is frozen. `ui/frozen.tsx` therefore provides the store again below
+  the tab is frozen, for a reader below a memoized component such as a
+  navigator's screen. `ui/frozen.tsx` therefore provides the store again below
   the freeze, from a value read outside it. Without that, the Practice tab
   kept a focus set on a module's page. Continue then served every module
   instead of the focus, as the prod rehearsal of 2026-11-24 found.
+  `ui/frozen.test.tsx` freezes a memoized screen, changes the store and thaws
+  it.
 
 ## Typing code
 

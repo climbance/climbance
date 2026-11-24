@@ -1342,6 +1342,7 @@ src = [
     "native/src/ui/feedback.tsx",
     "native/src/ui/record.tsx",
     "native/src/ui/frozen.tsx",
+    "native/src/ui/frozen.test.tsx",
     "native/src/lib/auth.ts",
     "native/src/lib/scheme.tsx",
     "native/src/lib/reported.ts",
