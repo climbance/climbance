@@ -60,3 +60,14 @@ def test_a_relation_between_containers_without_technology_fails() -> None:
     assert tool.relation_problems(model, ids) == [
         "the relation from `proxy` to `api` lacks `technology`"
     ]
+
+
+def test_a_screen_in_no_journey_fails() -> None:
+    """A `screens.md` row no journey reaches is a missed path or apart."""
+    tool = _tool()
+    model = tomllib.loads(tool.MODEL.read_text())
+    for j in model["journey"]:
+        j["screens"] = [s for s in j["screens"] if s != "The cards"]
+    found = tool.journey_problems(model, [], ["The cards", "The gallery"], [])
+    assert "`The cards` is in no journey and not apart" in found
+    assert "`The gallery` is in no journey and not apart" not in found

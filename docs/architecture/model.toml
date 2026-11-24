@@ -47,6 +47,12 @@
 # A flow is a named, ordered list of steps, with the page that describes it.
 # Each step names the `from` and the `to` of one relation, and is drawn with
 # that relation's label, as a sequence diagram in that page.
+#
+# A journey is one path a user takes through both clients, with where it
+# starts and where it ends. `screens` and `acts` name rows of
+# `core-package/screens.md`, `flows` names flow ids, and `components` names
+# the elements that act in it. Every row there sits in a journey or in
+# `journeys.apart`, and the table in `journeys/README.md` is generated.
 
 [engine]
 id = "engine"
@@ -2499,3 +2505,181 @@ steps = [
     { from = "recall", to = "database" },
     { from = "template-schedule", to = "recall" },
 ]
+
+# Journeys
+
+[journeys]
+apart = ["The gallery"]
+
+[[journey]]
+id = "first-run"
+name = "First run and the baseline test"
+doc = "journeys/README.md"
+starts = "The login page, with an invitation"
+ends = "The first lesson read and its first questions answered"
+screens = [
+    "The login",
+    "The privacy policy",
+    "The terms of use",
+    "The landing page",
+    "The guide",
+    "The knowledge home",
+    "A module",
+    "The start sheet",
+    "A baseline test a queue offers",
+    "A lesson a queue offers",
+]
+acts = ["Continue"]
+components = ["sign-in", "app-tokens", "snapshot", "baseline-tests", "gating", "queues", "answering", "client-store", "knowledge-sync"]
+
+[[journey]]
+id = "knowledge-queue"
+name = "The knowledge queue"
+doc = "journeys/README.md"
+starts = "The knowledge home's Continue"
+ends = "The queue's stop and its summary"
+screens = ["The knowledge home", "A queue", "A module", "A subtopic", "The lessons", "A lesson"]
+acts = [
+    "Continue",
+    "Review what a strict focus leaves out",
+    "Raise today's limit",
+    "Clear the focus, or make it strict",
+    "Aim the focus at a module",
+    "Aim the focus at a topic",
+    "Aim the focus at a subtopic",
+    "Start a filtered queue on a group",
+    "Start a filtered queue on a subtopic",
+    "Start a filtered queue on a topic or a module",
+    "Order the modules",
+    "Pause, resume or archive a module",
+    "Open a lesson ready to read, or a certification ready for its exam",
+    "Mark a lesson read or unread",
+    "Type a `short` reply",
+]
+components = ["knowledge-schedule", "gating", "queues", "answering", "baseline-tests", "projections", "knowledge-screens", "client-store", "knowledge-sync", "knowledge-log"]
+
+[[journey]]
+id = "sitting"
+name = "A sitting"
+doc = "journeys/README.md"
+starts = "The board's pick, a technique's problems, or the problem listing"
+ends = "A solved or ended sitting, its claim and its label answered"
+screens = [
+    "The board",
+    "A technique's problems and cards",
+    "The problem listing",
+    "A picked problem's record and statement",
+    "A sitting",
+]
+acts = ["Ask for a problem's retirement"]
+flows = ["drill-loop"]
+components = ["practice-screens", "core-sitting", "problems", "sitting", "submission", "runner", "run-faults", "attempt-log", "attempt-claims", "self-labels", "retirement-requests"]
+
+[[journey]]
+id = "failure-diagnosed"
+name = "A failure diagnosed and the next pick"
+doc = "journeys/README.md"
+starts = "A sitting ended unsolved"
+ends = "The board serving a pick aimed at the form that failed"
+screens = ["A sitting", "The board", "A recall"]
+acts = []
+flows = ["drill-loop"]
+components = ["self-labels", "diagnoser", "pick", "predictions", "template-schedule", "card-states", "mastery"]
+
+[[journey]]
+id = "cards-and-recall"
+name = "Cards and recall"
+doc = "journeys/README.md"
+starts = "The Cards tab"
+ends = "A card graduated"
+screens = [
+    "The cards",
+    "A card's trigger, brief and templates",
+    "A card's ladder and probes",
+    "The press starting a card's run",
+    "The required cards a locked card waits on, on that press",
+    "A sitting",
+    "A recall",
+    "Judging a solution",
+    "Filling a key line",
+]
+acts = [
+    "Open a subtopic naming a card's technique",
+    "Open a card a lesson's subtopic pairs with",
+    "Open a subtopic a template cites",
+]
+flows = ["starting-a-card-run", "solving-a-rung", "recalling-a-template"]
+components = ["card-runs", "card-states", "recall", "core-recall", "template-schedule", "short-exercises", "core-exercises"]
+
+[[journey]]
+id = "cold-sitting"
+name = "A cold sitting and the rating"
+doc = "journeys/README.md"
+starts = "The board's cold panel"
+ends = "The cold panel reading the measured and the projected rating"
+screens = ["The board", "A cold sitting, running and ended"]
+acts = [
+    "Start a cold sitting, or return to the one running",
+    "End a cold sitting before it is solved, confirmed",
+]
+components = ["sitting", "submission", "runner", "attempt-log", "rating", "projection", "mastery"]
+
+[[journey]]
+id = "exam-and-certification"
+name = "A level exam and a certification"
+doc = "journeys/README.md"
+starts = "The knowledge home naming a certification ready for its exam, or its Exam press"
+ends = "A certification earned, or its conditions read as not yet met"
+screens = [
+    "The certifications",
+    "A certification's conditions",
+    "A level exam's choices",
+    "An exam and its results",
+]
+acts = [
+    "Aim the focus at a certification",
+    "Set the exam size for one exam",
+    "Open a lesson ready to read, or a certification ready for its exam",
+]
+components = ["certifications", "gating", "knowledge-schedule", "answering", "knowledge-screens", "knowledge-sync"]
+
+[[journey]]
+id = "phone-offline"
+name = "The phone offline"
+doc = "journeys/README.md"
+starts = "The phone's Home with no connection"
+ends = "The outbox sent, and the web reading the same answers"
+screens = ["The knowledge home", "A queue", "The board", "The cards"]
+acts = ["Read the sync's state, and sync now"]
+components = ["client-store", "queues", "answering", "snapshot", "knowledge-sync", "knowledge-log"]
+
+[[journey]]
+id = "account"
+name = "The account on the web and the phone"
+doc = "journeys/README.md"
+starts = "The account menu"
+ends = "Signed out, or the account deleted"
+screens = ["The settings", "The signed-in devices", "The error screen"]
+acts = [
+    "Set the daily limit and the exam size",
+    "Restore an archived module",
+    "Read the sync's state, and sync now",
+    "Sign out, naming unsent records",
+    "Send feedback",
+    "Revoke a signed-in device",
+    "Export the record as a file",
+    "Delete the account, its name typed back",
+    "Choose the colour scheme",
+    "Set the device name or the reminder hour",
+]
+components = ["core-account", "sign-in", "app-tokens", "feedback", "knowledge-sync"]
+
+[[journey]]
+id = "author-review"
+name = "The author's review"
+doc = "journeys/README.md"
+starts = "The author area's inbox, at `/author`"
+ends = "Each waiting row answered by its command"
+screens = ["The author pages"]
+acts = []
+components = ["author-reads", "retirement-requests", "feedback", "run-faults", "diagnoser", "seed", "generation", "difficulty"]

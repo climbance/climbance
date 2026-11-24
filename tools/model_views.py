@@ -1,6 +1,6 @@
-"""Generate the views in `docs/architecture/README.md`, and each flow's sequence
-diagram in the page the flow names, from `docs/architecture/model.toml`, and
-check them.
+"""Generate the views in `docs/architecture/README.md`, each flow's sequence
+diagram in the page the flow names, and the journeys' table in
+`journeys/README.md`, from `docs/architecture/model.toml`, and check them.
 
     python3 tools/model_views.py write   # rewrite the views
     python3 tools/model_views.py check   # fail on a stale view, a broken model,
@@ -32,6 +32,10 @@ BEGIN = "<!-- generated from model.toml by `just model-views`, never edited -->"
 END = "<!-- end of the generated views -->"
 FLOW_BEGIN = "<!-- generated from model.toml by `just model-views`, never edited: the flow -->"
 FLOW_END = "<!-- end of the generated flow -->"
+SCREENS = DOCS / "core-package" / "screens.md"
+JOURNEYS = DOCS / "journeys" / "README.md"
+JOURNEYS_BEGIN = "<!-- generated from model.toml by `just model-views`: the journeys -->"
+JOURNEYS_END = "<!-- end of the generated journeys -->"
 KINDS = {"person", "system", "container", "library", "component"}
 ACCESS = {"reads", "writes"}
 
@@ -85,6 +89,37 @@ def owner_problems(model: dict, files: list[str]) -> list[str]:
     return found
 
 
+def inventory(heading: str, text: str) -> list[str]:
+    table = text.split(f"## {heading}\n", 1)[1].split("\n## ", 1)[0]
+    lines = [line for line in table.splitlines() if line.startswith("|")]
+    rows = [line.strip().strip("|").split("|")[0].strip() for line in lines]
+    return [row for row in rows if row not in ("Screen", "Act", "---")]
+
+
+def journey_problems(model: dict, ids: list[str], screens: list[str], acts: list[str]) -> list[str]:
+    found = []
+    flows = {f["id"] for f in model.get("flow", [])}
+    journeys = model.get("journey", [])
+    apart = model.get("journeys", {}).get("apart", [])
+    for j in journeys:
+        fields = (("screens", screens), ("acts", acts), ("flows", flows), ("components", ids))
+        for field, known in fields:
+            found += [
+                f"journey `{j['id']}` names `{n}` in `{field}`, which is not one"
+                for n in j.get(field, [])
+                if n not in known
+            ]
+    met = {n for j in journeys for n in j.get("screens", []) + j.get("acts", [])}
+    found += [
+        f"`{n}` is in no journey and not apart"
+        for n in screens + acts
+        if n not in met and n not in apart
+    ]
+    found += [f"`{n}` is apart and in a journey" for n in apart if n in met]
+    found += [f"`{n}` is apart and in no inventory" for n in apart if n not in screens + acts]
+    return found
+
+
 def problems(model: dict) -> list[str]:
     found = []
     elements = [model["engine"], *model["element"]]
@@ -105,7 +140,9 @@ def problems(model: dict) -> list[str]:
             for n, s in enumerate(f["steps"], 1)
             if (s["from"], s["to"]) not in pairs
         ]
-    for e in elements + model.get("flow", []):
+    text = SCREENS.read_text()
+    found += journey_problems(model, ids, inventory("Screens", text), inventory("Acts", text))
+    for e in elements + model.get("flow", []) + model.get("journey", []):
         path = DOCS / e["doc"]
         if not path.is_file():
             found.append(f"`{e['id']}` cites `{e['doc']}`, which does not exist")
@@ -283,6 +320,33 @@ def drawn(text: str, model: dict, flow: dict) -> str:
     return head + "\n".join(block) + rest.split(FLOW_END, 1)[1]
 
 
+def cell(names: list[str]) -> str:
+    return "; ".join(names) or "none"
+
+
+def journeys(model: dict) -> str:
+    block = [
+        JOURNEYS_BEGIN,
+        "",
+        "| Journey | Starts | Ends | Screens | Acts | Flows | Components |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for j in model.get("journey", []):
+        components = [f"`{c}`" for c in j.get("components", [])]
+        flows = [f"`{f}`" for f in j.get("flows", [])]
+        row = [j["name"], j["starts"], j["ends"], cell(j["screens"]), cell(j["acts"])]
+        row += [cell(flows), cell(components)]
+        block.append("| " + " | ".join(row) + " |")
+    apart = model.get("journeys", {}).get("apart", [])
+    block += ["", "The screens and acts in no journey: " + cell(apart) + ".", "", JOURNEYS_END]
+    return "\n".join(block)
+
+
+def listed(text: str, model: dict) -> str:
+    head, rest = text.split(JOURNEYS_BEGIN, 1)
+    return head + journeys(model) + rest.split(JOURNEYS_END, 1)[1]
+
+
 def main(command: str) -> int:
     model = load()
     found = problems(model)
@@ -291,7 +355,10 @@ def main(command: str) -> int:
         for line in found:
             sys.stderr.write(f"model views: {line}\n")
         return 1
-    pages: dict[Path, Callable[[str], str]] = {README: lambda text: rendered(text, model)}
+    pages: dict[Path, Callable[[str], str]] = {
+        README: lambda text: rendered(text, model),
+        JOURNEYS: lambda text: listed(text, model),
+    }
     for flow in model.get("flow", []):
         path = DOCS / flow["doc"]
         if FLOW_BEGIN not in path.read_text():

@@ -25,6 +25,9 @@ inventory is the list both clients build to. A page's own file under
   Each web route and phone screen file names its row there, and a row's phone
   column reads `none` exactly where no phone screen holds it. A screen added
   without its row fails the suite.
+- **Every row sits in a user journey, or is listed apart.**
+  `../journeys/README.md` gives the journeys, and the model-views check fails
+  on a row in neither.
 
 ## Screens
 

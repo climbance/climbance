@@ -384,7 +384,7 @@ and each component is a file named by its id.
 
 | Path | Holds |
 |---|---|
-| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, the source files it owns, its relations, and each flow as an ordered list of them. The views above, and each flow's diagram in its page, are generated from it |
+| [`model.toml`](model.toml) | The engine's elements as one model: each element's stable id, its role, the doc that specifies it, the source files it owns, its relations, each flow as an ordered list of them, and each user journey. The views above, each flow's diagram in its page, and the journeys' table are generated from it |
 | [`modules.md`](modules.md) | The engine's Python packages and the imports between them, grouped by the containers whose code reaches each package. Generated from `src/climb` and `model.toml` |
 | [`client-modules.md`](client-modules.md) | The clients' TypeScript modules and the imports between them: the web app and the native app, then the shared packages per file, grouped by the clients that reach each file. Generated from the workspaces' sources |
 | [`concepts/terms/`](concepts/terms/) | Every word this project gives its own meaning, a file per group |
@@ -394,6 +394,7 @@ and each component is a file named by its id.
 | [`concepts/machine-records.md`](concepts/machine-records.md) | What a model-written record carries, and content a session writes |
 | [`concepts/log-records.md`](concepts/log-records.md) | What every log record carries, one user's log, export and erasure |
 | [`concepts/techniques.md`](concepts/techniques.md) | The technique vocabulary and how a technique is claimed |
+| [`journeys/`](journeys/README.md) | The user journeys: each one's start, end, screens, acts, flows and components, generated from `model.toml`, and the screens no journey reaches |
 | [`flows/`](flows/) | The flows crossing containers, a page each with its generated sequence diagram: the drill loop, starting a card run, solving a rung, recalling a template |
 | [`api/`](api/README.md) | One origin, JSON writes, client error reports, and a file per component: sign-in, app tokens, the sitting, the submission and its run caps, the runner, the pick and the rest |
 | [`cli/`](cli/README.md) | Generation as a command run off the server, and a file or folder per component: generation and its states, difficulty, the classifier, the eval set, the matcher, the diagnoser, the exercise items, the seed and the calls |
