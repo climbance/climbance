@@ -49,7 +49,7 @@ export function AuthorGenerationPage() {
       <PageHeader
         back={{ to: '/author', label: AUTHOR_TITLE }}
         title={GENERATION_TITLE}
-        aside={area.data && <AuthorBar pages={area.data.pages} />}
+        aside={area.data && <AuthorBar area={area.data} />}
       />
       <Loaded of={OF.author} state={state} blankWhen={() => false}>
         {(read) => <Generation read={read} />}

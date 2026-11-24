@@ -67,7 +67,7 @@ export function AuthorLessonsPage() {
       <PageHeader
         back={{ to: '/author', label: AUTHOR_TITLE }}
         title={LESSONS_TITLE}
-        aside={area.data && <AuthorBar pages={area.data.pages} />}
+        aside={area.data && <AuthorBar area={area.data} />}
       />
       <Loaded of={OF.author} state={state} blank={BANK_NONE} blankWhen={(f) => f === null}>
         {(filter) => (

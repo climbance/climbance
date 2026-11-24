@@ -1124,8 +1124,10 @@ export interface components {
     };
     /** AuthorArea */
     AuthorArea: {
-      /** Pages */
-      pages: string[];
+      /** Groups */
+      groups: string[][];
+      /** Waiting */
+      waiting: number;
     };
     /** AuthorCard */
     AuthorCard: {

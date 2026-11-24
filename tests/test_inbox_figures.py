@@ -3,7 +3,7 @@ from datetime import UTC, date, datetime, timedelta
 from helpers import attempt, browsing, seed_problem, stored_problem, stored_template
 from sqlalchemy import insert, text
 
-from climb.api.inbox_figures import Pass, inbox_figures
+from climb.api.inbox_figures import Pass, inbox_figures, waiting_rows
 from climb.log import AttemptLog, FeedbackLog, RetirementRequestLog, named
 from climb.log.table import run_faults
 from climb.schema import (
@@ -182,3 +182,31 @@ def test_the_route_names_no_user(database):
 
     assert response.status_code == 200
     assert LEARNER not in response.text and "a note" in response.text
+
+
+def test_the_navigation_counts_the_waiting_rows_that_count_something(database):
+    """Each waiting request is a row; a retired problem's request and a pass
+    counting nothing add none."""
+    stored_template(database, "t1")
+    stored_problem(database, "p1")
+    stored_problem(
+        database,
+        "p2",
+        status=ProblemStatus.RETIRED,
+        retired_reason=RetirementReason.DEFECTIVE,
+    )
+    named(database, LEARNER)
+    log = RetirementRequestLog(database)
+    for id, problem_id in (("r1", "p1"), ("r2", "p2"), ("r3", "p1")):
+        log.append(
+            RetirementRequest(
+                id=id,
+                created_at=NOW,
+                user_id=LEARNER,
+                problem_id=problem_id,
+                reason=RetirementReason.DEFECTIVE,
+                note="case 4 expects the wrong sum",
+            )
+        )
+
+    assert waiting_rows(database, AUTHOR) == 4

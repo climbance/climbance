@@ -53,7 +53,7 @@ export function AuthorPage() {
       <PageHeader
         back={{ to: '/', label: BACK_BOARD }}
         title={INBOX_TITLE}
-        aside={area.data && <AuthorBar pages={area.data.pages} />}
+        aside={area.data && <AuthorBar area={area.data} />}
       />
       <Loaded of={OF.author} state={state} blankWhen={() => false}>
         {(read) => <Inbox read={read} />}

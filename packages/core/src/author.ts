@@ -8,6 +8,7 @@ type WaitingPass = components['schemas']['WaitingPass'];
 // the author area's pages, by the last segment of each path:
 // `web-app/pages/author/README.md`
 export const AUTHOR_PAGES: Record<string, string> = {
+  inbox: 'Inbox',
   product: 'Product',
   generation: 'Generation',
   spend: 'Spend',
@@ -96,6 +97,9 @@ export function untemplatedLine(n: number): string | null {
 }
 
 export const INBOX_TITLE = 'Inbox';
+
+// the inbox's entry in the navigation, with the waiting rows beside it
+export const inboxEntry = (waiting: number) => (waiting ? `${INBOX_TITLE} ${waiting}` : INBOX_TITLE);
 export const WAITING = 'Waiting';
 export const WAITING_REQUESTS = 'Retirement requests, waiting';
 export const ANSWERED_REQUESTS = 'Retirement requests, answered';

@@ -2441,17 +2441,25 @@
       },
       "AuthorArea": {
         "properties": {
-          "pages": {
+          "groups": {
             "items": {
-              "type": "string"
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
             },
             "type": "array",
-            "title": "Pages"
+            "title": "Groups"
+          },
+          "waiting": {
+            "type": "integer",
+            "title": "Waiting"
           }
         },
         "type": "object",
         "required": [
-          "pages"
+          "groups",
+          "waiting"
         ],
         "title": "AuthorArea"
       },

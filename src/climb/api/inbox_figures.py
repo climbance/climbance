@@ -89,17 +89,7 @@ def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures
     since = now - timedelta(days=PERIOD_DAYS)
     problems = load_problems(root)
     by_id = {one.id: one for one in problems}
-    rows = [
-        RequestRow(
-            created_at=one.created_at,
-            problem_id=one.problem_id,
-            title=by_id[one.problem_id].title,
-            reason=one.reason,
-            note=one.note,
-            status=by_id[one.problem_id].status,
-        )
-        for one in sorted(RetirementRequestLog(root).all(), key=lambda one: one.created_at)
-    ][::-1]
+    rows = _requests(root, by_id)
     feedback = list(reversed(FeedbackLog(root).all()))
     recent = now - timedelta(days=FEEDBACK_DAYS)
     fault_days, faults = _faults(root, since)
@@ -117,6 +107,31 @@ def inbox_figures(root: Database, author_id: str, now: datetime) -> InboxFigures
         fault_days=fault_days,
         faults=faults,
     )
+
+
+def waiting_rows(root: Database, author_id: str) -> int:
+    """The rows under the inbox's What waits that count something."""
+    problems = load_problems(root)
+    by_id = {one.id: one for one in problems}
+    passes = sum(1 for one in _waiting(root, author_id, problems) if one.count)
+    return passes + sum(
+        1 for one in RetirementRequestLog(root).all() if by_id[one.problem_id].served
+    )
+
+
+def _requests(root: Database, by_id: dict[str, Problem]) -> list[RequestRow]:
+    # newest first
+    return [
+        RequestRow(
+            created_at=one.created_at,
+            problem_id=one.problem_id,
+            title=by_id[one.problem_id].title,
+            reason=one.reason,
+            note=one.note,
+            status=by_id[one.problem_id].status,
+        )
+        for one in sorted(RetirementRequestLog(root).all(), key=lambda one: one.created_at)
+    ][::-1]
 
 
 def _waiting(root: Database, author_id: str, problems: Sequence[Problem]) -> list[WaitingPass]:

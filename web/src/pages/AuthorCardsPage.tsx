@@ -65,7 +65,7 @@ export function AuthorCardsPage() {
       <PageHeader
         back={{ to: '/author', label: AUTHOR_TITLE }}
         title={CARD_BANK_TITLE}
-        aside={area.data && <AuthorBar pages={area.data.pages} />}
+        aside={area.data && <AuthorBar area={area.data} />}
       />
       <Loaded
         of={OF.author}

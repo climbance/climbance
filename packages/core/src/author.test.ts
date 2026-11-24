@@ -5,6 +5,7 @@ import {
   NO_CORRECTION,
   dayLabel,
   gapsLine,
+  inboxEntry,
   retentionCells,
   stopLabel,
   timeLabel,
@@ -81,5 +82,12 @@ describe('gapsLine', () => {
       { optional: true, gap: false },
     ];
     expect(gapsLine(rows)).toBe('1 of 2 core templates carry no solution');
+  });
+});
+
+describe('inboxEntry', () => {
+  it('counts the waiting rows, and reads bare with none', () => {
+    expect(inboxEntry(5)).toBe('Inbox 5');
+    expect(inboxEntry(0)).toBe('Inbox');
   });
 });

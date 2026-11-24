@@ -20,7 +20,7 @@ from climb.api.author_content import (
 )
 from climb.api.context import Root, author_id
 from climb.api.generation_figures import GenerationFigures, generation_figures
-from climb.api.inbox_figures import InboxFigures, inbox_figures
+from climb.api.inbox_figures import InboxFigures, inbox_figures, waiting_rows
 from climb.api.product_figures import ProductFigures, product_figures
 from climb.api.spend_figures import SpendFigures, spend_figures
 from climb.cards import CardStore
@@ -34,20 +34,19 @@ from climb.solutions import SolutionLog
 
 router = APIRouter(prefix="/author", dependencies=[Depends(author_id)])
 
-# the author pages the engine serves, each the last segment of its path
-PAGES: list[str] = [
-    "product",
-    "generation",
-    "spend",
-    "questions",
-    "lessons",
-    "cards",
-    "problems",
+# the author pages, each the last segment of its path and `inbox` for
+# `/author`, in the navigation's groups: `web-app/pages/author/README.md`
+GROUPS: list[list[str]] = [
+    ["inbox"],
+    ["questions", "lessons", "cards", "problems"],
+    ["product", "generation", "spend"],
 ]
 
 
 class AuthorArea(BaseModel):
-    pages: list[str]
+    groups: list[list[str]]
+    # the inbox's waiting rows that count something
+    waiting: int
 
 
 class AuthorConcepts(BaseModel):
@@ -55,8 +54,8 @@ class AuthorConcepts(BaseModel):
 
 
 @router.get("")
-def area() -> AuthorArea:
-    return AuthorArea(pages=PAGES)
+def area(root: Root, user_id: Annotated[str, Depends(author_id)]) -> AuthorArea:
+    return AuthorArea(groups=GROUPS, waiting=waiting_rows(root, user_id))
 
 
 @router.get("/product")

@@ -67,7 +67,7 @@ export function AuthorProblemsPage() {
       <PageHeader
         back={{ to: '/author', label: AUTHOR_TITLE }}
         title={PROBLEM_BANK_TITLE}
-        aside={area.data && <AuthorBar pages={area.data.pages} />}
+        aside={area.data && <AuthorBar area={area.data} />}
       />
       <Loaded
         of={OF.author}
