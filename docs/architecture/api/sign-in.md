@@ -14,6 +14,12 @@ credential handling is the engine's own.
   state, the nonce and PKCE.** A managed account provider is rejected: its
   login and its tokens live on its own domain, and the session cookie stays on
   the pages' origin.
+- **Every sign-in asks the provider to show its account chooser, with
+  `prompt=select_account`.** Without the prompt, a browser already signed in to
+  one Google or GitHub account signs in as that account. A person with two
+  accounts could then not pick the other. Signing out of the engine leaves the
+  provider's session in place, and on the phone the sign-in sheet shares the
+  browser's session.
 - **An `identities` row links a provider's user id to a user id the engine
   mints at the first sign-in.** The log keys on the engine's id, so adding or
   replacing a provider rewrites no record.

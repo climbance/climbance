@@ -100,6 +100,13 @@ def test_github_is_sent_pkce_and_asked_for_the_account_s_emails():
     assert "code_challenge" in sent and "nonce" not in sent
 
 
+@pytest.mark.parametrize("provider", list(Provider))
+def test_a_sign_in_asks_the_provider_to_show_its_account_chooser(provider):
+    """Without it a browser signed in to one account is signed in as that
+    account, and a person with two cannot pick the other."""
+    assert redirected(browser(Database()), provider)["prompt"] == "select_account"
+
+
 def test_a_provider_with_no_client_offers_no_sign_in():
     client = browser(Database(), {Provider.GOOGLE: CLIENTS[Provider.GOOGLE]})
 

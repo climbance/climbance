@@ -57,12 +57,14 @@ REGISTERED: dict[Provider, dict[str, Any]] = {
         "access_token_url": "https://oauth2.googleapis.com/token",
         "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
         "client_kwargs": {"scope": "openid email", "code_challenge_method": "S256"},
+        "authorize_params": {"prompt": "select_account"},
     },
     Provider.GITHUB: {
         "authorize_url": "https://github.com/login/oauth/authorize",
         "access_token_url": "https://github.com/login/oauth/access_token",
         "api_base_url": "https://api.github.com/",
         "client_kwargs": {"scope": "user:email", "code_challenge_method": "S256"},
+        "authorize_params": {"prompt": "select_account"},
     },
 }
 
