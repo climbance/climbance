@@ -2,11 +2,10 @@
 // which the providers' consent screens name, and the phone's Privacy screen
 const POLICY = `# Privacy policy
 
-Last updated: 16 November 2026
+Last updated: 24 November 2026
 
 Climbance is an app for practising algorithmic problem solving, used in a
-browser and as an app on your phone, and access is by invitation. This page
-says what Climbance stores about you, why it stores it, and who can read it.
+browser and as an app on your phone. Anyone may sign up. This page says what Climbance stores about you, why it stores it, and who can read it.
 
 Climbance is run by Maksim Lunochkin. Write to
 [maksim@lunochkin.com](mailto:maksim@lunochkin.com) with any request about this
@@ -20,8 +19,11 @@ You sign in through Google or GitHub, and Climbance never sees a password.
   address, and nothing else.
 - The app stores that id, that email, and when you first signed in. It stores
   no name and no profile picture.
-- Your email is checked against the list of invited emails. A sign-in whose
-  email has no invitation is refused before anything about it is stored.
+- Climbance opens a limited number of new accounts each day, and a limited
+  number in all. A first sign-in past either limit is refused before anything
+  about it is stored, and you can try again on a later day.
+- An email on the list of invited emails is let in past both limits. That list
+  holds the email and nothing else about you.
 
 ## Your session
 
@@ -124,8 +126,10 @@ server for 30 days.
 ## How long it is kept
 
 - Your record, your email and your sign-in are kept until you delete your
-  account. Nothing expires by itself, since the record is what shows your
-  progress.
+  account, since the record is what shows your progress.
+- An account that has not been used for 12 months, in any browser or on any
+  phone, is deleted as if you had deleted it yourself. An account whose email
+  is on the list of invited emails is kept.
 - Deleting the account removes them from the database at once. The backups
   hold a copy for up to 30 days more, and the copy is deleted with them.
 - A session ends after 30 days, and a phone's token after 90 days unused. An
@@ -140,8 +144,9 @@ server for 30 days.
 
 The settings, in the browser and on the phone, export your whole record as a
 JSON file, and delete your account. Deleting the account erases your record,
-your sign-in, your signed-in devices, and the invitation your email was let in
-by, at once and for good. Signing in again then needs a new invitation.
+your sign-in, your signed-in devices, and any invitation of your email, at
+once and for good. Signing in again is then a new sign-up, and starts a new
+account with an empty record.
 
 You can also write to the address above to ask for any of these:
 
