@@ -2,6 +2,7 @@ from climb.log.apps import app_revoked, app_user_of, exchanged, issued
 from climb.log.devices import DeviceKind, SignedInDevice, device_revoked, signed_in_devices
 from climb.log.feedback import FeedbackLog
 from climb.log.fills import FillLog
+from climb.log.idle import idle_accounts_deleted, idle_users
 from climb.log.invitations import authored, invitations_held, invite, invited, withdraw
 from climb.log.judgements import JudgementLog
 from climb.log.latest import latest_by_attempt
@@ -44,6 +45,8 @@ __all__ = [
     "erased",
     "exchanged",
     "hashed",
+    "idle_accounts_deleted",
+    "idle_users",
     "invitations_held",
     "invite",
     "invited",

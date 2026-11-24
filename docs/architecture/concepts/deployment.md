@@ -14,6 +14,9 @@ commands that build the server are in the deployment repo.
   server costs the time a rebuild takes rather than the log.
 - **The database is dumped on a schedule, and the dump is copied off the
   server.** A dump left on the same storage as the database is lost with it.
+- **A second daily timer deletes the accounts unused for a year**, by running
+  `climb log prune` in the API's container. `../api/sign-in.md` gives the rule
+  it applies.
 - **Every service logs to the host's journal, which keeps 14 days.** Docker's
   default log driver keeps every line until the disk fills. The privacy policy
   states the 14 days, and the deployment repo sets the journal's retention.

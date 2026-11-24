@@ -124,6 +124,11 @@ credential handling is the engine's own.
   of that period the record is kept, since the board and the schedule read
   it. An account holding an invitation is never deleted this way. The privacy
   policy states this period, the backups' 30 days and the logs' 14 days.
+- **`climb log prune` runs this deletion, once a day, from a timer on the
+  server beside the dumps.** The latest use of any session or app token
+  counts, and a user no sign-in row names counts from its minting. The command
+  asks for no confirmation, since no one is at the terminal when the timer
+  runs it.
 - **The deletion asks for the account's name typed back, and the engine checks
   it.** The name is the one the account menu shows: the verified email, or the
   user id where no provider linked one. The client signs out after the

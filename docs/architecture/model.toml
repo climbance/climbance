@@ -634,6 +634,7 @@ src = [
     "src/climb/api/signin.py",
     "src/climb/api/devlogin.py",
     "src/climb/log/devices.py",
+    "src/climb/log/idle.py",
     "src/climb/log/invitations.py",
     "src/climb/log/owned.py",
     "src/climb/log/sessions.py",

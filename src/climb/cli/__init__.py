@@ -481,6 +481,7 @@ def main() -> None:
         "delete", help="erase the log and delete the account, as the account menu does"
     )
     delete_parser.add_argument("--user", required=True, help="whose account to delete")
+    action.add_parser("prune", help="delete every uninvited account no sign-in used for a year")
 
     args = parser.parse_args()
     # read at call time, not at import: a test names its own database
