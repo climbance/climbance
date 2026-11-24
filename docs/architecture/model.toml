@@ -1134,6 +1134,7 @@ src = [
     "web/src/pages/NotFoundPage.tsx",
     "web/src/lib/theme.ts",
     "web/src/lib/reported.ts",
+    "web/src/lib/fresh.ts",
 ]
 
 [[element]]

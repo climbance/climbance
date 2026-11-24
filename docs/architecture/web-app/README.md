@@ -129,6 +129,12 @@ Author        the inbox, on the web alone
   reached from two places would otherwise load a different list at each of
   them.
 
+- **A page whose code file is gone reloads once, onto the new build.** Each
+  page's code is a separate file named by its hash, and a deploy replaces every
+  file. A tab loaded before the deploy then fails to fetch the next page it
+  opens. The reload is kept to once per build, so a file missing from the new
+  build too shows the error screen instead of reloading forever.
+
 ## What the browser keeps
 
 - **A problem's unsent code, the clock preference and the chosen colour scheme
