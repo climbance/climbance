@@ -4,8 +4,9 @@ The `ai-eng` module teaches each pattern through questions. This folder names
 the practice beyond the questions: the AI drills on the phone and the desk
 tasks at the desk, per pattern. [`patterns.md`](patterns.md) lists every
 activity with its activity kind, its check and its pattern, and marks the
-spine. This file gives each activity kind, the rule every check follows, and
-how simplicity is graded.
+spine. [`readiness-bar.md`](readiness-bar.md) gives the readiness bar the
+spine's desk tasks build to. This file gives each activity kind, the rule
+every check follows, and how simplicity is graded.
 
 The record of a desk task, the hidden set and the harness's boundary with the
 sandbox belong to `../ai-task-grading.md`. The record of each AI drill belongs

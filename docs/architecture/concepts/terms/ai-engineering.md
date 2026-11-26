@@ -28,3 +28,16 @@ uses them without redefining them.
   removed, to measure what the stage adds.
 - **Spine**: the activities the first sittings open with, one path through the
   patterns a new learner meets first.
+
+## The readiness bar
+
+- **Readiness bar**: the measured state of having learned AI engineering:
+  every step of its version held. `../ai-activities/readiness-bar.md` gives
+  it. A task's bar is a different thing: the threshold one task's metric must
+  clear.
+- **Readiness sitting**: a desk task served fresh, under a time limit, for one
+  step of the readiness bar, its hidden set grading one final submission.
+- **Readiness retest**: a readiness sitting of a step already passed, due 28
+  days after the pass, on another fresh task.
+- **Held step**: a step of the readiness bar with a pass and a passed
+  readiness retest 28 days or more apart.

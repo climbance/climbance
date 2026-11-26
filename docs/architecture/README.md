@@ -394,7 +394,7 @@ and each component is a file named by its id.
 | [`concepts/machine-records.md`](concepts/machine-records.md) | What a model-written record carries, and content a session writes |
 | [`concepts/log-records.md`](concepts/log-records.md) | What every log record carries, one user's log, export and erasure |
 | [`concepts/techniques.md`](concepts/techniques.md) | The technique vocabulary and how a technique is claimed |
-| [`concepts/ai-activities/`](concepts/ai-activities/README.md) | The AI engineering module's drills and desk tasks per pattern, how each key is proven by a run, simplicity graded by ablation, and the spine |
+| [`concepts/ai-activities/`](concepts/ai-activities/README.md) | The AI engineering module's drills and desk tasks per pattern, how each key is proven by a run, simplicity graded by ablation, the spine, and the readiness bar a learner holds |
 | [`journeys/`](journeys/README.md) | The user journeys: each one's start, end, screens, acts, flows and components, generated from `model.toml`, and the screens no journey reaches |
 | [`flows/`](flows/) | The flows crossing containers, a page each with its generated sequence diagram: the drill loop, starting a card run, solving a rung, recalling a template |
 | [`api/`](api/README.md) | One origin, JSON writes, client error reports, and a file per component: sign-in, app tokens, the sitting, the submission and its run caps, the runner, the pick and the rest |
