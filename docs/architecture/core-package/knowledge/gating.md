@@ -10,6 +10,9 @@ reviewed whatever gates it.
   one subtopic to another, at an offset, opens the first subtopic's level only
   once the second subtopic is done up to that level plus the offset. Levels
   above a configured bound match at the bound.
+- **A placed group counts as done.** A placement passing a level places that
+  group and every lower group of its subtopic, as `placement.md` gives. Every
+  rule below reads a placed group as done.
 - **A level holding no questions gates nothing through the graph either.** A
   prerequisite subtopic's level counts as done when it holds no question. So
   a mapped subtopic never locks a subtopic that needs it.

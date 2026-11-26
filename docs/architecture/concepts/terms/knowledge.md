@@ -56,7 +56,16 @@ without redefining them.
   lesson, whose answers the schedule ignores. Distinct from a lesson's pretest.
 - **Delayed test**: the baseline test's questions asked again four weeks or
   more later. The difference in score is the learning gain.
-- **Measure**: the test an answer was given in, `baseline` or `delayed`.
+- **Measure**: the test an answer was given in: `baseline`, `delayed` or
+  `placement`.
+- **Placement**: the test of one topic's subtopics that places the groups a
+  user already holds. Each subtopic is asked first at its highest level
+  holding a `choice` or a `short` question, and one such level lower after
+  each miss.
+- **Placement step**: one placement's questions on one group, at most three.
+  It passes when every answer is correct and none is a guess.
+- **Placed**: a group a placement step passed, or a lower group of the same
+  subtopic. Gating reads a placed group as done.
 - **Focus**: the module, topic, subtopic or certification the next queue is
   aimed at.
 - **Module status**: active, paused or archived, set by the user.

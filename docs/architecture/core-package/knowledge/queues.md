@@ -8,11 +8,11 @@ left to serve.
 
 - **A queue orders the questions it serves weak, due, unseen, learning,
   retained.** Ties break at random.
-- **A question a baseline test asked is served as new after the rest of its
-  group's new questions.** The schedule ignores the test's answer, so the
-  question still reads as unseen. Served in random order, `bs-cube-floor`
-  came back 41 seconds after the test in the rehearsal, a review of an answer
-  just given.
+- **A question a baseline test or a placement asked is served as new after
+  the rest of its group's new questions.** The schedule ignores the test's
+  answer, so the question still reads as unseen. Served in random order,
+  `bs-cube-floor` came back 41 seconds after the test in the rehearsal, a
+  review of an answer just given.
 - **A step due within 20 minutes is served early** when nothing else is
   servable, so a one-minute step does not end the queue.
 - **A client counts such steps apart from the due reviews**, and marks a

@@ -22,12 +22,13 @@ trigger, as `../database/README.md` requires.
 
 - **`answers`**: the question, whether the reply was correct, the guess flag,
   and for an open question the grade, the points missed, the traps fallen
-  into and the wrong flag. A test answer also names its measure, `baseline`
-  or `delayed`.
+  into and the wrong flag. A test answer also names its measure, `baseline`,
+  `delayed` or `placement`.
 - **`stints`**: the mode, the score, the number of questions answered, and
   for an exam the level it was taken at. A certification's exam also names
   the certification, by its wire id. A `baseline` or `delayed` stint names
-  its module, its topic and its level.
+  its module, its topic and its level. A `placement` stint names its module
+  and its topic.
 - **`module_status_changes`**: the module and its status.
 - **`focuses`**: the module, the topic, the subtopic and the certification,
   each optional, and whether the focus is strict.

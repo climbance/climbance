@@ -155,6 +155,7 @@ flowchart TB
         queues["Queues<br/>Picks each queue's next question under the daily limit, the focus, the settings and the module order."]
         certifications["Certifications<br/>Decides each certification's state, and samples a level exam or a certification's."]
         baseline_tests["Baseline tests<br/>Samples a topic's baseline test, and asks its questions again as the delayed test."]
+        placement["Placement<br/>Asks a topic's subtopics highest level first, and reads which groups the user's answers placed."]
         projections["Projections<br/>Counts the reviews of the next fourteen learning days, and dates when the focus is reached."]
         client_store["Store and sync<br/>Names the records a client keeps, folds them into the learner, and syncs the outbox with the engine."]
         answering["Answering<br/>Runs a queue or an exam one question at a time: the reply, its grade, and the result each answer shows."]
@@ -172,6 +173,9 @@ flowchart TB
     certifications -.->|"reads which questions are retained"| knowledge_schedule
     certifications -.->|"reads the groups a certification covers"| gating
     baseline_tests -.->|"samples the questions as an exam does"| certifications
+    placement -.->|"samples the questions as an exam does"| certifications
+    gating -.->|"reads which groups are placed"| placement
+    answering -.->|"runs a placement"| placement
     projections -.->|"reads what the next queue serves"| queues
     projections -.->|"replays each question forward"| knowledge_schedule
     client_store -.->|"reads the focus, the settings and the order records"| queues

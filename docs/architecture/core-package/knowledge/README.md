@@ -17,5 +17,6 @@ FSRS replay and the question states in Python too. Shared fixtures hold
 | [`queues.md`](queues.md) | The queues, the daily limit, settings, the focus, module status and order |
 | [`certifications.md`](certifications.md) | Certifications and exams |
 | [`baseline-tests.md`](baseline-tests.md) | The baseline and the delayed tests |
+| [`placement.md`](placement.md) | Placing the groups a user already holds, highest level first |
 | [`projections.md`](projections.md) | The review forecast and when the focus is reached |
 | [`store.md`](store.md) | A client's copy of the content and the log, and its outbox |

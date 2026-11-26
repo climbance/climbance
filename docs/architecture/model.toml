@@ -964,6 +964,14 @@ src = [
 ]
 
 [[element]]
+id = "placement"
+kind = "component"
+container = "core-package"
+name = "Placement"
+role = "Asks a topic's subtopics highest level first, and reads which groups the user's answers placed."
+doc = "core-package/knowledge/placement.md"
+
+[[element]]
 id = "projections"
 kind = "component"
 container = "core-package"
@@ -2162,6 +2170,24 @@ access = "reads"
 from = "baseline-tests"
 to = "certifications"
 label = "samples the questions as an exam does"
+access = "reads"
+
+[[relation]]
+from = "placement"
+to = "certifications"
+label = "samples the questions as an exam does"
+access = "reads"
+
+[[relation]]
+from = "gating"
+to = "placement"
+label = "reads which groups are placed"
+access = "reads"
+
+[[relation]]
+from = "answering"
+to = "placement"
+label = "runs a placement"
 access = "reads"
 
 [[relation]]

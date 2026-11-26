@@ -59,6 +59,9 @@ A lesson's pretest is a different thing, as
   Most baseline answers are wrong, on questions the user has not studied. As
   ordinary answers they would make those questions weak, and the review
   queue would serve them before their lesson is read.
+- **A placement answer carries the measure `placement`**, and the schedule
+  ignores it as well. The baseline test samples none of the questions a
+  placement asked, as `placement.md` gives.
 - **The rule exists in Python and in `packages/core`**, held together by the
   shared fixtures, as `../README.md` gives for the schedule.
 - **The queues order the tested questions last.** A question the test asked

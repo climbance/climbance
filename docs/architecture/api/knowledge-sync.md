@@ -21,8 +21,9 @@ engine translates them at its edge, so the store keeps this project's names.
   level, naming the certification. A line read
   back carries the wire's names again.
 - **A test's lines carry its topic.** A `session` line whose mode is
-  `baseline` or `delayed` names its `course`, its `topic` and its `level`. An
-  `attempt` line given in a test carries its `measure`.
+  `baseline` or `delayed` names its `course`, its `topic` and its `level`. A
+  `session` line whose mode is `placement` names its `course` and its
+  `topic`. An `attempt` line given in a test carries its `measure`.
 - **A line naming content the store does not hold is refused alone.** The
   rest of the upload is stored, and the reply names each refused line.
 - **A sync returns the user's records since a cursor**, one append order per
