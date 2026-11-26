@@ -5,6 +5,11 @@ export const LESSONS = '/knowledge/lessons'
 export const CERTIFICATIONS = '/knowledge/certifications'
 export const EXAM = '/knowledge/exam'
 
+/** A topic's placement, run on the exam page: `core-package/knowledge/placement.md`. */
+export function placementPath(module: string, topic: string): string {
+  return `${EXAM}?place=${encodeURIComponent(module)}&topic=${encodeURIComponent(topic)}`
+}
+
 /** A lesson's page, at one of its sections where `part` names one. */
 export function lessonPath(module: string, slug: string, part = ''): string {
   return `${LESSONS}/${module}/${slug}${part ? `#${part}` : ''}`

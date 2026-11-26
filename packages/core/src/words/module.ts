@@ -43,6 +43,7 @@ export function noGraph(c: Pick<Course, 'title' | 'graphErrors'>): string {
 
 export const MAP_LEGEND: Record<CellState, string> = {
   covered: 'covered',
+  placed: 'placed',
   open: 'open',
   locked: 'locked',
   empty: 'no questions',

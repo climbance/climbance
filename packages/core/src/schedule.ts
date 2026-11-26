@@ -1,6 +1,7 @@
 import { courseGroups, DEFAULT_RULES, groupKey, levelName, qkey, subTitle, topicOf, type Catalog } from './courses';
 import { AGAIN, GOOD, HARD, replay, type Memory } from './fsrs';
 import type { Lesson } from './graph';
+import { placedGroups, placementAnswers, type Asked } from './placed';
 import type { Attempt, AttemptRecord, Course, Group, Question, Rules, Status } from './types';
 
 export type History = Map<string, Attempt[]>;
@@ -92,7 +93,9 @@ export class Board {
   readonly explicit: boolean; // one course was selected by the learner
   readonly include: string | null; // served even if paused: the focus course
   readonly tested: ReadonlySet<string>; // `course:topic` of each baseline test taken
-  readonly measured: ReadonlySet<string>; // qkey of each question a baseline test asked
+  readonly measured: ReadonlySet<string>; // qkey of each question a baseline test or a placement asked
+  readonly baselineAsked: ReadonlySet<string>;
+  readonly placementAnswers: ReadonlyMap<string, Asked>;
 
   constructor(
     catalog: Catalog,
@@ -101,11 +104,13 @@ export class Board {
     explicit = false,
     include: string | null = null,
     tested: ReadonlySet<string> = new Set(),
-    measured: ReadonlySet<string> = new Set(),
+    records: readonly AttemptRecord[] = [],
   ) {
     this.catalog = catalog;
     this.tested = tested;
-    this.measured = measured;
+    this.baselineAsked = new Set(records.filter((r) => r.measure === 'baseline').map(qkey));
+    this.placementAnswers = placementAnswers(records);
+    this.measured = new Set([...this.baselineAsked, ...this.placementAnswers.keys()]);
     this.courses = courses;
     this.hist = hist;
     this.explicit = explicit;
@@ -122,11 +127,10 @@ export class Board {
 
   static build(catalog: Catalog, records: AttemptRecord[], only?: string | null, include: string | null = null): Board {
     const courses = only ? catalog.courses.filter((c) => c.slug === only) : catalog.courses;
-    const measured = new Set(records.filter((r) => r.measure === 'baseline').map(qkey));
-    return new Board(catalog, courses, buildHistory(records), !!only, include, testedTopics(catalog, records), measured);
+    return new Board(catalog, courses, buildHistory(records), !!only, include, testedTopics(catalog, records), records);
   }
 
-  /** The new questions a queue serves first: those no baseline test asked, while any is left. */
+  /** The new questions a queue serves first: those no baseline test or placement asked, while any is left. */
   untested(qs: Question[]): Question[] {
     const rest = qs.filter((q) => !this.measured.has(qkey(q)));
     return rest.length ? rest : qs;
@@ -190,7 +194,16 @@ export class Board {
     return this.groupQuestions(g).filter((q) => passed(this.attempts(q))).length;
   }
 
+  private placedMemo: Set<string> | null = null;
+
+  /** Placed by a placement: `core-package/knowledge/placement.md`. Gating reads it as done. */
+  placed(g: Group): boolean {
+    this.placedMemo ??= placedGroups(this);
+    return this.placedMemo.has(groupKey(g));
+  }
+
   done(g: Group): boolean {
+    if (this.placed(g)) return true;
     const qs = this.groupQuestions(g);
     return qs.length > 0 && this.nPassed(g) / qs.length >= this.ratio(g);
   }

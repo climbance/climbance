@@ -2280,11 +2280,11 @@ export interface components {
     };
     /**
      * Measure
-     * @description The test an answer was given in:
-     *     `core-package/knowledge/baseline-tests.md`.
+     * @description The test an answer was given in: `core-package/knowledge/baseline-tests.md`
+     *     and `core-package/knowledge/placement.md`.
      * @enum {string}
      */
-    Measure: 'baseline' | 'delayed';
+    Measure: 'baseline' | 'delayed' | 'placement';
     /** Measured */
     Measured: {
       /** Rating */
@@ -3056,7 +3056,7 @@ export interface components {
      * StintMode
      * @enum {string}
      */
-    StintMode: 'next' | 'review' | 'filtered' | 'exam' | 'baseline' | 'delayed';
+    StintMode: 'next' | 'review' | 'filtered' | 'exam' | 'baseline' | 'delayed' | 'placement';
     /**
      * Stop
      * @description Where the period's writings that did not land stopped: a site's gate, a

@@ -25,6 +25,12 @@ export const baselineNote = (n: number) =>
   `${n} ${n === 1 ? 'question' : 'questions'} on what you know already, with the answers shown at the end. ` +
   'They do not count toward your reviews. In four weeks the same questions show what you gained.';
 
+// a topic's placement: `core-package/knowledge/placement.md`
+export const PLACEMENT_NAME = 'Placement';
+export const PLACEMENT_PRESS = 'Place';
+export const PLACED_NONE = 'Not placed';
+export const PLACEMENT_NONE_LEFT = 'Every subtopic of this topic was placed already.';
+
 // the delayed test a queue stops on at its start
 export const DELAYED_KICKER = 'Four weeks on';
 export const DELAYED_NAME = 'Delayed test';

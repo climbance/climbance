@@ -9,7 +9,7 @@ import type { Result } from './result';
 import { Board } from './schedule';
 import { offersRaise, queueLine, type QueueCounts } from './screens';
 import { newRecord } from './sync';
-import { BASELINE_NAME, DELAYED_NAME } from './words/queue';
+import { BASELINE_NAME, DELAYED_NAME, PLACEMENT_NAME } from './words/queue';
 import type { AttemptRecord, Course, Question, RaiseRecord, SessionRecord, Status } from './types';
 
 export type QueueItem =
@@ -251,26 +251,36 @@ export class ExamRun {
 
   readonly plan: ExamPlan;
   private readonly courses: Course[];
+  // a placement's questions grow one at a time, each picked after the answer before it
+  private readonly asked: Question[];
+  private ended = false;
 
   constructor(plan: ExamPlan, courses: Course[]) {
     this.plan = plan;
     this.courses = courses;
+    this.asked = [...plan.questions];
   }
 
   get total(): number {
-    return this.plan.questions.length;
+    return this.asked.length;
   }
 
   get question(): Question | undefined {
-    return this.phase === 'ask' ? this.plan.questions[this.index] : undefined;
+    return this.phase === 'ask' ? this.asked[this.index] : undefined;
   }
 
+  /** The last question: known before the answer for a fixed sample, after it for a placement. */
   get last(): boolean {
+    if (this.plan.follow) return this.ended;
     return this.index + 1 === this.total;
   }
 
   answer(r: Result): void {
     this.results = [...this.results, r];
+    if (!this.plan.follow) return;
+    const q = this.plan.follow(this.results);
+    if (q) this.asked.push(q);
+    else this.ended = true;
   }
 
   /** The next question, or the end after the last. */
@@ -331,7 +341,16 @@ export class ExamRun {
 
   get title(): string {
     const measure = this.plan.test?.measure;
-    const name = measure === 'baseline' ? BASELINE_NAME : measure === 'delayed' ? DELAYED_NAME : undefined;
+    const name =
+      measure === 'baseline'
+        ? BASELINE_NAME
+        : measure === 'delayed'
+          ? DELAYED_NAME
+          : measure === 'placement'
+            ? PLACEMENT_NAME
+            : undefined;
+    // a placement's length is not known ahead, so its title counts the question alone
+    if (this.plan.follow && this.phase === 'ask') return `${name ?? ''} · ${this.index + 1}`;
     return examTitle(this.phase, this.index, this.total, this.reviewAt, this.outcome.missed.length, name);
   }
 }
@@ -340,5 +359,5 @@ export class ExamRun {
 function testStint(s: SessionRecord, plan: ExamPlan): SessionRecord {
   if (!plan.test) return s;
   const { course, topic, level } = plan.test;
-  return { ...s, course, topic, level };
+  return level === undefined ? { ...s, course, topic } : { ...s, course, topic, level };
 }

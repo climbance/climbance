@@ -5797,10 +5797,11 @@
         "type": "string",
         "enum": [
           "baseline",
-          "delayed"
+          "delayed",
+          "placement"
         ],
         "title": "Measure",
-        "description": "The test an answer was given in:\n`core-package/knowledge/baseline-tests.md`."
+        "description": "The test an answer was given in: `core-package/knowledge/baseline-tests.md`\nand `core-package/knowledge/placement.md`."
       },
       "Measured": {
         "properties": {
@@ -7750,7 +7751,8 @@
           "filtered",
           "exam",
           "baseline",
-          "delayed"
+          "delayed",
+          "placement"
         ],
         "title": "StintMode"
       },

@@ -56,6 +56,8 @@ const ZOOMS = [0.5, 0.75, 1, 1.25]
 // reads muted
 const DOT: Record<CellState, string> = {
   covered: 'fill-brand stroke-brand',
+  // opened by a placement, its questions not yet passed
+  placed: 'fill-none stroke-brand',
   open: 'fill-foreground stroke-foreground',
   locked: 'fill-muted-foreground/30 stroke-muted-foreground/50',
   empty: 'fill-none stroke-border',

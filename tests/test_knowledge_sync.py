@@ -104,6 +104,25 @@ def test_a_baseline_test_round_trips_with_its_measured_answers(database, tmp_pat
     }
 
 
+def test_a_placement_round_trips_naming_its_topic_and_no_level(database, tmp_path):
+    """Gating reads the placed groups from these answers."""
+    session = {"kind": "session", "client_id": "s1", "t": T, "mode": "placement", "score": 1,
+               "n": 1, "course": "python", "topic": "core"}  # fmt: skip
+    answer = attempt("c1", measure="placement")
+
+    result = synced(database, tmp_path, [session, answer])
+
+    assert result["refused"] == []
+    back = {line["kind"]: line for line in result["records"]}
+    assert back["attempt"]["measure"] == "placement"
+    assert {k: back["session"].get(k) for k in ("mode", "course", "topic", "level")} == {
+        "mode": "placement",
+        "course": "python",
+        "topic": "core",
+        "level": None,
+    }
+
+
 def test_a_baseline_test_naming_no_topic_is_refused(database, tmp_path):
     session = {"kind": "session", "client_id": "s1", "t": T, "mode": "baseline", "score": 0,
                "n": 0, "course": "python", "topic": "nowhere", "level": 0}  # fmt: skip

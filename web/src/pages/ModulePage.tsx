@@ -1,4 +1,4 @@
-import { Archive, Crosshair, Pause, Play } from 'lucide-react'
+import { Archive, Crosshair, Gauge, Pause, Play } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
 
@@ -26,6 +26,7 @@ import {
   MODULE_PAUSE,
   MODULE_RESUME,
   MODULE_START,
+  PLACEMENT_PRESS,
   moduleMeta,
   noGraph,
   newRecord,
@@ -54,6 +55,7 @@ import {
 import { loadedFrom, useKnowledge } from '@/knowledge/context'
 import { useLearner } from '@/knowledge/learner'
 import { ModuleMap } from '@/knowledge/ModuleMap'
+import { placementPath } from '@/knowledge/paths'
 import { StartSheet, type Scope } from '@/knowledge/StartSheet'
 import { useSections } from '@/lib/sections'
 import { GridTable } from '@/components/GridTable'
@@ -66,6 +68,7 @@ const HOME = '/knowledge'
 // serve yet reads muted
 const CELL_TONE: Record<CellState, string> = {
   covered: 'text-brand-deep font-medium',
+  placed: 'text-brand-deep',
   open: 'text-foreground',
   locked: 'text-muted-foreground',
   empty: 'text-muted-foreground',
@@ -252,6 +255,16 @@ export function ModulePage() {
                             <Crosshair />
                             {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
                           </Button>
+                          {t.placeable && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => void navigate(placementPath(module, t.slug))}
+                            >
+                              <Gauge />
+                              {PLACEMENT_PRESS}
+                            </Button>
+                          )}
                         </>
                       )
                     }

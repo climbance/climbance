@@ -111,8 +111,8 @@ describe("an exam's outcome", () => {
 
   it('scores it by topic, named by its title', () => {
     expect(outcome.byTopic).toEqual([
-      { topic: 'm/t', title: 'Types', score: 1, n: 2 },
-      { topic: 'm/u', title: 'Units', score: 1, n: 1 },
+      { topic: 'm/t', title: 'Types', score: 1, n: 2, value: '1/2' },
+      { topic: 'm/u', title: 'Units', score: 1, n: 1, value: '1/1' },
     ]);
     expect([outcome.score, outcome.n, outcome.percent]).toEqual([2, 3, 67]);
   });

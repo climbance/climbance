@@ -1,4 +1,5 @@
 import { levelName, levels, subsByDepth, subTitle } from './courses';
+import { placementOpen } from './placement';
 import { drillQueue, type DrillScope, type Queue } from './queue';
 import type { Board } from './schedule';
 import { counted } from './screens';
@@ -7,10 +8,10 @@ import { startLabel } from './words/pages';
 import type { Course, Group } from './types';
 
 /**
- * How one group reads on a module's screens: covered, open, locked, holding no questions, or
+ * How one group reads on a module's screens: covered, placed, open, locked, holding no questions, or
  * mapped: a group of a subtopic the topic map lists and no level of which holds a question yet.
  */
-export type CellState = 'covered' | 'open' | 'locked' | 'empty' | 'mapped';
+export type CellState = 'covered' | 'placed' | 'open' | 'locked' | 'empty' | 'mapped';
 
 export interface GroupCell {
   state: CellState;
@@ -34,7 +35,9 @@ export function groupCell(b: Board, g: Group): GroupCell {
       ? 'mapped'
       : 'empty'
     : b.done(g)
-      ? 'covered'
+      ? b.placed(g) && passed / total < b.ratio(g)
+        ? 'placed'
+        : 'covered'
       : b.unlocked(g)
         ? 'open'
         : 'locked';
@@ -106,6 +109,7 @@ export interface GridTopic {
   title: string;
   count: number;
   mapped: boolean; // every row mapped: the topic's Start and Focus have nothing to serve
+  placeable: boolean; // a placement has a question left to ask: `core-package/knowledge/placement.md`
   rows: GridRow[];
 }
 
@@ -119,6 +123,7 @@ export function moduleGrid(b: Board, c: Course): { levels: { level: number; name
       title: t.title,
       count: t.subs.length,
       mapped: t.subs.every((sub) => isMapped(b, { course: c.slug, topic: t.slug, sub })),
+      placeable: placementOpen(b, c.slug, t.slug),
       // the shallowest subtopic first, as the map draws them
       rows: subsByDepth(c, t).map((sub) => {
         const title = subTitle(c, sub);

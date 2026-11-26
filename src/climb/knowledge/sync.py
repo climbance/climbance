@@ -111,7 +111,8 @@ def sync(
     return result
 
 
-TESTS = ("baseline", "delayed")
+TESTS = ("baseline", "delayed", "placement")
+LEVELLED_TESTS = ("baseline", "delayed")
 
 
 class _Names:
@@ -196,7 +197,9 @@ def _session(names: _Names, line: dict[str, Any]) -> dict[str, Any]:
     if mode in TESTS:
         module_id = names.module(line["course"])
         topic = _topic(names, module_id, line["topic"])
-        values |= {"module_id": module_id, "topic_id": topic, "level": line["level"]}
+        values |= {"module_id": module_id, "topic_id": topic}
+        if mode in LEVELLED_TESTS:
+            values["level"] = line["level"]
     return values | {"certification": certification}
 
 
@@ -256,7 +259,9 @@ def _line(kind: str, row: dict[str, Any], names: _Names) -> dict[str, Any]:
         line |= {"mode": mode, "score": row["score"], "n": row["answered"]}
         if row["mode"] in TESTS:
             topic = names.slug[row["topic_id"]]
-            line |= {"course": names.slug[row["module_id"]], "topic": topic, "level": row["level"]}
+            line |= {"course": names.slug[row["module_id"]], "topic": topic}
+            if row["mode"] in LEVELLED_TESTS:
+                line["level"] = row["level"]
         return line
     if kind == "setting":
         return line | {"name": row["name"], "n": row["value"]}

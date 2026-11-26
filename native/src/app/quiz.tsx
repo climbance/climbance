@@ -431,7 +431,7 @@ function ExamQuiz({ s, onDone }: { s: ExamSession; onDone?: () => void }) {
           </View>
           <PickPanel>
             {out.byTopic.map((t) => (
-              <PickRow key={t.topic} title={t.title} stats={[{ label: '', value: `${t.score}/${t.n}` }]} />
+              <PickRow key={t.topic} title={t.title} stats={[{ label: '', value: t.value }]} />
             ))}
           </PickPanel>
         </ScrollView>

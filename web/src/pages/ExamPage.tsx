@@ -43,6 +43,9 @@ import {
   BACK_CERTIFICATIONS,
   BACK_KNOWLEDGE,
   OF,
+  placementPlan,
+  PLACEMENT_NAME,
+  PLACEMENT_NONE_LEFT,
 } from '@climb/core'
 
 import { optionTile } from '@/components/optionTile'
@@ -58,7 +61,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Ask, Details, Verdict } from '@/knowledge/Ask'
 import { linesOf, loadedFrom, useKnowledge, type Knowledge } from '@/knowledge/context'
 import { useLearner } from '@/knowledge/learner'
-import { CERTIFICATIONS, KNOWLEDGE } from '@/knowledge/paths'
+import { CERTIFICATIONS, KNOWLEDGE, modulePath } from '@/knowledge/paths'
 
 const ALL = 'all'
 
@@ -70,8 +73,12 @@ export function ExamPage() {
   const [params] = useSearchParams()
   const [plan, setPlan] = useState<ExamPlan | null>(null)
   const cert = params.get('cert')
+  const place = params.get('place')
+  const topic = params.get('topic')
 
   const catalog = learner.catalog
+  if (place && topic && catalog)
+    return <PlacementRunning module={place} topic={topic} catalog={catalog} />
   if (plan && catalog)
     return <ExamRunning plan={plan} catalog={catalog} back={cert ? CERTIFICATIONS : KNOWLEDGE} />
   const certified = certById(catalog, cert)?.x
@@ -221,6 +228,32 @@ function CertChoice({
   )
 }
 
+// a topic's placement, drawn once from the board as the page opens; its Done returns to the module
+function PlacementRunning({
+  module,
+  topic,
+  catalog,
+}: {
+  module: string
+  topic: string
+  catalog: Catalog
+}) {
+  const { board } = useLearner()
+  const [plan] = useState(() => {
+    const b = board(module)
+    const c = b?.courses[0]
+    return b && c ? placementPlan(b, c, topic) : null
+  })
+  if (!plan)
+    return (
+      <section className="space-y-section">
+        <PageHeader back={{ to: KNOWLEDGE, label: BACK_KNOWLEDGE }} title={PLACEMENT_NAME} />
+        <p className="text-meta text-muted-foreground">{PLACEMENT_NONE_LEFT}</p>
+      </section>
+    )
+  return <ExamRunning plan={plan} catalog={catalog} back={modulePath(module)} />
+}
+
 // a queue's baseline test runs here too, and its Done returns to the queue
 export function ExamRunning({
   plan,
@@ -301,7 +334,7 @@ export function ExamRunning({
               <PickRow
                 key={t.topic}
                 title={t.title}
-                stats={[{ label: '', value: `${t.score}/${t.n}` }]}
+                stats={[{ label: '', value: t.value }]}
               />
             ))}
           </PickPanel>

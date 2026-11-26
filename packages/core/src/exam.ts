@@ -13,8 +13,11 @@ export interface ExamPlan {
   mode: string; // `exam-L<level>`, or `cert-<id>`: the stint's mode
   questions: Question[];
   cert?: { course: string; id: string; passShare: number };
-  // a baseline or delayed test: its answers carry the measure, its stint the topic
-  test?: { measure: Measure; course: string; topic: string; level: number };
+  // a test: its answers carry the measure, its stint the topic, and a baseline's or a delayed's the level
+  test?: { measure: Measure; course: string; topic: string; level?: number };
+  // a placement picks each question after the last answer, and sums up per subtopic
+  follow?: (results: readonly Result[]) => Question | null;
+  rows?: (results: readonly Result[]) => { topic: string; title: string; value: string }[];
 }
 
 /** A level exam: a uniform sample of every open group at the level, open questions left out. */
@@ -95,7 +98,7 @@ export interface ExamOutcome {
   score: number;
   n: number;
   percent: number;
-  byTopic: { topic: string; title: string; score: number; n: number }[];
+  byTopic: { topic: string; title: string; score: number; n: number; value: string }[];
   missed: Result[];
   attempts: AttemptRecord[];
   cert: Omit<CertRecord, 't'> | null;
@@ -130,7 +133,9 @@ export function examOutcome(plan: ExamPlan, results: Result[], t: string, course
     score,
     n: results.length,
     percent: results.length ? Math.round((100 * score) / results.length) : 0,
-    byTopic: [...topics.values()],
+    byTopic: plan.rows
+      ? plan.rows(results).map((row) => ({ ...row, score: 0, n: 0 }))
+      : [...topics.values()].map((e) => ({ ...e, value: `${e.score}/${e.n}` })),
     missed: results.filter((r) => !r.correct),
     // an exam stores its answers together at its end, at one moment
     attempts: results.map((r) =>

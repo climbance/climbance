@@ -970,6 +970,10 @@ container = "core-package"
 name = "Placement"
 role = "Asks a topic's subtopics highest level first, and reads which groups the user's answers placed."
 doc = "core-package/knowledge/placement.md"
+src = [
+    "packages/core/src/placed.*",
+    "packages/core/src/placement.*",
+]
 
 [[element]]
 id = "projections"
@@ -2576,7 +2580,7 @@ name = "The knowledge queue"
 doc = "journeys/knowledge-queue.md"
 starts = "The knowledge home's Continue"
 ends = "The queue's stop and its summary"
-screens = ["The knowledge home", "A queue", "A module", "A subtopic", "The lessons", "A lesson"]
+screens = ["The knowledge home", "A queue", "A module", "A topic's placement", "A subtopic", "The lessons", "A lesson"]
 acts = [
     "Continue",
     "Review what a strict focus leaves out",
@@ -2588,13 +2592,14 @@ acts = [
     "Start a filtered queue on a group",
     "Start a filtered queue on a subtopic",
     "Start a filtered queue on a topic or a module",
+    "Start a topic's placement",
     "Order the modules",
     "Pause, resume or archive a module",
     "Open a lesson ready to read, or a certification ready for its exam",
     "Mark a lesson read or unread",
     "Type a `short` reply",
 ]
-components = ["knowledge-schedule", "gating", "queues", "answering", "baseline-tests", "projections", "knowledge-screens", "client-store", "knowledge-sync", "knowledge-log"]
+components = ["knowledge-schedule", "gating", "queues", "answering", "baseline-tests", "placement", "projections", "knowledge-screens", "client-store", "knowledge-sync", "knowledge-log"]
 
 [[journey]]
 id = "sitting"

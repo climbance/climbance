@@ -131,7 +131,13 @@ in `packages/core`, on the web and on the phone alike.
   `knowledge-sync` stores its stint as the filtered queue, translating the
   wire's `drill`, as `../api/knowledge-sync.md` gives.
 
-## 6. Lessons and subtopics outside a queue
+## 6. A topic's placement
+
+- **Place beside a topic's heading starts the topic's placement** on the
+  exam's screen, as `../core-package/knowledge/placement.md` gives. `gating`
+  reads a placed group as done, so the next queue starts above it.
+
+## 7. Lessons and subtopics outside a queue
 
 - **The lessons page lists each module's lessons in order**, each row naming
   whether the lesson is locked, ready or read, and its minutes. The web's page
@@ -169,7 +175,7 @@ gives.
 | Step | Stores | Read later by |
 |---|---|---|
 | Each answer | an answer, in `answers` | `knowledge-schedule`, for the question's state; `gating`, for passed groups; `queues`, for today's new questions; `projections`; `certifications`, for coverage and retention |
-| A test answer | an answer carrying its measure | `baseline-tests`, for the learning gain; the schedule ignores it |
+| A test answer | an answer carrying its measure | `baseline-tests`, for the learning gain; `placement`, for the placed groups; the schedule ignores it |
 | The stop | a stint, in `stints` | the summary on the stop; a stopped test's stint, so the test is not offered again |
 | A raise | a limit raise, in `limit_raises` | `queues`, for today's limit on every device |
 | A focus press | a focus, in `focuses` | `queues`, for the next queue; `projections`, for the focus's dates; the exam's opening choices |

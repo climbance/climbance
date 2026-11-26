@@ -53,6 +53,7 @@ inventory is the list both clients build to. A page's own file under
 | The start sheet | a dialog on the module page | a sheet on Module | same |
 | A queue | `/knowledge/queue` | the quiz screen | same |
 | A lesson a queue offers | a stop opening the lesson over the queue | a stop opening the lesson screen | same |
+| A topic's placement | `/knowledge/exam?place=:module&topic=:topic` | the quiz screen | same |
 | A baseline test a queue offers | a stop, then the exam's screen in the queue's place | a stop, then the exam's screen in the quiz's place | same |
 | A level exam's choices | `/knowledge/exam` | Exam | same |
 | An exam and its results | `/knowledge/exam` | the quiz screen | by platform |
@@ -86,6 +87,7 @@ inventory is the list both clients build to. A page's own file under
 | Start a filtered queue on a group | a module page cell | a Module cell | same |
 | Start a filtered queue on a subtopic | the module page | Module, its groups and its map | same |
 | Start a filtered queue on a topic or a module | the module page | Module | same |
+| Start a topic's placement | the module page | Module | same |
 | Order the modules | up and down presses | a drag | by platform |
 | Pause, resume or archive a module | the module page | Module | same |
 | Restore an archived module | the settings page | Settings | same |

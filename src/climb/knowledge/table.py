@@ -194,7 +194,8 @@ stints = _logged(
         name="an_exam_names_its_level",
     ),
     CheckConstraint(
-        "(mode IN ('baseline', 'delayed')) = (module_id IS NOT NULL AND topic_id IS NOT NULL)",
+        "(mode IN ('baseline', 'delayed', 'placement'))"
+        " = (module_id IS NOT NULL AND topic_id IS NOT NULL)",
         name="a_test_names_its_topic",
     ),
     CheckConstraint(

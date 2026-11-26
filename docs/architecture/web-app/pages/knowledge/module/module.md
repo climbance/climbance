@@ -13,7 +13,7 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 |                                                                        |
 | Foundation 18/20   Associate 9/24   Professional 0/30   Expert 0/12    |
 |                                                                        |
-| Core  4 subtopics                             ( Start ) ( Focus )      |
+| Core  4 subtopics                     ( Start ) ( Focus ) ( Place )    |
 | +--------------------------------------------------------+             |
 | |                  L0        L1        L2        L3      |             |
 | | Names            covered   open      locked    locked  |             |
@@ -37,6 +37,8 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
   each level over the questions the level holds.
 - Each topic is a section with its heading and a panel of its subtopics. A
   cell is one group, and `-` is a group holding no questions.
+- Place beside a topic's heading starts the topic's placement. A topic whose
+  subtopics a placement ended has no Place press.
 - A mapped subtopic, Descriptors here, reads Not yet open under its name, and
   each of its cells reads `·`. Its name and its cells are not pressable, and
   its row has no Focus press.

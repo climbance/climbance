@@ -117,6 +117,8 @@ flowchart LR
         core_module["module"]
         core_order["order"]
         core_pairing["pairing"]
+        core_placed["placed"]
+        core_placement["placement"]
         core_practice["practice"]
         core_privacy["privacy"]
         core_queue["queue"]
@@ -199,12 +201,15 @@ flowchart LR
     core_mapview --> core_layout
     core_mapview --> core_module
     core_modes --> core_select
+    core_module --> core_placement
     core_module --> core_screens
-    core_module --> core_words
     core_order --> core_types
     core_pairing --> core_api
     core_pairing --> core_lessons
     core_pairing --> core_module
+    core_placed --> core_types
+    core_placement --> core_exam
+    core_placement --> core_words
     core_practice --> core_account
     core_practice --> core_lessontext
     core_practice --> core_schedule
@@ -227,6 +232,7 @@ flowchart LR
     core_run --> core_sync
     core_schedule --> core_courses
     core_schedule --> core_fsrs
+    core_schedule --> core_placed
     core_screens --> core_queue
     core_select --> core_types
     core_sitting --> core_recall

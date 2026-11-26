@@ -1,4 +1,4 @@
-import { moduleTopicTitle, topicKey } from './courses';
+import { moduleTopicTitle, qkey, topicKey } from './courses';
 import type { ExamPlan } from './exam';
 import type { Board } from './schedule';
 import { shuffle, type Rng } from './select';
@@ -41,7 +41,7 @@ export function baselinePlan(b: Board, item: BaselineItem, rng: Rng = Math.rando
   const pool = b
     .questions()
     .filter((q) => q.course === item.course.slug && q.topic === item.topic && q.level === item.level)
-    .filter((q) => q.format !== 'card');
+    .filter((q) => q.format !== 'card' && !b.placementAnswers.has(qkey(q)));
   const subs = item.course.topics.find((t) => t.slug === item.topic)?.subs ?? [];
   const picked = subs.flatMap((s) =>
     shuffle(

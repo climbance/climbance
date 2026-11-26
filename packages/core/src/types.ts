@@ -171,7 +171,7 @@ export interface AttemptRecord {
 }
 
 /** The test an answer was given in: `core-package/knowledge/baseline-tests.md`. */
-export type Measure = 'baseline' | 'delayed';
+export type Measure = 'baseline' | 'delayed' | 'placement';
 
 export type CourseStatus = 'active' | 'paused' | 'archived';
 

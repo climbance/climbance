@@ -38,10 +38,12 @@ class QuestionFormat(StrEnum):
 
 class Measure(StrEnum):
     """The test an answer was given in:
-    `core-package/knowledge/baseline-tests.md`."""
+    `core-package/knowledge/baseline-tests.md` and
+    `core-package/knowledge/placement.md`."""
 
     BASELINE = "baseline"
     DELAYED = "delayed"
+    PLACEMENT = "placement"
 
 
 class OpenGrade(StrEnum):
@@ -60,6 +62,7 @@ class StintMode(StrEnum):
     EXAM = "exam"
     BASELINE = "baseline"
     DELAYED = "delayed"
+    PLACEMENT = "placement"
 
 
 class SettingName(StrEnum):
@@ -230,6 +233,7 @@ class Answer(KnowledgeRecord):
 
 
 LEVELLED = (StintMode.EXAM, StintMode.BASELINE, StintMode.DELAYED)
+TOPICAL = (StintMode.BASELINE, StintMode.DELAYED, StintMode.PLACEMENT)
 
 
 class Stint(KnowledgeRecord):
@@ -239,7 +243,7 @@ class Stint(KnowledgeRecord):
     answered: int = Field(ge=0)
     # a certification's exam, by its wire id: `api/knowledge-sync.md`
     certification: str | None = Field(default=None, min_length=1)
-    # a baseline or delayed test's topic, with its level above
+    # a test's topic; a baseline or delayed test's level is above
     module_id: str | None = None
     topic_id: str | None = None
 
@@ -247,9 +251,9 @@ class Stint(KnowledgeRecord):
     def _an_exam_names_its_level(self) -> Stint:
         if (self.mode in LEVELLED) != (self.level is not None):
             raise ValueError("an exam or a test names its level, and no queue does")
-        tested = self.mode in (StintMode.BASELINE, StintMode.DELAYED)
+        tested = self.mode in TOPICAL
         if tested != (self.module_id is not None and self.topic_id is not None):
-            raise ValueError("a baseline or delayed test names its module and topic alone")
+            raise ValueError("a test or a placement names its module and topic alone")
         if self.certification is not None and self.mode is not StintMode.EXAM:
             raise ValueError("a certification names an exam, and no queue")
         return self

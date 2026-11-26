@@ -360,6 +360,7 @@ function CourseMap(props: { c: Course; b: Board; withLessons: boolean }) {
   const dots = useMemo(() => {
     const color = {
       covered: tone.done,
+      placed: tone.done,
       open: tone.open,
       locked: theme.colors.onSurfaceDisabled,
       empty: null,

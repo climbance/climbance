@@ -12,9 +12,11 @@ import {
   MODULE_FOCUSED,
   moduleGrid,
   MODULE_START,
+  placementPlan,
+  PLACEMENT_PRESS,
 } from '@climb/core';
 import { useStore } from '@/lib/store';
-import { styles, tones } from '@/ui/common';
+import { startExam, styles, tones } from '@/ui/common';
 import { PageSection, type Sections } from '@/ui/sections';
 import type { Scope } from '@/ui/start';
 import { space } from '@/ui/tokens';
@@ -40,6 +42,7 @@ export function ModuleGroups({
   const { done, open } = tones(theme.dark);
   const tone: Record<CellState, string> = {
     covered: done,
+    placed: done,
     open,
     locked: theme.colors.onSurfaceDisabled,
     empty: theme.colors.onSurfaceDisabled,
@@ -73,6 +76,19 @@ export function ModuleGroups({
                 <Button compact icon="crosshairs-gps" disabled={aimed(t.slug, null)} onPress={() => aim(t.slug, null)}>
                   {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
                 </Button>
+                {t.placeable ? (
+                  <Button
+                    compact
+                    icon="gauge"
+                    onPress={() => {
+                      // a topic's placement runs on the quiz screen: `core-package/knowledge/placement.md`
+                      const plan = placementPlan(b, c, t.slug);
+                      if (plan) startExam(st, plan);
+                    }}
+                  >
+                    {PLACEMENT_PRESS}
+                  </Button>
+                ) : null}
               </>
             )
           }

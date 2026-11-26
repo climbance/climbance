@@ -8,7 +8,11 @@ status. `../../../README.md` `## The structure` gives what the page holds.
 screens at low fidelity.
 
 - **A module's page reads each topic as a panel of subtopics by level.** Each
-  group reads as covered, open, locked, holding no questions or not yet open.
+  group reads as covered, placed, open, locked, holding no questions or not
+  yet open. `../../../../core-package/knowledge/placement.md` gives placed.
+- **A topic's heading carries a Place press** while its placement has a
+  question left to ask. The press starts the topic's placement on the exam's
+  screen.
 - **The page shows every subtopic of the module's topic map, the mapped ones
   too.** A mapped subtopic reads Not yet open beside its name, and its cells
   read `·`. The topic map promises the module's whole extent, so a learner

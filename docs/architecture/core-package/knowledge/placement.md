@@ -37,6 +37,15 @@ answers every Foundation question before reaching the level they need.
   resumes at the next placement of the topic, sampling from the questions it
   has not asked.
 
+## Where a placement starts
+
+- **A Place press beside a topic's heading on the module's page starts its
+  placement**, on both clients, while the topic has a question left to ask.
+  A topic every subtopic of which a placement ended offers no press.
+- **The placement runs on the exam's screen**: `/knowledge/exam` on the web,
+  the quiz screen on the phone. Its title counts the questions asked, since
+  the number left depends on the answers. Its Done returns to the module.
+
 ## What a pass places
 
 - **A pass at a level places the subtopic's group at that level and at every
@@ -50,6 +59,8 @@ answers every Foundation question before reaching the level they need.
   date the focus is reached in `projections.md` read it too. The next queue
   then serves no new question from a placed group. The filtered queue still
   serves a placed group's questions.
+- **A placed group reads placed on the module's page**, until its passed
+  share reaches the pass ratio and it reads covered.
 - **A placed group is not covered.** A certification's coverage is the passed
   share of each group, as `certifications.md` gives, and a placement passes no
   question. A certification rests on retention measured over weeks, and three
@@ -100,5 +111,4 @@ Deferred, since only use answers each:
   need a fourth. The stored placement answers and the later answers on placed
   groups answer it.
 - Whether a user may undo a placement and walk a subtopic from level 0.
-- The screen offering a placement. A module's first run offers it before the
-  first lesson, as a separate design.
+- Offering a placement in a module's first run, before its first lesson.
