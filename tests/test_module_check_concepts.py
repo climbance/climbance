@@ -5,6 +5,8 @@ from pathlib import Path
 from authoring import found, shelved, written
 
 from climb.knowledge.authoring import check
+from climb.knowledge.authoring.course import Report, load
+from climb.knowledge.authoring.model_checks import checked
 
 URL = "https://docs.python.org/3/reference/compound_stmts.html#the-while-statement"
 LESSON = "## While\n\n`while` tests its condition first.\n"
@@ -397,3 +399,78 @@ def test_an_elided_quote_matches_its_parts_in_order(tmp_path):
 
     assert found(check(kept, run=False).report.errors, 30) == []
     assert len(found(check(swapped, run=False).report.errors, 30)) == 1
+
+
+MODEL = {
+    "model_witness": "print('holds')\n",
+    "quote": "A sentence.",
+    "read_on": date(2026, 11, 15),
+}
+PANEL = '[models]\npanel = ["a/one", "b/two"]\nevery_days = 90\n'
+
+
+def held(model: str, on: date, holds: bool = True) -> dict:
+    return {"model": model, "checked_on": on, "holds": holds, "measured": "0.6 against 0.8"}
+
+
+def checking(tmp_path: Path, *checks: dict, config: str = PANEL, **fields) -> list[str]:
+    root = module(tmp_path, concept(**MODEL, checks=list(checks), **fields))
+    (root / "check.toml").write_text(config)
+    course = load(root)
+    report = Report()
+    checked(course, report, today=date(2026, 12, 1))
+    return report.errors + report.warnings
+
+
+def test_a_claim_checked_on_every_panel_model_lately_reports_nothing(tmp_path):
+    """Rule 31: the latest check on each panel model held, within the period."""
+    on = date(2026, 11, 20)
+
+    assert checking(tmp_path, held("a/one", on), held("b/two", on)) == []
+
+
+def test_a_claim_whose_latest_check_failed_must_be_retired(tmp_path):
+    """Rule 31: a claim that stopped holding on one panel model is false."""
+    checks = (held("a/one", date(2026, 9, 1)), held("a/one", date(2026, 11, 20), holds=False))
+
+    assert checking(tmp_path, *checks, held("b/two", date(2026, 11, 20))) == [
+        "[31] concepts/t/sub.toml while-retests: stopped holding on a/one on 2026-11-20: retire it"
+    ]
+
+
+def test_a_claim_unchecked_on_a_model_or_past_its_period_is_due(tmp_path):
+    """Rule 31: a new panel model, or a check past the period, is due."""
+    assert checking(tmp_path, held("a/one", date(2026, 8, 1))) == [
+        "[31] concepts/t/sub.toml while-retests: due: last checked on a/one on 2026-08-01",
+        "[31] concepts/t/sub.toml while-retests: due: never checked on b/two",
+    ]
+
+
+def test_a_model_witness_in_a_module_naming_no_panel_is_refused(tmp_path):
+    """Rule 31: with no panel, the claim's checks name models nobody chose."""
+    assert checking(tmp_path, held("a/one", date(2026, 11, 20)), config="") == [
+        "[31] concepts/t/sub.toml while-retests: check.toml names no [models] panel and every_days"
+    ]
+
+
+def test_a_malformed_check_is_refused(tmp_path):
+    """Rule 31: a check names its model, date, verdict and measurement."""
+    bare = {"model": "a/one", "checked_on": date(2026, 11, 20)}
+
+    assert checking(
+        tmp_path, bare, held("a/one", date(2026, 11, 20)), held("b/two", date(2026, 11, 20))
+    )[0] == (
+        "[31] concepts/t/sub.toml while-retests: a check is not "
+        "{ model, checked_on, holds, measured }"
+    )
+
+
+def test_a_retired_id_is_refused_and_its_entry_needs_a_reason(tmp_path):
+    """Rule 31: a retired id is never reused, and its retirement says why."""
+    on = date(2026, 11, 20)
+    config = PANEL + "[retired.while-retests]\nretired_on = 2026-11-01\n"
+
+    assert checking(tmp_path, held("a/one", on), held("b/two", on), config=config) == [
+        "[31] concepts/t/sub.toml while-retests: the id was retired",
+        "[31] check.toml retired while-retests: needs retired_on and because",
+    ]

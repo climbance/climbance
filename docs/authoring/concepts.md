@@ -56,6 +56,8 @@ the coverage map for a module written by concept.
 | `output` | The witness's output, the same on every supported build. |
 | `quote` | The source's sentence the claim rests on, where no witness can run. `[...]` marks text left out between two parts. |
 | `read_on` | The date the quoted source was read, beside a `quote`. |
+| `model_witness` | Code that asks models and prints whether the claim's effect showed, for a claim that depends on a model. |
+| `checks` | Each run of the `model_witness`, as `{ model, checked_on, holds, measured }`. |
 | `misconceptions` | Wrong beliefs about the claim, each `{ id, text }`. |
 | `taught_by` | The lesson section teaching the concept, as `<slug>#<anchor>`. |
 
@@ -217,6 +219,53 @@ compared exactly on every run, so a cost is witnessed by counting steps.
   one place, and the witness shows the count at several sizes. The source
   still states the order of the cost, which the derived count refines. Such a
   count is not invented, since the code fixes it.
+
+## Claims that depend on a model
+
+A claim depends on a model when its truth is a fact about how models answer,
+such as a fact in the middle of a long context being used less reliably. A
+stub cannot show such a claim, since a stub shows only what its author wrote
+into it. A model can stop showing the effect when a successor ships, and the
+questions on the claim then teach a wrong fact.
+
+- **A claim that depends on a model carries a `model_witness` and its
+  `checks`, beside the `quote` from its source.** The quote says where the
+  effect was found. The checks say the effect still shows on the models used
+  today.
+- **A `model_witness` measures the effect and prints a verdict.** It asks each
+  model through `ask(model, prompt)`, which the run provides, so it names no
+  product's interface. Its last line is `holds` or `fails`, decided by a
+  threshold the witness states. A line before it gives the measured sizes.
+- **Each run appends one check per model**: the model with its pin as the
+  engine's configuration names it, the date, the verdict, and the measured
+  sizes in `measured`. A check is never edited. The latest check on a model is
+  the claim's standing on that model.
+- **The module's `check.toml` names the panel under `[models]`**, with
+  `panel`, the models every such claim is checked on, and `every_days`, the
+  period between two checks. The panel holds the current model of at least two
+  providers' families, chosen from the models the lab allows. A claim checked
+  on one family alone may describe that family.
+- **A claim is due when a panel model has no check on it, or its latest check
+  is older than `every_days`.** A model joining the panel makes every such
+  claim due at once. The module check warns on a due claim, since it is not
+  yet known to be false.
+- **A claim stops holding when its latest check on any panel model fails.** An
+  effect absent on one current model is no longer a fact about models in
+  general. The module check refuses the module until the concept is retired.
+- **A retired concept is removed with its questions and its lesson section.**
+  The seed retires the removed questions, as it does for any removed
+  question. Its id goes under `[retired.<id>]` in `check.toml`, with
+  `retired_on` and `because`, which quotes the failing check. The check
+  refuses a concept taking a retired id, since a learner's answers to the old
+  questions would count toward a different claim.
+- **A narrower claim that still holds is a new concept**, written and reviewed
+  as any concept is. The old claim's misconceptions are not copied into it,
+  since they were wrong beliefs about a different claim.
+- **`climb module reverify` runs each due claim's `model_witness` on the
+  panel and appends the checks.** It sends every call through the engine's
+  calls, so each call is in the call log with its configuration. The command
+  is not built yet. Until it is, the writer runs the `model_witness` on each
+  panel model and appends the checks by hand.
 
 ## Lessons and questions
 
@@ -468,7 +517,7 @@ back to a concept in the pilot broke one of them.
 
 ## Mechanical checks
 
-The module check holds a module written by concept to rules 26 to 30 of
+The module check holds a module written by concept to rules 26 to 31 of
 `rules.md`: the witnesses, the concept records, the lessons' sections and
 the prose a program can check. Rule 19 files each question by its concept.
 It warns of a concept no question tests, and of a misconception no wrong

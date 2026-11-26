@@ -13,6 +13,7 @@ from climb.knowledge.authoring.execution import Runs
 from climb.knowledge.authoring.layout import box_drawing, text_fences, widths
 from climb.knowledge.authoring.lessons import lessons_run
 from climb.knowledge.authoring.likeness import overlaps
+from climb.knowledge.authoring.model_checks import checked
 from climb.knowledge.authoring.pairing import paired
 from climb.knowledge.authoring.prose import prose
 from climb.knowledge.authoring.quotes import quoted
@@ -54,7 +55,7 @@ STATIC = (
 )
 # a module written by concept files each question by its concept, where
 # another files it in the coverage map: docs/authoring/concepts.md
-BY_CONCEPT = (records, quoted, taught, prose, filed, replies, shared, verdicts, centres)
+BY_CONCEPT = (records, quoted, taught, prose, filed, replies, shared, verdicts, centres, checked)
 
 
 @dataclass

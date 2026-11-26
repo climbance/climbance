@@ -51,6 +51,10 @@ class Course:
     empty: list[dict[str, Any]] = field(default_factory=list[dict[str, Any]])
     # what reading the concepts found wrong: a file, an id, a derived field
     unread: list[str] = field(default_factory=list[str])
+    # rule 31: the models a claim depending on one is checked on, and how often
+    models: dict[str, Any] = field(default_factory=dict[str, Any])
+    # concept ids retired once their claim stopped holding, never reused
+    retired: dict[str, dict[str, Any]] = field(default_factory=dict[str, dict[str, Any]])
 
 
 def load(root: Path) -> Course:
@@ -91,6 +95,8 @@ def load(root: Path) -> Course:
         concepts=concepts,
         empty=read_empty(root),
         unread=unread,
+        models=config.get("models", {}),
+        retired=config.get("retired", {}),
     )
 
 

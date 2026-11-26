@@ -286,3 +286,12 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     between two `[...]` is found after the part before it. A concept quoting
     beside a source kept outside git, as Wikipedia is, is refused, since a
     review cannot read the text the quote came from. *check*
+31. **A claim that depends on a model is checked on the module's panel, again
+    every `every_days`, and retired once it stops holding.** A concept with a
+    `model_witness` holds a list of `checks`, each `{ model, checked_on,
+    holds, measured }`, and its module's `check.toml` names `[models] panel`
+    and `every_days`. A claim with no check on a panel model, or a latest
+    check older than the period, is due. A latest check that failed on a
+    panel model refuses the module until the concept is retired. A retired id
+    names its `retired_on` and `because`, and no concept takes it again.
+    *check (due: warning)*
