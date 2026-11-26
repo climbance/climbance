@@ -45,6 +45,7 @@ See `README.md` for what this is.
 @docs/architecture/concepts/terms/log.md
 @docs/architecture/concepts/terms/knowledge.md
 @docs/architecture/concepts/terms/clients.md
+@docs/architecture/concepts/terms/ai-engineering.md
 
 The other files in `docs/architecture/` are not loaded at start. Before
 changing what one of them governs, read that file: the map in its README names
