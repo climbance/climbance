@@ -346,6 +346,7 @@ flowchart TB
     difficulty -->|"asks the judge for each draw, and each panel member for a solution"| calls
     difficulty -->|"appends the draws, the corrections, the ratings and the trials"| database
     diagnoser -->|"asks why an attempt failed"| calls
+    seed -->|"asks each panel model for a claim's model witness"| calls
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
     calls -.->|"sends each request, pinned to one endpoint"| model_router
     calls -->|"appends each call to the call log"| database

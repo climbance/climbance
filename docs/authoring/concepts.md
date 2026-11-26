@@ -57,7 +57,7 @@ the coverage map for a module written by concept.
 | `quote` | The source's sentence the claim rests on, where no witness can run. `[...]` marks text left out between two parts. |
 | `read_on` | The date the quoted source was read, beside a `quote`. |
 | `model_witness` | Code that asks models and prints whether the claim's effect showed, for a claim that depends on a model. |
-| `checks` | Each run of the `model_witness`, as `{ model, checked_on, holds, measured }`. |
+| `checks` | Each run of the `model_witness`, as a `[[concept.checks]]` table `{ model, checked_on, holds, measured }`. |
 | `misconceptions` | Wrong beliefs about the claim, each `{ id, text }`. |
 | `taught_by` | The lesson section teaching the concept, as `<slug>#<anchor>`. |
 
@@ -232,17 +232,23 @@ questions on the claim then teach a wrong fact.
   `checks`, beside the `quote` from its source.** The quote says where the
   effect was found. The checks say the effect still shows on the models used
   today.
-- **A `model_witness` measures the effect and prints a verdict.** It asks each
-  model through `ask(model, prompt)`, which the run provides, so it names no
+- **A `model_witness` measures the effect on one model and prints a
+  verdict.** The run executes it once per panel model, with `model` set to
+  that panel entry. It asks the model through `ask(model, prompt)`, which the
+  run provides and which returns the reply's text, so the witness names no
   product's interface. Its last line is `holds` or `fails`, decided by a
-  threshold the witness states. A line before it gives the measured sizes.
-- **Each run appends one check per model**: the model with its pin as the
-  engine's configuration names it, the date, the verdict, and the measured
-  sizes in `measured`. A check is never edited. The latest check on a model is
-  the claim's standing on that model.
+  threshold the witness states. The line before it gives the measured sizes.
+- **Each run appends one check per model**: the panel entry, the date, the
+  verdict, and the measured sizes in `measured`. Each check is a
+  `[[concept.checks]]` table after the concept's fields, since an inline
+  `checks` array cannot be appended to without rewriting it. A check is never
+  edited. The latest check on a model is the claim's standing on that model.
 - **The module's `check.toml` names the panel under `[models]`**, with
   `panel`, the models every such claim is checked on, and `every_days`, the
-  period between two checks. The panel holds the current model of at least two
+  period between two checks. A panel entry is `model@pin`, the model id and
+  the endpoint it is pinned to, as the engine's configuration names them. The
+  call sends no effort and no temperature, since the claim is about the model
+  as it answers by default. The panel holds the current model of at least two
   providers' families, chosen from the models the lab allows. A claim checked
   on one family alone may describe that family.
 - **A claim is due when a panel model has no check on it, or its latest check
@@ -261,11 +267,12 @@ questions on the claim then teach a wrong fact.
 - **A narrower claim that still holds is a new concept**, written and reviewed
   as any concept is. The old claim's misconceptions are not copied into it,
   since they were wrong beliefs about a different claim.
-- **`climb module reverify` runs each due claim's `model_witness` on the
-  panel and appends the checks.** It sends every call through the engine's
-  calls, so each call is in the call log with its configuration. The command
-  is not built yet. Until it is, the writer runs the `model_witness` on each
-  panel model and appends the checks by hand.
+- **`climb module reverify <module>` runs each due claim's `model_witness`
+  on each panel model it is due on, and appends the checks.** It sends every
+  call through the engine's calls, so each call is in the call log with its
+  configuration. A claim whose latest check failed is not run again, since it
+  is retired instead. A witness that raises or prints no verdict appends no
+  check for that model, and the command exits non-zero.
 
 ## Lessons and questions
 

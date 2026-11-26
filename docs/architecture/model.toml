@@ -2079,6 +2079,12 @@ label = "asks why an attempt failed"
 access = "writes"
 
 [[relation]]
+from = "seed"
+to = "calls"
+label = "asks each panel model for a claim's model witness"
+access = "writes"
+
+[[relation]]
 from = "diagnoser"
 to = "database"
 label = "appends each diagnosis and mutant diagnosis"

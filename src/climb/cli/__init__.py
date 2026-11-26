@@ -452,6 +452,13 @@ def main() -> None:
         "--content", default="content/modules", help="the directory holding the modules"
     )
     status_parser.add_argument("--json", action="store_true", help="emit the status as JSON")
+    reverify_parser = module_action.add_parser(
+        "reverify", help="run each due model_witness on the panel and append its checks"
+    )
+    reverify_parser.add_argument("slug", help="the module's directory under --content")
+    reverify_parser.add_argument(
+        "--content", default="content/modules", help="the directory holding the modules"
+    )
     retire_parser = module_action.add_parser(
         "retire", help="retire a seeded module whose files are gone, keeping its rows"
     )
@@ -516,7 +523,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     "judge": lambda args, _parser, root: judge(args, root),
     "fill": lambda args, _parser, root: fill(args, root),
     "module": lambda args, parser, root: (
-        retired(args, root) if args.action == "retire" else module(args, parser)
+        retired(args, root) if args.action == "retire" else module(args, parser, root)
     ),
     "library": lambda args, parser, _root: library(args, parser),
     "invite": invitation,

@@ -29,3 +29,8 @@ already made.
   concepts out, since no learner reads one.
 - **A re-seed replaces a module's concepts whole.** No log record references a
   concept, so a concept removed from the files has nothing left to keep.
+- **`climb module reverify` is the one command of this component that calls
+  a model.** It runs each due `model_witness` on the module's panel through
+  the calls, and appends the checks to the concept files in `content/`.
+  `docs/authoring/concepts.md`, under `## Claims that depend on a model`,
+  gives the rule it follows.
