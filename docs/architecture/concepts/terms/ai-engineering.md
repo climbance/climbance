@@ -41,3 +41,28 @@ uses them without redefining them.
   days after the pass, on another fresh task.
 - **Held step**: a step of the readiness bar with a pass and a passed
   readiness retest 28 days or more apart.
+
+## AI tasks and their grading
+
+- **AI task**: the record a desk task is served from: its statement, its
+  component interface, its dataset, its metric, its bar, its slices and its
+  token budget. `../ai-task-grading.md` gives it.
+- **Component interface**: the functions a desk task's submission defines,
+  and its declared stages with the identity of each.
+- **Visible set** / **hidden set**: an AI task's cases the learner runs, and
+  the cases that grade the submission and are never served.
+- **Bar**: the score an AI task's metric must reach on the hidden set.
+  Distinct from the readiness bar.
+- **Slice**: a named group of an AI task's cases testing one difficulty.
+  Its **floor** is the score the metric must reach on its cases alone.
+- **Token budget**: the most tokens a submission may spend per case.
+- **Reference component**: the component written with an AI task that clears
+  its bar and every floor. Distinct from a problem's reference solution.
+- **Baseline component**: the component written with an AI task that fails
+  its bar. Distinct from a baseline test.
+- **AI attempt**: a learner's submission to an AI task. An **AI grading** is
+  one harness run of an AI attempt on one set.
+- **Driver**: the entry process of an AI task's run, which feeds the
+  component its dataset and each case's input.
+- **Model gateway**: the one address the sandbox reaches in an AI task's run.
+  It answers each model call and counts its tokens.

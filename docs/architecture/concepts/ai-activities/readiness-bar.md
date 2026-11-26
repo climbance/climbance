@@ -102,9 +102,8 @@ different things, and this file names the first in full each time.
 ## The state is derived
 
 - **The readiness bar's state is derived from the log on every read, never
-  stored.** Each readiness sitting is an attempt with a flag naming its step,
-  and the pass is read from the attempt's grading. A stored state would
-  drift from the attempts it summarises.
-- **The records the bar reads are written by the AI desk tasks.** The record
-  of a readiness sitting is designed with the AI task record in
-  `../ai-task-grading.md`.
+  stored.** Each readiness sitting's AI attempt carries a flag naming its
+  step, and the pass is read from the AI attempt's hidden AI grading. A
+  stored state would drift from the AI attempts it summarises.
+- **The records the bar reads are the AI attempts and the AI gradings**, as
+  `../ai-task-grading.md` gives.
