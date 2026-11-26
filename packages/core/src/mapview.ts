@@ -2,10 +2,10 @@ import type { CertState, CertStatus } from './certs';
 import { levelName, levels, subTitle, topicTitle, unlocksLabel } from './courses';
 import { aimedAt, type Focus } from './focus';
 import { lineage, type ClusterLayout, type MapEdge, type PlacedNode } from './layout';
-import { groupCell, type CellState } from './module';
+import { groupCell, isMapped, type CellState } from './module';
 import type { Board } from './schedule';
 import type { Course } from './types';
-import { alsoNeedsLine, levelLine, MODULE_FOCUS_HERE, MODULE_FOCUSED } from './words/module';
+import { alsoNeedsLine, levelLine, MODULE_FOCUS_HERE, MODULE_FOCUSED, NOT_YET_OPEN } from './words/module';
 
 /**
  * Where a map opens: the focus's subtopic or topic where it aims inside the
@@ -108,7 +108,7 @@ export function levelDots(b: Board, c: Course, nodes: PlacedNode[]): Map<string,
       n.sub,
       levels(b.rules).map((level) => {
         const s = groupCell(b, { course: c.slug, topic: n.topic, sub: n.sub, level }).state;
-        return s === 'empty' ? null : s;
+        return s === 'empty' || s === 'mapped' ? null : s;
       }),
     );
   }
@@ -181,7 +181,10 @@ export function lessonView(b: Board, c: Course, slug: string): LessonView | null
     state,
     teaches: `Teaches: ${x.teaches.map(([s, l]) => `${s} · ${levelName(b.rules, l)}`).join(', ')}`,
     needs: needs.length ? `Needs: ${needs.join(', ')}` : null,
-    pretest: state === 'done' || b.pretestByTest(c, x) ? null : `Pretest: ${Math.min(b.tried(c, x), x.pretest)}/${x.pretest} questions tried`,
+    pretest:
+      state === 'done' || b.pretestByTest(c, x)
+        ? null
+        : `Pretest: ${Math.min(b.tried(c, x), x.pretest)}/${x.pretest} questions tried`,
   };
 }
 
@@ -234,7 +237,8 @@ export function entryMark(n: PlacedNode): string {
 export interface NodeView {
   title: string;
   topic: string;
-  levels: { line: string; empty: boolean }[];
+  levels: { line: string; empty: boolean }[]; // one Not yet open line on a mapped node
+  mapped: boolean; // offers neither Start nor Focus
   alsoNeeds: string | null;
   unlocks: string | null;
   aimed: boolean;
@@ -245,13 +249,17 @@ export interface NodeView {
 export function nodeView(b: Board, c: Course, n: { topic: string; sub: string }, focus: Focus | null): NodeView {
   const outside = alsoNeeds(c, n.sub, n.topic);
   const aimed = aimedAt(focus, c.slug, n.topic, n.sub);
+  const mapped = isMapped(b, { course: c.slug, topic: n.topic, sub: n.sub });
   return {
     title: subTitle(c, n.sub),
     topic: topicTitle(c, n.topic),
-    levels: levels(b.rules).map((level) => {
-      const cell = groupCell(b, { course: c.slug, topic: n.topic, sub: n.sub, level });
-      return { line: levelLine(levelName(b.rules, level), cell.line), empty: cell.state === 'empty' };
-    }),
+    levels: mapped
+      ? [{ line: NOT_YET_OPEN, empty: true }]
+      : levels(b.rules).map((level) => {
+          const cell = groupCell(b, { course: c.slug, topic: n.topic, sub: n.sub, level });
+          return { line: levelLine(levelName(b.rules, level), cell.line), empty: cell.state === 'empty' };
+        }),
+    mapped,
     alsoNeeds: outside.length ? alsoNeedsLine(outside) : null,
     unlocks: unlocksLabel(c, n.sub) || null,
     aimed,

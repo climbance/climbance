@@ -356,9 +356,10 @@ question per fix cost the author's time and changed little.
      its headings follow the concept order, so every construct a witness
      uses is taught before the section teaching that witness's concept. It
      adds the subtopic to `course.toml` and to `graph.toml`, with the
-     subtopics it needs, and writes each lesson file as its `##` headings
-     alone. The check then holds every `taught_by`
-     to a section, and stage 2 writes under the approved headings.
+     subtopics it needs, where the module's topic map has not listed it
+     already. It writes each lesson file as its `##` headings alone. The
+     check then holds every `taught_by` to a section, and stage 2 writes
+     under the approved headings.
    - The approval is recorded in the concept file's header, with its date
      and the scopes the author decided.
 2. **Lessons.** The sections are written from the approved concepts. A

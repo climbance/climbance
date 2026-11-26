@@ -17,6 +17,8 @@ export const MODULE_RESUME = 'Resume';
 export const MODULE_ARCHIVE = 'Archive';
 export const MODULE_GROUPS_TAB = 'Groups';
 export const MODULE_MAP_TAB = 'Map';
+// a subtopic the topic map lists, no level of which holds a question yet
+export const NOT_YET_OPEN = 'Not yet open';
 
 export function moduleMeta(topics: number, due: number, paused: boolean): string {
   return `${counted(topics, 'topic')} · ${due} due · ${paused ? 'paused' : 'active'}`;
@@ -44,6 +46,7 @@ export const MAP_LEGEND: Record<CellState, string> = {
   open: 'open',
   locked: 'locked',
   empty: 'no questions',
+  mapped: 'not yet open',
 };
 export const MAP_LESSONS = 'Lessons';
 export const MAP_FIT = 'Fit the map';

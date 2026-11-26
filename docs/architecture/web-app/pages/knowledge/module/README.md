@@ -8,7 +8,18 @@ status. `../../../README.md` `## The structure` gives what the page holds.
 screens at low fidelity.
 
 - **A module's page reads each topic as a panel of subtopics by level.** Each
-  group reads as covered, open, locked or holding no questions.
+  group reads as covered, open, locked, holding no questions or not yet open.
+- **The page shows every subtopic of the module's topic map, the mapped ones
+  too.** A mapped subtopic reads Not yet open beside its name, and its cells
+  read `·`. The topic map promises the module's whole extent, so a learner
+  sees what is coming before it is written.
+- **A mapped subtopic offers no press.** Its name starts nothing and it has no
+  Focus press, since no level holds a question to serve. A topic whose
+  subtopics are all mapped has no Start or Focus press either. The map's node
+  of a mapped subtopic reads Not yet open and offers neither press.
+- **A mapped subtopic counts against nothing.** Gating skips it, so a
+  subtopic needing it opens as if the need were met. The counts per level,
+  the certifications' coverage and the frontier hold none of its groups.
 - **The module's page is one screen on both clients.** The two clients read
   the same numbers from `packages/core`, so the difference is the layout
   alone.

@@ -43,6 +43,7 @@ export function ModuleGroups({
     open,
     locked: theme.colors.onSurfaceDisabled,
     empty: theme.colors.onSurfaceDisabled,
+    mapped: theme.colors.onSurfaceDisabled,
   };
   const grid = moduleGrid(b, c);
   const aimed = (topic: string | null, sub: string | null) => aimedAt(st.focus, c.slug, topic, sub);
@@ -59,18 +60,21 @@ export function ModuleGroups({
           title={t.title}
           count={t.count}
           aside={
-            <>
-              <Button
-                compact
-                icon="play"
-                onPress={() => onStart({ course: c.slug, topic: t.slug, sub: null, level: null })}
-              >
-                {MODULE_START}
-              </Button>
-              <Button compact icon="crosshairs-gps" disabled={aimed(t.slug, null)} onPress={() => aim(t.slug, null)}>
-                {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
-              </Button>
-            </>
+            // a topic of mapped subtopics has nothing to start or aim at
+            t.mapped ? undefined : (
+              <>
+                <Button
+                  compact
+                  icon="play"
+                  onPress={() => onStart({ course: c.slug, topic: t.slug, sub: null, level: null })}
+                >
+                  {MODULE_START}
+                </Button>
+                <Button compact icon="crosshairs-gps" disabled={aimed(t.slug, null)} onPress={() => aim(t.slug, null)}>
+                  {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
+                </Button>
+              </>
+            )
           }
         >
           <View style={[styles.row, { paddingLeft: space[1] }]}>
@@ -83,36 +87,50 @@ export function ModuleGroups({
           </View>
           {t.rows.map((row) => (
             <View key={row.sub} style={styles.row}>
-              {/* the name starts the subtopic at every level; the press beside it aims the focus */}
-              <Pressable
-                style={{ flex: 1, minHeight: 40, justifyContent: 'center' }}
-                accessibilityRole="button"
-                accessibilityLabel={row.start}
-                onPress={() => onStart({ course: c.slug, topic: t.slug, sub: row.sub, level: null })}
-              >
-                <Text
-                  variant="bodyMedium"
-                  numberOfLines={1}
-                  style={aimed(t.slug, row.sub) ? { color: theme.colors.primary } : null}
-                >
-                  {row.title}
-                </Text>
-              </Pressable>
-              <IconButton
-                icon="crosshairs-gps"
-                size={18}
-                selected={aimed(t.slug, row.sub)}
-                iconColor={aimed(t.slug, row.sub) ? theme.colors.primary : theme.colors.onSurfaceVariant}
-                accessibilityLabel={row.focus}
-                onPress={() => aim(t.slug, row.sub)}
-                style={{ margin: space[0] }}
-              />
+              {row.mapped ? (
+                // no level holds a question, so the row starts nothing and aims nothing
+                <View style={{ flex: 1, minHeight: 40, justifyContent: 'center' }}>
+                  <Text variant="bodyMedium" numberOfLines={1} style={{ color: theme.colors.onSurfaceDisabled }}>
+                    {row.title}
+                  </Text>
+                  <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                    {row.note}
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  {/* the name starts the subtopic at every level; the press beside it aims the focus */}
+                  <Pressable
+                    style={{ flex: 1, minHeight: 40, justifyContent: 'center' }}
+                    accessibilityRole="button"
+                    accessibilityLabel={row.start}
+                    onPress={() => onStart({ course: c.slug, topic: t.slug, sub: row.sub, level: null })}
+                  >
+                    <Text
+                      variant="bodyMedium"
+                      numberOfLines={1}
+                      style={aimed(t.slug, row.sub) ? { color: theme.colors.primary } : null}
+                    >
+                      {row.title}
+                    </Text>
+                  </Pressable>
+                  <IconButton
+                    icon="crosshairs-gps"
+                    size={18}
+                    selected={aimed(t.slug, row.sub)}
+                    iconColor={aimed(t.slug, row.sub) ? theme.colors.primary : theme.colors.onSurfaceVariant}
+                    accessibilityLabel={row.focus}
+                    onPress={() => aim(t.slug, row.sub)}
+                    style={{ margin: space[0] }}
+                  />
+                </>
+              )}
               {row.cells.map(({ level, cell, label }) => {
                 return (
                   // a locked cell starts too: locks do not apply to the filtered queue
                   <Pressable
                     key={level}
-                    disabled={cell.state === 'empty'}
+                    disabled={cell.state === 'empty' || cell.state === 'mapped'}
                     accessibilityLabel={label}
                     onPress={() => onStart({ course: c.slug, topic: t.slug, sub: row.sub, level })}
                     style={{

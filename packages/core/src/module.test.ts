@@ -10,7 +10,9 @@ import {
   levelCountsLine,
   loadSnapshot,
   moduleGrid,
+  nodeView,
   startPreview,
+  subtopicView,
 } from './index';
 
 const mk = (id: string, sub: string, level: number) => ({
@@ -112,6 +114,59 @@ describe("a module's grid", () => {
     expect([t.title, t.count, t.rows.map((r) => r.title)]).toEqual(['Types', 2, ['Ints', 's2']]);
     expect(t.rows[0]).toMatchObject({ start: 'Start Ints', focus: 'Focus on Ints' });
     expect(t.rows[0].cells[0].label).toBe('Start Ints, Foundation: 0/2 · open');
+  });
+});
+
+describe('a mapped subtopic', () => {
+  const mapped = loadSnapshot({
+    format: 6,
+    courses: [
+      {
+        slug: 'c',
+        definition: {
+          title: 'C',
+          pass_ratio: 1,
+          kinds: ['concept'],
+          topic: [{ slug: 't', tier: 1, title: 'Types', subs: ['s1', 's3'], sub_titles: { s3: 'Floats' } }],
+        },
+        questions: [mk('a', 's1', 0), mk('c', 's1', 1)],
+        graph: { format: 2, needs: { s1: ['s3'] } },
+      },
+    ],
+  } as never);
+  const b = Board.build(mapped, []);
+
+  it('reads every group of a subtopic holding no question as not yet open', () => {
+    /** a written subtopic's level holding none stays empty: the subtopic itself is open */
+    expect(groupCell(b, g('s3', 0))).toMatchObject({ state: 'mapped', count: '·', line: 'not yet open' });
+    expect(groupCell(b, g('s1', 2)).state).toBe('empty');
+  });
+
+  it('offers a row that names the state and presses nothing', () => {
+    /** a mapped row's name and Focus would open a drill holding no question */
+    const [t] = moduleGrid(b, b.courses[0]).topics;
+    expect(t.mapped).toBe(false);
+    expect(t.rows.map((r) => [r.title, r.mapped, r.note])).toEqual([
+      ['Floats', true, 'Not yet open'],
+      ['s1', false, ''],
+    ]);
+  });
+
+  it('locks nothing that needs it', () => {
+    /** a learner is never held back by a subtopic nobody has written */
+    expect(groupCell(b, g('s1', 0)).state).toBe('open');
+    expect(b.nextNew(b.courses[0])).toMatchObject({ sub: 's1', level: 0 });
+  });
+
+  it('adds nothing to the counts per level', () => {
+    expect(levelCountsLine(b, b.courses[0])).toBe('Foundation 0/1 · Associate 0/1');
+  });
+
+  it('reads as one line on its map node and its page', () => {
+    /** four lines of "not yet open" would say one fact four times */
+    const v = nodeView(b, b.courses[0], { topic: 't', sub: 's3' }, null);
+    expect([v.mapped, v.levels]).toEqual([true, [{ line: 'Not yet open', empty: true }]]);
+    expect(subtopicView(b, b.courses[0], 's3')?.levels).toEqual(['Not yet open']);
   });
 });
 

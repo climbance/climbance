@@ -358,7 +358,13 @@ function CourseMap(props: { c: Course; b: Board; withLessons: boolean }) {
 
   // level dots need scheduling queries: computed once per board, not on every selection
   const dots = useMemo(() => {
-    const color = { covered: tone.done, open: tone.open, locked: theme.colors.onSurfaceDisabled, empty: null };
+    const color = {
+      covered: tone.done,
+      open: tone.open,
+      locked: theme.colors.onSurfaceDisabled,
+      empty: null,
+      mapped: null,
+    };
     const out = new Map<string, (string | null)[]>();
     for (const [sub, xs] of levelDots(b, c, nodes))
       out.set(
@@ -472,26 +478,29 @@ function NodePanel(props: {
       title={v.title}
       note={v.topic}
       actions={
-        <>
-          <Button
-            mode="outlined"
-            icon="crosshairs-gps"
-            disabled={v.aimed}
-            onPress={() => void st.setFocus(aimFocus(st.focus, { course: c.slug, topic, sub }))}
-          >
-            {v.aimLabel}
-          </Button>
-          <Button
-            mode="outlined"
-            icon="play"
-            onPress={() => {
-              onClose();
-              onPractice(v.scope);
-            }}
-          >
-            {MODULE_START}
-          </Button>
-        </>
+        // a mapped subtopic holds no question to start or to aim at
+        v.mapped ? undefined : (
+          <>
+            <Button
+              mode="outlined"
+              icon="crosshairs-gps"
+              disabled={v.aimed}
+              onPress={() => void st.setFocus(aimFocus(st.focus, { course: c.slug, topic, sub }))}
+            >
+              {v.aimLabel}
+            </Button>
+            <Button
+              mode="outlined"
+              icon="play"
+              onPress={() => {
+                onClose();
+                onPractice(v.scope);
+              }}
+            >
+              {MODULE_START}
+            </Button>
+          </>
+        )
       }
     >
       <View style={{ gap: space[0.5] }}>

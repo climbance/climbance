@@ -10,6 +10,9 @@ reviewed whatever gates it.
   one subtopic to another, at an offset, opens the first subtopic's level only
   once the second subtopic is done up to that level plus the offset. Levels
   above a configured bound match at the bound.
+- **A level holding no questions gates nothing through the graph either.** A
+  prerequisite subtopic's level counts as done when it holds no question. So
+  a mapped subtopic never locks a subtopic that needs it.
 - **A gate restricts new questions alone.** Every review reaches a seen
   question in a locked group, so a reordered graph never hides a fact the
   user already met.

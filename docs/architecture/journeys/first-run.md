@@ -82,8 +82,9 @@ component below is named by its id in `../model.toml`.
 - **The home's one act reads Start while the knowledge log holds no answer
   and no lesson mark.** Start runs the same queue Continue runs.
 - **A module's row opens the module's page**, where each group reads as
-  covered, open, locked or holding no questions. `gating` opens level 0 of
-  every subtopic at once, as `../core-package/knowledge/gating.md` gives.
+  covered, open, locked, holding no questions or not yet open. `gating`
+  opens level 0 of every subtopic at once, as
+  `../core-package/knowledge/gating.md` gives.
 - **The module's page opens the start sheet on a group, a subtopic, a topic or
   the module**, and the sheet starts a filtered queue.
   `../web-app/pages/knowledge/module/start-sheet.md` draws the sheet.

@@ -13,12 +13,14 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 |                                                                        |
 | Foundation 18/20   Associate 9/24   Professional 0/30   Expert 0/12    |
 |                                                                        |
-| Core  3 subtopics                             ( Start ) ( Focus )      |
+| Core  4 subtopics                             ( Start ) ( Focus )      |
 | +--------------------------------------------------------+             |
 | |                  L0        L1        L2        L3      |             |
 | | Names            covered   open      locked    locked  |             |
 | | Types            covered   covered   open      locked  |             |
 | | Mutability       open      locked    locked    -       |             |
+| | Descriptors      .         .         .         .       |             |
+| |   Not yet open                                         |             |
 | +--------------------------------------------------------+             |
 |                                                                        |
 | Functions  2 subtopics                        ( Start ) ( Focus )      |
@@ -35,6 +37,9 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
   each level over the questions the level holds.
 - Each topic is a section with its heading and a panel of its subtopics. A
   cell is one group, and `-` is a group holding no questions.
+- A mapped subtopic, Descriptors here, reads Not yet open under its name, and
+  each of its cells reads `·`. Its name and its cells are not pressable, and
+  its row has no Focus press.
 - A press on a cell opens the start sheet on that group: the subtopic at
   the cell's level. A locked cell opens it too, since locks do not apply to
   the filtered queue. Start beside the module or a topic opens the sheet on

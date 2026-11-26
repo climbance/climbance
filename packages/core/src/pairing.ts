@@ -2,9 +2,10 @@ import type { components } from './api/schema';
 import { levelName, levels } from './courses';
 import type { Lesson } from './graph';
 import { inGraphOrder } from './lessons';
-import { groupCell } from './module';
+import { groupCell, isMapped } from './module';
 import type { Board } from './schedule';
 import type { Course } from './types';
+import { NOT_YET_OPEN } from './words/module';
 
 // a card and a subtopic are paired by technique code alone: `content-repo/cards-and-subtopics.md`,
 // Cards and subtopics
@@ -89,10 +90,13 @@ export interface SubtopicView {
 export function subtopicView(b: Board, course: Course, sub: string): SubtopicView | null {
   const topic = course.topics.find((one) => one.subs.includes(sub));
   if (!topic) return null;
-  const lines = levels(b.rules).flatMap((level) => {
-    const cell = groupCell(b, { course: course.slug, topic: topic.slug, sub, level });
-    return cell.state === 'empty' ? [] : [`${levelName(b.rules, level)} · ${cell.line}`];
-  });
+  const mapped = isMapped(b, { course: course.slug, topic: topic.slug, sub });
+  const lines = mapped
+    ? [NOT_YET_OPEN]
+    : levels(b.rules).flatMap((level) => {
+        const cell = groupCell(b, { course: course.slug, topic: topic.slug, sub, level });
+        return cell.state === 'empty' ? [] : [`${levelName(b.rules, level)} · ${cell.line}`];
+      });
   return {
     topic: topic.slug,
     title: topic.subTitles[sub] ?? sub,

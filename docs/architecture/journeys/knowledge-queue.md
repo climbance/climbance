@@ -94,7 +94,8 @@ in `packages/core`, on the web and on the phone alike.
 
 - **The web's module page is `/knowledge/modules/:module`, and the phone's
   is the Module screen.** A topic reads as a panel of subtopics by level, and
-  each group reads as covered, open, locked or holding no questions.
+  each group reads as covered, open, locked, holding no questions or not yet
+  open.
   `../web-app/pages/knowledge/module/README.md` gives the page.
 - **A press of its own aims the focus at the module, a topic or a
   subtopic.** The phone also aims at a subtopic from the module's map. A focus

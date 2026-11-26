@@ -25,5 +25,6 @@ A wireframe of the page `README.md` specifies, drawn at low fidelity.
 ```
 
 - The way back names the module, since the subtopic sits under it.
-- A level holding no questions has no line.
+- A level holding no questions has no line. A mapped subtopic has one line,
+  Not yet open, in place of its levels.
 - A row opens the lesson, and a card's name opens the card.

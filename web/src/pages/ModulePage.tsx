@@ -69,6 +69,7 @@ const CELL_TONE: Record<CellState, string> = {
   open: 'text-foreground',
   locked: 'text-muted-foreground',
   empty: 'text-muted-foreground',
+  mapped: 'text-muted-foreground',
 }
 
 // where each group of one module stands: `web-app/pages/knowledge/module/`
@@ -224,32 +225,35 @@ export function ModulePage() {
                     closed={sections.closed(t.slug)}
                     onToggle={sections.toggle}
                     aside={
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() =>
-                            setStarting({
-                              course: module,
-                              topic: t.slug,
-                              sub: null,
-                              level: null,
-                            })
-                          }
-                        >
-                          <Play />
-                          {MODULE_START}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={aimed(t.slug, null)}
-                          onClick={() => aim({ course: module, topic: t.slug, sub: null })}
-                        >
-                          <Crosshair />
-                          {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
-                        </Button>
-                      </>
+                      // a topic of mapped subtopics has nothing to start or aim at
+                      t.mapped ? undefined : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setStarting({
+                                course: module,
+                                topic: t.slug,
+                                sub: null,
+                                level: null,
+                              })
+                            }
+                          >
+                            <Play />
+                            {MODULE_START}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={aimed(t.slug, null)}
+                            onClick={() => aim({ course: module, topic: t.slug, sub: null })}
+                          >
+                            <Crosshair />
+                            {aimed(t.slug, null) ? MODULE_FOCUSED : MODULE_FOCUS}
+                          </Button>
+                        </>
+                      )
                     }
                   >
                     <GridTable
@@ -259,45 +263,55 @@ export function ModulePage() {
                       {t.rows.map((row) => (
                         <tr key={row.sub}>
                           <td className={GRID_FIRST}>
-                            <div className="flex items-center gap-1">
-                              {/* the name starts the subtopic at every level; the press beside it aims the focus */}
-                              <button
-                                type="button"
-                                aria-label={row.start}
-                                className={cn(
-                                  'flex-1 text-left hover:underline',
-                                  aimed(t.slug, row.sub) && 'font-medium text-brand-deep',
-                                )}
-                                onClick={() =>
-                                  setStarting({
-                                    course: module,
-                                    topic: t.slug,
-                                    sub: row.sub,
-                                    level: null,
-                                  })
-                                }
-                              >
-                                {row.title}
-                              </button>
-                              <Button
-                                variant="ghost"
-                                size="icon-sm"
-                                aria-label={row.focus}
-                                aria-pressed={aimed(t.slug, row.sub)}
-                                onClick={() => aim({ course: module, topic: t.slug, sub: row.sub })}
-                              >
-                                <Crosshair
-                                  className={cn(aimed(t.slug, row.sub) && 'text-brand-deep')}
-                                />
-                              </Button>
-                            </div>
+                            {row.mapped ? (
+                              // no level holds a question, so the row starts nothing and aims nothing
+                              <div className="flex flex-col text-muted-foreground">
+                                <span>{row.title}</span>
+                                <span className="text-meta">{row.note}</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                {/* the name starts the subtopic at every level; the press beside it aims the focus */}
+                                <button
+                                  type="button"
+                                  aria-label={row.start}
+                                  className={cn(
+                                    'flex-1 text-left hover:underline',
+                                    aimed(t.slug, row.sub) && 'font-medium text-brand-deep',
+                                  )}
+                                  onClick={() =>
+                                    setStarting({
+                                      course: module,
+                                      topic: t.slug,
+                                      sub: row.sub,
+                                      level: null,
+                                    })
+                                  }
+                                >
+                                  {row.title}
+                                </button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon-sm"
+                                  aria-label={row.focus}
+                                  aria-pressed={aimed(t.slug, row.sub)}
+                                  onClick={() =>
+                                    aim({ course: module, topic: t.slug, sub: row.sub })
+                                  }
+                                >
+                                  <Crosshair
+                                    className={cn(aimed(t.slug, row.sub) && 'text-brand-deep')}
+                                  />
+                                </Button>
+                              </div>
+                            )}
                           </td>
                           {row.cells.map(({ level, cell, label }) => (
                             <td key={level} className={GRID_CELL}>
                               {/* a locked cell starts too: locks do not apply to the filtered queue */}
                               <button
                                 type="button"
-                                disabled={cell.state === 'empty'}
+                                disabled={cell.state === 'empty' || cell.state === 'mapped'}
                                 className={cn(GRID_PRESS, CELL_TONE[cell.state])}
                                 title={cell.line}
                                 aria-label={label}

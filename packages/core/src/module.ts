@@ -2,12 +2,15 @@ import { levelName, levels, subsByDepth, subTitle } from './courses';
 import { drillQueue, type DrillScope, type Queue } from './queue';
 import type { Board } from './schedule';
 import { counted } from './screens';
-import { focusOn, startGroup } from './words/module';
+import { focusOn, NOT_YET_OPEN, startGroup } from './words/module';
 import { startLabel } from './words/pages';
 import type { Course, Group } from './types';
 
-/** How one group reads on a module's screens: covered, open, locked, or holding no questions. */
-export type CellState = 'covered' | 'open' | 'locked' | 'empty';
+/**
+ * How one group reads on a module's screens: covered, open, locked, holding no questions, or
+ * mapped: a group of a subtopic the topic map lists and no level of which holds a question yet.
+ */
+export type CellState = 'covered' | 'open' | 'locked' | 'empty' | 'mapped';
 
 export interface GroupCell {
   state: CellState;
@@ -18,14 +21,34 @@ export interface GroupCell {
   line: string; // the count and the state in words, as the Map's panel reads them
 }
 
+/** A subtopic no level of which holds a question: listed by the topic map, not yet written. */
+export function isMapped(b: Board, g: Omit<Group, 'level'>): boolean {
+  return levels(b.rules).every((level) => !b.groupQuestions({ ...g, level }).length);
+}
+
 export function groupCell(b: Board, g: Group): GroupCell {
   const total = b.groupQuestions(g).length;
   const passed = b.nPassed(g);
-  const state: CellState = !total ? 'empty' : b.done(g) ? 'covered' : b.unlocked(g) ? 'open' : 'locked';
+  const state: CellState = !total
+    ? isMapped(b, g)
+      ? 'mapped'
+      : 'empty'
+    : b.done(g)
+      ? 'covered'
+      : b.unlocked(g)
+        ? 'open'
+        : 'locked';
   const needs = state === 'locked' ? b.needsLabel(g) : '';
   const count = total ? `${passed}/${total}` : '·';
-  const word = state === 'empty' ? 'no questions' : state === 'locked' ? needs || 'locked' : state;
-  return { state, passed, total, count, needs, line: state === 'empty' ? word : `${count} · ${word}` };
+  const word =
+    state === 'mapped'
+      ? NOT_YET_OPEN.toLowerCase()
+      : state === 'empty'
+        ? 'no questions'
+        : state === 'locked'
+          ? needs || 'locked'
+          : state;
+  return { state, passed, total, count, needs, line: total ? `${count} · ${word}` : word };
 }
 
 export interface LevelCount {
@@ -64,10 +87,15 @@ export interface GridCell {
   label: string;
 }
 
-/** One subtopic's row: the name that starts it at every level, its focus press, and a cell per level. */
+/**
+ * One subtopic's row: the name that starts it at every level, its focus press, and a cell per level.
+ * A mapped row offers neither press, since no level holds a question to serve.
+ */
 export interface GridRow {
   sub: string;
   title: string;
+  mapped: boolean;
+  note: string; // NOT_YET_OPEN on a mapped row, '' otherwise
   start: string;
   focus: string;
   cells: GridCell[];
@@ -77,6 +105,7 @@ export interface GridTopic {
   slug: string;
   title: string;
   count: number;
+  mapped: boolean; // every row mapped: the topic's Start and Focus have nothing to serve
   rows: GridRow[];
 }
 
@@ -89,12 +118,16 @@ export function moduleGrid(b: Board, c: Course): { levels: { level: number; name
       slug: t.slug,
       title: t.title,
       count: t.subs.length,
+      mapped: t.subs.every((sub) => isMapped(b, { course: c.slug, topic: t.slug, sub })),
       // the shallowest subtopic first, as the map draws them
       rows: subsByDepth(c, t).map((sub) => {
         const title = subTitle(c, sub);
+        const mapped = isMapped(b, { course: c.slug, topic: t.slug, sub });
         return {
           sub,
           title,
+          mapped,
+          note: mapped ? NOT_YET_OPEN : '',
           start: startLabel(title),
           focus: focusOn(title),
           cells: lv.map((level) => {

@@ -11,6 +11,9 @@ without redefining them.
 - **Level**: how deep a question goes, one of four: 0 Foundation, 1 Associate,
   2 Professional and 3 Expert. A problem's difficulty is a different field.
 - **Group**: one subtopic at one level, the unit gating and coverage count.
+- **Mapped**: a subtopic the module's course lists while no level of it holds
+  a question. It reads Not yet open, offers no press, and counts toward
+  nothing.
 - **Question**: one fact asked about, in one of three formats: `choice`,
   `short` or `open`.
 - **Open question**: a question the user answers in their own head, then

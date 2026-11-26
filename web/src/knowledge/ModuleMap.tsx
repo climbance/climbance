@@ -59,6 +59,7 @@ const DOT: Record<CellState, string> = {
   open: 'fill-foreground stroke-foreground',
   locked: 'fill-muted-foreground/30 stroke-muted-foreground/50',
   empty: 'fill-none stroke-border',
+  mapped: 'fill-none stroke-border',
 }
 const PIP: Record<CertState, string> = {
   earned: 'fill-brand stroke-brand',
@@ -411,21 +412,23 @@ function Picked(props: {
         {v.alsoNeeds && <p className="text-muted-foreground">{v.alsoNeeds}</p>}
         {v.unlocks && <p className="text-muted-foreground">{v.unlocks}</p>}
       </div>
-      <div className="flex gap-stack">
-        <Button variant="outline" size="sm" onClick={() => props.onStart(v.scope)}>
-          <Play />
-          {MODULE_START}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={v.aimed}
-          onClick={() => props.onAim(n.topic, n.sub)}
-        >
-          <Crosshair />
-          {v.aimLabel}
-        </Button>
-      </div>
+      {!v.mapped && (
+        <div className="flex gap-stack">
+          <Button variant="outline" size="sm" onClick={() => props.onStart(v.scope)}>
+            <Play />
+            {MODULE_START}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={v.aimed}
+            onClick={() => props.onAim(n.topic, n.sub)}
+          >
+            <Crosshair />
+            {v.aimLabel}
+          </Button>
+        </div>
+      )}
     </Panel>
   )
 }
