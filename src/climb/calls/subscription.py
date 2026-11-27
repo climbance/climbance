@@ -187,6 +187,10 @@ def codex(
         "--ignore-user-config",
         "--ignore-rules",
         "--skip-git-repo-check",
+        # without it the model ran a command in 2 of 29 generation calls, which
+        # `ANSWERING` refuses
+        "--disable",
+        "shell_tool",
         "--sandbox",
         "read-only",
         "--json",

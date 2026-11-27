@@ -103,9 +103,10 @@ subscription charges nothing per call, so a problem is regenerated for free.
   runs with no tools, with the site's prompt as its system prompt, and with no
   setting sources. The user's own `CLAUDE.md` and hooks therefore stay out of
   the prompt: with them, a two-word prompt sent 4,526 input tokens, and without
-  them 678. Codex has no flag that turns its tools off. A Codex call whose
-  events show any item other than a message or reasoning is refused, since the
-  model then read more than the prompt the hash names.
+  them 678. Codex runs with its shell tool disabled: with the tool, the model
+  ran a command in 2 of 29 generation calls on 2026-11-27. A Codex call whose
+  events show any item other than a message or reasoning is still refused,
+  since the model then read more than the prompt the hash names.
 - **No API key reaches a CLI.** An `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
   in the environment wins over the subscription login, and `climb` loads
   `.env`, which holds one. On 2026-11-27 the first runs were billed to the API

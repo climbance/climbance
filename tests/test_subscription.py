@@ -102,6 +102,16 @@ def test_a_codex_call_that_ran_a_command_is_refused():
         asked(Subscription(Runner(said)), "codex-cli 0.171.0")
 
 
+def test_codex_runs_with_its_shell_tool_off():
+    """With the tool on, the model ran a command in 2 of 29 generation calls."""
+    runner = Runner(codex_said({"type": "agent_message", "text": '{"answer":5}'}))
+
+    asked(Subscription(runner), "codex-cli 0.171.0")
+
+    argv, _ = runner.sent[-1]
+    assert argv[argv.index("--disable") + 1] == "shell_tool"
+
+
 def test_a_codex_answer_is_its_last_message():
     said = codex_said({"type": "reasoning"}, {"type": "agent_message", "text": '{"answer":5}'})
 
