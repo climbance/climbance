@@ -17,7 +17,7 @@ export interface AskState {
   recalled: Set<number>;
   fell: Set<number>;
   wrong: boolean;
-  tapped: number | null; // a spot-the-flaw drill's line, 1-based
+  tapped: number | null; // a spot-the-flaw drill's line, or a trace's step, 1-based
   calledClean: boolean;
   result: Result | null;
 }

@@ -85,6 +85,7 @@ import { EMPTY, type Edit, type Key, pressed } from '@/lib/keys';
 import { useStore, type ExamSession, type QueueSession } from '@/lib/store';
 import { Heading, PickPanel, PickRow } from '@/ui/rows';
 import { FlawCall, FlawStated } from '@/ui/flaw';
+import { TraceStated } from '@/ui/trace';
 import { BottomBar, CodeBlock, fromCopy, Loaded, optionTile, Press, ScreenHeader, styles } from '@/ui/common';
 import { KeyPad, PAD_HEIGHT } from '@/ui/keys';
 import { Diagram } from '@/ui/diagram';
@@ -658,6 +659,12 @@ function Ask(props: {
           answered={!!result}
           onTap={result ? undefined : (line) => dispatch({ type: 'tap', line })}
         />
+        <TraceStated
+          q={q}
+          tapped={result ? (result.drill?.tapped ?? null) : asked.tapped}
+          answered={!!result}
+          onTap={result ? undefined : (step) => dispatch({ type: 'tap', line: step })}
+        />
         {q.judge && !result ? <FlawCall on={asked.calledClean} onClean={() => dispatch({ type: 'clean' })} /> : null}
         {offersChoices(q) ? (
           <Choices q={q} order={order} picked={picked} onToggle={result ? undefined : toggle} />
@@ -759,6 +766,7 @@ function Reviewed({ r, bottom, last, onNext }: { r: Result; bottom: number; last
       <ScrollView contentContainerStyle={[styles.page, { paddingBottom: bottom + 96 }]}>
         <Head q={q} tag="" />
         <FlawStated q={q} tapped={r.drill?.tapped ?? null} answered />
+        <TraceStated q={q} tapped={r.drill?.tapped ?? null} answered />
         {offersChoices(q) ? <Choices q={q} order={r.order} picked={r.picked} /> : null}
         <Text variant="titleSmall" style={{ color: theme.colors.tertiary }}>
           {youLine(r)}

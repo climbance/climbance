@@ -25,10 +25,10 @@ record, how its key is proven, and how its answer is stored.
 - **Retiring a concept retires its drill items**, as it retires its questions.
   A drill whose key stopped holding is retired as a concept is, under
   `[retired.<id>]` in `check.toml`.
-- **A `judge` or a `trace` item's lines fit 60 characters**, the width the
-  modules hold code and prompts to. A tap has to land on one line of a
-  phone's screen, and a line wider than 60 wraps more than once there. An
-  estimate is tapped nowhere, so its texts are prose a client wraps.
+- **A `judge` item's lines and a `trace` item's calls fit 60 characters**,
+  the width the modules hold code to. A tap has to land on one line of a
+  phone's screen, and a wider line wraps more than once there. A trace's
+  message and an estimate's texts are prose, which a client wraps.
 
 ## The formats
 
@@ -91,30 +91,31 @@ grader's rubric. The author writes it clean, with up to three variants.
 
 ## Read an agent's trace
 
-A trace is one failed run of an agent in a scripted environment. A scripted
-environment is Python code in `content/modules/ai-eng/environments/`: tools
-whose results depend only on their arguments and the environment's state,
-and a goal predicate over the final state and the agent's final answer.
+A trace is one failed run of an agent in a scripted environment, a file in
+`content/modules/ai-eng/environments/`.
 
-- **A trace is a list of steps**: the agent's messages, its tool calls with
-  their arguments, and the tools' results. A tap lands on an agent's message
-  or tool call alone. A tool's result is the environment's, and cannot be the
-  wrong step.
-- **The record**: the item's `id`, `concept` and `environment`, the failed
-  run's `steps`, the key step `k`, and the corrected run's steps from `k` on.
-  The corrected run shares the failed run's steps before `k`.
-- **The module check replays both runs in the environment.** Each tool call is
-  executed, and its result must equal the stored one. The failed run ends with
-  the goal predicate false. The corrected run ends with it true.
+- **An environment file defines `TOOLS`, the tools' names, and a class
+  `Environment`** with a method per tool, the goal predicate `goal(answer)`,
+  and `state()`, a line naming the end state. A run's final answer is its
+  last step when that step is a message.
+- **A trace is a list of steps, each the agent's message or a tool call**
+  with its arguments and its result. A tap lands on a whole step. A result is
+  the environment's, and cannot be the wrong step.
+- **The record**: the item's `id`, `concept`, `prompt`, `environment`, `k`,
+  `end_state`, `corrected_end_state` and `explain`, a `[[drill.step]]` per
+  step of the failed run, and a `[[drill.corrected]]` per step of the
+  corrected run from `k` on. The reader renders each call as `name(a=1)` and
+  each result as its text, since a client runs no Python.
+- **The module check replays both runs in the environment**, as rule 35 in
+  `docs/authoring/rules.md` gives: the failed run misses the goal, and the
+  corrected run reaches it.
 - **The shared prefix makes the first wrong step unique.** Every step before
-  `k` is also a step of the corrected run, which reaches the goal, so none of
-  them is wrong. Step `k` is the first step the two runs differ at, and the
-  failed run's version of it leads to failure.
-- **A trace's key is never re-verified.** The steps are stored, and the
-  environment is code, so the key holds on every replay. The model that wrote
-  the trace is named on the item as provenance alone.
-- **After the answer, the item shows the corrected step** and the goal state
-  the corrected run reached.
+  `k` is a step of the corrected run, which reaches the goal, so none of them
+  is wrong. The failed run's step `k` is the first step the runs differ at.
+- **A trace's key is never re-verified**, since the steps are stored and the
+  environment is code. A model that wrote a trace is named in its `model`.
+- **After the answer, the item marks step `k` and shows the corrected run
+  from `k` on**, then the end state of each run.
 
 ## Pick the metric and choose the fix
 

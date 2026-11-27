@@ -23,7 +23,7 @@ trigger, as `../database/README.md` requires.
 - **`answers`**: the question, whether the reply was correct, the guess flag,
   and for an open question the grade, the points missed, the traps fallen
   into and the wrong flag. An AI drill's answer also stores the raw answer:
-  `called_clean` and `tapped`, or `estimate`, as
+  `called_clean` and `tapped`, `tapped` alone on a trace, or `estimate`, as
   `../content-repo/ai-drills.md` gives. A flawed spot-the-flaw item's answer
   also stores `located`, whether the tapped line lies in the flawed span. A
   test answer also names its measure, `baseline`, `delayed` or `placement`.

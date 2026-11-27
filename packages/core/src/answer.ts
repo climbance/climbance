@@ -8,13 +8,18 @@ export interface Reply {
   text: string;
   picked: number[]; // displayed positions
   guessing: boolean;
-  tapped?: number | null; // a spot-the-flaw drill's line, 1-based
+  tapped?: number | null; // a spot-the-flaw drill's line, or a trace's step, 1-based
   calledClean?: boolean;
 }
 
 /** A short or a choice question's answer. A reply ending in `?` is a guess too. */
 export function answerResult(q: Question, order: number[], reply: Reply): Result {
   if (q.judge) return flawResult(q, order, reply);
+  if (q.trace) {
+    const tapped = reply.tapped ?? null;
+    const correct = tapped === q.trace.k;
+    return { q, correct, guess: reply.guessing, order, picked: [], reply: '', drill: tapped === null ? {} : { tapped } };
+  }
   if (q.estimate) {
     const [text, suffix] = splitGuess(reply.text);
     const n = parseEstimate(text);
@@ -59,6 +64,7 @@ export function togglePick(picked: number[], pos: number, multi: boolean): numbe
 
 export function canSubmit(q: Question, reply: Reply): boolean {
   if (q.judge) return !!reply.calledClean || reply.tapped != null;
+  if (q.trace) return reply.tapped != null;
   if (q.estimate) return parseEstimate(splitGuess(reply.text)[0]) !== null;
   return typed(q) ? hasAnswer(reply.text) : reply.picked.length > 0;
 }

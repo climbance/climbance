@@ -17,9 +17,7 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     # every card stored so far is an algorithms card
-    op.add_column(
-        "cards", sa.Column("module", sa.Text(), server_default="algo", nullable=False)
-    )
+    op.add_column("cards", sa.Column("module", sa.Text(), server_default="algo", nullable=False))
     op.alter_column("cards", "module", server_default=None)
 
 

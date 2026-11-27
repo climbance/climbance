@@ -35,6 +35,7 @@ from climb.knowledge.authoring.static import (
     verdicts,
 )
 from climb.knowledge.authoring.tools import tool_outputs, transcripts
+from climb.knowledge.authoring.tracing import traced
 from climb.knowledge.authoring.witnesses import witnesses
 from climb.knowledge.check import refusals
 from climb.knowledge.files import read_module
@@ -94,8 +95,8 @@ def check(
                 ran["runs on other interpreters"] = versions(
                     course, report, pool, runs, here, others
                 )
-            ran["drill keys"] = drills(course, report, pool, runs) + judged(
-                course, report, pool, runs
+            ran["drill keys"] = sum(
+                one(course, report, pool, runs) for one in (drills, judged, traced)
             )
             if course.concepts:
                 ran["witness runs"] = witnesses(course, report, pool, runs, others)

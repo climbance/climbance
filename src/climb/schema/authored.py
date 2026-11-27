@@ -195,7 +195,7 @@ def agreeing(scores: list[tuple[float, float]], goal: tuple[float, float]) -> li
 
 
 # a tap lands on one line of a phone's screen: `content-repo/ai-drills.md`
-JUDGE_WIDTH = 60
+TAP_WIDTH = 60
 
 
 class JudgeBody(Authored):
@@ -216,8 +216,8 @@ class JudgeBody(Authored):
 
     @model_validator(mode="after")
     def _a_span_on_its_lines(self) -> JudgeBody:
-        if wide := [i + 1 for i, line in enumerate(self.lines) if len(line) > JUDGE_WIDTH]:
-            raise ValueError(f"line {wide[0]} is wider than {JUDGE_WIDTH} characters")
+        if wide := [i + 1 for i, line in enumerate(self.lines) if len(line) > TAP_WIDTH]:
+            raise ValueError(f"line {wide[0]} is wider than {TAP_WIDTH} characters")
         flawed = (self.span, self.fix, self.clean_output)
         if any(one is None for one in flawed) != all(one is None for one in flawed):
             raise ValueError("a flawed item states its span, its fix and the clean output together")
@@ -226,7 +226,56 @@ class JudgeBody(Authored):
         return self
 
 
-type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody | MetricBody | JudgeBody
+class TraceStep(Authored):
+    """One step of an agent's run, as the reader renders it: a message, or a
+    tool call beside its result."""
+
+    say: Text | None = None
+    call: Text | None = None  # `name(arg=value)`
+    result: str | None = None  # the environment's, never a tap's key
+
+    @model_validator(mode="after")
+    def _a_message_or_a_call(self) -> TraceStep:
+        if (self.say is None) == (self.call is None):
+            raise ValueError("a step is a message or a call")
+        if (self.call is None) != (self.result is None):
+            raise ValueError("a call states its result, and a message none")
+        return self
+
+    def lines(self) -> list[str]:
+        if self.call is None:
+            return []  # a message is prose, which a client wraps
+        return [self.call, *str(self.result).splitlines()]
+
+
+class TraceBody(Authored):
+    """One read-the-trace item: an agent's failed run and its first wrong step:
+    `content-repo/ai-drills.md`."""
+
+    environment: Text  # the scripted environment both runs were replayed in
+    steps: list[TraceStep] = Field(min_length=2)
+    k: int = Field(ge=1)  # the first wrong step, 1-based
+    corrected: list[TraceStep] = Field(min_length=1)  # the corrected run from `k` on
+    end_state: Text  # the environment's state after the failed run
+    corrected_end_state: Text
+    explain: str
+    model: str | None = None  # the `model@pin` that wrote the trace, as provenance
+    detail: Detail | None = None
+    concept: str | None = None
+
+    @model_validator(mode="after")
+    def _a_key_step_the_runs_differ_at(self) -> TraceBody:
+        if self.k > len(self.steps):
+            raise ValueError(f"k {self.k} is past the {len(self.steps)} steps")
+        if self.corrected[0] == self.steps[self.k - 1]:
+            raise ValueError(f"the corrected run repeats step {self.k}, so it is not the wrong one")
+        for n, step in enumerate([*self.steps, *self.corrected], 1):
+            if any(len(line) > TAP_WIDTH for line in step.lines()):
+                raise ValueError(f"step {n} holds a line wider than {TAP_WIDTH} characters")
+        return self
+
+
+type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody | MetricBody | JudgeBody | TraceBody
 
 
 class Edge(Authored):

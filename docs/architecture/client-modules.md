@@ -145,6 +145,7 @@ flowchart LR
         core_table["table"]
         core_target["target"]
         core_terms["terms"]
+        core_trace["trace"]
         core_types["types"]
         core_words["words"]
     end
@@ -228,6 +229,7 @@ flowchart LR
     core_result --> core_records
     core_result --> core_reply
     core_result --> core_table
+    core_result --> core_trace
     core_retirement --> core_sittingrun
     core_run --> core_baseline
     core_run --> core_delayed
@@ -250,6 +252,7 @@ flowchart LR
     core_sync --> core_synced
     core_target --> core_forecast
     core_terms --> core_privacy
+    core_trace --> core_result
     core_types --> core_certs
     core_types --> core_diagram
     core_types --> core_graph

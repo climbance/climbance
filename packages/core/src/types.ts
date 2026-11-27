@@ -2,7 +2,7 @@ import type { Drawing } from './diagram';
 import type { Certs, RawCerts } from './certs';
 import type { Graph, RawGraph } from './graph';
 
-export type Format = 'choice' | 'short' | 'card' | 'estimate' | 'metric' | 'judge';
+export type Format = 'choice' | 'short' | 'card' | 'estimate' | 'metric' | 'judge' | 'trace';
 export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'retained';
 export type Grade = 'k' | 'p' | 'n';
 
@@ -72,6 +72,12 @@ export interface RawQuestion {
   span?: [number, number];
   fix?: string[];
   clean_output?: string;
+  // a read-the-trace drill
+  steps?: TraceStep[];
+  k?: number;
+  corrected?: TraceStep[];
+  end_state?: string;
+  corrected_end_state?: string;
 }
 
 export interface RawDetail {
@@ -175,6 +181,18 @@ export interface Question {
   estimate: Estimate | null; // an estimate drill's stated numbers and its key
   metric: MetricItem | null; // a pick-the-metric drill's cases and scores; its candidates are the choices
   judge: JudgeItem | null; // a spot-the-flaw drill's lines and its witness
+  trace: TraceItem | null; // a read-the-trace drill's runs and its key step
+}
+
+/** One step of an agent's run: a message, or a call as the reader rendered it beside its result. */
+export type TraceStep = { say: string } | { call: string; result: string };
+
+export interface TraceItem {
+  steps: TraceStep[];
+  k: number; // the first wrong step, 1-based
+  corrected: TraceStep[]; // the corrected run from step k on
+  endState: string;
+  correctedEndState: string;
 }
 
 export interface JudgeItem {

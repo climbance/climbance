@@ -26,6 +26,7 @@ from climb.schema.authored import (
     MetricBody,
     OpenBody,
     ShortBody,
+    TraceBody,
 )
 from climb.schema.card import Slug
 
@@ -40,6 +41,7 @@ class QuestionFormat(StrEnum):
     ESTIMATE = "estimate"
     METRIC = "metric"
     JUDGE = "judge"
+    TRACE = "trace"
 
 
 class Measure(StrEnum):
@@ -162,6 +164,7 @@ BODIES: dict[QuestionFormat, type[Authored]] = {
     QuestionFormat.ESTIMATE: EstimateBody,
     QuestionFormat.METRIC: MetricBody,
     QuestionFormat.JUDGE: JudgeBody,
+    QuestionFormat.TRACE: TraceBody,
 }
 
 

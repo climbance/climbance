@@ -51,6 +51,7 @@ import {
 
 import { optionTile } from '@/components/optionTile'
 import { FlawStated } from '@/knowledge/FlawStated'
+import { TraceStated } from '@/knowledge/TraceStated'
 import { Choice } from '@/components/Choice'
 import { PickPanel, PickRow } from '@/components/PickRow'
 import { Loaded } from '@/components/Loaded'
@@ -381,6 +382,7 @@ function Reviewed({
       </p>
       <p className="text-heading whitespace-pre-wrap">{block(r.q.prompt)}</p>
       <FlawStated q={r.q} tapped={r.drill?.tapped ?? null} answered />
+      <TraceStated q={r.q} tapped={r.drill?.tapped ?? null} answered />
       {offersChoices(r.q) && (
         <ul className="space-y-2">
           {r.order.map((i, pos) => (

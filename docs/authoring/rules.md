@@ -319,3 +319,11 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     a client shows the stored output as the witness and runs no Python. The
     reader refuses a variant whose stated `span` differs from the one span of
     lines its text changes, and a variant that only deletes lines. *check*
+35. **A trace item's failed run misses its environment's goal, and its
+    corrected run reaches it.** The check replays each run's calls in a fresh
+    `Environment` from `environments/<environment>.py`, and refuses a stored
+    result that differs from the one the tool returns. Each run's `state()`
+    must equal its stored end state, since a client shows the end states as
+    the witness and runs no Python. The reader refuses a corrected run whose
+    first step repeats step `k`, since step `k` is then not the first step
+    the runs differ at. *check*

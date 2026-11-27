@@ -54,6 +54,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { FlawCall, FlawStated } from '@/knowledge/FlawStated'
+import { TraceStated } from '@/knowledge/TraceStated'
 import { useLearner } from '@/knowledge/learner'
 import { lessonPath } from '@/knowledge/paths'
 import { cn } from '@/lib/utils'
@@ -132,6 +133,12 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
         tapped={result ? (result.drill?.tapped ?? null) : state.tapped}
         answered={!!result}
         onTap={result ? undefined : (line) => dispatch({ type: 'tap', line })}
+      />
+      <TraceStated
+        q={q}
+        tapped={result ? (result.drill?.tapped ?? null) : state.tapped}
+        answered={!!result}
+        onTap={result ? undefined : (step) => dispatch({ type: 'tap', line: step })}
       />
       {q.judge && !result && (
         <FlawCall on={state.calledClean} onClean={() => dispatch({ type: 'clean' })} />
@@ -286,6 +293,7 @@ export function Answered({ q, course }: { q: Question; course: Course | undefine
       <EstimateStated q={q} />
       <MetricStated q={q} />
       <FlawStated q={q} tapped={r.drill?.tapped ?? null} answered />
+      <TraceStated q={q} tapped={r.drill?.tapped ?? null} answered />
       {offersChoices(q) && <Choices q={q} order={r.order} picked={r.picked} disabled />}
       <Verdict r={r} />
       <Details r={r} course={course} answered={{ title: BANK_ANSWER, rows: bankAnswer(q) }} />

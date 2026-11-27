@@ -7,6 +7,7 @@ import type {
   Detail,
   Group,
   JudgeItem,
+  TraceItem,
   LessonRecord,
   MetricItem,
   Topic,
@@ -103,12 +104,23 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
         : null,
     metric,
     judge: raw.format === 'judge' ? judgeOf(raw) : null,
+    trace: raw.format === 'trace' ? traceOf(raw) : null,
   };
 }
 
 function judgeOf(raw: RawQuestion): JudgeItem {
   const flaw = raw.span ? { span: raw.span, fix: raw.fix ?? [], cleanOutput: raw.clean_output ?? '' } : null;
   return { lines: raw.lines ?? [], input: raw.input ?? '', output: raw.output ?? '', flaw };
+}
+
+function traceOf(raw: RawQuestion): TraceItem {
+  return {
+    steps: raw.steps ?? [],
+    k: raw.k ?? 1,
+    corrected: raw.corrected ?? [],
+    endState: raw.end_state ?? '',
+    correctedEndState: raw.corrected_end_state ?? '',
+  };
 }
 
 /** A pick-the-metric drill's key: the candidates putting first the system the goal puts first; a tie agrees with no goal. */

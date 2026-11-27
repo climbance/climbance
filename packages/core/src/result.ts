@@ -5,6 +5,8 @@ import { answerKey, block } from './reply';
 import { mermaidSource } from './diagram';
 import { flawHead, flawWitness } from './flaw';
 import { metricRankings } from './metric';
+import { traceHead, traceWitness } from './trace';
+import { traceStep } from './words/trace';
 import { FLAW_CALLED_CLEAN, flawTappedLine } from './words/flaw';
 import { isTable } from './table';
 import type { Course, DrillFields, Estimate, Grade, Question } from './types';
@@ -25,7 +27,11 @@ export interface Result {
 /** The learner's own reply, as a missed exam question repeats it. */
 export function youLine(r: Result): string {
   const tapped = r.drill?.tapped;
-  const you = r.q.judge
+  const you = r.q.trace
+    ? tapped === undefined
+      ? ''
+      : traceStep(tapped)
+    : r.q.judge
     ? tapped === undefined
       ? FLAW_CALLED_CLEAN
       : flawTappedLine(tapped)
@@ -52,6 +58,10 @@ export function verdictView(r: Result): VerdictView {
   if (q.format === 'card') return { head: null, explain, note: '', misconceptions: [] };
   if (q.estimate) return estimateVerdict(r, q.estimate, explain);
   if (q.metric) return metricVerdict(r, explain);
+  if (q.trace) {
+    const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
+    return { head: traceHead(r), explain: [traceWitness(q).join('\n'), explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };
+  }
   if (q.judge) {
     const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
     return { head: flawHead(r), explain: [flawWitness(q).join('\n'), explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };

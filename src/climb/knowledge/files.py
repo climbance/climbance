@@ -93,6 +93,8 @@ def _drills(base: Path, banks: list[Bank], listed: set[tuple[str, str]], unread:
                 unread += [
                     f"drills/{'/'.join(where)}:{raw.get('id', '?')}: {one}" for one in problems
                 ]
+            elif raw.get("format") == "trace":
+                by_sub[where].questions.append(traced(raw))
             else:
                 by_sub[where].questions.append(raw)
 
@@ -161,6 +163,28 @@ def changed(clean: list[str], variant: list[str]) -> tuple[tuple[int, int], list
     if kind == "delete":
         return "only deletes lines, leaving no line to tap"
     return (j1 + 1, j2), clean[i1:i2]
+
+
+def traced(raw: dict[str, Any]) -> dict[str, Any]:
+    """A trace item with its steps rendered as the clients draw them, the
+    arguments and results kept by the module check alone."""
+    rendered = {"steps": raw.get("step", []), "corrected": raw.get("corrected", [])}
+    return {key: value for key, value in raw.items() if key != "step"} | {
+        key: [step_shown(step) for step in steps] for key, steps in rendered.items()
+    }
+
+
+def step_shown(step: dict[str, Any]) -> dict[str, Any]:
+    if "call" not in step:
+        return step
+    args = ", ".join(f"{name}={value!r}" for name, value in step.get("args", {}).items())
+    result = step.get("result")
+    shown = {"call": f"{step['call']}({args})"}
+    return shown | ({} if result is None else {"result": result_shown(result)})
+
+
+def result_shown(value: object) -> str:
+    return value if isinstance(value, str) else repr(value)
 
 
 def _optional(path: Path) -> dict[str, Any] | None:

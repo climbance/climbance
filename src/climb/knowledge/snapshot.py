@@ -15,7 +15,7 @@ RULES: dict[str, Any] = {
     "levels": {"0": "Foundation", "1": "Associate", "2": "Professional", "3": "Expert"},
 }
 # the formats a drill item takes: `content-repo/ai-drills.md`
-DRILLS = ("estimate", "metric", "judge")
+DRILLS = ("estimate", "metric", "judge", "trace")
 # the order a module carries when its file gives none
 DEFAULT_ORDER = 100
 
