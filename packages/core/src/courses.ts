@@ -7,6 +7,7 @@ import type {
   Detail,
   Group,
   LessonRecord,
+  MetricItem,
   Topic,
   Question,
   RawDetail,
@@ -58,7 +59,10 @@ export function asDetail(raw: string | RawDetail | undefined): Detail | null {
 }
 
 export function parseQuestion(raw: RawQuestion, course: string): Question {
-  const answer = Array.from(raw.answer ?? []).map((a) => LETTERS.indexOf(a));
+  const metric = raw.format === 'metric' ? metricOf(raw) : null;
+  const answer = metric
+    ? agreeing(metric.scores, metric.goal)
+    : Array.from(raw.answer ?? []).map((a) => LETTERS.indexOf(a));
   return {
     course,
     id: raw.id,
@@ -69,7 +73,7 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
     prompt: raw.prompt,
     format: raw.format ?? 'choice',
     code: raw.code ?? '',
-    choices: raw.choices ?? [],
+    choices: metric ? (raw.candidates ?? []).map((c) => c.label) : (raw.choices ?? []),
     answer: [...new Set(answer)].sort((a, b) => a - b),
     accept: raw.accept ?? [],
     caseSensitive: raw.case ?? false,
@@ -96,6 +100,24 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
             unit: raw.unit ?? '',
           }
         : null,
+    metric,
+  };
+}
+
+/** A pick-the-metric drill's key: the candidates putting first the system the goal puts first; a tie agrees with no goal. */
+export function agreeing(scores: [number, number][], goal: [number, number]): number[] {
+  const ahead = goal[0] > goal[1];
+  return scores.flatMap(([a, b], i) => (a !== b && a > b === ahead ? [i] : []));
+}
+
+function metricOf(raw: RawQuestion): MetricItem {
+  return {
+    inputs: raw.inputs ?? [],
+    expected: raw.expected ?? [],
+    a: raw.a ?? [],
+    b: raw.b ?? [],
+    scores: raw.scores ?? [],
+    goal: raw.goal ?? [0, 0],
   };
 }
 

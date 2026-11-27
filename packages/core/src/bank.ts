@@ -1,4 +1,4 @@
-import { answerResult, gradeResult } from './answer';
+import { answerResult, gradeResult, offersChoices } from './answer';
 import { LETTERS, levelName, subTitle, type Catalog } from './courses';
 import type { Lesson } from './graph';
 import type { GridColumn } from './grid';
@@ -10,8 +10,8 @@ import type { Course, Format, Question } from './types';
 // the author's questions page: `web-app/pages/author/questions/`
 
 /** A question's format as the glossary names it: the wire's `card` is an open question. */
-export type BankFormat = 'choice' | 'short' | 'open' | 'estimate';
-export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open', 'estimate'];
+export type BankFormat = 'choice' | 'short' | 'open' | 'estimate' | 'metric';
+export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open', 'estimate', 'metric'];
 const bankFormat = (format: Format): BankFormat => (format === 'card' ? 'open' : format);
 
 export interface BankFilter {
@@ -235,7 +235,7 @@ export function bankAnswer(q: Question): AnswerRow[] {
     note: note ? block(note) : '',
     yours: false,
   });
-  if (q.format === 'choice')
+  if (offersChoices(q))
     return q.choices.map((choice, i) => {
       const ok = q.answer.includes(i);
       const why = q.why[i] ? block(q.why[i]) : '';

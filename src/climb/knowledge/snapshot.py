@@ -14,6 +14,8 @@ RULES: dict[str, Any] = {
     "fsrs": FSRS,
     "levels": {"0": "Foundation", "1": "Associate", "2": "Professional", "3": "Expert"},
 }
+# the formats a drill item takes: `content-repo/ai-drills.md`
+DRILLS = ("estimate", "metric")
 # the order a module carries when its file gives none
 DEFAULT_ORDER = 100
 
@@ -79,8 +81,8 @@ def _course(conn: Connection, module: dict[str, Any]) -> dict[str, Any]:
         "definition": _definition(module, list(listed.values())),
     }
     served = _questions(conn, module["id"], where)
-    course["questions"] = [raw for raw in served if raw.get("format") != "estimate"]
-    if drills := [raw for raw in served if raw.get("format") == "estimate"]:
+    course["questions"] = [raw for raw in served if raw.get("format") not in DRILLS]
+    if drills := [raw for raw in served if raw.get("format") in DRILLS]:
         # apart from `questions`, which an installed app reads whole
         course["drills"] = drills
     taught = conn.execute(

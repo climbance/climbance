@@ -1,7 +1,7 @@
 """The authored structure a content row holds as JSONB, typed so the seed
 refuses a malformed one: `database/README.md`."""
 
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
@@ -140,7 +140,61 @@ class EstimateBody(Authored):
         return self
 
 
-type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody
+class Candidate(Authored):
+    """One metric a pick-the-metric item offers, from the module's library."""
+
+    metric: str = Field(pattern=r"^[a-z][a-z0-9_]*$")  # a function in metrics.py
+    label: Text
+    params: dict[str, Any] = Field(default_factory=dict[str, Any])
+
+
+class MetricBody(Authored):
+    """A pick-the-metric drill: `content-repo/ai-drills.md`. Its key is the
+    one candidate ranking the two systems as `utility` does."""
+
+    inputs: list[Text] | None = None  # shown beside each case, where it helps
+    expected: list[Any]
+    a: list[Any]  # system A's output on each case
+    b: list[Any]
+    candidates: list[Candidate] = Field(min_length=2, max_length=5)
+    # defines `utility(outputs, expected)`, the goal's own score
+    utility: Text
+    # as the module check computed them: each candidate's, and the goal's
+    scores: list[tuple[float, float]]
+    goal: tuple[float, float]
+    explain: str
+    detail: Detail | None = None
+    concept: str | None = None
+
+    @model_validator(mode="after")
+    def _one_candidate_ranks_as_the_goal(self) -> MetricBody:
+        cases = len(self.expected)
+        if not 1 <= cases <= MAX_CASES:
+            raise ValueError(f"expected holds 1 to {MAX_CASES} cases")
+        for name, values in (("inputs", self.inputs), ("a", self.a), ("b", self.b)):
+            if values is not None and len(values) != cases:
+                raise ValueError(f"{name} holds {len(values)} cases, where expected holds {cases}")
+        if len(self.scores) != len(self.candidates):
+            raise ValueError("scores holds one pair per candidate")
+        if self.goal[0] == self.goal[1]:
+            raise ValueError("the goal ties the two systems, so no metric is right")
+        if len(agreeing(self.scores, self.goal)) != 1:
+            raise ValueError("exactly one candidate must rank the systems as the goal does")
+        return self
+
+
+# a phone shows every case as a row
+MAX_CASES = 12
+
+
+def agreeing(scores: list[tuple[float, float]], goal: tuple[float, float]) -> list[int]:
+    """The candidates putting first the system the goal puts first. A tie
+    decides nothing, so it agrees with no goal."""
+    ahead = goal[0] > goal[1]
+    return [i for i, (a, b) in enumerate(scores) if a != b and (a > b) == ahead]
+
+
+type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody | MetricBody
 
 
 class Edge(Authored):

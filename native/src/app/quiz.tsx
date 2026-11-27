@@ -72,6 +72,8 @@ import {
   initialAsk,
   keyPointLabel,
   estimateShown,
+  metricShown,
+  offersChoices,
   ESTIMATE_ANSWER,
   lessonStopKicker,
   lessonRead,
@@ -475,7 +477,38 @@ function Head({ q, tag, early = false }: { q: Question; tag: string; early?: boo
       </Text>
       {q.code ? <CodeBlock code={q.code} wrap /> : null}
       <EstimateStated q={q} />
+      <MetricStated q={q} />
     </>
+  );
+}
+
+/** A pick-the-metric drill's cases: the expected answer and each system's output, a row each. */
+function MetricStated({ q }: { q: Question }) {
+  const theme = useTheme();
+  const shown = metricShown(q);
+  if (!shown) return null;
+  const line = (cells: string[], muted: boolean, key: string) => (
+    <View key={key} style={[styles.row, { alignItems: 'flex-start' }]}>
+      {cells.map((value, j) => (
+        <Text
+          key={j}
+          variant="bodySmall"
+          style={{
+            flex: 1,
+            fontFamily: muted ? undefined : font.mono,
+            color: muted ? theme.colors.onSurfaceVariant : undefined,
+          }}
+        >
+          {value}
+        </Text>
+      ))}
+    </View>
+  );
+  return (
+    <View style={{ gap: space[1] }}>
+      {line(shown.header, true, 'head')}
+      {shown.rows.map((row, i) => line(row, false, String(i)))}
+    </View>
   );
 }
 
@@ -596,7 +629,7 @@ function Ask(props: {
         keyboardShouldPersistTaps="handled"
       >
         <Head q={q} tag={tag} early={early} />
-        {q.format === 'choice' ? (
+        {offersChoices(q) ? (
           <Choices q={q} order={order} picked={picked} onToggle={result ? undefined : toggle} />
         ) : null}
         {typedIn ? (
@@ -695,7 +728,7 @@ function Reviewed({ r, bottom, last, onNext }: { r: Result; bottom: number; last
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={[styles.page, { paddingBottom: bottom + 96 }]}>
         <Head q={q} tag="" />
-        {q.format === 'choice' ? <Choices q={q} order={r.order} picked={r.picked} /> : null}
+        {offersChoices(q) ? <Choices q={q} order={r.order} picked={r.picked} /> : null}
         <Text variant="titleSmall" style={{ color: theme.colors.tertiary }}>
           {youLine(r)}
         </Text>

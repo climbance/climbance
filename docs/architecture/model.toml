@@ -1016,6 +1016,8 @@ src = [
     "packages/core/src/ask.*",
     "packages/core/src/answer.*",
     "packages/core/src/estimate.*",
+    "packages/core/src/metric.*",
+    "packages/core/src/words/metric.*",
     "packages/core/src/reply.*",
     "packages/core/src/result.*",
     "packages/core/src/words/queue.*",

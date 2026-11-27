@@ -35,6 +35,8 @@ import {
   initialAsk,
   keyPointLabel,
   estimateShown,
+  metricShown,
+  offersChoices,
   ESTIMATE_ANSWER,
 } from '@climb/core'
 
@@ -103,7 +105,7 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
       )
         return
       const pos = Number(event.key) - 1
-      if (!result && q.format === 'choice' && pos >= 0 && pos < order.length) {
+      if (!result && offersChoices(q) && pos >= 0 && pos < order.length) {
         event.preventDefault()
         toggle(pos)
       } else if (event.key === 'Enter') {
@@ -123,8 +125,9 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
       </p>
       {q.code && <PythonCode code={q.code} />}
       <EstimateStated q={q} />
+      <MetricStated q={q} />
 
-      {q.format === 'choice' && (
+      {offersChoices(q) && (
         <Choices q={q} order={order} picked={picked} disabled={!!result} onToggle={toggle} />
       )}
 
@@ -271,9 +274,42 @@ export function Answered({ q, course }: { q: Question; course: Course | undefine
       </p>
       {q.code && <PythonCode code={q.code} />}
       <EstimateStated q={q} />
-      {q.format === 'choice' && <Choices q={q} order={r.order} picked={r.picked} disabled />}
+      <MetricStated q={q} />
+      {offersChoices(q) && <Choices q={q} order={r.order} picked={r.picked} disabled />}
       <Verdict r={r} />
       <Details r={r} course={course} answered={{ title: BANK_ANSWER, rows: bankAnswer(q) }} />
+    </div>
+  )
+}
+
+/** A pick-the-metric drill's cases: the expected answer and each system's output. */
+function MetricStated({ q }: { q: Question }) {
+  const shown = metricShown(q)
+  if (!shown) return null
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-meta">
+        <thead>
+          <tr className="text-muted-foreground">
+            {shown.header.map((h) => (
+              <th key={h} className="pr-3 pb-1 font-medium">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="font-mono">
+          {shown.rows.map((row, i) => (
+            <tr key={i} className="border-t border-border">
+              {row.map((value, j) => (
+                <td key={j} className="py-1 pr-3 align-top">
+                  {value}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

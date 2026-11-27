@@ -3,6 +3,7 @@ import { headings } from './lessontext';
 import type { CardFields } from './records';
 import { answerKey, block } from './reply';
 import { mermaidSource } from './diagram';
+import { metricRankings } from './metric';
 import { isTable } from './table';
 import type { Course, Estimate, Grade, Question } from './types';
 
@@ -44,6 +45,7 @@ export function verdictView(r: Result): VerdictView {
   const explain = q.explain ? block(q.explain) : '';
   if (q.format === 'card') return { head: null, explain, note: '', misconceptions: [] };
   if (q.estimate) return estimateVerdict(r, q.estimate, explain);
+  if (q.metric) return metricVerdict(r, explain);
   const key = q.format === 'short' ? q.accept[0] : answerKey(q, r.order);
   const note =
     r.correct && r.guess
@@ -72,6 +74,14 @@ function estimateVerdict(r: Result, e: Estimate, explain: string): VerdictView {
   const text = r.correct ? `✓ Within ×${e.factor} of ${key}.` : `✗ Answer: ${key}, within ×${e.factor}.`;
   const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
   return { head: { correct: r.correct, text }, explain: [...e.working, explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };
+}
+
+/** A pick-the-metric verdict: the candidate's letter, then each candidate's ranking before the explanation. */
+function metricVerdict(r: Result, explain: string): VerdictView {
+  const key = answerKey(r.q, r.order);
+  const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
+  const text = r.correct ? '✓ Correct.' : `✗ Answer: ${key}.`;
+  return { head: { correct: r.correct, text }, explain: [metricRankings(r.q, r.order).join('\n'), explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };
 }
 
 /** The numbers an estimate accepts, as the learner's answer section reads them. */

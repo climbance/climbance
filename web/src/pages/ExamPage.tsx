@@ -46,6 +46,7 @@ import {
   placementPlan,
   PLACEMENT_NAME,
   PLACEMENT_NONE_LEFT,
+  offersChoices,
 } from '@climb/core'
 
 import { optionTile } from '@/components/optionTile'
@@ -382,7 +383,7 @@ function Reviewed({
         {questionHead(course, catalog.rules, r.q, '', false)}
       </p>
       <p className="text-heading whitespace-pre-wrap">{block(r.q.prompt)}</p>
-      {r.q.format === 'choice' && (
+      {offersChoices(r.q) && (
         <ul className="space-y-2">
           {r.order.map((i, pos) => (
             <li

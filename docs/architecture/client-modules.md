@@ -113,6 +113,7 @@ flowchart LR
         core_lessontext["lessontext"]
         core_listing["listing"]
         core_mapview["mapview"]
+        core_metric["metric"]
         core_modes["modes"]
         core_module["module"]
         core_order["order"]
@@ -158,13 +159,11 @@ flowchart LR
     core_account --> core_sittingrun
     core_answer --> core_result
     core_ask --> core_answer
-    core_ask --> core_words
     core_author --> core_api
     core_author --> core_screens
     core_bank --> core_answer
     core_bank --> core_grid
     core_baseline --> core_exam
-    core_baseline --> core_words
     core_certs --> core_schedule
     core_certview --> core_order
     core_certview --> core_screens
@@ -175,7 +174,6 @@ flowchart LR
     core_contentbank --> core_listing
     core_courses --> core_types
     core_delayed --> core_exam
-    core_delayed --> core_words
     core_engine --> core_api
     core_exam --> core_modes
     core_exam --> core_result
@@ -200,6 +198,8 @@ flowchart LR
     core_listing --> core_api
     core_mapview --> core_layout
     core_mapview --> core_module
+    core_metric --> core_types
+    core_metric --> core_words
     core_modes --> core_select
     core_module --> core_placement
     core_module --> core_screens
@@ -209,7 +209,6 @@ flowchart LR
     core_pairing --> core_module
     core_placed --> core_types
     core_placement --> core_exam
-    core_placement --> core_words
     core_practice --> core_account
     core_practice --> core_lessontext
     core_practice --> core_schedule
@@ -222,6 +221,7 @@ flowchart LR
     core_reminder --> core_schedule
     core_reply --> core_types
     core_result --> core_lessontext
+    core_result --> core_metric
     core_result --> core_records
     core_result --> core_reply
     core_result --> core_table

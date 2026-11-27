@@ -32,17 +32,19 @@ record, how its key is proven, and how its answer is stored.
 
 ## The formats
 
-Three formats are added to `choice`, `short` and `open`. Pick the metric and
-choose the fix are `choice` questions whose correct option is computed.
+Four formats are added to `choice`, `short` and `open`. Choose the fix is a
+`choice` question whose correct option is computed. A pick-the-metric item is
+a `metric` question, answered as a `choice` and stating its cases beside it.
 
 | Format | Activity kind | The user's answer | Rating |
 |---|---|---|---|
 | `judge` | Spot the flaw | clean or flawed, then the flawed line | Good: right verdict and, if flawed, the right line. Hard: flawed called flawed, wrong line. Again: wrong verdict |
 | `trace` | Read an agent's trace | the first wrong step | Good: the right step. Again: any other step |
 | `estimate` | Estimate | a number | Good: within the item's factor of the key. Again: outside it |
-| `choice` | Pick the metric, choose the fix | one option | as any `choice` question |
+| `metric` | Pick the metric | one candidate | as any `choice` question |
+| `choice` | Choose the fix | one option | as any `choice` question |
 
-- **A guess is marked on the three new formats as on `choice`.** A correct
+- **A guess is marked on the new formats as on `choice`.** A correct
   guess rates Hard, since the fact is not yet held.
 - **An `answers` row of a drill stores the raw answer beside `correct`**:
   `called_clean` and `tapped` for `judge`, `tapped` for `trace`, and
@@ -117,20 +119,28 @@ and a goal predicate over the final state and the agent's final answer.
 
 ## Pick the metric and choose the fix
 
-Both are `choice` questions whose correct option is computed by the module
-check.
+The correct option of both is computed, never authored.
 
 - **A pick-the-metric item stores a goal, a set, two systems' outputs on it,
-  and three to five candidate metrics.** The goal is stated in prose and as a
-  `utility`, code scoring each system as the goal ranks them, such as a missed
-  fraud costing a hundred false alarms. Each candidate names a metric from the
-  module's metric library, `content/modules/ai-eng/metrics.py`.
-- **The module check computes every candidate on both systems.** Exactly one
-  candidate must rank the systems as the `utility` ranks them. Every other
-  candidate must rank them the other way. A tie between the two systems
-  decides nothing and counts as the other way.
-- **After the answer, the item shows each candidate's two scores**, so a wrong
-  pick is shown with the ranking it gave.
+  and two to five candidate metrics.** The goal is stated in the prompt and as
+  a `utility`, code scoring each system as the goal ranks them, such as a
+  missed fraud costing a hundred false alarms. Each candidate names a metric
+  from the module's metric library, `content/modules/ai-eng/metrics.py`, with
+  its `label` and its `params`.
+- **The record**: the item's `id` and `concept`, the cases' `expected`
+  answers, `a` and `b` for the two systems' outputs, and `inputs` where a case
+  needs one. It also holds the `candidates`, the `utility`, and the numbers the
+  module check computed: `scores`, a pair per candidate, and `goal`. A set
+  holds at most 12 cases, since a phone shows each case as a row.
+- **The module check computes every candidate and the `utility` on both
+  systems**, and refuses a stored number that differs, as rule 33 gives.
+- **The seed refuses an item where other than one candidate ranks the
+  systems as the goal does**, read from the stored numbers. A tie between the
+  two systems decides nothing and agrees with no goal. Each client derives
+  the correct option from the same numbers.
+- **After the answer, the item shows each candidate's two scores** and the
+  system it put first, in the order the options were shown, then the goal's.
+  A wrong pick is shown with the ranking it gave.
 - **A choose-the-fix item stores an artefact, its input, its failing output,
   three or four edits, and a `check`.** Each edit is applied to the artefact,
   and its output is computed or stored as in spot the flaw. Exactly one edit's
@@ -147,8 +157,7 @@ check.
 - **The record**: the item's `id` and `concept`, the texts `sent` and
   `received`, and each stated value in `given` with its `name` and `label`.
   It also holds the `compute` code, the `working` it prints, the key in
-  `computed`, the `factor` and the `unit`. The tokenizer is a `given` named
-  `tokenizer`, pinned by the module's `requirements.txt`.
+  `computed`, the `factor` and the `unit`. The module pins the tokenizer.
 - **The module check runs `compute` and refuses a `computed` or a `working`
   that differs**, as rule 32 in `docs/authoring/rules.md` gives. The key is
   stored because no client holds a tokenizer.

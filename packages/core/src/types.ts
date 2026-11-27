@@ -2,7 +2,7 @@ import type { Drawing } from './diagram';
 import type { Certs, RawCerts } from './certs';
 import type { Graph, RawGraph } from './graph';
 
-export type Format = 'choice' | 'short' | 'card' | 'estimate';
+export type Format = 'choice' | 'short' | 'card' | 'estimate' | 'metric';
 export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'retained';
 export type Grade = 'k' | 'p' | 'n';
 
@@ -57,6 +57,14 @@ export interface RawQuestion {
   computed?: number;
   factor?: number;
   unit?: string;
+  // a pick-the-metric drill
+  inputs?: string[];
+  expected?: unknown[];
+  a?: unknown[];
+  b?: unknown[];
+  candidates?: { metric: string; label: string }[];
+  scores?: [number, number][];
+  goal?: [number, number];
 }
 
 export interface RawDetail {
@@ -158,6 +166,16 @@ export interface Question {
   keyDetail: string[]; // card: one explanation per point
   trapsDetail: string[]; // card: why each trap is wrong
   estimate: Estimate | null; // an estimate drill's stated numbers and its key
+  metric: MetricItem | null; // a pick-the-metric drill's cases and scores; its candidates are the choices
+}
+
+export interface MetricItem {
+  inputs: string[]; // empty where the item gives none
+  expected: unknown[];
+  a: unknown[];
+  b: unknown[];
+  scores: [number, number][]; // per candidate, system A's then B's
+  goal: [number, number];
 }
 
 export interface Estimate {

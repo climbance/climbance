@@ -48,6 +48,11 @@ export function canSubmit(q: Question, reply: Reply): boolean {
   return typed(q) ? hasAnswer(reply.text) : reply.picked.length > 0;
 }
 
+/** A question answered by picking among options: a choice, or a pick-the-metric drill's candidates. */
+export function offersChoices(q: Question): boolean {
+  return q.format === 'choice' || q.format === 'metric';
+}
+
 /** A question answered by typing: a short reply, or an estimate's number. */
 export function typed(q: Question): boolean {
   return q.format === 'short' || q.format === 'estimate';

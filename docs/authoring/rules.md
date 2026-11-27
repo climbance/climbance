@@ -305,3 +305,10 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     before it must equal `working`. A key typed by hand can be wrong, and a
     learner reads it as the engine's. `sent` and `received` are prose, a
     paragraph a line, which a client wraps to its width. *check*
+33. **A pick-the-metric drill's `scores` and `goal` are what the module's
+    `metrics.py` and the item's `utility` give on its outputs.** The check runs
+    each candidate's function on system A's outputs and on system B's, then
+    `utility` on each, and refuses a stored number that differs. The seed then
+    refuses an item where the goal ties the systems, or where other than one
+    candidate puts first the system the goal puts first. A candidate whose two
+    scores tie agrees with no goal. *check*

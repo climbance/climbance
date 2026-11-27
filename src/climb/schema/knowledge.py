@@ -22,6 +22,7 @@ from climb.schema.authored import (
     ChoiceBody,
     EstimateBody,
     GraphSettings,
+    MetricBody,
     OpenBody,
     ShortBody,
 )
@@ -36,6 +37,7 @@ class QuestionFormat(StrEnum):
     SHORT = "short"
     OPEN = "open"
     ESTIMATE = "estimate"
+    METRIC = "metric"
 
 
 class Measure(StrEnum):
@@ -156,6 +158,7 @@ BODIES: dict[QuestionFormat, type[Authored]] = {
     QuestionFormat.SHORT: ShortBody,
     QuestionFormat.OPEN: OpenBody,
     QuestionFormat.ESTIMATE: EstimateBody,
+    QuestionFormat.METRIC: MetricBody,
 }
 
 
