@@ -71,6 +71,8 @@ import {
   askResult,
   initialAsk,
   keyPointLabel,
+  estimateShown,
+  ESTIMATE_ANSWER,
   lessonStopKicker,
   lessonRead,
 } from '@climb/core';
@@ -472,7 +474,44 @@ function Head({ q, tag, early = false }: { q: Question; tag: string; early?: boo
         <Inline text={block(q.prompt)} variant="titleMedium" />
       </Text>
       {q.code ? <CodeBlock code={q.code} wrap /> : null}
+      <EstimateStated q={q} />
     </>
+  );
+}
+
+/** An estimate's texts and the values it states, each by its label. */
+function EstimateStated({ q }: { q: Question }) {
+  const theme = useTheme();
+  const shown = estimateShown(q);
+  if (!shown) return null;
+  const muted = { color: theme.colors.onSurfaceVariant };
+  return (
+    <View style={{ gap: space[2] }}>
+      {shown.texts.map((t) => (
+        <View key={t.label} style={{ gap: space[1] }}>
+          <Text variant="bodySmall" style={muted}>
+            {t.label}
+          </Text>
+          <Text
+            variant="bodyMedium"
+            selectable
+            style={{ backgroundColor: theme.colors.surfaceVariant, borderRadius: radius(theme).md, padding: space[3] }}
+          >
+            {t.text}
+          </Text>
+        </View>
+      ))}
+      {shown.given.map((g) => (
+        <View key={g.label} style={styles.row}>
+          <Text variant="bodyMedium" style={[muted, { flex: 1 }]}>
+            {g.label}
+          </Text>
+          <Text variant="bodyMedium" style={{ fontFamily: font.mono }}>
+            {g.value}
+          </Text>
+        </View>
+      ))}
+    </View>
   );
 }
 
@@ -543,7 +582,8 @@ function Ask(props: {
     else dispatch({ type: 'answered', result: r });
   };
   const toggle = (pos: number) => dispatch({ type: 'pick', pos, multi });
-  const padOpen = q.format === 'short' && !result;
+  const typedIn = q.format === 'short' || q.format === 'estimate';
+  const padOpen = typedIn && !result;
 
   return (
     // Edge-to-edge Android no longer resizes the window for the keyboard; this keeps the input and bottom bar above it.
@@ -559,10 +599,10 @@ function Ask(props: {
         {q.format === 'choice' ? (
           <Choices q={q} order={order} picked={picked} onToggle={result ? undefined : toggle} />
         ) : null}
-        {q.format === 'short' ? (
+        {typedIn ? (
           <TextInput
             mode="outlined"
-            label={ASK_ANSWER}
+            label={q.estimate ? `${ESTIMATE_ANSWER}, ${q.estimate.unit}` : ASK_ANSWER}
             value={text}
             selection={edit.selection}
             onChangeText={(typed) => setEdit((was) => ({ ...was, text: typed }))}

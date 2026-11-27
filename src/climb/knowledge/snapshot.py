@@ -77,8 +77,12 @@ def _course(conn: Connection, module: dict[str, Any]) -> dict[str, Any]:
     course: dict[str, Any] = {
         "slug": module["slug"],
         "definition": _definition(module, list(listed.values())),
-        "questions": _questions(conn, module["id"], where),
     }
+    served = _questions(conn, module["id"], where)
+    course["questions"] = [raw for raw in served if raw.get("format") != "estimate"]
+    if drills := [raw for raw in served if raw.get("format") == "estimate"]:
+        # apart from `questions`, which an installed app reads whole
+        course["drills"] = drills
     taught = conn.execute(
         select(lessons).where(lessons.c.module_id == module["id"], lessons.c.retired_at.is_(None))
     ).mappings()

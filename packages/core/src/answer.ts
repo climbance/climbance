@@ -1,5 +1,5 @@
 import { cardFields } from './records';
-import { gradeChoice, hasAnswer, matchShort, splitGuess } from './reply';
+import { gradeChoice, hasAnswer, matchShort, parseEstimate, splitGuess, withinFactor } from './reply';
 import type { Result } from './result';
 import type { Question } from './types';
 
@@ -12,6 +12,12 @@ export interface Reply {
 
 /** A short or a choice question's answer. A reply ending in `?` is a guess too. */
 export function answerResult(q: Question, order: number[], reply: Reply): Result {
+  if (q.estimate) {
+    const [text, suffix] = splitGuess(reply.text);
+    const n = parseEstimate(text);
+    const correct = n !== null && withinFactor(n, q.estimate);
+    return { q, correct, guess: reply.guessing || suffix, order, picked: [], reply: text, estimate: n ?? undefined };
+  }
   if (q.format === 'short') {
     const [text, suffix] = splitGuess(reply.text);
     return { q, correct: matchShort(text, q), guess: reply.guessing || suffix, order, picked: [], reply: text };
@@ -38,7 +44,13 @@ export function togglePick(picked: number[], pos: number, multi: boolean): numbe
 }
 
 export function canSubmit(q: Question, reply: Reply): boolean {
-  return q.format === 'short' ? hasAnswer(reply.text) : reply.picked.length > 0;
+  if (q.estimate) return parseEstimate(splitGuess(reply.text)[0]) !== null;
+  return typed(q) ? hasAnswer(reply.text) : reply.picked.length > 0;
+}
+
+/** A question answered by typing: a short reply, or an estimate's number. */
+export function typed(q: Question): boolean {
+  return q.format === 'short' || q.format === 'estimate';
 }
 
 export function flipped(s: Set<number>, i: number): Set<number> {

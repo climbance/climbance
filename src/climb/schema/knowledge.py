@@ -20,6 +20,7 @@ from climb.schema.authored import (
     Body,
     CertificationSettings,
     ChoiceBody,
+    EstimateBody,
     GraphSettings,
     OpenBody,
     ShortBody,
@@ -34,6 +35,7 @@ class QuestionFormat(StrEnum):
     CHOICE = "choice"
     SHORT = "short"
     OPEN = "open"
+    ESTIMATE = "estimate"
 
 
 class Measure(StrEnum):
@@ -153,6 +155,7 @@ BODIES: dict[QuestionFormat, type[Authored]] = {
     QuestionFormat.CHOICE: ChoiceBody,
     QuestionFormat.SHORT: ShortBody,
     QuestionFormat.OPEN: OpenBody,
+    QuestionFormat.ESTIMATE: EstimateBody,
 }
 
 
@@ -222,6 +225,7 @@ class Answer(KnowledgeRecord):
     traps: list[int] = Field(default_factory=list[int])
     wrong: bool = False
     measure: Measure | None = None  # a test's answer, which the schedule skips
+    estimate: float | None = None  # an estimate drill's number, as the user gave it
 
     @model_validator(mode="after")
     def _ticks_belong_to_a_grade(self) -> Answer:
@@ -229,6 +233,8 @@ class Answer(KnowledgeRecord):
             raise ValueError("only an open question's answer carries ticks")
         if self.grade is not None and self.guess:
             raise ValueError("an open question takes no guess")
+        if self.grade is not None and self.estimate is not None:
+            raise ValueError("an open question takes no estimate")
         return self
 
 

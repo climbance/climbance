@@ -3,7 +3,7 @@ import { cardLabel } from './records';
 import type { Result } from './result';
 import type { Question } from './types';
 import { FINISH } from './words/pages';
-import { ASK_NEXT, ASK_REVEAL, askSubmit } from './words/queue';
+import { ASK_NEXT, ASK_REVEAL, ESTIMATE_RECEIVED, ESTIMATE_SENT, askSubmit } from './words/queue';
 
 // one question's answer, for every platform: what the user has picked, typed
 // and ticked, and the one press the question asks for at each point. Each
@@ -89,6 +89,22 @@ export function askAct(
 export function askResult(q: Question, order: number[], s: AskState): Result {
   if (q.format === 'card') return gradeResult(q, order, s.recalled, s.fell, s.wrong);
   return answerResult(q, order, { text: s.text, picked: s.picked, guessing: s.guessing });
+}
+
+/** What an estimate states before its answer: the texts sent and received, and each given value. */
+export interface EstimateShown {
+  texts: { label: string; text: string }[];
+  given: { label: string; value: string }[];
+}
+
+export function estimateShown(q: Question): EstimateShown | null {
+  const e = q.estimate;
+  if (!e) return null;
+  const texts = [
+    { label: ESTIMATE_SENT, text: e.sent },
+    { label: ESTIMATE_RECEIVED, text: e.received },
+  ].filter((t) => t.text);
+  return { texts, given: e.given.map(({ label, value }) => ({ label, value: String(value) })) };
 }
 
 /** A point of an open question's key, as its tick reads. */

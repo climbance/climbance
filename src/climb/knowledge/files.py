@@ -43,6 +43,7 @@ def read_module(base: Path) -> ModuleSource:
             unread.append(f"{where}: {error}")
             continue
         banks.append(Bank(topic=path.parent.name, sub=path.stem, questions=raws))
+    _drills(base, banks, listed, unread)
     concepts = read_concepts(base, unread)
     for bank in banks:
         for raw in bank.questions:
@@ -66,6 +67,25 @@ def read_module(base: Path) -> ModuleSource:
         concepts=concepts,
         unread=unread,
     )
+
+
+def _drills(base: Path, banks: list[Bank], listed: set[tuple[str, str]], unread: list[str]) -> None:
+    """Each subtopic's drill items, after its questions:
+    `content-repo/ai-drills.md`."""
+    by_sub = {(bank.topic, bank.sub): bank for bank in banks}
+    for path in sorted((base / "drills").glob("*/*.toml")):
+        where = (path.parent.name, path.stem)
+        if where not in listed:
+            unread.append(f"drills/{'/'.join(where)}: not in course.toml")
+        try:
+            raws = tomllib.loads(path.read_text()).get("drill", [])
+        except tomllib.TOMLDecodeError as error:
+            unread.append(f"drills/{'/'.join(where)}: {error}")
+            continue
+        if where not in by_sub:
+            by_sub[where] = Bank(topic=where[0], sub=where[1], questions=[])
+            banks.append(by_sub[where])
+        by_sub[where].questions.extend(raws)
 
 
 def _optional(path: Path) -> dict[str, Any] | None:

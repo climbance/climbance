@@ -2151,6 +2151,17 @@
                 "type": "null"
               }
             ]
+          },
+          "estimate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimate"
           }
         },
         "type": "object",
@@ -5801,7 +5812,7 @@
           "placement"
         ],
         "title": "Measure",
-        "description": "The test an answer was given in: `core-package/knowledge/baseline-tests.md`\nand `core-package/knowledge/placement.md`."
+        "description": "The test an answer was given in:\n`core-package/knowledge/baseline-tests.md` and\n`core-package/knowledge/placement.md`."
       },
       "Measured": {
         "properties": {

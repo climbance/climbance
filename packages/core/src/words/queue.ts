@@ -110,3 +110,8 @@ export function certExamRule(size: number, passShare: number): string {
 }
 export const CERT_EXAM_START = 'Start the exam';
 export const CERT_EXAM_MISSING = 'No certification of that name is open.';
+
+// an estimate drill's stated texts: `content-repo/ai-drills.md`
+export const ESTIMATE_SENT = 'Sent';
+export const ESTIMATE_RECEIVED = 'Received';
+export const ESTIMATE_ANSWER = 'Your estimate';

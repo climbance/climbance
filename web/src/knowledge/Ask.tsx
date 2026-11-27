@@ -34,6 +34,8 @@ import {
   askResult,
   initialAsk,
   keyPointLabel,
+  estimateShown,
+  ESTIMATE_ANSWER,
 } from '@climb/core'
 
 import { Link } from 'react-router'
@@ -120,12 +122,13 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
         <Inline text={block(q.prompt)} />
       </p>
       {q.code && <PythonCode code={q.code} />}
+      <EstimateStated q={q} />
 
       {q.format === 'choice' && (
         <Choices q={q} order={order} picked={picked} disabled={!!result} onToggle={toggle} />
       )}
 
-      {q.format === 'short' && (
+      {(q.format === 'short' || q.format === 'estimate') && (
         <form
           onSubmit={(event) => {
             event.preventDefault()
@@ -133,7 +136,9 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
           }}
         >
           <Input
-            aria-label={ASK_ANSWER}
+            aria-label={q.estimate ? `${ESTIMATE_ANSWER}, ${q.estimate.unit}` : ASK_ANSWER}
+            placeholder={q.estimate?.unit}
+            inputMode={q.estimate ? 'decimal' : undefined}
             autoFocus
             autoComplete="off"
             spellCheck={false}
@@ -265,9 +270,34 @@ export function Answered({ q, course }: { q: Question; course: Course | undefine
         <Inline text={block(q.prompt)} />
       </p>
       {q.code && <PythonCode code={q.code} />}
+      <EstimateStated q={q} />
       {q.format === 'choice' && <Choices q={q} order={r.order} picked={r.picked} disabled />}
       <Verdict r={r} />
       <Details r={r} course={course} answered={{ title: BANK_ANSWER, rows: bankAnswer(q) }} />
+    </div>
+  )
+}
+
+/** An estimate's texts and the values it states, each by its label. */
+function EstimateStated({ q }: { q: Question }) {
+  const shown = estimateShown(q)
+  if (!shown) return null
+  return (
+    <div className="space-y-stack">
+      {shown.texts.map((t) => (
+        <div key={t.label} className="space-y-1">
+          <p className="text-meta text-muted-foreground">{t.label}</p>
+          <p className="rounded-md bg-muted p-3 whitespace-pre-wrap">{t.text}</p>
+        </div>
+      ))}
+      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+        {shown.given.map((g) => (
+          <div key={g.label} className="contents">
+            <dt className="text-muted-foreground">{g.label}</dt>
+            <dd className="font-mono">{g.value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   )
 }

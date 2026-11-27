@@ -102,7 +102,45 @@ class OpenBody(Authored):
         return self
 
 
-type Body = ChoiceBody | ShortBody | OpenBody
+# the names an estimate's `compute` is given besides its own
+ESTIMATE_NAMES = ("sent", "received", "tokens")
+
+
+class Given(Authored):
+    """One number or name an estimate states, shown as its label and value."""
+
+    name: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    label: Text
+    value: float | str
+
+
+class EstimateBody(Authored):
+    """An estimate drill: `content-repo/ai-drills.md`."""
+
+    sent: Text | None = None  # the prompt the call sends
+    received: Text | None = None  # the answer it returns
+    given: list[Given]
+    # prints the working, a line each, then the key as the last line
+    compute: Text
+    working: list[Text]
+    computed: float = Field(gt=0)  # the key, as `compute` printed it
+    factor: float = Field(gt=1)
+    unit: Text
+    explain: str
+    detail: Detail | None = None
+    concept: str | None = None
+
+    @model_validator(mode="after")
+    def _names_once(self) -> EstimateBody:
+        names = [one.name for one in self.given]
+        if len(set(names)) < len(names):
+            raise ValueError("given names a value twice")
+        if taken := sorted(set(names) & set(ESTIMATE_NAMES)):
+            raise ValueError(f"given takes the reserved name {taken[0]}")
+        return self
+
+
+type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody
 
 
 class Edge(Authored):

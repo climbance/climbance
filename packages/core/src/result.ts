@@ -4,7 +4,7 @@ import type { CardFields } from './records';
 import { answerKey, block } from './reply';
 import { mermaidSource } from './diagram';
 import { isTable } from './table';
-import type { Course, Grade, Question } from './types';
+import type { Course, Estimate, Grade, Question } from './types';
 
 /** One answered question as a result screen shows it, on either client. */
 export interface Result {
@@ -16,12 +16,13 @@ export interface Result {
   reply: string;
   grade?: Grade;
   card?: CardFields;
+  estimate?: number; // an estimate drill's number, as parsed
 }
 
 /** The learner's own reply, as a missed exam question repeats it. */
 export function youLine(r: Result): string {
   const you =
-    r.q.format === 'short'
+    r.q.format === 'short' || r.q.format === 'estimate'
       ? r.reply
       : [...r.picked]
           .sort((a, b) => a - b)
@@ -42,6 +43,7 @@ export function verdictView(r: Result): VerdictView {
   const q = r.q;
   const explain = q.explain ? block(q.explain) : '';
   if (q.format === 'card') return { head: null, explain, note: '', misconceptions: [] };
+  if (q.estimate) return estimateVerdict(r, q.estimate, explain);
   const key = q.format === 'short' ? q.accept[0] : answerKey(q, r.order);
   const note =
     r.correct && r.guess
@@ -63,6 +65,21 @@ export function verdictView(r: Result): VerdictView {
     misconceptions,
   };
 }
+
+/** An estimate's verdict: the key in its unit, and the working that computed it before the explanation. */
+function estimateVerdict(r: Result, e: Estimate, explain: string): VerdictView {
+  const key = `${shownNumber(e.computed)} ${e.unit}`;
+  const text = r.correct ? `✓ Within ×${e.factor} of ${key}.` : `✗ Answer: ${key}, within ×${e.factor}.`;
+  const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
+  return { head: { correct: r.correct, text }, explain: [...e.working, explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };
+}
+
+/** The numbers an estimate accepts, as the learner's answer section reads them. */
+export const estimateRange = (e: Estimate) =>
+  `${shownNumber(e.computed / e.factor)} to ${shownNumber(e.computed * e.factor)} ${e.unit}`;
+
+/** Three significant figures, which an estimate to an order never needs more of. */
+export const shownNumber = (n: number) => String(Number(n.toPrecision(3)));
 
 /** One row of the learner's answer: a ✓, a ✗ or a · mark, a label, and what explains it. */
 export interface AnswerRow {
@@ -94,6 +111,7 @@ export function yourAnswer(r: Result): YourAnswer {
     return { kind: 'rows', rows };
   }
   if (q.format === 'short') return { kind: 'short', you: r.reply, accepted: q.accept.join(', ') };
+  if (q.estimate) return { kind: 'short', you: r.reply, accepted: estimateRange(q.estimate) };
   if (q.format === 'card' && r.card) {
     const missed = new Set(r.card.missed ?? []);
     const fell = new Set(r.card.traps ?? []);

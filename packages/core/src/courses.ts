@@ -84,6 +84,18 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
     keyDetail: raw.key_detail ?? [],
     lesson: raw.lesson ?? '',
     trapsDetail: raw.traps_detail ?? [],
+    estimate:
+      raw.format === 'estimate'
+        ? {
+            sent: raw.sent ?? '',
+            received: raw.received ?? '',
+            given: (raw.given ?? []).map(({ label, value }) => ({ label, value })),
+            working: raw.working ?? [],
+            computed: raw.computed ?? 0,
+            factor: raw.factor ?? 1,
+            unit: raw.unit ?? '',
+          }
+        : null,
   };
 }
 
@@ -138,7 +150,7 @@ export function loadSnapshot(snap: Snapshot): Catalog {
           course.certsErrors = [String(e)];
         }
       }
-      return { course, raws: c.questions };
+      return { course, raws: [...c.questions, ...(c.drills ?? [])] };
     })
     .sort((a, b) =>
       a.course.order !== b.course.order ? a.course.order - b.course.order : cmp(a.course.slug, b.course.slug),

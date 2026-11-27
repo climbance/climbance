@@ -3,14 +3,15 @@ import { LETTERS, levelName, subTitle, type Catalog } from './courses';
 import type { Lesson } from './graph';
 import type { GridColumn } from './grid';
 import { block } from './reply';
+import { estimateRange, shownNumber } from './result';
 import type { AnswerRow, Result } from './result';
 import type { Course, Format, Question } from './types';
 
 // the author's questions page: `web-app/pages/author/questions/`
 
 /** A question's format as the glossary names it: the wire's `card` is an open question. */
-export type BankFormat = 'choice' | 'short' | 'open';
-export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open'];
+export type BankFormat = 'choice' | 'short' | 'open' | 'estimate';
+export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open', 'estimate'];
 const bankFormat = (format: Format): BankFormat => (format === 'card' ? 'open' : format);
 
 export interface BankFilter {
@@ -216,7 +217,8 @@ export function answeredRight(q: Question): Result {
   const order = q.choices.map((_, i) => i);
   if (q.format === 'card')
     return gradeResult(q, order, new Set(q.key.keys()), new Set(), false);
-  return answerResult(q, order, { text: q.accept[0] ?? '', picked: [...q.answer], guessing: false });
+  const text = q.estimate ? String(q.estimate.computed) : (q.accept[0] ?? '');
+  return answerResult(q, order, { text, picked: [...q.answer], guessing: false });
 }
 
 /**
@@ -244,6 +246,11 @@ export function bankAnswer(q: Question): AnswerRow[] {
     return [
       ...q.accept.map((reply, i) => row(`a${i}`, true, reply)),
       row('case', true, q.caseSensitive ? CASE_COUNTS : CASE_IGNORED, '', '·'),
+    ];
+  if (q.estimate)
+    return [
+      row('key', true, `${shownNumber(q.estimate.computed)} ${q.estimate.unit}`, q.estimate.working.join('\n')),
+      row('range', true, estimateRange(q.estimate), '', '·'),
     ];
   return [
     ...q.key.map((point, i) => row(`k${i}`, true, `${i + 1}. ${block(point)}`, q.keyDetail[i])),

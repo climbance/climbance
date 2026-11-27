@@ -295,3 +295,13 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     panel model refuses the module until the concept is retired. A retired id
     names its `retired_on` and `because`, and no concept takes it again.
     *check (due: warning)*
+
+## Drills
+
+32. **An estimate drill's key and its working are what its `compute` prints.**
+    The check runs `compute` with each `given` value bound by its name, the
+    item's `sent` and `received`, and `tokens(text)` counting by the given
+    `tokenizer`. The last line printed must equal `computed`, and the lines
+    before it must equal `working`. A key typed by hand can be wrong, and a
+    learner reads it as the engine's. `sent` and `received` are prose, a
+    paragraph a line, which a client wraps to its width. *check*

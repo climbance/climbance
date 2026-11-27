@@ -2,7 +2,7 @@ import type { Drawing } from './diagram';
 import type { Certs, RawCerts } from './certs';
 import type { Graph, RawGraph } from './graph';
 
-export type Format = 'choice' | 'short' | 'card';
+export type Format = 'choice' | 'short' | 'card' | 'estimate';
 export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'retained';
 export type Grade = 'k' | 'p' | 'n';
 
@@ -49,6 +49,14 @@ export interface RawQuestion {
   key_detail?: string[];
   traps_detail?: string[];
   lesson?: string; // "slug" or "slug#anchor"
+  // an estimate drill: `content-repo/ai-drills.md`
+  sent?: string;
+  received?: string;
+  given?: { name: string; label: string; value: number | string }[];
+  working?: string[];
+  computed?: number;
+  factor?: number;
+  unit?: string;
 }
 
 export interface RawDetail {
@@ -93,6 +101,7 @@ export interface Snapshot {
     graph?: RawGraph;
     lesson_bodies?: Record<string, string>; // format 5
     certs?: RawCerts; // format 6
+    drills?: RawQuestion[]; // apart from questions, which an installed app reads whole
   }[];
   diagrams?: Record<string, Drawing>; // the engine's own, beside format 6
 }
@@ -148,6 +157,17 @@ export interface Question {
   lesson: string; // "slug" or "slug#anchor": where this is taught; "" when unset
   keyDetail: string[]; // card: one explanation per point
   trapsDetail: string[]; // card: why each trap is wrong
+  estimate: Estimate | null; // an estimate drill's stated numbers and its key
+}
+
+export interface Estimate {
+  sent: string;
+  received: string;
+  given: { label: string; value: number | string }[];
+  working: string[];
+  computed: number;
+  factor: number;
+  unit: string;
 }
 
 export interface Group {
@@ -168,6 +188,7 @@ export interface AttemptRecord {
   traps?: number[]; // card: 0-based traps fallen into
   wrong?: true; // card: something else said wrong
   measure?: Measure; // a test's answer, which the schedule skips
+  estimate?: number; // an estimate drill's number, as the user gave it
 }
 
 /** The test an answer was given in: `core-package/knowledge/baseline-tests.md`. */

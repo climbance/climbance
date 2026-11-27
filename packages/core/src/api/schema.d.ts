@@ -1030,6 +1030,8 @@ export interface components {
        */
       wrong: boolean;
       measure?: components['schemas']['Measure'] | null;
+      /** Estimate */
+      estimate?: number | null;
     };
     /**
      * Arm
@@ -2280,8 +2282,9 @@ export interface components {
     };
     /**
      * Measure
-     * @description The test an answer was given in: `core-package/knowledge/baseline-tests.md`
-     *     and `core-package/knowledge/placement.md`.
+     * @description The test an answer was given in:
+     *     `core-package/knowledge/baseline-tests.md` and
+     *     `core-package/knowledge/placement.md`.
      * @enum {string}
      */
     Measure: 'baseline' | 'delayed' | 'placement';

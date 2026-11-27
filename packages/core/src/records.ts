@@ -79,6 +79,7 @@ export function makeAttempt(
   grade?: Grade,
   card?: CardFields,
   measure?: Measure,
+  estimate?: number,
 ): AttemptRecord {
   const rec: AttemptRecord = { t, course, id, ok };
   if (guess) rec.guess = true;
@@ -87,6 +88,7 @@ export function makeAttempt(
   if (card?.traps) rec.traps = card.traps;
   if (card?.wrong) rec.wrong = true;
   if (measure) rec.measure = measure;
+  if (estimate !== undefined) rec.estimate = estimate;
   return rec;
 }
 

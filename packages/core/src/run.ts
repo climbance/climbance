@@ -106,7 +106,7 @@ export class QueueRun {
 
   /** Records the answer to the current question, and returns the attempt to store. */
   answer(r: Result): AttemptRecord {
-    const rec = makeAttempt(isoNow(), r.q.course, r.q.id, r.correct, r.guess, r.grade, r.card);
+    const rec = makeAttempt(isoNow(), r.q.course, r.q.id, r.correct, r.guess, r.grade, r.card, undefined, r.estimate);
     this.mine.push(rec);
     this.results = [...this.results, r];
     if (this.current && 'q' in this.current && this.current.fresh) this.introduced++;

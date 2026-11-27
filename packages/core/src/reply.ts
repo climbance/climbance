@@ -23,6 +23,19 @@ export function splitGuess(reply: string): [string, boolean] {
   return r.endsWith('?') ? [r.slice(0, -1), true] : [r, false];
 }
 
+/** An estimate's number: digits with an optional exponent, commas, spaces and a leading `$` dropped. */
+export function parseEstimate(text: string): number | null {
+  const t = pyStrip(text).replace(/[,\s]/g, '').replace(/^\$/, '');
+  if (!/^(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t)) return null;
+  const n = Number(t);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/** Within the item's factor of the key, either side: an engineer estimates to an order. */
+export function withinFactor(n: number, e: { computed: number; factor: number }): boolean {
+  return n >= e.computed / e.factor && n <= e.computed * e.factor;
+}
+
 /** True when the reply carries an answer, i.e. is not empty after dropping `?`s. */
 export function hasAnswer(raw: string): boolean {
   return pyStrip(raw).replace(/\?+$/, '') !== '';

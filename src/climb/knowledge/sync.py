@@ -169,7 +169,7 @@ def _record(names: _Names, line: dict[str, Any]) -> tuple[Table, dict[str, Any]]
             raise Unknown(f"unknown question {module}/{line['id']}")
         ticks = {
             key: line[key]
-            for key in ("guess", "grade", "missed", "traps", "wrong", "measure")
+            for key in ("guess", "grade", "missed", "traps", "wrong", "measure", "estimate")
             if key in line
         }
         return table, {"question_id": question, "correct": line["ok"], **ticks}

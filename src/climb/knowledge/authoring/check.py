@@ -9,6 +9,7 @@ from pathlib import Path
 
 from climb.knowledge.authoring.concept_rules import filed, records, shared, taught
 from climb.knowledge.authoring.course import Report, load
+from climb.knowledge.authoring.drills import drills
 from climb.knowledge.authoring.execution import Runs
 from climb.knowledge.authoring.layout import box_drawing, text_fences, widths
 from climb.knowledge.authoring.lessons import lessons_run
@@ -92,6 +93,7 @@ def check(
                 ran["runs on other interpreters"] = versions(
                     course, report, pool, runs, here, others
                 )
+            ran["drill keys"] = drills(course, report, pool, runs)
             if course.concepts:
                 ran["witness runs"] = witnesses(course, report, pool, runs, others)
         kept.write_text(json.dumps(runs.cache))

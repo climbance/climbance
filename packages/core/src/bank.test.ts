@@ -64,7 +64,7 @@ describe('bankView', () => {
       ['output', 3, true],
       ['principle', 1, false],
     ]);
-    expect(view.formats.map((chip) => chip.count)).toEqual([2, 1, 0]);
+    expect(view.formats.map((chip) => chip.count)).toEqual([2, 1, 0, 0]);
   });
 
   it('reads a row: the first line of the prompt and the code in lines', () => {

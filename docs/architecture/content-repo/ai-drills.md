@@ -25,9 +25,10 @@ record, how its key is proven, and how its answer is stored.
 - **Retiring a concept retires its drill items**, as it retires its questions.
   A drill whose key stopped holding is retired as a concept is, under
   `[retired.<id>]` in `check.toml`.
-- **Every item's lines fit 60 characters**, the width the modules hold code
-  and prompts to. A tap has to land on one line of a phone's screen, and a
-  line wider than 60 wraps more than once there.
+- **A `judge` or a `trace` item's lines fit 60 characters**, the width the
+  modules hold code and prompts to. A tap has to land on one line of a
+  phone's screen, and a line wider than 60 wraps more than once there. An
+  estimate is tapped nowhere, so its texts are prose a client wraps.
 
 ## The formats
 
@@ -143,10 +144,14 @@ check.
   and output tokens, and the rate in tokens per second. An item on another
   quantity, such as end-to-end success from per-step error rates, states its
   rates instead.
-- **The record**: the item's `id`, `concept`, the stated numbers, the
-  `compute` code printing the key, the stored `key`, and the `factor`.
-- **The module check runs `compute` and refuses a stored `key` that differs.**
-  The key is stored because no client holds a tokenizer.
+- **The record**: the item's `id` and `concept`, the texts `sent` and
+  `received`, and each stated value in `given` with its `name` and `label`.
+  It also holds the `compute` code, the `working` it prints, the key in
+  `computed`, the `factor` and the `unit`. The tokenizer is a `given` named
+  `tokenizer`, pinned by the module's `requirements.txt`.
+- **The module check runs `compute` and refuses a `computed` or a `working`
+  that differs**, as rule 32 in `docs/authoring/rules.md` gives. The key is
+  stored because no client holds a tokenizer.
 - **A number is correct within the factor**: between the key divided by the
   factor and the key multiplied by it. An engineer estimates to an order, so
   a ratio is scored and a difference is not.

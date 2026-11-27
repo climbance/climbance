@@ -173,11 +173,13 @@ answers = _logged(
     Column("traps", ARRAY(Integer), nullable=False),
     Column("wrong", Boolean, nullable=False),
     Column("measure", enumerated(Measure)),
+    Column("estimate", Double),
     CheckConstraint(
         "grade IS NOT NULL OR (missed = '{}' AND traps = '{}' AND NOT wrong)",
         name="ticks_belong_to_a_grade",
     ),
     CheckConstraint("grade IS NULL OR NOT guess", name="an_open_question_takes_no_guess"),
+    CheckConstraint("grade IS NULL OR estimate IS NULL", name="an_open_question_takes_no_estimate"),
 )
 
 stints = _logged(
