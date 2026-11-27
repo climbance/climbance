@@ -35,7 +35,7 @@ SHRINKS = 3
 # is a number a reader bumps rather than a hash of the code: the search is
 # spread over four modules, and a hash of one would fire on a comment there and
 # miss a change elsewhere
-SEARCH_REVISION = 2
+SEARCH_REVISION = 3
 
 
 class Missing(StrEnum):
@@ -55,8 +55,8 @@ class Missing(StrEnum):
     NAIVE_CRASHED = "naive_crashed"
     CANONICAL_FAILED = "canonical_failed"
     # the canonical is over a tenth of the cap where the naive solution is over
-    # the cap, so the two are within a constant factor and no count separates
-    # them
+    # the cap, under the same count, so the two are within a constant factor
+    # and no count separates them
     CANONICAL_TOO_SLOW = "canonical_too_slow"
     # every storable input the walk reached, the naive solution finished under
     # the cap. No search writes it since the count step ran after the walk, and
@@ -377,17 +377,18 @@ def _settled(
     ceiling: int,
     repeats: int = 1,
 ) -> Searched:
-    # the canonical is run under the cap it has to beat rather than the
-    # measuring one: what the case asserts is that this solution answers there
-    [ran] = run(canonical, [args], cap_ms=cap_ms, repeats=[repeats])
-    if not ran.returned:
-        return Searched(missing=Missing.CANONICAL_FAILED)
-
-    # carried onto every answer from here: the speedup is established at this
-    # size whether or not a case is stored
+    # under the measuring cap, so a canonical over the cap it has to beat still
+    # reads as a time: repeated, it is the margin and not a failure
+    [ran] = run(canonical, [args], cap_ms=measure_ms, repeats=[repeats])
+    # carried onto every answer from here: the count that ran, whatever it found
     measured = partial(
         Searched, size=size, repeats=repeats, canonical_ms=ran.elapsed_ms, naive_ms=naive_ms
     )
+    if ran.outcome is RunOutcome.TIMEOUT:
+        return measured(missing=Missing.CANONICAL_TOO_SLOW)
+    if not ran.returned:
+        return measured(missing=Missing.CANONICAL_FAILED)
+
     # a case the canonical only just answers fails a correct submission that is
     # a few percent slower, so the margin is what makes it a test of the form
     if (ran.elapsed_ms or 0) * MARGIN > cap_ms:

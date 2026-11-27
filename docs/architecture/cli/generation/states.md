@@ -133,7 +133,10 @@ a second generator call writes a different problem.
   the count bound and the search's own revision, and a resume reads the four
   beside the flag and the bench. The revision is bumped where the walk's
   behaviour changes, since a code change moves no bound. A hash of the code is
-  not used, because the search spans four modules.
+  not used, because the search spans four modules. A moved revision re-walks
+  a draft held for any reason the search named, since a changed walk can
+  answer any of them differently. Revision 2 reported a repeated canonical
+  over the cap as `canonical_failed`, which no bound releases.
 - **A draft held at `searched` starts at the loop once its template drops the
   claim.** The flag is read beside the bench, since a corrected flag moves
   neither a configuration nor a prompt hash.

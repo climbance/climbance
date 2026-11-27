@@ -599,3 +599,18 @@ def test_a_changed_search_re_enters_it(database):
     stopped = at_ceiling(database, "case_too_large", CEILING, search_revision=SEARCH_REVISION - 1)
 
     assert moved_at(stopped, CLAIMS, BENCH) is WritingState.SEARCHED
+
+
+def test_a_draft_an_older_search_held_on_any_reason_re_enters_it(database):
+    """The old walk reported a repeated canonical over the cap as
+    `canonical_failed`, which no bound releases."""
+    stopped = at_ceiling(database, "canonical_failed", CEILING, search_revision=SEARCH_REVISION - 1)
+
+    assert moved_at(stopped, CLAIMS, BENCH) is WritingState.SEARCHED
+
+
+def test_a_failed_canonical_under_this_search_is_not_walked_again(database):
+    """A crash at scale is not a bound a resume can move."""
+    stopped = at_ceiling(database, "canonical_failed", CEILING, margin=MARGIN * 2)
+
+    assert moved_at(stopped, CLAIMS, BENCH) is not WritingState.SEARCHED

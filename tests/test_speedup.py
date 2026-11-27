@@ -149,11 +149,20 @@ def test_the_largest_legal_size_is_tried_before_the_search_gives_up():
     assert asked == [1, 2, 3]
 
 
-def test_a_canonical_that_cannot_answer_at_that_size_separates_nothing():
-    """The form gives no usable speedup at this cap, which is not a case."""
-    found = searched(canonical=SLEEPS)
+def test_a_canonical_that_crashes_at_that_size_failed():
+    """A crash at scale says the canonical is wrong, not slow."""
+    found = searched(canonical=solution("crashes-at-size", lambda n: [][n] if n > 2 else n))
 
     assert found.missing is Missing.CANONICAL_FAILED
+
+
+def test_a_canonical_over_the_cap_is_too_slow_and_carries_its_time():
+    """It is timed under the measuring cap, so it is too slow by a factor the
+    record shows rather than a failure."""
+    found = searched(canonical=SLEEPS)
+
+    assert found.missing is Missing.CANONICAL_TOO_SLOW
+    assert found.canonical_ms > CAP_MS
 
 
 # 8ms at any size: over a tenth of the cap, and inside it
@@ -365,3 +374,23 @@ def test_a_size_the_statement_bounds_is_not_repeated():
     found = counted(largest=2, ceiling=CEILING)
 
     assert found.missing is Missing.NAIVE_FINISHED
+
+
+def test_a_repeated_canonical_over_the_cap_is_too_slow_with_its_count():
+    """Repeated as the naive solution is, two solutions within a constant
+    factor both exceed the cap, and that is the margin's meaning."""
+    found = counted(canonical=solution("as-slow", len, lambda xs: 3))
+
+    assert found.missing is Missing.CANONICAL_TOO_SLOW
+    assert found.repeats > 1
+    assert found.canonical_ms > CAP_MS
+
+
+def test_a_repeated_canonical_beyond_the_measuring_cap_is_too_slow():
+    """No time is read past the measuring cap, and the count is still the one
+    that ran."""
+    found = counted(canonical=solution("never-repeated", len, lambda xs: math.inf))
+
+    assert found.missing is Missing.CANONICAL_TOO_SLOW
+    assert found.repeats > 1
+    assert found.canonical_ms is None

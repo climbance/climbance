@@ -149,20 +149,27 @@ def re_walks(
     moved: a bound the walk stopped at is no longer the one in force, or the
     search itself is no longer the one that walked.
 
-    One rule over the four numbers rather than a reason per number. The search
+    One rule over the three bounds rather than a reason per bound. The search
     is a local step, so a walk taken again where an unrelated one moved costs
     subprocesses and no call.
 
     Absent counts as moved. The drafts written before a number was recorded
     were walked under the first of it.
     """
-    return (
+    if not (
         draft.state is WritingState.SEARCHED
         and target.template.speedup
         and draft.separating_case is None
-        and draft.unseparated in BOUNDED
-        and (draft.ceiling, draft.margin, draft.repeats_max, draft.search_revision)
-        != (ceiling, margin, repeats_max, revision)
+    ):
+        return False
+    # a changed walk may answer any reason differently, as `canonical_failed`
+    # did for a repeated canonical over the cap
+    if draft.search_revision != revision and draft.unseparated in tuple(Missing):
+        return True
+    return draft.unseparated in BOUNDED and (draft.ceiling, draft.margin, draft.repeats_max) != (
+        ceiling,
+        margin,
+        repeats_max,
     )
 
 

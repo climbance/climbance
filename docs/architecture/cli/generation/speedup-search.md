@@ -82,10 +82,13 @@ case at that size is appended after the mutation loop.
     input, and the repeat count reaching the cap is over its bound. A
     separation may still sit above either bound.
   - `canonical_too_slow`: the canonical took over a tenth of the cap where
-    the naive solution exceeded it. The two are within a constant factor, and
-    no count separates them.
+    the naive solution exceeded it, under the same repeat count. The two are
+    within a constant factor, and no count separates them. The canonical is
+    timed well above the sitting's cap, as the naive solution is, so the
+    record shows how slow it was.
   - `naive_crashed`, `canonical_failed` and `disagreed`: a solution crashed,
-    failed, or the two disagreed at a size the walk reached.
+    failed, or the two disagreed at a size the walk reached. A canonical over
+    the cap is too slow, not failed.
   - `input_too_large`: no storable input separated. Only drafts written
     before the repeat count carry it.
 
