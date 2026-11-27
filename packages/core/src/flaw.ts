@@ -4,6 +4,9 @@ import {
   FLAW_CLEAN_GIVES,
   FLAW_GIVES,
   FLAW_INPUT,
+  FLAW_MEASURED,
+  FLAW_MODEL_CLEAN_GIVES,
+  FLAW_MODEL_GIVES,
   flawFalseAlarm,
   flawFix,
   flawFound,
@@ -53,6 +56,8 @@ export function flawHead(r: Result): { correct: boolean; text: string } {
 export function flawWitness(q: Question): string[] {
   const j = q.judge;
   if (!j) return [];
-  const clean = j.flaw ? [`${FLAW_CLEAN_GIVES}: \`${j.flaw.cleanOutput}\``] : [];
-  return [`${FLAW_INPUT}: \`${j.input}\``, ...clean, `${FLAW_GIVES}: \`${j.output}\``];
+  const model = j.measured.length > 0;
+  const clean = j.flaw ? [`${model ? FLAW_MODEL_CLEAN_GIVES : FLAW_CLEAN_GIVES}: \`${j.flaw.cleanOutput}\``] : [];
+  const measured = model ? [FLAW_MEASURED, ...j.measured.map((line) => `- ${line}`)] : [];
+  return [`${FLAW_INPUT}: \`${j.input}\``, ...clean, `${model ? FLAW_MODEL_GIVES : FLAW_GIVES}: \`${j.output}\``, ...measured];
 }

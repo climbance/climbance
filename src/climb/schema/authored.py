@@ -210,6 +210,8 @@ class JudgeBody(Authored):
     span: tuple[int, int] | None = None
     fix: list[str] | None = None
     clean_output: Text | None = None
+    # a prompt artefact's: each model's counts against the check
+    measured: list[Text] | None = None
     explain: str
     detail: Detail | None = None
     concept: str | None = None

@@ -27,24 +27,30 @@ def checked(course: Course, report: Report, today: date | None = None) -> None:
         if malformed(concept.get("checks", [])):
             report.error(31, at, "a check is not { model, checked_on, holds, measured }")
             continue
-        _standing(report, at, concept.get("checks", []), panel, every, today)
+        standing(report, at, concept.get("checks", []), panel, every, today)
     for name, why in course.retired.items():
         if not isinstance(why.get("retired_on"), date) or not why.get("because"):
             report.error(31, f"check.toml retired {name}", "needs retired_on and because")
 
 
-def _standing(
-    report: Report, at: str, checks: list[dict[str, Any]], panel: list[str], every: int, today: date
+def standing(
+    report: Report,
+    at: str,
+    checks: list[dict[str, Any]],
+    panel: list[str],
+    every: int,
+    today: date,
+    rule: int = 31,
 ) -> None:
     last, owed = latest(checks), due(checks, panel, every, today)
     for model in panel:
         if model not in last:
-            report.warn(31, at, f"due: never checked on {model}")
+            report.warn(rule, at, f"due: never checked on {model}")
         elif not last[model]["holds"]:
             on = last[model]["checked_on"]
-            report.error(31, at, f"stopped holding on {model} on {on}: retire it")
+            report.error(rule, at, f"stopped holding on {model} on {on}: retire it")
         elif model in owed:
-            report.warn(31, at, f"due: last checked on {model} on {last[model]['checked_on']}")
+            report.warn(rule, at, f"due: last checked on {model} on {last[model]['checked_on']}")
 
 
 def malformed(checks: object) -> bool:

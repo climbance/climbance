@@ -33,4 +33,6 @@ already made.
   a model.** It runs each due `model_witness` on the module's panel through
   the calls, and appends the checks to the concept files in `content/`.
   `docs/authoring/concepts.md`, under `## Claims that depend on a model`,
-  gives the rule it follows.
+  gives the rule it follows. It also asks the panel for each due prompt
+  artefact's answers, as `../content-repo/ai-drills.md` gives, and `--only`
+  limits a run to the claims and artefacts it names.

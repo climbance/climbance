@@ -20,6 +20,7 @@ from climb.knowledge.authoring.pairing import paired
 from climb.knowledge.authoring.prose import prose
 from climb.knowledge.authoring.quotes import quoted
 from climb.knowledge.authoring.repeats import repeats
+from climb.knowledge.authoring.sampling import sampled
 from climb.knowledge.authoring.snippets import interpreters, snippets, versions
 from climb.knowledge.authoring.static import (
     centres,
@@ -96,7 +97,7 @@ def check(
                     course, report, pool, runs, here, others
                 )
             ran["drill keys"] = sum(
-                one(course, report, pool, runs) for one in (drills, judged, traced)
+                one(course, report, pool, runs) for one in (drills, judged, traced, sampled)
             )
             if course.concepts:
                 ran["witness runs"] = witnesses(course, report, pool, runs, others)

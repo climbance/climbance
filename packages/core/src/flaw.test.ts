@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { answerResult, canSubmit } from './answer';
 import { loadSnapshot } from './courses';
-import { flawFixShown, flawLines } from './flaw';
+import { flawFixShown, flawLines, flawWitness } from './flaw';
 import { makeAttempt } from './records';
 import { verdictView } from './result';
 import { ratingOf } from './schedule';
@@ -50,10 +50,18 @@ const snap = (raws: RawQuestion[]): Snapshot => ({
 });
 
 const [clean, flawed] = loadSnapshot(snap([CLEAN, FLAWED])).questions;
-const reply = (tapped: number | null, calledClean = false) => ({ text: '', picked: [], guessing: false, tapped, calledClean });
+const reply = (tapped: number | null, calledClean = false) => ({
+  text: '',
+  picked: [],
+  guessing: false,
+  tapped,
+  calledClean,
+});
 const rated = (q: typeof clean, tapped: number | null, calledClean = false) => {
   const r = answerResult(q, [], reply(tapped, calledClean));
-  return ratingOf(makeAttempt('2026-11-27T10:00:00Z', 'ai-eng', q.id, r.correct, r.guess, undefined, undefined, undefined, r.drill));
+  return ratingOf(
+    makeAttempt('2026-11-27T10:00:00Z', 'ai-eng', q.id, r.correct, r.guess, undefined, undefined, undefined, r.drill),
+  );
 };
 
 describe('a spot-the-flaw drill', () => {
@@ -99,5 +107,33 @@ describe('a spot-the-flaw drill', () => {
       correct: false,
       text: '✗ The lines were correct: no line is wrong.',
     });
+  });
+});
+
+describe('a spot-the-flaw drill on a prompt', () => {
+  const [prompt] = loadSnapshot(
+    snap([
+      {
+        ...FLAWED,
+        id: 'jdg-date-no-format',
+        output: '3 March 2026',
+        clean_output: '2026-03-03',
+        measured: ['m@p: 5 of 5 answers failed the check'],
+      },
+    ]),
+  ).questions;
+
+  it('shows the answers as a model gave them, then the counts measured', () => {
+    expect(flawWitness(prompt)).toEqual([
+      'Input: `chunks("a b c".split(), 2, 1)`',
+      'A model answered the correct lines: `2026-03-03`',
+      'A model answered these lines: `3 March 2026`',
+      'Measured on each model:',
+      '- m@p: 5 of 5 answers failed the check',
+    ]);
+  });
+
+  it('keeps the code witness unchanged on a code artefact', () => {
+    expect(flawWitness(flawed)).not.toContain('Measured on each model:');
   });
 });

@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 
@@ -9,7 +10,8 @@ from climb.calls import UNSENT, CallLog, ask
 from climb.calls.subscription import CODEX, backend
 from climb.cli.transport import routed_transport
 from climb.knowledge import retire_module
-from climb.knowledge.authoring import Checked, check, in_sub, load, near
+from climb.knowledge.authoring import Checked, check, in_sub, load, near, prompting
+from climb.knowledge.authoring.course import Course
 from climb.knowledge.authoring.reverify import Check, appended, owed, witnessed
 from climb.knowledge.authoring.status import markdown, topics
 from climb.schema import Configuration
@@ -56,21 +58,42 @@ def reverify(
     except ValueError as error:
         parser.exit(2, f"module reverify: {error}\n")
     today = date.today()
-    found = owed(course, today)
-    if not found:
-        print(f"{args.slug}: no claim is due")
+    found, prompts = owed(course, today), prompting.owed(course, today)
+    if args.only:
+        found = {name: models for name, models in found.items() if name in args.only}
+        prompts = {name: models for name, models in prompts.items() if name in args.only}
+    if not found and not prompts:
+        print(f"{args.slug}: no claim and no prompt is due")
         return
     panel, send = routed_transport(args, parser, panel)
     log = CallLog(store)
 
-    def asking(model: str, prompt: str) -> str:
+    def answering(model: str, prompt: str) -> tuple[str, str]:
         if model not in panel:
             raise ValueError(f"{model} is not on the panel")
-        _call, text = ask(send, log, system=SYSTEM, content=prompt, configuration=panel[model])
+        call, text = ask(send, log, system=SYSTEM, content=prompt, configuration=panel[model])
         if text is None:
             raise ValueError(f"{model} answered nothing")
-        return text
+        return call.id, text
 
+    def asking(model: str, prompt: str) -> str:
+        return answering(model, prompt)[1]
+
+    failed = _claims(course, root, found, asking, today, panel)
+    failed += _prompts(course, prompts, answering, today, panel)
+    if failed:
+        parser.exit(1, f"module reverify: {failed} checks not made\n")
+
+
+def _claims(
+    course: Course,
+    root: Path,
+    found: dict[str, list[str]],
+    asking: Callable[[str, str], str],
+    today: date,
+    panel: dict[str, Configuration],
+) -> int:
+    """Each due claim's witness run on its due models; the count not made."""
     failed = 0
     for name, models in found.items():
         concept = course.concepts[name]
@@ -87,8 +110,36 @@ def reverify(
             print(f"{name} on {model}: {'holds' if holds else 'fails'}, {measured}")
         if checks:
             appended(root / concept["_file"], checks)
-    if failed:
-        parser.exit(1, f"module reverify: {failed} checks not made\n")
+    return failed
+
+
+def _prompts(
+    course: Course,
+    found: dict[str, list[str]],
+    answering: prompting.Answer,
+    today: date,
+    panel: dict[str, Configuration],
+) -> int:
+    """Each due prompt sampled on its due models; the count not made."""
+    failed = 0
+    by_id = {raw["id"]: raw for raw in prompting.prompted(course)}
+    for name, models in found.items():
+        for model in models:
+            try:
+                samples, holds, measured = prompting.asked(by_id[name], model, answering)
+            except Exception as error:
+                print(f"{name} on {model}: not checked: {type(error).__name__}: {error}")
+                failed += 1
+                continue
+            check = {
+                "model": model,
+                "checked_on": today,
+                "holds": holds,
+                "measured": measured + wrapped(panel[model]),
+            }
+            prompting.recorded(course, by_id[name], samples, check)
+            print(f"{name} on {model}: {'holds' if holds else 'fails'}, {measured}")
+    return failed
 
 
 def status(args: argparse.Namespace, root: Path) -> None:

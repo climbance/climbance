@@ -34,7 +34,8 @@ def witness(lines: str, raw: dict[str, Any]) -> str:
 def judged(course: Course, report: Report, pool: cf.Executor, runs: Runs) -> int:
     jobs: dict[cf.Future[Ran], tuple[dict[str, Any], dict[str, Any] | None]] = {}
     for raw in of_format(course, "judge"):
-        if not {"lines", "check", "input"} <= raw.keys():
+        # a prompt's witness is a model's answers: rule 36
+        if "share" in raw or not {"lines", "check", "input"} <= raw.keys():
             continue
         jobs[pool.submit(runs.run, witness(raw["lines"], raw))] = (raw, None)
         for variant in raw.get("variant", []):

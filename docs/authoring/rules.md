@@ -327,3 +327,12 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     the witness and runs no Python. The reader refuses a corrected run whose
     first step repeats step `k`, since step `k` is then not the first step
     the runs differ at. *check*
+36. **A prompt artefact's stored answers bear out its key on every model that
+    gave them.** `climb module reverify` writes the answers to
+    `samples/<artefact>.toml`, `samples` per side per panel model. The check
+    runs the artefact's `check` on each stored answer and refuses a stored
+    `passed` that differs, since a client reads the counts and runs no
+    Python. It refuses a side under its `share`: the clean lines' answers
+    passing, a variant's failing. An artefact with no samples is refused, and
+    one whose latest check on a panel model failed is retired, as rule 31
+    retires a claim. *check (due: warning)*

@@ -4,6 +4,9 @@ export const FLAW_TAP = 'Or tap the first line that is wrong.';
 export const FLAW_INPUT = 'Input';
 export const FLAW_GIVES = 'These lines give';
 export const FLAW_CLEAN_GIVES = 'The correct lines give';
+export const FLAW_MODEL_GIVES = 'A model answered these lines';
+export const FLAW_MODEL_CLEAN_GIVES = 'A model answered the correct lines';
+export const FLAW_MEASURED = 'Measured on each model:';
 export const FLAW_CALLED_CLEAN = 'Correct, no line is wrong';
 
 /** One line, or a span of lines, as a verdict names it. */

@@ -72,6 +72,7 @@ export interface RawQuestion {
   span?: [number, number];
   fix?: string[];
   clean_output?: string;
+  measured?: string[]; // a prompt's: each model's counts against the check
   // a read-the-trace drill
   steps?: TraceStep[];
   k?: number;
@@ -200,6 +201,7 @@ export interface JudgeItem {
   input: string; // the call the witness ran, as shown
   output: string; // what these lines gave on it
   flaw: { span: [number, number]; fix: string[]; cleanOutput: string } | null; // null on a clean item
+  measured: string[]; // a prompt's, whose outputs are a model's answers; empty on code
 }
 
 export interface MetricItem {

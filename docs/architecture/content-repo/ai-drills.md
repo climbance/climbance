@@ -85,9 +85,6 @@ grader's rubric. The author writes it clean, with up to three variants.
 - **The `check` defines `check(output)` on the output of the `input`**, a
   Python expression calling the artefact. The module check proves each key
   with it, as rule 34 in `docs/authoring/rules.md` gives.
-- **A prompt artefact's output is a model's response, stored with the item.**
-  The section on model-dependent keys gives how the responses are stored and
-  re-checked.
 
 ## Read an agent's trace
 
@@ -169,24 +166,26 @@ The correct option of both is computed, never authored.
 
 ## A model-dependent key
 
-A prompt artefact's flaw shows only in how a model answers it, such as data
-without delimiters being followed as an instruction.
+A prompt artefact's flaw shows only in a model's answers. Its lines are a
+prompt with `{input}` standing for the `input`, and its `check` reads one.
 
-- **A model-dependent item stores the responses its key rests on**: several
-  samples on the input for the clean artefact and for each variant, each with
-  the `model@pin` that answered. The samples are sent through the engine's
-  calls, so each one is in the call log with its configuration.
-- **The item states a share for each side.** The clean artefact's samples pass
-  the `check` at or above its share, and each variant's samples fail it at or
-  above its share. One sample is not enough, since a sampled model answers a
-  prompt differently on repeated calls.
-- **A queue replays the stored responses.** Two learners then meet the same
-  key, and the phone needs no model.
-- **`climb module reverify` re-asks each model-dependent item on the panel**
-  in `check.toml`, as it does a concept's `model_witness`. Each run appends a
-  `[[drill.checks]]` table per model: the model, the date, whether both shares
-  held, and the measured shares. An item whose latest check on any panel model
-  failed stops holding and is retired.
+- **A prompt artefact states `share` and `samples`, and each variant its own
+  `share`.** Each panel model gives `samples` answers per side. The clean
+  lines' answers pass the `check` at or above the artefact's share, and a
+  variant's fail it at or above the variant's. A model answers a prompt
+  differently on repeated calls, so one answer proves nothing.
+- **`climb module reverify` asks the panel in `check.toml` through the
+  engine's calls**, so each answer is in the call log with its configuration.
+  It rewrites `samples/<artefact>.toml` whole: a `[[sample]]` per answer with
+  its `side`, `model`, `call`, `text` and `passed`, and a `[[checks]]` per run
+  as a concept's are. A model's answers are written once, and a later run
+  appends its check alone.
+- **The module check runs the `check` on every stored answer**, as rule 36 in
+  `docs/authoring/rules.md` gives. An item whose latest check on a panel model
+  failed stops holding, and is retired.
+- **A queue replays the stored answers**, so every learner meets the same key
+  and the phone needs no model. An item's output is its side's first answer,
+  one bearing out the key, with each model's counts under it.
 - **A code artefact, a trace, a metric item and an estimate are never
   re-asked.** Their keys rest on code and stored data alone.
 
@@ -194,7 +193,7 @@ without delimiters being followed as an instruction.
 
 - The factor an estimate is scored within, per quantity. The first stored
   `estimate` answers set it.
-- The shares a model-dependent item states, and its sample count. The first
-  injection items measured on the panel set them.
+- The shares and the sample count of a prompt open to injection. The first
+  two prompts state 0.8 of 5, and each side came out 5 of 5 on both models.
 - Whether a `judge` item is drawn in the order its subtopic's questions are,
   or after them. The first queue serving both answers it.

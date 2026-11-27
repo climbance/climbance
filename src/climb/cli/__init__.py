@@ -462,11 +462,14 @@ def main() -> None:
     )
     status_parser.add_argument("--json", action="store_true", help="emit the status as JSON")
     reverify_parser = module_action.add_parser(
-        "reverify", help="run each due model_witness on the panel and append its checks"
+        "reverify", help="check each due claim and sample each due prompt on the panel"
     )
     reverify_parser.add_argument("slug", help="the module's directory under --content")
     reverify_parser.add_argument(
         "--content", default="content/modules", help="the directory holding the modules"
+    )
+    reverify_parser.add_argument(
+        "--only", action="append", metavar="ID", help="this claim or prompt alone; repeatable"
     )
     retire_parser = module_action.add_parser(
         "retire", help="retire a seeded module whose files are gone, keeping its rows"

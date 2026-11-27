@@ -88,7 +88,7 @@ def _drills(base: Path, banks: list[Bank], listed: set[tuple[str, str]], unread:
             banks.append(by_sub[where])
         for raw in raws:
             if raw.get("format") == "judge":
-                items, problems = expanded(raw)
+                items, problems = expanded(raw, _optional(base / SAMPLES / f"{raw.get('id')}.toml"))
                 by_sub[where].questions.extend(items)
                 unread += [
                     f"drills/{'/'.join(where)}:{raw.get('id', '?')}: {one}" for one in problems
@@ -100,12 +100,19 @@ def _drills(base: Path, banks: list[Bank], listed: set[tuple[str, str]], unread:
 
 
 # the artefact's own fields, which none of its items carries
-ARTEFACT = {"variant", "check", "lines", "output", "explain"}
+ARTEFACT = {"variant", "check", "lines", "output", "explain", "share", "samples"}
+# a prompt artefact's stored answers and checks, one file per artefact
+SAMPLES = "samples"
+CLEAN = "clean"
 
 
-def expanded(raw: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str]]:
+def expanded(
+    raw: dict[str, Any], sampled: dict[str, Any] | None = None
+) -> tuple[list[dict[str, Any]], list[str]]:
     """A spot-the-flaw artefact as its items: the clean one, then one per
     variant, each variant's span derived from the two texts."""
+    if "share" in raw:
+        return answered(raw, sampled)
     shared = {key: value for key, value in raw.items() if key not in ARTEFACT}
     clean = str(raw.get("lines", "")).strip("\n").splitlines()
     artefact = str(raw.get("id", "?"))
@@ -145,6 +152,51 @@ def expanded(raw: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str]]:
             }
         )
     return items, problems
+
+
+def answered(
+    raw: dict[str, Any], sampled: dict[str, Any] | None
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """A prompt artefact's items, each output the first stored answer of its
+    side, and the counts measured on each model."""
+    samples: list[dict[str, Any]] = (sampled or {}).get("sample", [])
+    if not samples:
+        return [], [f"no samples in {SAMPLES}/{raw.get('id')}.toml: run climb module reverify"]
+    by_side: dict[str, list[dict[str, Any]]] = {}
+    for one in samples:
+        by_side.setdefault(str(one.get("side")), []).append(one)
+    sides = [CLEAN, *(str(v.get("id")) for v in raw.get("variant", []))]
+    if sides.count(CLEAN) > 1:
+        return [], [f"a variant takes the id {CLEAN}, which names the clean lines' samples"]
+    if missing := [side for side in sides if side not in by_side]:
+        return [], [f"no samples on {', '.join(missing)}: run climb module reverify"]
+    first = {side: by_side[side][0].get("text") for side in sides}
+    items, problems = expanded({key: v for key, v in raw.items() if key != "share"})
+    artefact = str(raw.get("id"))
+    for item in items:
+        side = CLEAN if item["id"] == artefact else item["id"].removeprefix(f"{artefact}-")
+        item["output"] = first[side]
+        if side != CLEAN:
+            item["clean_output"] = first[CLEAN]
+        item["measured"] = measured(by_side, side)
+    return items, problems
+
+
+def measured(by_side: dict[str, list[dict[str, Any]]], side: str) -> list[str]:
+    """One line per model: how its answers to these lines, and on a flawed
+    item to the clean ones, fared against the check."""
+    lines: list[str] = []
+    for model in dict.fromkeys(one["model"] for one in by_side[side]):
+        mine = [one["passed"] for one in by_side[side] if one["model"] == model]
+        if side == CLEAN:
+            lines.append(f"{model}: {sum(mine)} of {len(mine)} answers passed the check")
+            continue
+        clean = [one["passed"] for one in by_side[CLEAN] if one["model"] == model]
+        lines.append(
+            f"{model}: {len(mine) - sum(mine)} of {len(mine)} answers failed the check,"
+            f" and {sum(clean)} of {len(clean)} to the correct lines passed"
+        )
+    return lines
 
 
 def changed(clean: list[str], variant: list[str]) -> tuple[tuple[int, int], list[str]] | str:

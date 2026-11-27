@@ -110,7 +110,13 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
 
 function judgeOf(raw: RawQuestion): JudgeItem {
   const flaw = raw.span ? { span: raw.span, fix: raw.fix ?? [], cleanOutput: raw.clean_output ?? '' } : null;
-  return { lines: raw.lines ?? [], input: raw.input ?? '', output: raw.output ?? '', flaw };
+  return {
+    lines: raw.lines ?? [],
+    input: raw.input ?? '',
+    output: raw.output ?? '',
+    flaw,
+    measured: raw.measured ?? [],
+  };
 }
 
 function traceOf(raw: RawQuestion): TraceItem {
