@@ -31,4 +31,5 @@ def quoted(course: Course, report: Report) -> None:
             if fragment and not holds_anchor(snapshot, fragment):
                 report.error(30, at, f"snapshot {snapshot.name} of {url} holds no #{fragment}")
         if isinstance(quote, str) and read and not any(holds_quote(s, quote) for s in read):
-            report.error(30, at, f"no snapshot it cites holds the quote {quote[:50]!r}")
+            parts = " (each part joined by [...] on one page)" if "[...]" in quote else ""
+            report.error(30, at, f"no snapshot it cites holds the quote {quote[:50]!r}{parts}")

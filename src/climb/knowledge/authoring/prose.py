@@ -77,7 +77,12 @@ def _lint(report: Report, at: str, text: str) -> None:
         if len(sentence.split()) > LONGEST:
             report.warn(29, at, f"a sentence of {len(sentence.split())} words: {sentence[:50]!r}")
     for m in ISED.finditer(plain):
-        if m[0].lower() not in ISE and (m[1] + "ise").lower() not in ISE:
+        # -wise, as in pairwise, is no -ise suffix
+        if (
+            m[0].lower() not in ISE
+            and (m[1] + "ise").lower() not in ISE
+            and not m[1].lower().endswith("w")
+        ):
             report.warn(29, at, f"{m[0]!r} is spelt -ize in Oxford spelling")
     for m in AMERICAN.finditer(plain):
         report.warn(29, at, f"{m[0]!r} is American spelling")

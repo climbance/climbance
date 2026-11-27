@@ -179,6 +179,13 @@ def test_a_sentence_opening_with_both_is_warned(tmp_path):
     assert any("opens with 'Both'" in w for w in warnings)
 
 
+def test_a_word_ending_in_wise_is_not_taken_for_ise(tmp_path):
+    """Rule 29: `pairwise` is spelt alike in every English, as `clockwise`."""
+    root = module(tmp_path, concept(claim="A pairwise test runs first. It stops on false."))
+
+    assert found(check(root, run=False).report.warnings, 29) == []
+
+
 def test_a_question_naming_no_concept_is_refused_where_concepts_file_questions(tmp_path):
     """Rule 19: in a module written by concept, a question is filed by its
     concept, and the coverage map is not read."""
@@ -399,6 +406,15 @@ def test_an_elided_quote_matches_its_parts_in_order(tmp_path):
 
     assert found(check(kept, run=False).report.errors, 30) == []
     assert len(found(check(swapped, run=False).report.errors, 30)) == 1
+
+
+def test_an_elided_quote_refused_names_where_its_parts_sit(tmp_path):
+    """Rule 30: the parts an elided quote joins are matched on one page."""
+    root = module(tmp_path, quoting("A sentence. [...] The while"))
+
+    errors = found(check(root, run=False).report.errors, 30)
+
+    assert errors[0].endswith("(each part joined by [...] on one page)")
 
 
 MODEL = {
