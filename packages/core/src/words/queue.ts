@@ -30,6 +30,13 @@ export const PLACEMENT_NAME = 'Placement';
 export const PLACEMENT_PRESS = 'Place';
 export const PLACED_NONE = 'Not placed';
 export const PLACEMENT_NONE_LEFT = 'Every subtopic of this topic was placed already.';
+export const PLACEMENT_KICKER = 'New module';
+export const PLACEMENT_TAKE = 'Place me';
+export const PLACEMENT_SKIP = 'Start from the beginning';
+export const placementNote =
+  'Know some of this topic already? Each subtopic is asked from its highest level down, ' +
+  'and every level you pass is opened for you. The answers are shown at the end, ' +
+  'and they do not count toward your reviews.';
 
 // the delayed test a queue stops on at its start
 export const DELAYED_KICKER = 'Four weeks on';

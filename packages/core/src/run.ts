@@ -4,6 +4,7 @@ import { delayedDue, delayedPlan, type DelayedItem } from './delayed';
 import { topicKey, type Catalog } from './courses';
 import { examOutcome, examTitle, type ExamOutcome, type ExamPlan } from './exam';
 import { isLessonItem, NEW_STEP, type LessonItem, type Queue } from './queue';
+import { placementBefore, placementPlan, skipPlacement, type PlacementItem } from './placement';
 import { isoNow, makeAttempt } from './records';
 import type { Result } from './result';
 import { Board } from './schedule';
@@ -16,6 +17,7 @@ export type QueueItem =
   | { q: Question; tag: Status; fresh: boolean; early: boolean }
   | { lesson: LessonItem }
   | { baseline: BaselineItem }
+  | { placement: PlacementItem }
   | { delayed: DelayedItem };
 
 /** What a client's copy holds when the run reads it: the catalog and every attempt stored so far. */
@@ -91,6 +93,12 @@ export class QueueRun {
       this.shown--;
       return this.pick(src, now);
     }
+    const place = test && this.placementBefore(b, picked, src);
+    if (place) {
+      // the topic's baseline test follows the placement in this run
+      this.testsOffered.delete(topicKey(picked.course, picked.topic));
+      return { placement: place };
+    }
     if (test) {
       // sampled at the offer, so the stop counts the questions the test asks
       this.testPlan = baselinePlan(b, test);
@@ -135,6 +143,20 @@ export class QueueRun {
     return item;
   }
 
+  // a fresh module's first new question waits for a placement offer, once per module in a run:
+  // `core-package/knowledge/placement.md`
+  private placementsOffered = new Set<string>();
+
+  private placementBefore(b: Board, q: Question, src: QueueSource): PlacementItem | null {
+    if (this.placementsOffered.has(q.course)) return null;
+    const item = placementBefore(b, q, src.sessions ?? []);
+    const plan = item && placementPlan(b, item.course, item.topic);
+    if (!item || !plan) return null;
+    this.placementsOffered.add(q.course);
+    this.testPlan = plan;
+    return item;
+  }
+
   private testPlan: ExamPlan | null = null;
 
   // a stop at the start of the run, offered again each run until taken:
@@ -159,6 +181,17 @@ export class QueueRun {
   /** The current stop's baseline test. */
   get baselinePlan(): ExamPlan | null {
     return this.current && 'baseline' in this.current ? this.testPlan : null;
+  }
+
+  /** The current stop's placement. */
+  get placementPlan(): ExamPlan | null {
+    return this.current && 'placement' in this.current ? this.testPlan : null;
+  }
+
+  /** Skips the current stop's placement. Returns the stint to store, before `next`. */
+  skipPlacement(): SessionRecord | null {
+    if (!this.current || !('placement' in this.current)) return null;
+    return skipPlacement(this.current.placement, isoNow());
   }
 
   /** Skips the current stop's baseline test. Returns the stint to store, before `next`. */

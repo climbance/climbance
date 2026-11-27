@@ -2572,11 +2572,12 @@ screens = [
     "The knowledge home",
     "A module",
     "The start sheet",
+    "A placement a queue offers",
     "A baseline test a queue offers",
     "A lesson a queue offers",
 ]
 acts = ["Continue"]
-components = ["sign-in", "app-tokens", "practice-screens", "knowledge-screens", "snapshot", "baseline-tests", "gating", "queues", "answering", "client-store", "knowledge-sync"]
+components = ["sign-in", "app-tokens", "practice-screens", "knowledge-screens", "snapshot", "placement", "baseline-tests", "gating", "queues", "answering", "client-store", "knowledge-sync"]
 
 [[journey]]
 id = "knowledge-queue"

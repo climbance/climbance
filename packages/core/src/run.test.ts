@@ -12,6 +12,7 @@ import {
   loadSnapshot,
   NEW_STEP,
   nextQueue,
+  placementStop,
   QueueRun,
   reviewQueue,
   togglePick,
@@ -173,8 +174,57 @@ describe('a queue run', () => {
   });
 });
 
+// a placement offered and skipped, so the module's first new question meets its baseline test
+const unplaced = (course: string) =>
+  ({ t: '2026-11-01T12:00:00+00:00', mode: 'placement', score: 0, n: 0, course, topic: 't' }) as SessionRecord;
+
+describe('a placement offered in a queue run', () => {
+  const src = (sessions: SessionRecord[] = [], attempts: AttemptRecord[] = []) => ({ catalog, attempts, sessions });
+  const run = (s = src()) => new QueueRun(nextQueue(Board.build(catalog, s.attempts), 10), 'next', null, null, s);
+  const offered = (r: QueueRun) => (r.current && 'placement' in r.current ? r.current.placement : null);
+
+  it('comes before the first new question of a module nobody answered in', () => {
+    const r = run();
+    expect(offered(r)).toMatchObject({ topic: 't' });
+    expect(placementStop(offered(r)!).title).toBe('C · T');
+    expect(r.placementPlan?.test).toMatchObject({ measure: 'placement', course: 'c', topic: 't' });
+  });
+
+  it('is skipped once, as a placement stint, and the baseline test follows', () => {
+    const r = run();
+    const skip = r.skipPlacement()!;
+    expect(skip).toMatchObject({ mode: 'placement', n: 0, course: 'c', topic: 't' });
+    r.next(src([skip]));
+    expect(r.current && 'baseline' in r.current).toBe(true);
+  });
+
+  it('once taken and passed, leaves the queue no new question in the placed group', () => {
+    const r = run();
+    const exam = new ExamRun(r.placementPlan!, catalog.courses);
+    let out = null;
+    while (exam.question) {
+      exam.answer(result(exam.question, true));
+      out = exam.next() ?? out;
+    }
+    r.next(src([out!.session], out!.attempts));
+    expect(r.done).toBe(true);
+  });
+
+  it('is offered once a run, where the stop was passed with nothing stored', () => {
+    const r = run();
+    r.next(src());
+    expect(r.current && 'baseline' in r.current).toBe(true);
+  });
+
+  it('is not offered on a module already answered in, by practice or by a placement', () => {
+    const t = '2026-11-01T12:00:00+00:00';
+    expect(offered(run(src([], [{ t, course: 'c', id: 'a', ok: true }])))).toBeNull();
+    expect(offered(run(src([], [{ t, course: 'c', id: 'a', ok: false, measure: 'placement' }])))).toBeNull();
+  });
+});
+
 describe('a baseline test in a queue run', () => {
-  const fresh = (sessions: SessionRecord[] = []) => ({ catalog, attempts: [] as AttemptRecord[], sessions });
+  const fresh = (sessions: SessionRecord[] = [unplaced('c')]) => ({ catalog, attempts: [] as AttemptRecord[], sessions });
   const run = () => new QueueRun(nextQueue(Board.build(catalog, []), 10), 'next', null, null, fresh());
 
   it('comes before the first new question of a topic nobody answered in', () => {
@@ -202,7 +252,7 @@ describe('a baseline test in a queue run', () => {
     const r = run();
     const skip = r.skipBaseline()!;
     expect(skip).toMatchObject({ mode: 'baseline', n: 0, course: 'c', topic: 't', level: 0 });
-    r.next(fresh([skip]));
+    r.next(fresh([unplaced('c'), skip]));
     expect(r.current && 'q' in r.current).toBe(true);
   });
 
@@ -314,7 +364,11 @@ describe('the baseline tests of two modules', () => {
     questions: [mk('a'), mk('b')],
   });
   const two = loadSnapshot({ format: 6, courses: [course('c'), course('d')] } as never);
-  const src = (sessions: SessionRecord[], attempts: AttemptRecord[] = []) => ({ catalog: two, attempts, sessions });
+  const src = (sessions: SessionRecord[], attempts: AttemptRecord[] = []) => ({
+    catalog: two,
+    attempts,
+    sessions: [unplaced('c'), unplaced('d'), ...sessions],
+  });
 
   it('offers one test per run, holding the other topic for the next run', () => {
     const r = new QueueRun(nextQueue(Board.build(two, []), 10), 'next', null, null, src([]));

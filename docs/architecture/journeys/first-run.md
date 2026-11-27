@@ -1,7 +1,8 @@
 # First run and the baseline test
 
 A new user signs in for the first time, reads the guide, opens the knowledge
-home, takes a topic's baseline test, and reads the first lesson. This page
+home, is offered a placement, takes a topic's baseline test, and reads the
+first lesson. This page
 follows the `first-run` journey in `../model.toml`. It starts at the login
 page. It ends once the first lesson is read and its first questions are
 answered.
@@ -89,7 +90,24 @@ component below is named by its id in `../model.toml`.
   the module**, and the sheet starts a filtered queue.
   `../web-app/pages/knowledge/module/start-sheet.md` draws the sheet.
 
-## 6. The baseline test
+## 6. The placement
+
+- **The queue offers a placement before the first new question of a module
+  no answer and no stint names.** The placement covers that question's topic,
+  as `../core-package/knowledge/placement.md` gives.
+- **The placement opens as a stop naming the module beside the topic**, with
+  Place me and Start from the beginning. Place me replaces the queue with the
+  exam's screen on the web, and the quiz screen on the phone.
+- **`placement` asks each subtopic from its highest written level down**, and
+  shows no feedback until the end. Each answer carries the measure
+  `placement`, and the schedule ignores it.
+- **Done returns to the queue**, and `gating` reads every placed group as
+  done. The queue's next new question then comes from above the placed
+  levels.
+- **Start from the beginning stores a placement stint that answered
+  nothing**, and the queue offers no placement on the module again.
+
+## 7. The baseline test
 
 - **The queue offers a topic's baseline test before the topic's first new
   question.** `queues` picks the question, and `baseline-tests` samples the
@@ -108,7 +126,7 @@ component below is named by its id in `../model.toml`.
 - **Each test answer carries the measure `baseline`, and the schedule ignores
   it.** A question the test asked stays unseen, and the queues serve it last.
 
-## 7. The first lesson and its questions
+## 8. The first lesson and its questions
 
 - **A taken test spends the pretest of every lesson teaching the topic.** The
   topic's next new question is then held back by its lesson, as
@@ -146,6 +164,8 @@ differences lie in how each client signs in and starts.
 | A first sign-in on the phone | a user, an identity, a one-time code, then an app token | every later request; the signed-in devices; `climb log prune` |
 | A sign-in refused past a limit | nothing | the login page, through `?refused=` alone |
 | The device's first sync | the copy of the snapshot and the empty log | every queue on the device, which picks from the copy |
+| A placement answer | an answer measuring `placement` | `placement`, which reads the placed groups; `gating`, which reads them as done |
+| The placement's end, or its skip | a placement stint | `placement`, so the queue offers the module no placement again |
 | A test answer | an answer measuring `baseline` | `baseline-tests`, for the delayed test and the learning gain; the lessons' pretests |
 | The test's stop, or its skip | a baseline stint | `baseline-tests`, so the topic's test is not offered again |
 | Mark read | a lesson mark | `queues`, which releases the held questions; the lessons page; the board's guide panel |

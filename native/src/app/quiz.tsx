@@ -8,6 +8,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   baselineStop,
+  placementStop,
+  PLACEMENT_SKIP,
+  PLACEMENT_TAKE,
   delayedStop,
   DELAYED_LATER,
   BASELINE_SKIP,
@@ -159,9 +162,10 @@ function LessonStop({ item, bottom, onNext }: { item: LessonItem; bottom: number
   );
 }
 
-/** A baseline or delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`. */
+/** A placement, a baseline or a delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`. */
 function TestStop(props: {
   stop: { kicker: string; title: string; note: string };
+  take: string;
   bottom: number;
   onTake: () => void;
   other: string;
@@ -185,7 +189,7 @@ function TestStop(props: {
           {props.other}
         </Press>
         <Press icon="clipboard-check-outline" style={{ flex: 1 }} onPress={props.onTake}>
-          {BASELINE_TAKE}
+          {props.take}
         </Press>
       </BottomBar>
     </View>
@@ -199,7 +203,7 @@ function QueueQuiz({ s }: { s: QueueSession }) {
   const insets = useSafeAreaInsets();
   const held = (): QueueSource => ({ catalog: st.catalog, attempts: st.attempts, sessions: st.sessions });
   const [run] = useState(() => new QueueRun(s.queue, s.mode, s.course, s.include ?? null, held()));
-  // the baseline test taken at a stop, run through the exam's screen
+  // the test or the placement taken at a stop, run through the exam's screen
   const [testing, setTesting] = useState<ExamSession | null>(null);
   const [, rerender] = useState(0);
   const changed = () => rerender((x) => x + 1);
@@ -241,6 +245,13 @@ function QueueQuiz({ s }: { s: QueueSession }) {
     if (!skip) return;
     await st.finishSession(skip);
     // the skip is read before the store holds it, so the stop is not offered again
+    run.next({ ...held(), sessions: [...st.sessions, skip] });
+    changed();
+  };
+  const skipPlacement = async () => {
+    const skip = run.skipPlacement();
+    if (!skip) return;
+    await st.finishSession(skip);
     run.next({ ...held(), sessions: [...st.sessions, skip] });
     changed();
   };
@@ -288,14 +299,25 @@ function QueueQuiz({ s }: { s: QueueSession }) {
       {!done && current && 'delayed' in current ? (
         <TestStop
           stop={delayedStop(current.delayed, run.delayedPlan?.questions.length ?? 0)}
+          take={BASELINE_TAKE}
           bottom={insets.bottom}
           onTake={() => setTesting(run.delayedPlan)}
           other={DELAYED_LATER}
           onOther={next}
         />
+      ) : !done && current && 'placement' in current ? (
+        <TestStop
+          stop={placementStop(current.placement)}
+          take={PLACEMENT_TAKE}
+          bottom={insets.bottom}
+          onTake={() => setTesting(run.placementPlan)}
+          other={PLACEMENT_SKIP}
+          onOther={() => void skipPlacement()}
+        />
       ) : !done && current && 'baseline' in current ? (
         <TestStop
           stop={baselineStop(current.baseline, run.baselinePlan?.questions.length ?? 0)}
+          take={BASELINE_TAKE}
           bottom={insets.bottom}
           onTake={() => setTesting(run.baselinePlan)}
           other={BASELINE_SKIP}

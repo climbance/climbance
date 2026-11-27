@@ -81,6 +81,7 @@ PHONE_PARTS = {
     "The landing page": "(tabs)/index.tsx",
     "The start sheet": "module.tsx",
     "A lesson a queue offers": "quiz.tsx",
+    "A placement a queue offers": "quiz.tsx",
     "A baseline test a queue offers": "quiz.tsx",
     "A topic's placement": "quiz.tsx",
     "An exam and its results": "quiz.tsx",

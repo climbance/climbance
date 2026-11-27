@@ -54,6 +54,7 @@ inventory is the list both clients build to. A page's own file under
 | A queue | `/knowledge/queue` | the quiz screen | same |
 | A lesson a queue offers | a stop opening the lesson over the queue | a stop opening the lesson screen | same |
 | A topic's placement | `/knowledge/exam?place=:module&topic=:topic` | the quiz screen | same |
+| A placement a queue offers | a stop, then the exam's screen in the queue's place | a stop, then the exam's screen in the quiz's place | same |
 | A baseline test a queue offers | a stop, then the exam's screen in the queue's place | a stop, then the exam's screen in the quiz's place | same |
 | A level exam's choices | `/knowledge/exam` | Exam | same |
 | An exam and its results | `/knowledge/exam` | the quiz screen | by platform |

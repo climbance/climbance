@@ -10,6 +10,9 @@ import {
   type SessionRecord,
   BASELINE_SKIP,
   BASELINE_TAKE,
+  PLACEMENT_SKIP,
+  PLACEMENT_TAKE,
+  placementStop,
   lessonStopNote,
   queueLine,
   queueSummary,
@@ -108,7 +111,7 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
   const [, rerender] = useState(0)
   // a lesson read over the queue: the stop's and an answer's lesson links open it
   const [lessonOpen, setLessonOpen] = useState<Reading>(null)
-  // the baseline test taken at a stop, run through the exam's screen
+  // the test or the placement taken at a stop, run through the exam's screen
   const [testing, setTesting] = useState<ExamPlan | null>(null)
   const changed = () => rerender((n) => n + 1)
 
@@ -154,6 +157,14 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
     if (!skip || !run) return
     void k.add('session', skip)
     // the skip is read before the copy holds it, so the stop is not offered again
+    run.next({ ...held(), sessions: [...held().sessions!, skip] })
+    changed()
+  }
+
+  function skipPlacement() {
+    const skip = run?.skipPlacement()
+    if (!skip || !run) return
+    void k.add('session', skip)
     run.next({ ...held(), sessions: [...held().sessions!, skip] })
     changed()
   }
@@ -213,13 +224,23 @@ function Running({ mode, scope, catalog, learner }: RunningProps) {
       {!done && current && 'delayed' in current ? (
         <TestStop
           stop={delayedStop(current.delayed, run?.delayedPlan?.questions.length ?? 0)}
+          take={BASELINE_TAKE}
           onTake={() => setTesting(run?.delayedPlan ?? null)}
           other={DELAYED_LATER}
           onOther={next}
         />
+      ) : !done && current && 'placement' in current ? (
+        <TestStop
+          stop={placementStop(current.placement)}
+          take={PLACEMENT_TAKE}
+          onTake={() => setTesting(run?.placementPlan ?? null)}
+          other={PLACEMENT_SKIP}
+          onOther={skipPlacement}
+        />
       ) : !done && current && 'baseline' in current ? (
         <TestStop
           stop={baselineStop(current.baseline, run?.baselinePlan?.questions.length ?? 0)}
+          take={BASELINE_TAKE}
           onTake={() => setTesting(run?.baselinePlan ?? null)}
           other={BASELINE_SKIP}
           onOther={skipTest}
@@ -312,9 +333,10 @@ function LessonStop(props: {
   )
 }
 
-// a baseline or delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`
+// a placement, a baseline or a delayed test a queue stops on: `core-package/knowledge/baseline-tests.md`
 function TestStop(props: {
   stop: { kicker: string; title: string; note: string }
+  take: string
   onTake: () => void
   other: string
   onOther: () => void
@@ -326,7 +348,7 @@ function TestStop(props: {
       <p className="text-heading font-medium">{stop.title}</p>
       <p className="text-meta text-muted-foreground">{stop.note}</p>
       <div className="flex gap-stack">
-        <Button onClick={props.onTake}>{BASELINE_TAKE}</Button>
+        <Button onClick={props.onTake}>{props.take}</Button>
         <Button variant="ghost" onClick={props.onOther}>
           {props.other}
         </Button>

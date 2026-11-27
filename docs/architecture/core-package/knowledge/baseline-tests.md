@@ -11,10 +11,12 @@ A lesson's pretest is a different thing, as
 - **A topic gets one baseline test, offered before its first new question.**
   When the next or the focus queue would serve the first new question of a
   topic the user has answered nothing in, it offers the baseline test first.
-  The test samples the topic's subtopics at that question's level. A lesson
-  is offered only once its pretest is spent, so a test waiting for the first
-  lesson would follow practice answers. A taken test then spends that pretest,
-  as `../../content-repo/lessons.md` gives.
+  The test samples the topic's subtopics at that question's level. On a
+  module no answer and no stint names, a placement is offered first, as
+  `placement.md` gives. A lesson is offered only once its pretest is spent,
+  so a test waiting for the first lesson would follow practice answers. A
+  taken test then spends that pretest, as `../../content-repo/lessons.md`
+  gives.
 - **A queue run offers one baseline test.** Once a run has offered one, the
   new questions of every other untested topic wait for a later run, which
   offers that topic's test. Two modules' tests in a row asked a new user 28

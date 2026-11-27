@@ -45,6 +45,22 @@ answers every Foundation question before reaching the level they need.
 - **The placement runs on the exam's screen**: `/knowledge/exam` on the web,
   the quiz screen on the phone. Its title counts the questions asked, since
   the number left depends on the answers. Its Done returns to the module.
+- **The next and the focus queue offer a placement before a fresh module's
+  first new question.** A module is fresh while no answer and no stint names
+  it. The offer places the topic of that question, so a new user is placed
+  before the module's first lesson. A new user rarely finds the Place press
+  before the queue serves level 0.
+- **The offer is a stop in the queue, before the topic's baseline test.** The
+  stop names the module beside the topic, and offers Place me and Start from
+  the beginning. Place me runs the placement on the exam's screen in the
+  queue's place, and its Done returns to the queue. The baseline test is then
+  offered at the level the user starts studying at.
+- **Start from the beginning stores a placement stint that answered
+  nothing**, naming the module and the topic. The stint makes the module not
+  fresh, so the queue offers no placement on it again. The Place press stays
+  on the module's page.
+- **A queue run offers each module's placement once.** A stop left with no
+  press stores nothing, so the next run offers the placement again.
 
 ## What a pass places
 
@@ -111,4 +127,3 @@ Deferred, since only use answers each:
   need a fourth. The stored placement answers and the later answers on placed
   groups answer it.
 - Whether a user may undo a placement and walk a subtopic from level 0.
-- Offering a placement in a module's first run, before its first lesson.

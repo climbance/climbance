@@ -1,11 +1,11 @@
-import { levelName, qkey, subTitle } from './courses';
+import { levelName, moduleTopicTitle, qkey, subTitle } from './courses';
 import type { ExamPlan } from './exam';
 import { openStep, placedThrough, type Asked } from './placed';
 import type { Result } from './result';
 import type { Board } from './schedule';
 import { shuffle, type Rng } from './select';
-import type { Course, Question } from './types';
-import { PLACED_NONE } from './words/queue';
+import type { Course, Question, SessionRecord } from './types';
+import { PLACED_NONE, PLACEMENT_KICKER, placementNote } from './words/queue';
 
 /** The log's placement answers, and this run's over them. */
 function withRun(b: Board, results: readonly Result[]): Map<string, Asked> {
@@ -63,4 +63,39 @@ export function placementRows(b: Board, c: Course, topic: string, results: reado
         value: level === null ? PLACED_NONE : levelName(b.rules, level),
       };
     });
+}
+
+/** The placement a queue offers before a module's first lesson, on the topic of its first new question. */
+export interface PlacementItem {
+  kind: 'placement';
+  course: Course;
+  topic: string;
+}
+
+/** A module nobody answered in, by practice or a test, and no stint names: `core-package/knowledge/placement.md`. */
+export function freshModule(b: Board, course: string, sessions: readonly SessionRecord[]): boolean {
+  if (sessions.some((s) => s.course === course)) return false;
+  return !b
+    .questions()
+    .some(
+      (q) =>
+        q.course === course && (b.attempts(q).length || b.baselineAsked.has(qkey(q)) || b.placementAnswers.has(qkey(q))),
+    );
+}
+
+/** The placement before `q`, where `q` opens a fresh module and its topic has a question to ask. */
+export function placementBefore(b: Board, q: Question, sessions: readonly SessionRecord[]): PlacementItem | null {
+  const course = b.course(q.course);
+  if (!course || !freshModule(b, q.course, sessions) || !placementOpen(b, q.course, q.topic)) return null;
+  return { kind: 'placement', course, topic: q.topic };
+}
+
+/** A skip: a placement stint that answered nothing, so the module is offered none again. */
+export function skipPlacement(item: PlacementItem, t: string): SessionRecord {
+  return { t, mode: 'placement', score: 0, n: 0, course: item.course.slug, topic: item.topic };
+}
+
+/** The stop a queue shows for the placement: the topic, and what the placement asks. */
+export function placementStop(item: PlacementItem): { kicker: string; title: string; note: string } {
+  return { kicker: PLACEMENT_KICKER, title: moduleTopicTitle(item.course, item.topic), note: placementNote };
 }

@@ -228,6 +228,7 @@ flowchart LR
     core_retirement --> core_sittingrun
     core_run --> core_baseline
     core_run --> core_delayed
+    core_run --> core_placement
     core_run --> core_screens
     core_run --> core_sync
     core_schedule --> core_courses
