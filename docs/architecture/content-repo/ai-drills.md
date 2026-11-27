@@ -1,0 +1,186 @@
+# AI drill items
+
+The AI drills of the `ai-eng` module, as the module's queues serve them. A drill
+item is one AI drill a user answers in a queue: an artefact, its key, and the
+witness run proving the key. `../concepts/ai-activities/README.md` gives each
+activity kind and the rule every check follows. This file gives each kind's
+record, how its key is proven, and how its answer is stored.
+
+## Where an item lives
+
+- **A drill item is a question of the `ai-eng` module.** It is authored under
+  `content/modules/ai-eng/drills/`, one file per subtopic, and names the
+  concept it tests, as a question does. The queues then schedule, gate and
+  count it as any question, and the phone serves it without a connection.
+- **A drill item is not a `Judgement`.** The judging exercise is served online
+  by the API from the cards a user started. A drill item is answered offline,
+  in a queue, and its answer goes to the knowledge log.
+- **The seed stores a drill item in the content tables as a question of its
+  format.** The sync then accepts an answer naming it, since the sync refuses
+  a line naming unknown content.
+- **The snapshot carries the drill items under `drills`, beside a module's
+  questions, left out where empty.** An installed app reads the formats it
+  knows from `questions`. A drill format placed there would be served by a
+  build that cannot draw it.
+- **Retiring a concept retires its drill items**, as it retires its questions.
+  A drill whose key stopped holding is retired as a concept is, under
+  `[retired.<id>]` in `check.toml`.
+- **Every item's lines fit 60 characters**, the width the modules hold code
+  and prompts to. A tap has to land on one line of a phone's screen, and a
+  line wider than 60 wraps more than once there.
+
+## The formats
+
+Three formats are added to `choice`, `short` and `open`. Pick the metric and
+choose the fix are `choice` questions whose correct option is computed.
+
+| Format | Activity kind | The user's answer | Rating |
+|---|---|---|---|
+| `judge` | Spot the flaw | clean or flawed, then the flawed line | Good: right verdict and, if flawed, the right line. Hard: flawed called flawed, wrong line. Again: wrong verdict |
+| `trace` | Read an agent's trace | the first wrong step | Good: the right step. Again: any other step |
+| `estimate` | Estimate | a number | Good: within the item's factor of the key. Again: outside it |
+| `choice` | Pick the metric, choose the fix | one option | as any `choice` question |
+
+- **A guess is marked on the three new formats as on `choice`.** A correct
+  guess rates Hard, since the fact is not yet held.
+- **An `answers` row of a drill stores the raw answer beside `correct`**:
+  `called_clean` and `tapped` for `judge`, `tapped` for `trace`, and
+  `estimate` for `estimate`. Spotting and locating are counted apart, as in
+  `../api/short-exercises.md`. The factor an estimate is scored within is
+  still to be set from real answers, and a stored `correct` alone could not
+  be rescored.
+- **A drill item may be asked in an exam.** Its verdict is computed from the
+  user's tap or number, where an open question's grade is the user's own
+  report.
+- **After the answer, the item shows its witness**: the input, what the clean
+  artefact gave and what the flawed one gave. The witness is the evidence the
+  key is right, and reading it is the lesson.
+
+## Spot the flaw
+
+An artefact is a prompt, a function, an eval script, a tool's definition or a
+grader's rubric. The author writes it clean, with up to three variants.
+
+- **An artefact yields one clean item and one flawed item per variant.** At
+  least a quarter of the items are then clean, so calling everything flawed
+  is wrong a quarter of the time. The judgement items keep the same share for
+  the same reason.
+- **A variant differs from the clean artefact in one contiguous span of
+  lines, and that span is the key.** A fault that is an absence, such as a
+  missing `other` label or a missing step budget, is written on the line it
+  changes: the label list without `other`, or `while True:` for the bounded
+  loop. A variant that only deletes lines leaves no line to tap.
+- **The record**: the artefact's `id`, `concept` and `lines`, its `check`, its
+  `input`, and per variant its `id`, `lines` and the `span` it changes. The
+  check derives the span from the two texts and refuses a stated span that
+  differs.
+- **The `check` is code deciding whether one output is right on the input.**
+  For a chunker, the output is the chunks and the check asks whether one chunk
+  holds the answer's sentence. For an injection prompt, the output is the run's
+  tool calls and the check asks whether the canary tool was called.
+- **The module check proves each item's key**: the clean artefact's output
+  passes the `check`, and each variant's output fails it. An artefact whose
+  clean output fails, or whose variant passes, does not seed.
+- **A code artefact's output is computed by running it on the input** at every
+  module check. Its key rests on code alone, and is never re-verified.
+- **A prompt artefact's output is a model's response, stored with the item.**
+  The section on model-dependent keys gives how the responses are stored and
+  re-checked.
+
+## Read an agent's trace
+
+A trace is one failed run of an agent in a scripted environment. A scripted
+environment is Python code in `content/modules/ai-eng/environments/`: tools
+whose results depend only on their arguments and the environment's state,
+and a goal predicate over the final state and the agent's final answer.
+
+- **A trace is a list of steps**: the agent's messages, its tool calls with
+  their arguments, and the tools' results. A tap lands on an agent's message
+  or tool call alone. A tool's result is the environment's, and cannot be the
+  wrong step.
+- **The record**: the item's `id`, `concept` and `environment`, the failed
+  run's `steps`, the key step `k`, and the corrected run's steps from `k` on.
+  The corrected run shares the failed run's steps before `k`.
+- **The module check replays both runs in the environment.** Each tool call is
+  executed, and its result must equal the stored one. The failed run ends with
+  the goal predicate false. The corrected run ends with it true.
+- **The shared prefix makes the first wrong step unique.** Every step before
+  `k` is also a step of the corrected run, which reaches the goal, so none of
+  them is wrong. Step `k` is the first step the two runs differ at, and the
+  failed run's version of it leads to failure.
+- **A trace's key is never re-verified.** The steps are stored, and the
+  environment is code, so the key holds on every replay. The model that wrote
+  the trace is named on the item as provenance alone.
+- **After the answer, the item shows the corrected step** and the goal state
+  the corrected run reached.
+
+## Pick the metric and choose the fix
+
+Both are `choice` questions whose correct option is computed by the module
+check.
+
+- **A pick-the-metric item stores a goal, a set, two systems' outputs on it,
+  and three to five candidate metrics.** The goal is stated in prose and as a
+  `utility`, code scoring each system as the goal ranks them, such as a missed
+  fraud costing a hundred false alarms. Each candidate names a metric from the
+  module's metric library, `content/modules/ai-eng/metrics.py`.
+- **The module check computes every candidate on both systems.** Exactly one
+  candidate must rank the systems as the `utility` ranks them. Every other
+  candidate must rank them the other way. A tie between the two systems
+  decides nothing and counts as the other way.
+- **After the answer, the item shows each candidate's two scores**, so a wrong
+  pick is shown with the ranking it gave.
+- **A choose-the-fix item stores an artefact, its input, its failing output,
+  three or four edits, and a `check`.** Each edit is applied to the artefact,
+  and its output is computed or stored as in spot the flaw. Exactly one edit's
+  output passes the `check`, and that edit is the correct option.
+- **After the answer, the item shows each edit's output** on the input.
+
+## Estimate
+
+- **An estimate item states every number its key uses**: the prompt and the
+  answer, the tokenizer by its name and version, the prices per million input
+  and output tokens, and the rate in tokens per second. An item on another
+  quantity, such as end-to-end success from per-step error rates, states its
+  rates instead.
+- **The record**: the item's `id`, `concept`, the stated numbers, the
+  `compute` code printing the key, the stored `key`, and the `factor`.
+- **The module check runs `compute` and refuses a stored `key` that differs.**
+  The key is stored because no client holds a tokenizer.
+- **A number is correct within the factor**: between the key divided by the
+  factor and the key multiplied by it. An engineer estimates to an order, so
+  a ratio is scored and a difference is not.
+- **After the answer, the item shows the key and the arithmetic** from the
+  stated numbers.
+
+## A model-dependent key
+
+A prompt artefact's flaw shows only in how a model answers it, such as data
+without delimiters being followed as an instruction.
+
+- **A model-dependent item stores the responses its key rests on**: several
+  samples on the input for the clean artefact and for each variant, each with
+  the `model@pin` that answered. The samples are sent through the engine's
+  calls, so each one is in the call log with its configuration.
+- **The item states a share for each side.** The clean artefact's samples pass
+  the `check` at or above its share, and each variant's samples fail it at or
+  above its share. One sample is not enough, since a sampled model answers a
+  prompt differently on repeated calls.
+- **A queue replays the stored responses.** Two learners then meet the same
+  key, and the phone needs no model.
+- **`climb module reverify` re-asks each model-dependent item on the panel**
+  in `check.toml`, as it does a concept's `model_witness`. Each run appends a
+  `[[drill.checks]]` table per model: the model, the date, whether both shares
+  held, and the measured shares. An item whose latest check on any panel model
+  failed stops holding and is retired.
+- **A code artefact, a trace, a metric item and an estimate are never
+  re-asked.** Their keys rest on code and stored data alone.
+
+## Deferred
+
+- The factor an estimate is scored within, per quantity. The first stored
+  `estimate` answers set it.
+- The shares a model-dependent item states, and its sample count. The first
+  injection items measured on the panel set them.
+- Whether a `judge` item is drawn in the order its subtopic's questions are,
+  or after them. The first queue serving both answers it.

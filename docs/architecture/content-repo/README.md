@@ -12,6 +12,7 @@ them from there.
 | [`modules.md`](modules.md) | A module's topics, subtopics and levels, where its authoring rules live, its diagrams |
 | [`questions.md`](questions.md) | A question's formats, its key and its grading |
 | [`lessons.md`](lessons.md) | Lessons and their pretests |
+| [`ai-drills.md`](ai-drills.md) | The AI drill items of the `ai-eng` module, their formats, and the witness run proving each key |
 
 ## Cards are ingested from files
 

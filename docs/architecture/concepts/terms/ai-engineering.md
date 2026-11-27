@@ -16,6 +16,12 @@ uses them without redefining them.
   different thing.
 - **AI drill**: an activity answered in a minute or two on the phone, by a tap,
   a choice or a number, with no code typed.
+- **Drill item**: one AI drill as a queue serves it: an artefact, clean or
+  carrying one variant, its key and the witness run proving the key.
+  `../../content-repo/ai-drills.md` gives each kind's record.
+- **Scripted environment**: code offering an agent tools whose results depend
+  only on their arguments and its state, and a goal predicate over the final
+  state. A trace is replayed against one.
 - **Desk task**: an activity answered with code or a dataset at the desk, and
   scored by the harness running it.
 - **Harness**: the code that runs a learner's submission on a hidden set and

@@ -9,9 +9,9 @@ spine's desk tasks build to. This file gives each activity kind, the rule
 every check follows, and how simplicity is graded.
 
 The record of a desk task, the hidden set and the harness's boundary with the
-sandbox belong to `../ai-task-grading.md`. The record of each AI drill belongs
-to `../../api/short-exercises.md`, beside the judging form it reuses. This
-file fixes what each activity kind asks and how its answer is checked.
+sandbox belong to `../ai-task-grading.md`. The record of each AI drill and
+the witness run proving its key belong to `../../content-repo/ai-drills.md`.
+This file fixes what each activity kind asks and how its answer is checked.
 
 ## The rule every check follows
 
@@ -127,5 +127,3 @@ file fixes what each activity kind asks and how its answer is checked.
   answered on real use set it.
 - Whether a design review's flaw kinds are one list for the module or one per
   pattern. The first written reviews answer it.
-- How a trace's planted fault is chosen so the first wrong step is unique. The
-  trace item's record answers it.

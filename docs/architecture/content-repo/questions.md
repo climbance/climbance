@@ -14,6 +14,8 @@ A question asks about one fact, and a user answers it from memory.
     end. Case is ignored unless the question says otherwise.
   - `open`: the user answers in their own head, reveals the key, and ticks the
     points recalled, the traps fallen into, and anything else said wrong.
+- **The AI drill items add three formats**: `judge`, `trace` and `estimate`,
+  as [`ai-drills.md`](ai-drills.md) gives.
 - **An open question's key is two to six points.** Each point is one fact the
   answer has to contain. A trap is a known wrong claim, and a question carries
   up to three.

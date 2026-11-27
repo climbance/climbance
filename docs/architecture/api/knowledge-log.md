@@ -22,7 +22,9 @@ trigger, as `../database/README.md` requires.
 
 - **`answers`**: the question, whether the reply was correct, the guess flag,
   and for an open question the grade, the points missed, the traps fallen
-  into and the wrong flag. A test answer also names its measure, `baseline`,
+  into and the wrong flag. An AI drill's answer also stores the raw answer:
+  `called_clean`, `tapped` or `estimate`, as
+  `../content-repo/ai-drills.md` gives. A test answer also names its measure, `baseline`,
   `delayed` or `placement`.
 - **`stints`**: the mode, the score, the number of questions answered, and
   for an exam the level it was taken at. A certification's exam also names
