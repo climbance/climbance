@@ -11,9 +11,9 @@ from climb.generation.contract import solution_schema as schema
 from climb.generation.site import answer
 from climb.schema import Call, Configuration
 
-# on Codex, another family than the canonical's: `cli/calls.md`, The
+# on Claude, another family than the canonical's: `cli/calls.md`, The
 # subscription backends. Sampled, since the CLI takes no temperature
-BLIND_DEFAULT = Configuration(model="gpt-6.2-sol", effort="medium", pin="codex-cli")
+BLIND_DEFAULT = Configuration(model="claude-sonnet-5-5", effort="medium", pin="claude-code")
 
 SYSTEM = f"""You write a correct solution to a problem statement.
 

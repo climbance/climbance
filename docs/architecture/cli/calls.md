@@ -115,10 +115,18 @@ subscription charges nothing per call, so a problem is regenerated for free.
 - **The schema is enforced by each CLI.** Claude takes it as `--json-schema`
   and Codex as `--output-schema`. A reply that does not parse fails the site's
   gate as it does on the router.
+- **Codex writes the generator's and the naive site's answers, and Claude
+  the other four.** The blind site runs on Sonnet, another model family than
+  the canonical's, so a mistake both share is less likely. Haiku answers the
+  screen, the inputs and the discrimination sites. On 2026-11-27 this bench
+  landed 8 of 10 writings, and the bench with Claude on the generator and the
+  naive site landed 1 of the same 10. Claude's naive solution finished at the
+  bound or ran within a tenth of the canonical in 4 of them. All 4 landed once
+  Codex wrote the naive solution.
 - **The cost is recorded as 0, and the tokens as each CLI reports them.**
   Claude reports a notional `total_cost_usd`, which is not stored, since the
   spend page would count money never paid. Codex wraps every prompt in about
-  17,700 input tokens of its own instructions, so its token counts mostly
+  16,000 input tokens of its own instructions, so its token counts mostly
   measure the CLI.
 - **No temperature is sent.** The two CLIs take none, so every site on this
   bench is sampled. `../concepts/machine-records.md` gives what that costs.

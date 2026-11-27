@@ -17,8 +17,8 @@ from climb.techniques import criterion
 
 # Sampled rather than greedy, as the generator is: it produces an artifact
 # rather than a verdict, and a second call is a second draw where the first
-# wrote the form.
-NAIVE_DEFAULT = Configuration(model="claude-sonnet-5-5", effort="medium", pin="claude-code")
+# wrote the form. On Codex: `cli/calls.md`, The subscription backends.
+NAIVE_DEFAULT = Configuration(model="gpt-6.2-sol", effort="medium", pin="codex-cli")
 
 SYSTEM = f"""You write the solution a solver reaches for without one technique.
 

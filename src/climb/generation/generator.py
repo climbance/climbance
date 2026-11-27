@@ -23,9 +23,9 @@ from climb.schema import (
     Template,
 )
 
-# unmeasured: none of the gates a generator is scored by has run on it yet.
-# Sampled, as `concepts/machine-records.md` gives
-GENERATOR_DEFAULT = Configuration(model="claude-sonnet-5-5", effort="medium", pin="claude-code")
+# on Codex: `cli/calls.md`, The subscription backends, gives the trial. Sampled,
+# as `concepts/machine-records.md` gives
+GENERATOR_DEFAULT = Configuration(model="gpt-6.2-sol", effort="medium", pin="codex-cli")
 
 # item 4 restates the criteria in `cli/difficulty/criteria.md`
 SYSTEM = f"""You write practice problems for one form of a technique.
