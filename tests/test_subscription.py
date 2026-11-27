@@ -109,7 +109,7 @@ def test_codex_runs_with_its_shell_tool_off():
     asked(Subscription(runner), "codex-cli 0.171.0")
 
     argv, _ = runner.sent[-1]
-    assert argv[argv.index("--disable") + 1] == "shell_tool"
+    assert "features.shell_tool=false" in argv
 
 
 def test_a_codex_answer_is_its_last_message():
@@ -161,3 +161,50 @@ def test_no_api_key_reaches_a_cli(monkeypatch):
 
     assert not {"ANTHROPIC_API_KEY", "OPENAI_API_KEY", "CLAUDE_CODE_SESSION_ID"} & set(inherited())
     assert "PATH" in inherited()
+
+
+def test_codex_reads_the_system_prompt_in_place_of_its_own_instructions():
+    """Codex's coding-agent prompt and its tools would be part of what the
+    model sees."""
+    runner = Runner(codex_said({"type": "agent_message", "text": '{"answer":5}'}))
+
+    asked(Subscription(runner), "codex-cli 0.171.0")
+
+    argv, stdin = runner.sent[-1]
+    settings = [argv[i + 1] for i, one in enumerate(argv) if one == "-c"]
+    held = next(one for one in settings if one.startswith("model_instructions_file="))
+    assert held.endswith("instructions.md")
+    assert {"include_environment_context=false", "features.shell_tool=false"} <= set(settings)
+    assert stdin == "2+3?"
+
+
+def test_the_default_effort_sends_no_effort_flag():
+    """A claim about a model as it answers by default names no effort."""
+    claude = Runner(claude_said())
+    codex = Runner(codex_said({"type": "agent_message", "text": "{}"}))
+
+    asked(Subscription(claude), "claude-code 2.1.332", effort="default")
+    asked(Subscription(codex), "codex-cli 0.171.0", effort="default")
+
+    assert "--effort" not in claude.sent[-1][0]
+    assert not any(one.startswith("model_reasoning_effort") for one in codex.sent[-1][0])
+
+
+def test_a_codex_turn_that_recovered_from_a_reconnect_is_answered():
+    """A reconnect notice is no tool use, and the turn still completed."""
+    said = codex_said(
+        {"type": "error", "message": "Reconnecting... 1/5"},
+        {"type": "agent_message", "text": '{"answer":5}'},
+    )
+    noticed = '{"type": "error", "message": "Reconnecting... 1/5"}\n' + said
+
+    reply = asked(Subscription(Runner(noticed)), "codex-cli 0.171.0")
+
+    assert json.loads(reply.text) == {"answer": 5}
+
+
+def test_a_codex_turn_that_never_completed_is_refused():
+    said = '{"type": "error", "message": "Reconnecting... 5/5"}\n{"type": "turn.failed"}'
+
+    with pytest.raises(ProviderError, match="codex"):
+        asked(Subscription(Runner(said)), "codex-cli 0.171.0")

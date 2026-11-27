@@ -7,6 +7,7 @@ from climb.calls import BASE_URL, OpenRouter, Retry, Transport
 from climb.calls.subscription import Routed, Subscription, backend, version
 from climb.cli.display import held
 from climb.generation import Bench
+from climb.schema import Configuration
 
 # Checked before the run: an unset key fails a whole backlog identically.
 CREDENTIALS = ("OPENROUTER_API_KEY",)
@@ -36,33 +37,45 @@ def transport(
     return OpenRouter(OpenAI(api_key=key, base_url=BASE_URL), on_retry=on_retry)
 
 
-def subscribed(bench: Bench) -> tuple[Bench, Subscription]:
-    """The bench with each bare backend resolved to the CLI version installed,
-    and the transport holding those versions."""
+def resolving(
+    configurations: dict[str, Configuration],
+) -> tuple[dict[str, Configuration], Subscription]:
+    """Each configuration on a bare backend resolved to the CLI version
+    installed, and the transport holding those versions."""
     installed: dict[str, str] = {}
-    named: dict[str, object] = {}
-    for site in Bench.model_fields:
-        configuration = getattr(bench, site)
+    named: dict[str, Configuration] = {}
+    for key, configuration in configurations.items():
         name = backend(configuration.pin)
         if name is None or configuration.pin != name:
+            named[key] = configuration
             continue
         pin = installed.setdefault(name, version(name))
-        named[site] = configuration.model_copy(update={"pin": pin})
-    return bench.model_copy(update=named), Subscription(installed=installed)
+        named[key] = configuration.model_copy(update={"pin": pin})
+    return named, Subscription(installed=installed)
+
+
+def subscribed(bench: Bench) -> tuple[Bench, Subscription]:
+    named, subscription = resolving({site: getattr(bench, site) for site in Bench.model_fields})
+    return bench.model_copy(update=named), subscription
+
+
+def routed_transport(
+    args: argparse.Namespace,
+    parser: argparse.ArgumentParser,
+    configurations: dict[str, Configuration],
+) -> tuple[dict[str, Configuration], Transport]:
+    """The subscription CLIs for the configurations pinned to one, and the
+    router for the rest. The router's key is checked only where one needs it."""
+    resolved, subscription = resolving(configurations)
+    if all(backend(one.pin) for one in resolved.values()):
+        return resolved, subscription
+    router = transport(args, parser)
+    return resolved, Routed(subscription, lambda: router)
 
 
 def generation_transport(
     args: argparse.Namespace, parser: argparse.ArgumentParser, bench: Bench
 ) -> tuple[Bench, Transport]:
-    """The subscription CLIs for the sites pinned to one, and the router for
-    the rest. The router's key is checked only where a site needs it."""
-    resolved, subscription = subscribed(bench)
-    routed = [
-        getattr(resolved, site).pin
-        for site in Bench.model_fields
-        if backend(getattr(resolved, site).pin) is None
-    ]
-    if not routed:
-        return resolved, subscription
-    router = transport(args, parser)
-    return resolved, Routed(subscription, lambda: router)
+    sites = {site: getattr(bench, site) for site in Bench.model_fields}
+    resolved, send = routed_transport(args, parser, sites)
+    return bench.model_copy(update=resolved), send

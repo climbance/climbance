@@ -228,6 +228,20 @@ stub cannot show such a claim, since a stub shows only what its author wrote
 into it. A model can stop showing the effect when a successor ships, and the
 questions on the claim then teach a wrong fact.
 
+Two kinds of claim about models carry no `model_witness`, and rest on their
+`quote` alone:
+
+- **A claim that a model is not guaranteed to do something is a design rule.**
+  Examples are "an instruction to answer from the chunks makes an added fact
+  less likely, not impossible" and "a secret in the prompt can reach the
+  user". No sample shows such a claim false: a run in which the model never
+  slips fails the witness without showing the guarantee holds. Code is built
+  on the rule either way, since no current model gives the guarantee.
+- **A claim about a model the panel cannot call rests on its source.** The
+  panel answers chat prompts. A tuned model, an embedding model and a
+  reranker are reached by no panel call, so a claim about what tuning does or
+  what an embedding finds has no check to run.
+
 - **A claim that depends on a model carries a `model_witness` and its
   `checks`, beside the `quote` from its source.** The quote says where the
   effect was found. The checks say the effect still shows on the models used
@@ -246,9 +260,14 @@ questions on the claim then teach a wrong fact.
 - **The module's `check.toml` names the panel under `[models]`**, with
   `panel`, the models every such claim is checked on, and `every_days`, the
   period between two checks. A panel entry is `model@pin`, the model id and
-  the endpoint it is pinned to, as the engine's configuration names them. The
-  call sends no effort and no temperature, since the claim is about the model
-  as it answers by default. The panel holds the current model of at least two
+  the endpoint it is pinned to, as the engine's configuration names them. A
+  pin may name a subscription CLI's bare backend, such as
+  `gpt-6.2-sol@codex-cli`, which the run resolves to the version installed, so
+  a CLI upgrade leaves every check standing. A check made through Codex says
+  so in `measured`, since Codex wraps the prompt in its own developer message
+  and tools, as `docs/architecture/cli/calls.md` gives. The call sends no
+  effort and no temperature, since the claim is about the model as it answers
+  by default. The panel holds the current model of at least two
   providers' families, chosen from the models the lab allows. A claim checked
   on one family alone may describe that family.
 - **A claim is due when a panel model has no check on it, or its latest check

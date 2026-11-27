@@ -6,7 +6,8 @@ from datetime import date
 from pathlib import Path
 
 from climb.calls import UNSENT, CallLog, ask
-from climb.cli.transport import transport
+from climb.calls.subscription import CODEX, backend
+from climb.cli.transport import routed_transport
 from climb.knowledge import retire_module
 from climb.knowledge.authoring import Checked, check, in_sub, load, near
 from climb.knowledge.authoring.reverify import Check, appended, owed, witnessed
@@ -38,6 +39,11 @@ def configured(entry: str) -> Configuration:
     return Configuration(model=model, effort=UNSENT, pin=pin, temperature=None)
 
 
+def wrapped(configuration: Configuration) -> str:
+    # Codex adds a developer message and tools no setting removes
+    return " (through codex exec's agent wrapper)" if backend(configuration.pin) == CODEX else ""
+
+
 def reverify(
     args: argparse.Namespace, parser: argparse.ArgumentParser, root: Path, store: Database
 ) -> None:
@@ -54,7 +60,8 @@ def reverify(
     if not found:
         print(f"{args.slug}: no claim is due")
         return
-    send, log = transport(args, parser), CallLog(store)
+    panel, send = routed_transport(args, parser, panel)
+    log = CallLog(store)
 
     def asking(model: str, prompt: str) -> str:
         if model not in panel:
@@ -76,7 +83,7 @@ def reverify(
                 print(f"{name} on {model}: not checked: {type(error).__name__}: {error}")
                 failed += 1
                 continue
-            checks.append(Check(name, model, today, holds, measured))
+            checks.append(Check(name, model, today, holds, measured + wrapped(panel[model])))
             print(f"{name} on {model}: {'holds' if holds else 'fails'}, {measured}")
         if checks:
             appended(root / concept["_file"], checks)

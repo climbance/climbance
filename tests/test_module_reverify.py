@@ -151,3 +151,29 @@ def test_the_command_appends_a_check_per_due_model_each_call_logged(
         ("b/two", "p2", "default"),
     ]
     assert "lost-middle on b/two@p2: fails, answered no" in capsys.readouterr().out
+
+
+def test_a_panel_on_the_subscriptions_runs_through_the_installed_clis(
+    database, monkeypatch, tmp_path, capsys
+):
+    """A bare backend resolves to the installed CLI, and a Codex check says
+    it was made through Codex's agent wrapper."""
+    connected(database, monkeypatch)
+    root = module(tmp_path)
+    (root / "check.toml").write_text(
+        '[models]\npanel = ["a/one@claude-code", "b/two@codex-cli"]\nevery_days = 90\n'
+    )
+    client = FakeTransport.per_deployment(
+        {
+            ("a/one", "claude-code 1.0.0"): Verdict(text="yes"),
+            ("b/two", "codex-cli 1.0.0"): Verdict(text="yes"),
+        }
+    )
+
+    run_cli(monkeypatch, "module", "reverify", "m", "--content", str(root.parent), client=client)
+
+    checks = tomllib.loads((root / "concepts" / "t" / "sub.toml").read_text())["concept"][1]
+    assert [(c["model"], c["measured"]) for c in checks["checks"][1:]] == [
+        ("a/one@claude-code", "answered yes"),
+        ("b/two@codex-cli", "answered yes (through codex exec's agent wrapper)"),
+    ]

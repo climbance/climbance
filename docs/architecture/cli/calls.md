@@ -103,10 +103,15 @@ subscription charges nothing per call, so a problem is regenerated for free.
   runs with no tools, with the site's prompt as its system prompt, and with no
   setting sources. The user's own `CLAUDE.md` and hooks therefore stay out of
   the prompt: with them, a two-word prompt sent 4,526 input tokens, and without
-  them 678. Codex runs with its shell tool disabled: with the tool, the model
-  ran a command in 2 of 29 generation calls on 2026-11-27. A Codex call whose
-  events show any item other than a message or reasoning is still refused,
-  since the model then read more than the prompt the hash names.
+  them 678. Codex reads the site's prompt as its instructions file, in place
+  of its own coding-agent prompt, with its environment context, its web search
+  and every feature offering a tool turned off. With its shell tool on, the
+  model ran a command in 2 of 29 generation calls on 2026-11-27. A developer
+  message and about ten tool definitions stay, since no setting in
+  `codex-cli 0.171.0` removes them: a two-word prompt sent 5,830 input tokens
+  on 2026-11-27, against about 17,700 with Codex's own prompt. A Codex call
+  whose events show any item other than a message or reasoning is still
+  refused, since the model then read more than the prompt the hash names.
 - **No API key reaches a CLI.** An `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
   in the environment wins over the subscription login, and `climb` loads
   `.env`, which holds one. On 2026-11-27 the first runs were billed to the API
@@ -125,11 +130,13 @@ subscription charges nothing per call, so a problem is regenerated for free.
   Codex wrote the naive solution.
 - **The cost is recorded as 0, and the tokens as each CLI reports them.**
   Claude reports a notional `total_cost_usd`, which is not stored, since the
-  spend page would count money never paid. Codex wraps every prompt in about
-  16,000 input tokens of its own instructions, so its token counts mostly
-  measure the CLI.
+  spend page would count money never paid. Codex adds about 5,800 input
+  tokens of its own to every prompt, so its token counts on a short prompt
+  mostly measure the CLI.
 - **No temperature is sent.** The two CLIs take none, so every site on this
   bench is sampled. `../concepts/machine-records.md` gives what that costs.
+- **An effort of `default` sends no effort flag.** The CLI then answers at its
+  own default, as a claim about a model as it answers by default needs.
 - **Only `climb` reaches these backends.** The server holds no subscription
   login, and the API makes no model call, so a user's request never runs on
   the author's account.

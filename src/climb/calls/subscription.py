@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from climb.calls.ask import payload
+from climb.calls.openrouter import UNSENT
 from climb.calls.transport import MAX_TOKENS, ProviderError, Reply, Transport
 
 CLAUDE = "claude-code"
@@ -26,6 +26,28 @@ TIMEOUT = 900
 # the Codex events a prompt-only answer emits: anything else read or ran
 # something, and the prompt hash would no longer name what the model saw
 ANSWERING = frozenset({"agent_message", "reasoning"})
+
+# Codex's features that offer the model a tool; the rest of its harness has
+# no switch. `cli/calls.md`, The subscription backends
+CODEX_TOOLS = (
+    "apps",
+    "browser_use",
+    "browser_use_external",
+    "computer_use",
+    "goals",
+    "hooks",
+    "image_generation",
+    "in_app_browser",
+    "multi_agent",
+    "plugins",
+    "remote_plugin",
+    "shell_tool",
+    "skill_search",
+    "sleep_tool",
+    "tool_suggest",
+    "unified_exec",
+    "view_image",
+)
 
 Run = Callable[[list[str], str, Path], subprocess.CompletedProcess[str]]
 
@@ -133,8 +155,7 @@ def claude(
         "-p",
         "--model",
         model,
-        "--effort",
-        effort,
+        *(["--effort", effort] if effort != UNSENT else []),
         "--tools",
         "",
         "--system-prompt",
@@ -180,6 +201,8 @@ def codex(
     effort: str,
     schema: dict[str, Any] | None,
 ) -> dict[str, Any]:
+    instructions = cwd.parent / "instructions.md"
+    instructions.write_text(system)
     argv = [
         "codex",
         "exec",
@@ -187,17 +210,20 @@ def codex(
         "--ignore-user-config",
         "--ignore-rules",
         "--skip-git-repo-check",
-        # without it the model ran a command in 2 of 29 generation calls, which
-        # `ANSWERING` refuses
-        "--disable",
-        "shell_tool",
         "--sandbox",
         "read-only",
         "--json",
         "-m",
         model,
+        *(["-c", f"model_reasoning_effort={effort}"] if effort != UNSENT else []),
+        # the system prompt in place of Codex's own instructions
         "-c",
-        f"model_reasoning_effort={effort}",
+        f"model_instructions_file={instructions}",
+        "-c",
+        "include_environment_context=false",
+        "-c",
+        "web_search=disabled",
+        *(arg for name in CODEX_TOOLS for arg in ("-c", f"features.{name}=false")),
         "-C",
         str(cwd),
     ]
@@ -205,22 +231,23 @@ def codex(
         written = cwd.parent / "schema.json"
         written.write_text(json.dumps(schema))
         argv += ["--output-schema", str(written)]
-    # no system flag: the prompt is the payload the hash is taken over
-    done = runner([*argv, "-"], payload(system, content), cwd)
+    done = runner([*argv, "-"], content, cwd)
     events: list[dict[str, Any]] = [
         json.loads(line) for line in done.stdout.splitlines() if line.startswith("{")
     ]
     items = [one["item"] for one in events if one.get("type") == "item.completed"]
-    acted = sorted({one.get("type") for one in items} - ANSWERING)
+    # an error item is Codex's notice, such as a reconnect, and read nothing
+    acted = sorted({one.get("type") for one in items} - ANSWERING - {"error"})
     if acted:
         raise ProviderError(f"codex: the model used {', '.join(map(str, acted))}")
+    completed = [one for one in events if one.get("type") == "turn.completed"]
+    # a reconnect the turn recovered from is an error event too
     failed = [one for one in events if one.get("type") in ("error", "turn.failed")]
-    if failed or done.returncode != 0:
+    if not completed or done.returncode != 0:
         said = failed[-1] if failed else done.stderr.strip()[:500]
         raise ProviderError(f"codex: {said}")
     said = [one.get("text") for one in items if one.get("type") == "agent_message"]
-    completed = [one for one in events if one.get("type") == "turn.completed"]
-    usage: dict[str, Any] = completed[-1].get("usage") or {} if completed else {}
+    usage: dict[str, Any] = completed[-1].get("usage") or {}
     return {
         "text": said[-1] if said else None,
         "stop_reason": "completed" if said else "no answer",
