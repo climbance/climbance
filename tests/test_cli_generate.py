@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 import pytest
-from commands import TRANSPORT, connected, run_cli
+from commands import connected, faked, run_cli
 from generating import SLOW, FakeWriter, Raises
 from helpers import own
 from matching import card, seeded, template
@@ -114,8 +114,7 @@ def test_a_rejected_draft_stores_nothing(root, monkeypatch, capsys):
 
 
 def test_an_unseeded_card_is_named_before_any_call(root, monkeypatch, capsys):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test")
-    monkeypatch.setattr(TRANSPORT, "OpenRouter", lambda _api, **_: FakeWriter())
+    faked(monkeypatch, FakeWriter())
     monkeypatch.setattr(
         "sys.argv",
         ["climb", "generate", "--card", "monotonic-stack", "--template", "next-greater"],
@@ -239,8 +238,7 @@ def test_a_named_template_says_nothing_beside_gaps(root, monkeypatch, capsys):
 
 
 def test_a_run_names_a_template_or_aims_itself(root, monkeypatch, capsys):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test")
-    monkeypatch.setattr(TRANSPORT, "OpenRouter", lambda _api, **_: FakeWriter())
+    faked(monkeypatch, FakeWriter())
     monkeypatch.setattr("sys.argv", ["climb", "generate", "--card", "sliding-window"])
 
     with pytest.raises(SystemExit) as exit_info:
@@ -426,14 +424,12 @@ def test_the_summary_names_one_model_where_every_site_shares_one():
 
 
 def test_the_summary_names_how_each_site_was_sampled():
-    """The built-in bench samples the generator and the naive solution and runs
-    the rest greedy, and two sites on one model differ by nothing else a name
-    shows."""
+    """The subscription CLIs take no temperature, so every site of the built-in
+    bench reads as the backend's own sampling."""
     named = summary([], [], BENCH)
 
     assert f"generator {GENERATOR_DEFAULT.model} at {GENERATOR_DEFAULT.effort} @default" in named
-    assert f"naive {GENERATOR_DEFAULT.model} at {GENERATOR_DEFAULT.effort} @default" in named
-    assert "blind " + GENERATOR_DEFAULT.model + " at " + GENERATOR_DEFAULT.effort + " @0.0" in named
+    assert f"blind {BENCH.blind.model} at {BENCH.blind.effort} @default" in named
 
 
 def test_the_summary_names_every_site_where_the_bench_mixes_them():

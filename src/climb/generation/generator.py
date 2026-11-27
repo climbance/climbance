@@ -23,13 +23,9 @@ from climb.schema import (
     Template,
 )
 
-# unmeasured: none of the gates a generator is scored by has run yet. Sampled
-# as the naive site is, where the four other sites are greedy, and
-# `concepts/machine-records.md` gives the reason. Pinned to AI Studio rather
-# than Vertex, whose endpoints advertise no temperature
-GENERATOR_DEFAULT = Configuration(
-    model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio"
-)
+# unmeasured: none of the gates a generator is scored by has run on it yet.
+# Sampled, as `concepts/machine-records.md` gives
+GENERATOR_DEFAULT = Configuration(model="claude-sonnet-5-5", effort="medium", pin="claude-code")
 
 # item 4 restates the criteria in `cli/difficulty/criteria.md`
 SYSTEM = f"""You write practice problems for one form of a technique.

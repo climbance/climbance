@@ -35,7 +35,9 @@ call log the records cite.
 - **A pin is part of the record, not a note about routing.** A model id
   resolves to as many builds as there are endpoints serving it, and
   quantization changes the weights. Unpinned, the router chooses per request,
-  so the records under one key are a mixture no later run can separate.
+  so the records under one key are a mixture no later run can separate. A
+  subscription CLI's pin names the CLI and its version instead, as
+  `../cli/calls.md` gives.
 - **Who served a call is recorded and never compared.** The router reports a
   company rather than an endpoint, and one company serves several builds. The
   company name confirms that a pin held, without identifying the build. The
@@ -46,7 +48,8 @@ call log the records cite.
   compare
   whether or not each carries a price. The price sits outside the all-or-none
   rule, as the temperature does: a record stored before the field existed
-  carries none, and so does a record a provider priced at nothing.
+  carries none, and so does a record a provider priced at nothing. A call on a
+  subscription CLI is priced at 0.
 
 ### Temperature
 
@@ -67,9 +70,15 @@ call log the records cite.
 - **The difficulty judge is sampled**, for the reason
   `../cli/difficulty/judge.md` gives: a problem's judged rating is the median
   of several draws, and greedy draws would all answer one number.
-- **The other four sites are greedy.** Greedy answers make two configurations
-  of one site comparable over the same item. Those sites answer about a
-  statement that already exists, and each answer decides something.
+- **The other four sites are greedy where the backend takes a temperature.**
+  Greedy answers make two configurations of one site comparable over the same
+  item. Those sites answer about a statement that already exists, and each
+  answer decides something.
+- **On a subscription CLI every site is sampled**, since the two CLIs take no
+  temperature, and the record says so by carrying none. Execution still
+  decides every gate those sites feed: a reference agrees with the canonical
+  on the cases or the draft is rejected. The cost is comparability: two
+  configurations of one site differ by their sampling as well as their model.
 - **Whether a site can be greedy is the endpoint's answer.** A request naming
   a parameter its endpoint does not advertise is refused rather than served, so
   a temperature sent where none is offered fails the call instead of running

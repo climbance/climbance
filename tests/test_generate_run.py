@@ -720,11 +720,12 @@ def test_every_site_is_asked_of_its_own_model(database):
     }
 
 
-def test_a_run_naming_no_bench_asks_one_model(database):
-    """The bench a run was given none of is the run that ran before there was
-    one."""
+def test_a_run_naming_no_bench_asks_each_sites_own_model(database):
+    """The built-in bench is a configuration per site, and the blind site's
+    family differs from the generator's."""
     model = bounded(separators=[[[3], [4]]], generator=BUILDS)
 
     run(database, model)
 
-    assert set(models(model).values()) == {GENERATOR_DEFAULT.model}
+    assert models(model)["generator"] == GENERATOR_DEFAULT.model
+    assert models(model)["blind"] == BENCH.blind.model != GENERATOR_DEFAULT.model

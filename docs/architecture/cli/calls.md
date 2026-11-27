@@ -38,11 +38,13 @@ holds nothing about what the answer was for.
 
 ## The transport
 
-- **One transport, one shape.** Every model is reached as chat completions
-  through a router, so adding a model is a string and adding a provider is a
-  base URL. Two provider shapes maintained by hand would create pressure to
-  adopt a library that reconciles them, and such a library can downgrade a
-  schema into a prompt where the record cannot show it happened.
+- **One transport, one shape.** Every model reached over an API is reached as
+  chat completions through a router, so adding a model is a string and adding
+  a provider is a base URL. Two provider shapes
+  maintained by hand would create pressure to adopt a library that reconciles
+  them, and such a library can downgrade a schema into a prompt where the
+  record cannot show it happened. The subscription backends below are the one
+  exception, and each is a CLI the engine runs, not a second API shape.
 - **Every request names one endpoint.** A provider that cannot honour the
   response schema is never chosen, and a request fails rather than falling back
   to a backend the record would not name.
@@ -76,3 +78,49 @@ holds nothing about what the answer was for.
 - **Every other failure is raised on the first request.** A rejected schema and
   an unset key are answered the same way twice, so retrying them spends the
   abort count slowly instead of at once.
+
+## The subscription backends
+
+Generation's sites run on the author's Claude and ChatGPT subscriptions, through
+the `claude -p` and `codex exec` CLIs. On OpenRouter a landed problem cost about
+$0.20 on 2026-11-27, so the 1,000-problem target would cost about $200. A
+subscription charges nothing per call, so a problem is regenerated for free.
+
+- **A pin names the CLI and its version, such as `claude-code 2.1.332` or
+  `codex-cli 0.171.0`.** Each CLI wraps the prompt in instructions of its own,
+  so an upgrade changes what the model is sent. A bench names the bare
+  backend, `claude-code` or `codex-cli`, and `climb` resolves it to the
+  installed version before the run. A call whose pin names another version
+  than the one installed is refused.
+- **The model is a full id, such as `claude-sonnet-5-5`, never an alias.** An
+  alias moves to a newer model, and the record would name whichever one
+  answered on the day.
+- **A subscription pin is weaker than an endpoint pin, and that is accepted.**
+  The vendor serves one build per model id and is the only host, so no
+  quantization or provider choice is hidden. The vendor can still update the
+  weights behind an id, and no record can show that.
+- **Each call runs prompt-only, in an empty directory created for it.** Claude
+  runs with no tools, with the site's prompt as its system prompt, and with no
+  setting sources. The user's own `CLAUDE.md` and hooks therefore stay out of
+  the prompt: with them, a two-word prompt sent 4,526 input tokens, and without
+  them 678. Codex has no flag that turns its tools off. A Codex call whose
+  events show any item other than a message or reasoning is refused, since the
+  model then read more than the prompt the hash names.
+- **No API key reaches a CLI.** An `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
+  in the environment wins over the subscription login, and `climb` loads
+  `.env`, which holds one. On 2026-11-27 the first runs were billed to the API
+  account this way, until its credit ran out. Each CLI therefore runs with
+  every `ANTHROPIC_`, `OPENAI_` and `CLAUDE_CODE_` variable removed.
+- **The schema is enforced by each CLI.** Claude takes it as `--json-schema`
+  and Codex as `--output-schema`. A reply that does not parse fails the site's
+  gate as it does on the router.
+- **The cost is recorded as 0, and the tokens as each CLI reports them.**
+  Claude reports a notional `total_cost_usd`, which is not stored, since the
+  spend page would count money never paid. Codex wraps every prompt in about
+  17,700 input tokens of its own instructions, so its token counts mostly
+  measure the CLI.
+- **No temperature is sent.** The two CLIs take none, so every site on this
+  bench is sampled. `../concepts/machine-records.md` gives what that costs.
+- **Only `climb` reaches these backends.** The server holds no subscription
+  login, and the API makes no model call, so a user's request never runs on
+  the author's account.

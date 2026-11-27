@@ -11,11 +11,9 @@ from climb.generation.contract import solution_schema as schema
 from climb.generation.site import answer
 from climb.schema import Call, Configuration
 
-# unmeasured, as every site's is. Greedy: this site writes against a statement
-# that already exists, so its variance buys no diversity
-BLIND_DEFAULT = Configuration(
-    model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio", temperature=0.0
-)
+# on Codex, another family than the canonical's: `cli/calls.md`, The
+# subscription backends. Sampled, since the CLI takes no temperature
+BLIND_DEFAULT = Configuration(model="gpt-6.2-sol", effort="medium", pin="codex-cli")
 
 SYSTEM = f"""You write a correct solution to a problem statement.
 

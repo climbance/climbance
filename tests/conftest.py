@@ -27,6 +27,17 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
 
 @pytest.fixture(autouse=True)
+def no_subscription_cli(monkeypatch):
+    """A test never runs `claude` or `codex`: each would spend the author's
+    quota and answer differently every run."""
+
+    def refused(argv, *_):
+        raise AssertionError(f"a test ran {argv[0]}")
+
+    monkeypatch.setattr("climb.calls.subscription.run", refused)
+
+
+@pytest.fixture(autouse=True)
 def off_the_developer_machine(tmp_path, monkeypatch):
     """Nothing outside the repo decides a test's outcome.
 

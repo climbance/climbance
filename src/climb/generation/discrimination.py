@@ -12,10 +12,8 @@ from climb.generation.site import answer
 from climb.mutation import Mutant
 from climb.schema import Call, Configuration
 
-# unmeasured, as every site's is, and greedy as every site but the generator
-DISCRIMINATION_DEFAULT = Configuration(
-    model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio", temperature=0.0
-)
+# unmeasured; sampled on the subscription CLI, which takes no temperature
+DISCRIMINATION_DEFAULT = Configuration(model="claude-haiku-5-5", effort="medium", pin="claude-code")
 
 SYSTEM = """You write the inputs that catch a wrong solution.
 

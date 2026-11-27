@@ -11,11 +11,9 @@ from climb.calls import CallLog, Transport, prompt_hash
 from climb.generation.site import answer
 from climb.schema import Call, Configuration, DraftCase
 
-# unmeasured, as every site's is. Greedy: a verdict about a statement that
-# already exists. Which model recalls the most published problems is open
-SCREEN_DEFAULT = Configuration(
-    model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio", temperature=0.0
-)
+# unmeasured. Sampled on the subscription CLI, which takes no temperature.
+# Which model recalls the most published problems is open
+SCREEN_DEFAULT = Configuration(model="claude-haiku-5-5", effort="medium", pin="claude-code")
 
 SYSTEM = """You check a newly written practice problem against the published
 problems you know from programming practice sites and contests.

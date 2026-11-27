@@ -15,7 +15,7 @@ from climb.cli.generating import (
     stage,
     summary,
 )
-from climb.cli.transport import transport
+from climb.cli.transport import generation_transport, subscribed
 from climb.drafts import DraftStore
 from climb.generation import (
     REPLAYED,
@@ -68,10 +68,9 @@ def generate(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
     if args.reject:
         return rejected_by_hand(args, parser, root)
     aimed = resolve(args, parser, root)
-    api = transport(args, parser)
+    bench, api = generation_transport(args, parser, chosen_bench(args, parser))
     calls, corpus = CallLog(root), Corpus.at(root)
     outcomes = OutcomeLog(root)
-    bench = chosen_bench(args, parser)
 
     reached: list[tuple[Target, GenerationResult]] = []
     total = len(aimed) * args.count
@@ -138,8 +137,7 @@ def resumed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Dat
     if not waiting:
         parser.exit(0, "generate: no draft is waiting on a step\n")
 
-    api = transport(args, parser)
-    bench = chosen_bench(args, parser)
+    bench, api = generation_transport(args, parser, chosen_bench(args, parser))
     cards = CardStore(root).all()
     calls, corpus = CallLog(root), Corpus.at(root)
     outcomes = OutcomeLog(root)
@@ -195,7 +193,8 @@ def listed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Data
     stored = DraftStore(root).all()
     if not stored:
         parser.exit(0, "generate: no draft is stored\n")
-    bench = chosen_bench(args, parser)
+    # resolved, as a resume would be, or every subscription draft reads moved
+    bench, _ = subscribed(chosen_bench(args, parser))
     cards = CardStore(root).all()
     waiting = [(draft, written_for(cards, draft)) for draft in stored]
     for draft, target in waiting:
@@ -256,8 +255,7 @@ def replayed(args: argparse.Namespace, parser: argparse.ArgumentParser, root: Da
         parser.exit(2, "generate: --replay reads the stored corpus, so it is aimed at nothing\n")
     if args.only and any(one not in REPLAYED for one in args.only):
         parser.exit(2, "generate: --only names a site a replay asks; the generator is none\n")
-    api = transport(args, parser)
-    bench = chosen_bench(args, parser)
+    bench, api = generation_transport(args, parser, chosen_bench(args, parser))
     result = replay(
         api,
         CallLog(root),

@@ -18,9 +18,7 @@ from climb.techniques import criterion
 # Sampled rather than greedy, as the generator is: it produces an artifact
 # rather than a verdict, and a second call is a second draw where the first
 # wrote the form.
-NAIVE_DEFAULT = Configuration(
-    model="google/gemini-3.7-flash", effort="medium", pin="google-ai-studio"
-)
+NAIVE_DEFAULT = Configuration(model="claude-sonnet-5-5", effort="medium", pin="claude-code")
 
 SYSTEM = f"""You write the solution a solver reaches for without one technique.
 

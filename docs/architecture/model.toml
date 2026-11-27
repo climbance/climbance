@@ -94,10 +94,18 @@ section = "Providers and identities"
 id = "model-router"
 kind = "system"
 name = "Model router"
-role = "Reaches every model as chat completions, each request pinned to one endpoint."
+role = "Reaches every model served over an API as chat completions, each request pinned to one endpoint."
 doc = "cli/calls.md"
 section = "The transport"
 bullet = "One transport, one shape."
+
+[[element]]
+id = "subscriptions"
+kind = "system"
+name = "Claude and ChatGPT subscriptions"
+role = "Answer generation's call sites through the `claude -p` and `codex exec` CLIs, on the author's own plans."
+doc = "cli/calls.md"
+section = "The subscription backends"
 
 [[element]]
 id = "content-repo"
@@ -1621,9 +1629,16 @@ technology = "docker pull"
 [[relation]]
 from = "cli"
 to = "model-router"
-label = "sends every model call"
+label = "sends every model call served over an API"
 access = "reads"
 technology = "chat completions"
+
+[[relation]]
+from = "cli"
+to = "subscriptions"
+label = "sends generation's calls"
+access = "reads"
+technology = "claude -p, codex exec"
 
 [[relation]]
 from = "cli"
@@ -2110,6 +2125,12 @@ access = "writes"
 from = "calls"
 to = "model-router"
 label = "sends each request, pinned to one endpoint"
+access = "reads"
+
+[[relation]]
+from = "calls"
+to = "subscriptions"
+label = "runs each call through a CLI, pinned to its version"
 access = "reads"
 
 [[relation]]

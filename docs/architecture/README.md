@@ -18,7 +18,8 @@ flowchart TB
     learner["Learner<br/>Solves problems, recalls templates and answers questions, on the web or the phone."]
     author["Author<br/>Generates and reviews the corpus, authors the content, invites users and deploys the engine."]
     identity_providers["Google and GitHub<br/>Hold each identity and its login; the engine stores no password."]
-    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    model_router["Model router<br/>Reaches every model served over an API as chat completions, each request pinned to one endpoint."]
+    subscriptions["Claude and ChatGPT subscriptions<br/>Answer generation's call sites through the claude -p and codex exec CLIs, on the author's own plans."]
     content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
     image_registry["Image registry<br/>Holds the engine's image, built on each push to main and pulled by digest."]
     offsite_dumps["Off-server dump storage<br/>Keeps the scheduled database dumps away from the storage the database lives on."]
@@ -27,7 +28,8 @@ flowchart TB
     author -->|"authors cards and modules [git]"| content_repo
     engine -.->|"runs the sign-in flow [OpenID Connect, OAuth]"| identity_providers
     engine -.->|"pulls the submission image by digest, through the host's daemon [docker pull]"| image_registry
-    engine -.->|"sends every model call [chat completions]; sends each request, pinned to one endpoint"| model_router
+    engine -.->|"sends every model call served over an API [chat completions]; sends each request, pinned to one endpoint"| model_router
+    engine -.->|"sends generation's calls [claude -p, codex exec]; runs each call through a CLI, pinned to its version"| subscriptions
     engine -.->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys [docker pull by digest]"| engine
     engine -->|"is dumped on a schedule and copied off the server [pg_dump]"| offsite_dumps
@@ -40,7 +42,8 @@ flowchart TB
     learner["Learner<br/>Solves problems, recalls templates and answers questions, on the web or the phone."]
     author["Author<br/>Generates and reviews the corpus, authors the content, invites users and deploys the engine."]
     identity_providers["Google and GitHub<br/>Hold each identity and its login; the engine stores no password."]
-    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    model_router["Model router<br/>Reaches every model served over an API as chat completions, each request pinned to one endpoint."]
+    subscriptions["Claude and ChatGPT subscriptions<br/>Answer generation's call sites through the claude -p and codex exec CLIs, on the author's own plans."]
     content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
     image_registry["Image registry<br/>Holds the engine's image, built on each push to main and pulled by digest."]
     offsite_dumps["Off-server dump storage<br/>Keeps the scheduled database dumps away from the storage the database lives on."]
@@ -73,7 +76,8 @@ flowchart TB
     api -->|"asks for one run: code, arguments, cap [HTTP, private network]"| broker
     broker -->|"starts one container per run, the run on standard input [docker run -i]"| sandbox
     broker -.->|"pulls the submission image by digest, through the host's daemon [docker pull]"| image_registry
-    cli -.->|"sends every model call [chat completions]"| model_router
+    cli -.->|"sends every model call served over an API [chat completions]"| model_router
+    cli -.->|"sends generation's calls [claude -p, codex exec]"| subscriptions
     cli -->|"writes the corpus and the by-hand records [SSH tunnel]"| database
     cli -.->|"seeds cards and modules from content/"| content_repo
     image_registry -->|"supplies the image the server deploys [docker pull by digest]"| api
@@ -320,7 +324,8 @@ The Command line's components, and what each reads and writes.
 
 ```mermaid
 flowchart TB
-    model_router["Model router<br/>Reaches every model as chat completions, each request pinned to one endpoint."]
+    model_router["Model router<br/>Reaches every model served over an API as chat completions, each request pinned to one endpoint."]
+    subscriptions["Claude and ChatGPT subscriptions<br/>Answer generation's call sites through the claude -p and codex exec CLIs, on the author's own plans."]
     content_repo["Content repository<br/>The private repository of authored cards and modules under content/, seeded into the store."]
     api["API<br/>Python and FastAPI: answers JSON under /api, serves the web app's files, signs users in and records the log."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
@@ -353,6 +358,7 @@ flowchart TB
     seed -->|"asks each panel model for a claim's model witness"| calls
     diagnoser -->|"appends each diagnosis and mutant diagnosis"| database
     calls -.->|"sends each request, pinned to one endpoint"| model_router
+    calls -.->|"runs each call through a CLI, pinned to its version"| subscriptions
     calls -->|"appends each call to the call log"| database
 ```
 
