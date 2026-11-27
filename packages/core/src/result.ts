@@ -3,9 +3,11 @@ import { headings } from './lessontext';
 import type { CardFields } from './records';
 import { answerKey, block } from './reply';
 import { mermaidSource } from './diagram';
+import { flawHead, flawWitness } from './flaw';
 import { metricRankings } from './metric';
+import { FLAW_CALLED_CLEAN, flawTappedLine } from './words/flaw';
 import { isTable } from './table';
-import type { Course, Estimate, Grade, Question } from './types';
+import type { Course, DrillFields, Estimate, Grade, Question } from './types';
 
 /** One answered question as a result screen shows it, on either client. */
 export interface Result {
@@ -17,13 +19,17 @@ export interface Result {
   reply: string;
   grade?: Grade;
   card?: CardFields;
-  estimate?: number; // an estimate drill's number, as parsed
+  drill?: DrillFields; // a drill's raw answer, which its record keeps
 }
 
 /** The learner's own reply, as a missed exam question repeats it. */
 export function youLine(r: Result): string {
-  const you =
-    r.q.format === 'short' || r.q.format === 'estimate'
+  const tapped = r.drill?.tapped;
+  const you = r.q.judge
+    ? tapped === undefined
+      ? FLAW_CALLED_CLEAN
+      : flawTappedLine(tapped)
+    : r.q.format === 'short' || r.q.format === 'estimate'
       ? r.reply
       : [...r.picked]
           .sort((a, b) => a - b)
@@ -46,6 +52,10 @@ export function verdictView(r: Result): VerdictView {
   if (q.format === 'card') return { head: null, explain, note: '', misconceptions: [] };
   if (q.estimate) return estimateVerdict(r, q.estimate, explain);
   if (q.metric) return metricVerdict(r, explain);
+  if (q.judge) {
+    const note = r.correct && r.guess ? 'Guessed: not counted as passed; it will come back.' : '';
+    return { head: flawHead(r), explain: [flawWitness(q).join('\n'), explain].filter(Boolean).join('\n\n'), note, misconceptions: [] };
+  }
   const key = q.format === 'short' ? q.accept[0] : answerKey(q, r.order);
   const note =
     r.correct && r.guess

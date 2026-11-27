@@ -12,10 +12,11 @@ export function parseTime(t: string): number {
   return ms;
 }
 
-/** FSRS rating of a record: card grade k/p/n; else correct Good, correct guess Hard, wrong Again. */
+/** FSRS rating of a record: card grade k/p/n; else correct Good, correct guess or misplaced flaw Hard, wrong Again. */
 export function ratingOf(r: AttemptRecord): number {
   if (r.grade) return { k: GOOD, p: HARD, n: AGAIN }[r.grade];
   if (!r.ok) return AGAIN;
+  if (r.located === false) return HARD; // a flaw spotted on the wrong line
   return r.guess ? HARD : GOOD;
 }
 

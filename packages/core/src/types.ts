@@ -2,7 +2,7 @@ import type { Drawing } from './diagram';
 import type { Certs, RawCerts } from './certs';
 import type { Graph, RawGraph } from './graph';
 
-export type Format = 'choice' | 'short' | 'card' | 'estimate' | 'metric';
+export type Format = 'choice' | 'short' | 'card' | 'estimate' | 'metric' | 'judge';
 export type Status = 'unseen' | 'weak' | 'due' | 'learning' | 'retained';
 export type Grade = 'k' | 'p' | 'n';
 
@@ -65,6 +65,13 @@ export interface RawQuestion {
   candidates?: { metric: string; label: string }[];
   scores?: [number, number][];
   goal?: [number, number];
+  // a spot-the-flaw drill, clean or one variant
+  lines?: string[];
+  input?: string;
+  output?: string;
+  span?: [number, number];
+  fix?: string[];
+  clean_output?: string;
 }
 
 export interface RawDetail {
@@ -167,6 +174,14 @@ export interface Question {
   trapsDetail: string[]; // card: why each trap is wrong
   estimate: Estimate | null; // an estimate drill's stated numbers and its key
   metric: MetricItem | null; // a pick-the-metric drill's cases and scores; its candidates are the choices
+  judge: JudgeItem | null; // a spot-the-flaw drill's lines and its witness
+}
+
+export interface JudgeItem {
+  lines: string[];
+  input: string; // the call the witness ran, as shown
+  output: string; // what these lines gave on it
+  flaw: { span: [number, number]; fix: string[]; cleanOutput: string } | null; // null on a clean item
 }
 
 export interface MetricItem {
@@ -207,7 +222,13 @@ export interface AttemptRecord {
   wrong?: true; // card: something else said wrong
   measure?: Measure; // a test's answer, which the schedule skips
   estimate?: number; // an estimate drill's number, as the user gave it
+  called_clean?: boolean; // a spot-the-flaw drill's verdict
+  tapped?: number; // the 1-based line tapped as flawed
+  located?: boolean; // whether that line is in the flawed span, on a flawed item
 }
+
+/** The raw answer a drill's record keeps beside `ok`. */
+export type DrillFields = Pick<AttemptRecord, 'estimate' | 'called_clean' | 'tapped' | 'located'>;
 
 /** The test an answer was given in: `core-package/knowledge/baseline-tests.md`. */
 export type Measure = 'baseline' | 'delayed' | 'placement';

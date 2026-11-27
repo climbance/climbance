@@ -2162,6 +2162,40 @@
               }
             ],
             "title": "Estimate"
+          },
+          "called_clean": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Called Clean"
+          },
+          "tapped": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tapped"
+          },
+          "located": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Located"
           }
         },
         "type": "object",

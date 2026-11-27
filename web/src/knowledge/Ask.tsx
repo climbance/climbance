@@ -53,6 +53,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { FlawCall, FlawStated } from '@/knowledge/FlawStated'
 import { useLearner } from '@/knowledge/learner'
 import { lessonPath } from '@/knowledge/paths'
 import { cn } from '@/lib/utils'
@@ -126,6 +127,15 @@ export function Ask({ q, course, head, onAnswered, onNext, exam, onLesson }: Pro
       {q.code && <PythonCode code={q.code} />}
       <EstimateStated q={q} />
       <MetricStated q={q} />
+      <FlawStated
+        q={q}
+        tapped={result ? (result.drill?.tapped ?? null) : state.tapped}
+        answered={!!result}
+        onTap={result ? undefined : (line) => dispatch({ type: 'tap', line })}
+      />
+      {q.judge && !result && (
+        <FlawCall on={state.calledClean} onClean={() => dispatch({ type: 'clean' })} />
+      )}
 
       {offersChoices(q) && (
         <Choices q={q} order={order} picked={picked} disabled={!!result} onToggle={toggle} />
@@ -275,6 +285,7 @@ export function Answered({ q, course }: { q: Question; course: Course | undefine
       {q.code && <PythonCode code={q.code} />}
       <EstimateStated q={q} />
       <MetricStated q={q} />
+      <FlawStated q={q} tapped={r.drill?.tapped ?? null} answered />
       {offersChoices(q) && <Choices q={q} order={r.order} picked={r.picked} disabled />}
       <Verdict r={r} />
       <Details r={r} course={course} answered={{ title: BANK_ANSWER, rows: bankAnswer(q) }} />

@@ -81,6 +81,8 @@ def rating(answer: Answer) -> Rating:
         return GRADED[answer.grade]
     if not answer.correct:
         return Rating.Again
+    if answer.located is False:  # flawed called flawed, on the wrong line
+        return Rating.Hard
     return Rating.Hard if answer.guess else Rating.Good
 
 

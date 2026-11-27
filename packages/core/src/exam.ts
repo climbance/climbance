@@ -139,7 +139,7 @@ export function examOutcome(plan: ExamPlan, results: Result[], t: string, course
     missed: results.filter((r) => !r.correct),
     // an exam stores its answers together at its end, at one moment
     attempts: results.map((r) =>
-      makeAttempt(t, r.q.course, r.q.id, r.correct, r.guess, undefined, undefined, plan.test?.measure),
+      makeAttempt(t, r.q.course, r.q.id, r.correct, r.guess, undefined, undefined, plan.test?.measure, r.drill),
     ),
     cert,
   };

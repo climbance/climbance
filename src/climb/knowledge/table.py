@@ -174,12 +174,16 @@ answers = _logged(
     Column("wrong", Boolean, nullable=False),
     Column("measure", enumerated(Measure)),
     Column("estimate", Double),
+    Column("called_clean", Boolean),
+    Column("tapped", Integer),
+    Column("located", Boolean),
     CheckConstraint(
         "grade IS NOT NULL OR (missed = '{}' AND traps = '{}' AND NOT wrong)",
         name="ticks_belong_to_a_grade",
     ),
     CheckConstraint("grade IS NULL OR NOT guess", name="an_open_question_takes_no_guess"),
     CheckConstraint("grade IS NULL OR estimate IS NULL", name="an_open_question_takes_no_estimate"),
+    CheckConstraint("NOT called_clean OR tapped IS NULL", name="a_clean_call_taps_no_line"),
 )
 
 stints = _logged(

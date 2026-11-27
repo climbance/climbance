@@ -6,6 +6,7 @@ import type {
   Course,
   Detail,
   Group,
+  JudgeItem,
   LessonRecord,
   MetricItem,
   Topic,
@@ -101,7 +102,13 @@ export function parseQuestion(raw: RawQuestion, course: string): Question {
           }
         : null,
     metric,
+    judge: raw.format === 'judge' ? judgeOf(raw) : null,
   };
+}
+
+function judgeOf(raw: RawQuestion): JudgeItem {
+  const flaw = raw.span ? { span: raw.span, fix: raw.fix ?? [], cleanOutput: raw.clean_output ?? '' } : null;
+  return { lines: raw.lines ?? [], input: raw.input ?? '', output: raw.output ?? '', flaw };
 }
 
 /** A pick-the-metric drill's key: the candidates putting first the system the goal puts first; a tie agrees with no goal. */

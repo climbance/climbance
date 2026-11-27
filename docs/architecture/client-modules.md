@@ -100,6 +100,7 @@ flowchart LR
         core_exam["exam"]
         core_feedback["feedback"]
         core_filling["filling"]
+        core_flaw["flaw"]
         core_focus["focus"]
         core_forecast["forecast"]
         core_fsrs["fsrs"]
@@ -180,6 +181,7 @@ flowchart LR
     core_exam --> core_settings
     core_feedback --> core_sittingrun
     core_filling --> core_sittingrun
+    core_flaw --> core_result
     core_focus --> core_types
     core_forecast --> core_queue
     core_forecast --> core_words
@@ -220,6 +222,7 @@ flowchart LR
     core_records --> core_types
     core_reminder --> core_schedule
     core_reply --> core_types
+    core_result --> core_flaw
     core_result --> core_lessontext
     core_result --> core_metric
     core_result --> core_records

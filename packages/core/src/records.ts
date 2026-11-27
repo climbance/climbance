@@ -1,4 +1,4 @@
-import type { AttemptRecord, Grade, Measure, SessionRecord } from './types';
+import type { AttemptRecord, DrillFields, Grade, Measure, SessionRecord } from './types';
 
 /** ISO-8601 UTC with seconds, as Python's datetime.now(UTC).isoformat(timespec="seconds"). */
 export function isoNow(ms: number = Date.now()): string {
@@ -79,7 +79,7 @@ export function makeAttempt(
   grade?: Grade,
   card?: CardFields,
   measure?: Measure,
-  estimate?: number,
+  drill?: DrillFields,
 ): AttemptRecord {
   const rec: AttemptRecord = { t, course, id, ok };
   if (guess) rec.guess = true;
@@ -88,7 +88,10 @@ export function makeAttempt(
   if (card?.traps) rec.traps = card.traps;
   if (card?.wrong) rec.wrong = true;
   if (measure) rec.measure = measure;
-  if (estimate !== undefined) rec.estimate = estimate;
+  if (drill?.estimate !== undefined) rec.estimate = drill.estimate;
+  if (drill?.called_clean !== undefined) rec.called_clean = drill.called_clean;
+  if (drill?.tapped !== undefined) rec.tapped = drill.tapped;
+  if (drill?.located !== undefined) rec.located = drill.located;
   return rec;
 }
 

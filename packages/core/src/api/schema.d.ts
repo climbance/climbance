@@ -1032,6 +1032,12 @@ export interface components {
       measure?: components['schemas']['Measure'] | null;
       /** Estimate */
       estimate?: number | null;
+      /** Called Clean */
+      called_clean?: boolean | null;
+      /** Tapped */
+      tapped?: number | null;
+      /** Located */
+      located?: boolean | null;
     };
     /**
      * Arm

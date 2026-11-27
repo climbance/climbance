@@ -312,3 +312,10 @@ describes. A module with no concept files is checked by rules 1 to 25 alone.
     refuses an item where the goal ties the systems, or where other than one
     candidate puts first the system the goal puts first. A candidate whose two
     scores tie agrees with no goal. *check*
+34. **A spot-the-flaw artefact's clean lines pass its `check`, and each
+    variant's lines fail it.** The check runs the lines, then `check`, then
+    the `input` expression, and calls `check` on the value the `input`
+    returns. Each stored `output` must equal the `repr` of that value, since
+    a client shows the stored output as the witness and runs no Python. The
+    reader refuses a variant whose stated `span` differs from the one span of
+    lines its text changes, and a variant that only deletes lines. *check*

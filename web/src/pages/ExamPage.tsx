@@ -50,6 +50,7 @@ import {
 } from '@climb/core'
 
 import { optionTile } from '@/components/optionTile'
+import { FlawStated } from '@/knowledge/FlawStated'
 import { Choice } from '@/components/Choice'
 import { PickPanel, PickRow } from '@/components/PickRow'
 import { Loaded } from '@/components/Loaded'
@@ -332,11 +333,7 @@ export function ExamRunning({
           </p>
           <PickPanel>
             {out.byTopic.map((t) => (
-              <PickRow
-                key={t.topic}
-                title={t.title}
-                stats={[{ label: '', value: t.value }]}
-              />
+              <PickRow key={t.topic} title={t.title} stats={[{ label: '', value: t.value }]} />
             ))}
           </PickPanel>
           <div className="flex gap-stack">
@@ -383,6 +380,7 @@ function Reviewed({
         {questionHead(course, catalog.rules, r.q, '', false)}
       </p>
       <p className="text-heading whitespace-pre-wrap">{block(r.q.prompt)}</p>
+      <FlawStated q={r.q} tapped={r.drill?.tapped ?? null} answered />
       {offersChoices(r.q) && (
         <ul className="space-y-2">
           {r.order.map((i, pos) => (

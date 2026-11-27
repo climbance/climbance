@@ -59,7 +59,7 @@ describe('an estimate drill', () => {
   });
 
   it('keeps the number it was given, for the factor still to be set', () => {
-    expect(answerResult(drill(), [], reply('$1,000')).estimate).toBe(1000);
+    expect(answerResult(drill(), [], reply('$1,000')).drill?.estimate).toBe(1000);
   });
 
   it('takes a trailing ? as a guess', () => {

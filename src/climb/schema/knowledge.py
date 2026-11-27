@@ -22,6 +22,7 @@ from climb.schema.authored import (
     ChoiceBody,
     EstimateBody,
     GraphSettings,
+    JudgeBody,
     MetricBody,
     OpenBody,
     ShortBody,
@@ -38,6 +39,7 @@ class QuestionFormat(StrEnum):
     OPEN = "open"
     ESTIMATE = "estimate"
     METRIC = "metric"
+    JUDGE = "judge"
 
 
 class Measure(StrEnum):
@@ -159,6 +161,7 @@ BODIES: dict[QuestionFormat, type[Authored]] = {
     QuestionFormat.OPEN: OpenBody,
     QuestionFormat.ESTIMATE: EstimateBody,
     QuestionFormat.METRIC: MetricBody,
+    QuestionFormat.JUDGE: JudgeBody,
 }
 
 
@@ -229,6 +232,10 @@ class Answer(KnowledgeRecord):
     wrong: bool = False
     measure: Measure | None = None  # a test's answer, which the schedule skips
     estimate: float | None = None  # an estimate drill's number, as the user gave it
+    # a spot-the-flaw drill's raw answer, and whether the tap hit the span
+    called_clean: bool | None = None
+    tapped: int | None = Field(default=None, ge=1)
+    located: bool | None = None
 
     @model_validator(mode="after")
     def _ticks_belong_to_a_grade(self) -> Answer:
@@ -238,6 +245,8 @@ class Answer(KnowledgeRecord):
             raise ValueError("an open question takes no guess")
         if self.grade is not None and self.estimate is not None:
             raise ValueError("an open question takes no estimate")
+        if self.called_clean and self.tapped is not None:
+            raise ValueError("an answer calling the item clean taps no line")
         return self
 
 

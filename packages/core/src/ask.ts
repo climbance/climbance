@@ -17,6 +17,8 @@ export interface AskState {
   recalled: Set<number>;
   fell: Set<number>;
   wrong: boolean;
+  tapped: number | null; // a spot-the-flaw drill's line, 1-based
+  calledClean: boolean;
   result: Result | null;
 }
 
@@ -28,6 +30,8 @@ export const initialAsk = (): AskState => ({
   recalled: new Set(),
   fell: new Set(),
   wrong: false,
+  tapped: null,
+  calledClean: false,
   result: null,
 });
 
@@ -39,6 +43,8 @@ export type AskEvent =
   | { type: 'recall'; i: number }
   | { type: 'fall'; i: number }
   | { type: 'wrong' }
+  | { type: 'tap'; line: number }
+  | { type: 'clean' }
   | { type: 'answered'; result: Result };
 
 /** One step of the answer. An answered question takes no more picks or ticks. */
@@ -59,6 +65,10 @@ export function askReducer(s: AskState, e: AskEvent): AskState {
       return { ...s, fell: flipped(s.fell, e.i) };
     case 'wrong':
       return { ...s, wrong: !s.wrong };
+    case 'tap':
+      return { ...s, tapped: e.line, calledClean: false };
+    case 'clean':
+      return { ...s, tapped: null, calledClean: true };
     case 'answered':
       return { ...s, result: e.result };
   }
@@ -81,14 +91,20 @@ export function askAct(
     if (!s.revealed) return { act: 'reveal', label: ASK_REVEAL, enabled: true };
     return { act: 'grade', label: cardLabel(q.key.length, s.recalled, s.fell, s.wrong), enabled: true };
   }
-  const reply = { text: s.text, picked: s.picked, guessing: s.guessing };
+  const reply = { text: s.text, picked: s.picked, guessing: s.guessing, tapped: s.tapped, calledClean: s.calledClean };
   return { act: 'submit', label: askSubmit(!!exam, !!exam?.last), enabled: canSubmit(q, reply) };
 }
 
 /** The answer the press records: the grade on an open question, the reply on the rest. */
 export function askResult(q: Question, order: number[], s: AskState): Result {
   if (q.format === 'card') return gradeResult(q, order, s.recalled, s.fell, s.wrong);
-  return answerResult(q, order, { text: s.text, picked: s.picked, guessing: s.guessing });
+  return answerResult(q, order, {
+    text: s.text,
+    picked: s.picked,
+    guessing: s.guessing,
+    tapped: s.tapped,
+    calledClean: s.calledClean,
+  });
 }
 
 /** What an estimate states before its answer: the texts sent and received, and each given value. */

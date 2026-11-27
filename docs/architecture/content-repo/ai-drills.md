@@ -47,9 +47,11 @@ a `metric` question, answered as a `choice` and stating its cases beside it.
 - **A guess is marked on the new formats as on `choice`.** A correct
   guess rates Hard, since the fact is not yet held.
 - **An `answers` row of a drill stores the raw answer beside `correct`**:
-  `called_clean` and `tapped` for `judge`, `tapped` for `trace`, and
-  `estimate` for `estimate`. Spotting and locating are counted apart, as in
-  `../api/short-exercises.md`. The factor an estimate is scored within is
+  `called_clean`, `tapped` and, on a flawed item, `located` for `judge`,
+  `tapped` for `trace`, and `estimate` for `estimate`. Spotting and locating
+  are counted apart, as in `../api/short-exercises.md`. A flawed item tapped
+  anywhere is correct, and `located` false rates it Hard, since FSRS rates a
+  record without reading its item. The factor an estimate is scored within is
   still to be set from real answers, and a stored `correct` alone could not
   be rescored.
 - **A drill item may be asked in an exam.** Its verdict is computed from the
@@ -73,19 +75,16 @@ grader's rubric. The author writes it clean, with up to three variants.
   missing `other` label or a missing step budget, is written on the line it
   changes: the label list without `other`, or `while True:` for the bounded
   loop. A variant that only deletes lines leaves no line to tap.
-- **The record**: the artefact's `id`, `concept` and `lines`, its `check`, its
-  `input`, and per variant its `id`, `lines` and the `span` it changes. The
-  check derives the span from the two texts and refuses a stated span that
-  differs.
-- **The `check` is code deciding whether one output is right on the input.**
-  For a chunker, the output is the chunks and the check asks whether one chunk
-  holds the answer's sentence. For an injection prompt, the output is the run's
-  tool calls and the check asks whether the canary tool was called.
-- **The module check proves each item's key**: the clean artefact's output
-  passes the `check`, and each variant's output fails it. An artefact whose
-  clean output fails, or whose variant passes, does not seed.
-- **A code artefact's output is computed by running it on the input** at every
-  module check. Its key rests on code alone, and is never re-verified.
+- **The record**: the artefact's `id`, `concept`, `prompt`, `lines`, `check`,
+  `input`, `output` and `explain`, and a `[[drill.variant]]` table per variant
+  with its `id`, `lines`, `span`, `output` and `explain`.
+- **The reader expands an artefact into its items**, a variant's id being
+  `<artefact>-<variant>`. A flawed item carries its `span`, the clean lines
+  there as `fix`, and the clean `output`. The reader derives each span from
+  the two texts, and refuses a stated span that differs.
+- **The `check` defines `check(output)` on the output of the `input`**, a
+  Python expression calling the artefact. The module check proves each key
+  with it, as rule 34 in `docs/authoring/rules.md` gives.
 - **A prompt artefact's output is a model's response, stored with the item.**
   The section on model-dependent keys gives how the responses are stored and
   re-checked.

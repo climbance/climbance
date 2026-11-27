@@ -1,4 +1,6 @@
 import { answerResult, gradeResult, offersChoices } from './answer';
+import { flawFixShown, flawWitness } from './flaw';
+import { FLAW_CALLED_CLEAN } from './words/flaw';
 import { LETTERS, levelName, subTitle, type Catalog } from './courses';
 import type { Lesson } from './graph';
 import type { GridColumn } from './grid';
@@ -10,8 +12,8 @@ import type { Course, Format, Question } from './types';
 // the author's questions page: `web-app/pages/author/questions/`
 
 /** A question's format as the glossary names it: the wire's `card` is an open question. */
-export type BankFormat = 'choice' | 'short' | 'open' | 'estimate' | 'metric';
-export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open', 'estimate', 'metric'];
+export type BankFormat = 'choice' | 'short' | 'open' | 'estimate' | 'metric' | 'judge';
+export const BANK_FORMATS: BankFormat[] = ['choice', 'short', 'open', 'estimate', 'metric', 'judge'];
 const bankFormat = (format: Format): BankFormat => (format === 'card' ? 'open' : format);
 
 export interface BankFilter {
@@ -218,7 +220,9 @@ export function answeredRight(q: Question): Result {
   if (q.format === 'card')
     return gradeResult(q, order, new Set(q.key.keys()), new Set(), false);
   const text = q.estimate ? String(q.estimate.computed) : (q.accept[0] ?? '');
-  return answerResult(q, order, { text, picked: [...q.answer], guessing: false });
+  const flaw = q.judge?.flaw;
+  const judged = q.judge ? { calledClean: !flaw, tapped: flaw ? flaw.span[0] : null } : {};
+  return answerResult(q, order, { text, picked: [...q.answer], guessing: false, ...judged });
 }
 
 /**
@@ -252,6 +256,11 @@ export function bankAnswer(q: Question): AnswerRow[] {
       row('key', true, `${shownNumber(q.estimate.computed)} ${q.estimate.unit}`, q.estimate.working.join('\n')),
       row('range', true, estimateRange(q.estimate), '', '·'),
     ];
+  if (q.judge) {
+    const fix = flawFixShown(q);
+    const witness = flawWitness(q).join('\n');
+    return [fix ? row('fix', true, fix.label, `${fix.code}\n\n${witness}`) : row('clean', true, FLAW_CALLED_CLEAN, witness)];
+  }
   return [
     ...q.key.map((point, i) => row(`k${i}`, true, `${i + 1}. ${block(point)}`, q.keyDetail[i])),
     ...q.traps.map((trap, i) => row(`t${i}`, false, `${'abc'[i]}) ${block(trap)}`, q.trapsDetail[i])),

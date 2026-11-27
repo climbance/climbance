@@ -65,6 +65,7 @@ def answer_out(row: dict[str, Any]) -> dict[str, Any]:
         line["wrong"] = True
     if row.get("measure") is not None:
         line["measure"] = row["measure"]
-    if row.get("estimate") is not None:
-        line["estimate"] = row["estimate"]
+    for key in ("estimate", "called_clean", "tapped", "located"):
+        if row.get(key) is not None:
+            line[key] = row[key]
     return line

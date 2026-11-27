@@ -1,6 +1,7 @@
 """A module's authored files, read as they are: `content-repo/modules.md`."""
 
 import tomllib
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -85,7 +86,81 @@ def _drills(base: Path, banks: list[Bank], listed: set[tuple[str, str]], unread:
         if where not in by_sub:
             by_sub[where] = Bank(topic=where[0], sub=where[1], questions=[])
             banks.append(by_sub[where])
-        by_sub[where].questions.extend(raws)
+        for raw in raws:
+            if raw.get("format") == "judge":
+                items, problems = expanded(raw)
+                by_sub[where].questions.extend(items)
+                unread += [
+                    f"drills/{'/'.join(where)}:{raw.get('id', '?')}: {one}" for one in problems
+                ]
+            else:
+                by_sub[where].questions.append(raw)
+
+
+# the artefact's own fields, which none of its items carries
+ARTEFACT = {"variant", "check", "lines", "output", "explain"}
+
+
+def expanded(raw: dict[str, Any]) -> tuple[list[dict[str, Any]], list[str]]:
+    """A spot-the-flaw artefact as its items: the clean one, then one per
+    variant, each variant's span derived from the two texts."""
+    shared = {key: value for key, value in raw.items() if key not in ARTEFACT}
+    clean = str(raw.get("lines", "")).strip("\n").splitlines()
+    artefact = str(raw.get("id", "?"))
+    items = [
+        shared
+        | {
+            "artefact": artefact,
+            "lines": clean,
+            "output": raw.get("output"),
+            "explain": raw.get("explain"),
+        }
+    ]
+    variants: list[dict[str, Any]] = raw.get("variant", [])
+    # a quarter of the items stay clean, so calling every one flawed fails
+    problems = [] if 1 <= len(variants) <= 3 else ["an artefact takes 1 to 3 variants"]
+    for variant in variants:
+        lines = str(variant.get("lines", "")).strip("\n").splitlines()
+        derived = changed(clean, lines)
+        if isinstance(derived, str):
+            problems.append(f"variant {variant.get('id', '?')}: {derived}")
+            continue
+        span, fix = derived
+        if list(variant.get("span", [])) != list(span):
+            stated = variant.get("span")
+            problems.append(f"variant {variant.get('id', '?')}: span {stated}, where it is {span}")
+        items.append(
+            shared
+            | {
+                "id": f"{artefact}-{variant.get('id', '?')}",
+                "artefact": artefact,
+                "lines": lines,
+                "output": variant.get("output"),
+                "explain": variant.get("explain"),
+                "span": list(span),
+                "fix": fix,
+                "clean_output": raw.get("output"),
+            }
+        )
+    return items, problems
+
+
+def changed(clean: list[str], variant: list[str]) -> tuple[tuple[int, int], list[str]] | str:
+    """The variant's one changed span, 1-based and inclusive, and the clean
+    lines it replaces."""
+    hunks = [
+        op
+        for op in SequenceMatcher(a=clean, b=variant, autojunk=False).get_opcodes()
+        if op[0] != "equal"
+    ]
+    if not hunks:
+        return "reads as the clean artefact"
+    if len(hunks) > 1:
+        return "differs in more than one span of lines"
+    ((kind, i1, i2, j1, j2),) = hunks
+    if kind == "delete":
+        return "only deletes lines, leaving no line to tap"
+    return (j1 + 1, j2), clean[i1:i2]
 
 
 def _optional(path: Path) -> dict[str, Any] | None:

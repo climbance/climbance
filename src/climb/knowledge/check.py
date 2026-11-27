@@ -14,7 +14,7 @@ from climb.schema import BODIES, CertificationSettings, GraphSettings, QuestionF
 from climb.schema.authored import LEVEL_NAMES, LEVELS
 from climb.techniques import codes
 
-FORMATS = ("choice", "short", "card", "estimate", "metric")
+FORMATS = ("choice", "short", "card", "estimate", "metric", "judge")
 # held in a column of its own, so never part of the body
 COLUMNS = {"id", "kind", "level", "prompt", "lesson", "code", "format", "sub"}
 COMMON = {"id", "kind", "prompt", "level"}
@@ -24,6 +24,7 @@ REQUIRED = {
     "card": COMMON | {"key"},
     "estimate": COMMON | {"given", "compute", "working", "computed", "factor", "unit", "explain"},
     "metric": COMMON | {"expected", "a", "b", "candidates", "utility", "scores", "goal", "explain"},
+    "judge": COMMON | {"artefact", "lines", "input", "output", "explain"},
 }
 HEADING = re.compile(r"#{2,3}\s+(.+?)\s*#*\s*$")
 

@@ -194,7 +194,39 @@ def agreeing(scores: list[tuple[float, float]], goal: tuple[float, float]) -> li
     return [i for i, (a, b) in enumerate(scores) if a != b and (a > b) == ahead]
 
 
-type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody | MetricBody
+# a tap lands on one line of a phone's screen: `content-repo/ai-drills.md`
+JUDGE_WIDTH = 60
+
+
+class JudgeBody(Authored):
+    """One spot-the-flaw item: an artefact, clean or one variant of it,
+    expanded at read: `content-repo/ai-drills.md`."""
+
+    artefact: str  # the authored artefact's id, shared by its clean and its variants
+    lines: list[str] = Field(min_length=1)
+    input: Text  # the call the witness runs, as shown
+    output: Text  # what these lines gave on it, as the module check computed it
+    # a flawed item's alone: its span, the clean lines there, the clean output
+    span: tuple[int, int] | None = None
+    fix: list[str] | None = None
+    clean_output: Text | None = None
+    explain: str
+    detail: Detail | None = None
+    concept: str | None = None
+
+    @model_validator(mode="after")
+    def _a_span_on_its_lines(self) -> JudgeBody:
+        if wide := [i + 1 for i, line in enumerate(self.lines) if len(line) > JUDGE_WIDTH]:
+            raise ValueError(f"line {wide[0]} is wider than {JUDGE_WIDTH} characters")
+        flawed = (self.span, self.fix, self.clean_output)
+        if any(one is None for one in flawed) != all(one is None for one in flawed):
+            raise ValueError("a flawed item states its span, its fix and the clean output together")
+        if self.span is not None and not 1 <= self.span[0] <= self.span[1] <= len(self.lines):
+            raise ValueError(f"span {list(self.span)} is not within the {len(self.lines)} lines")
+        return self
+
+
+type Body = ChoiceBody | ShortBody | OpenBody | EstimateBody | MetricBody | JudgeBody
 
 
 class Edge(Authored):
