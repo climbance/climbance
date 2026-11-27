@@ -54,7 +54,7 @@ flowchart TB
         broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
         sandbox["Sandbox<br/>One container per run under gVisor, no network, read-only root; its entry process forks a child per case."]
         database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
-        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."]
+        cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations, difficulty ratings and the corpus copy; it runs each draft's solutions in a local subprocess, never through the broker."]
     end
     learner -->|"practises in a browser [a web browser]"| web_app
     learner -->|"practises on a phone [Android, iOS]"| native_app
@@ -217,7 +217,7 @@ flowchart TB
     native_app["Native app<br/>The phone client for Android and iOS; schedules the knowledge queues offline and syncs."]
     broker["Broker<br/>Holds the container runtime's socket, admits one submission at a time and starts its sandbox."]
     database["Postgres<br/>The one store: the corpus, the content, every user's log and the call log."]
-    cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."]
+    cli["Command line<br/>climb, run by the author off the server: generation, the by-hand passes, seeding, invitations, difficulty ratings and the corpus copy; it runs each draft's solutions in a local subprocess, never through the broker."]
     subgraph api["API"]
         sitting["Sitting<br/>Times one session on one problem, minted at the first clock press or submission, and ended where next read."]
         submission["Submission<br/>Takes a user's code for a problem, refuses it past the run caps, and mints the attempt carrying the result."]

@@ -155,6 +155,11 @@ app-prod:
 prod *args:
     DATABASE_URL="${PROD_DATABASE_URL:?PROD_DATABASE_URL is not set in .env}" uv run climb {{ args }}
 
+# The problems the deployed store lacks, copied from the local one with every
+# record naming them, through the tunnel `prod` uses. `--dry-run` counts them.
+copy-corpus *args:
+    uv run climb copy-corpus --to "${PROD_DATABASE_URL:?PROD_DATABASE_URL is not set in .env}" {{ args }}
+
 # Per-technique progress.
 board *args:
     uv run climb board {{ args }}

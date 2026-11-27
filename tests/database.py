@@ -74,6 +74,21 @@ def migrated() -> str:
 
 @pytest.fixture(scope="session")
 def database_engine(worker_id: str) -> Iterator[Engine]:
+    engine = worker_engine(f"climb_test_{{checkout}}_{worker_id}")
+    yield engine
+    engine.dispose()
+
+
+@pytest.fixture(scope="session")
+def other_engine(worker_id: str) -> Iterator[Engine]:
+    """A second migrated database, for a command copying from one store into
+    another."""
+    engine = worker_engine(f"climb_test_{{checkout}}_{worker_id}_other")
+    yield engine
+    engine.dispose()
+
+
+def worker_engine(pattern: str) -> Engine:
     server = server_url()
     if server is None:
         # failed rather than skipped: a run without a server selects the unit
@@ -81,7 +96,7 @@ def database_engine(worker_id: str) -> Iterator[Engine]:
         pytest.fail("TEST_DATABASE_URL names no Postgres server; run -m 'not integration'")
     # per checkout: two worktrees running at once empty each other's tables
     checkout = hashlib.sha256(str(ROOT).encode()).hexdigest()[:6]
-    name = f"climb_test_{checkout}_{worker_id}"
+    name = pattern.format(checkout=checkout)
     url = make_url(server).set(database=name)
     stamp = migrated()
     admin = create_engine(server, isolation_level="AUTOCOMMIT")
@@ -113,8 +128,7 @@ def database_engine(worker_id: str) -> Iterator[Engine]:
     engine = create_engine(url, **UTC)
     # a run stopped midway leaves the rows of the test it stopped in
     emptied(engine)
-    yield engine
-    engine.dispose()
+    return engine
 
 
 @pytest.fixture
@@ -125,6 +139,15 @@ def database(database_engine: Engine) -> Iterator[Database]:
     shared(handle)
     yield handle
     emptied(database_engine)
+
+
+@pytest.fixture
+def other_database(other_engine: Engine) -> Iterator[Database]:
+    """The second database, empty but for the helper call, and emptied after."""
+    handle = Database(engine=other_engine)
+    shared(handle)
+    yield handle
+    emptied(other_engine)
 
 
 def shared(database: Database) -> None:

@@ -15,6 +15,7 @@ from climb.cli.chance_loss import chance_loss_printed
 from climb.cli.claim import claim
 from climb.cli.claim_solutions import claim_solutions
 from climb.cli.classify import classify
+from climb.cli.copy_corpus import copy_corpus
 from climb.cli.diagnose import diagnose
 from climb.cli.difficulty import difficulty
 from climb.cli.fill import fill
@@ -324,6 +325,14 @@ def main() -> None:
     )
     user_argument(movement_parser)
 
+    copy_parser = command(
+        sub, "copy-corpus", "the problems another store lacks, with every record naming them"
+    )
+    copy_parser.add_argument("--to", help="the store to copy into, by its URL")
+    copy_parser.add_argument(
+        "--dry-run", action="store_true", help="count what would be copied, writing nothing"
+    )
+
     invite_parser = command(sub, "invite", "the emails allowed to sign in")
     invite_action = invite_parser.add_subparsers(dest="action", required=True)
     invite_add = invite_action.add_parser("add", help="let the email sign in, or set its role")
@@ -527,6 +536,7 @@ COMMANDS: dict[str, Callable[[argparse.Namespace, argparse.ArgumentParser, Datab
     ),
     "library": lambda args, parser, _root: library(args, parser),
     "invite": invitation,
+    "copy-corpus": copy_corpus,
     "chance-loss": lambda _args, _parser, root: chance_loss_printed(root),
     "diagnose": diagnose,
     "spot": lambda args, parser, _root: spot(args, parser),

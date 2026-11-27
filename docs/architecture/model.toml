@@ -271,7 +271,7 @@ src = [
 id = "cli"
 kind = "container"
 name = "Command line"
-role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations and difficulty ratings; it runs each draft's solutions in a local subprocess, never through the broker."
+role = "`climb`, run by the author off the server: generation, the by-hand passes, seeding, invitations, difficulty ratings and the corpus copy; it runs each draft's solutions in a local subprocess, never through the broker."
 doc = "cli/README.md"
 src = [
     "src/climb/cli/__init__.py",
@@ -282,6 +282,7 @@ src = [
     "src/climb/cli/rows.py",
     "src/climb/cli/problem.py",
     "src/climb/cli/user_log.py",
+    "src/climb/cli/copy_corpus.py",
 ]
 code = ["climb.cli"]
 runs = [
