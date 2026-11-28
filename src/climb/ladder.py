@@ -190,7 +190,13 @@ def ladder(
     for covered in coverage([card], problems, solutions, matches):
         filling = sorted(
             {answers[one] for one in covered.solution_ids if answers.get(one) in by_id},
-            key=lambda id: (id in skipped, rank.get(id, len(rank)), id),
+            # written for the template, then matched: `content-repo/cards.md`
+            key=lambda id: (
+                id in skipped,
+                by_id[id].target_template_id != covered.template_id,
+                rank.get(id, len(rank)),
+                id,
+            ),
         )
         if not filling:
             if covered.gap:

@@ -50,6 +50,13 @@ from the template matches and the card's selector, and stores none of it.
   problem that solution answers. Drawn from the selector alone the ladder would
   exercise the technique and leave some forms untouched, since a technique says
   what a problem is about rather than which form solves it.
+- **A template's rung goes first to a problem written for that template.** A
+  problem only the matcher credited to the template comes after it. The
+  generator's match is provenance, and the matcher's is an inference that can
+  be wrong. On 2026-11-28 the matcher credited `prim-heap` to a heap problem
+  and to a `dijkstra` problem, and each took `prim`'s `prim-heap` rung in one
+  store. A user's skip still comes first: a skipped problem gives way to any
+  other.
 - **A ladder whose selector admits easy holds an easy rung** wherever the
   corpus holds an easy problem for the selector. The selector's fill takes an
   easy problem first when no covering rung is easy, one rung past `size` where

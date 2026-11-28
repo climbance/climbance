@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
-from helpers import T0
+from helpers import PROVENANCE, T0
 from matching import canonical, card, problem, seeded, template
 
 from climb.ladder import CardState, Rung, card_state, ladder, next_rung, probes
-from climb.mint import generator_match, user_match
+from climb.mint import generator_match, machine_match, user_match
 from climb.schema import Attempt, ProblemDifficulty, ProblemStatus, RetirementReason, Sitting
 
 TECHNIQUE = "sliding-window"
@@ -568,6 +568,25 @@ def test_a_skipped_rung_gives_way_to_another_problem_covering_its_templates(data
     )
 
     assert [(one.problem.id, one.skipped) for one in resolved.rungs] == [("p-1", False)]
+
+
+def test_a_rung_goes_to_the_problem_written_for_its_template(database):
+    """A matcher's credit is an inference that can be wrong, so a problem it
+    credited ranks after one the generator wrote for the template."""
+    held = a_card(database, size=1)
+    form = held.templates[0]
+    foreign = problem("p-0", techniques=[TECHNIQUE])
+    own = problem("p-1", techniques=[TECHNIQUE]).model_copy(
+        update={"target_template_id": form.id, "target_technique": None}
+    )
+    matches = [
+        machine_match(form.id, "s-p-0", matched=True, provenance=PROVENANCE),
+        generator_match(form.id, "s-p-1"),
+    ]
+
+    resolved = ladder(held, [foreign, own], [canonical("p-0"), canonical("p-1")], matches, [])
+
+    assert [one.problem.id for one in resolved.rungs] == ["p-1"]
 
 
 def test_a_skipped_rung_with_no_other_problem_is_served_last(database):
